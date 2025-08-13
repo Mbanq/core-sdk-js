@@ -9,6 +9,7 @@ export interface Config {
   graphqlPath?: string;
   middlewares?: Middleware[];
   logger?: (instance: any) => void;
+  traceId?: string;
   axiosConfig?: {
     timeout?: number;
     headers?: Record<string, string>;
