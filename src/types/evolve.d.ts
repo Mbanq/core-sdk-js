@@ -1,0 +1,64 @@
+export interface OutgoingReturn {
+  ODFI_trace: string
+  effective_date: string
+  ach_company_name: string
+  amount: number
+  return_reason: string
+  client_trace: string
+  CoreFileKey?: string
+  CoreBatch?: number
+  CoreSeq?: number
+}
+
+export interface IncomingReturn {
+  'cfgrp#': number;
+  CIF: string;
+  ts: string;
+  AC5OFFCR: null;
+  CFOFFR: null;
+  COMPANY_NAME: string;
+  COMPANY_DISCRETIONARY: string;
+  COMPANY_ID: string;
+  SEC: string;
+  COMPANY_ENTRY_DESC: string;
+  ODFI_ID: string;
+  ODFI_ACCOUNT: string;
+  INDIVIDUAL_NAME: string;
+  AMOUNT: number;
+  INDIVIDUAL_ID: string;
+  TRACE_NUMBER: number;
+  ORIGINAL_TRACE_NUMBER: number;
+  RCODE: string;
+  Addenda_Old: string;
+  DATE: string;
+  OFFSET: string;
+  TYPE: number;
+  ACDEN7_date: string;
+  ACDEN7: number;
+  ACBATN: number;
+  Expr1: string;
+  AC6TC: number;
+  AC6RTR: number;
+  AC6RCK: number;
+  AC1DT: number;
+  AC1TIM: number;
+  AC5CLA: number;
+  AC5SET: number;
+  AC7TRC: number;
+  AC7ATC: number;
+  Immed_Origin: string;
+  OrigTC: number;
+  rstring: string;
+  Addenda_Text: string;
+  Originating_DFI: string;
+  Descriptive_Date: string;
+  ABA_Routing: string;
+  absAmount: number;
+  ac7tr: string;
+  origAddenda: string;
+  dateDDA: string;
+  ManualReturn: number;
+  FileKey: string;
+  FileBatch: number;
+  FileSequence: number;
+}
