@@ -1,3 +1,7 @@
 node_modules
 .env*
 .idea
+coverage
+dist
+.vscode-test
+.vscode
