@@ -1,0 +1,88 @@
+{
+  "name": "core-sdk-js",
+  "version": "1.0.0",
+  "description": "",
+  "publishConfig": {
+    "@mbanq-cloud:registry": "https://gitlab.mbanq.com/api/v4/projects/715/packages/npm/"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./command": {
+      "import": "./dist/commands/index.mjs",
+      "require": "./dist/commands/index.js",
+      "types": "./dist/commands/index.d.ts"
+    },
+    "./client": {
+      "import": "./dist/client/index.mjs",
+      "require": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./types": {
+      "types": "./dist/index.d.ts"
+    },
+    "./types/command": {
+      "types": "./dist/commands/index.d.ts"
+    },
+    "./types/client": {
+      "types": "./dist/client/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "semantic-release": "semantic-release",
+    "build": "tsup",
+    "test": "vitest run --coverage",
+    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=junit.xml",
+    "lint": "eslint '*/**/*.{js,ts}' --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Mbanq/core-sdk-js.git"
+  },
+  "keywords": [
+    "core",
+    "sdk",
+    "javascript"
+  ],
+  "author": "MbanqCloud",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/eslint-plugin": "^7.27.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^12.0.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.2.1",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "eslint": "^9.33.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-security": "^3.0.1",
+    "globals": "^16.3.0",
+    "semantic-release": "^24.2.7",
+    "semantic-release-slack-bot": "^4.0.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@mbanq-cloud/sls-utils": "^1.6.0",
+    "@semantic-release/github": "^11.0.4",
+    "axios": "^1.11.0",
+    "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.6.0"
+  }
+}
