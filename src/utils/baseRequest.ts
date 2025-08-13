@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import * as https from 'https';
-import { log } from '@mbanq-cloud/sls-utils';
 import { generateTokenWithJWT, getAccessTokenWithCredential } from './generateToken';
 import type { Config } from '../types';
 
@@ -17,7 +17,7 @@ export default async (config: Config): Promise<AxiosInstance> => {
       'Content-Type': 'application/json; charset=utf-8',
       'JWT-Token': config?.secret ? `${generateTokenWithJWT(config?.secret, config?.signee || '')}` : undefined,
       Authorization: config.credential ? `Bearer ${core.token || await getAccessTokenWithCredential(core.token, config.baseUrl, config.tenantId, config.credential )}` : undefined,
-      'trace-id': log.getTraceId(),
+      'trace-id': config.traceId || `RequestUUID=${uuidv4()}`,
       tenantId: config.tenantId
     },
     httpsAgent: new https.Agent({
