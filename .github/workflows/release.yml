@@ -2,9 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - 'refs/heads/beta'
-      - 'refs/heads/master'
+    branches: [ master, beta ]
+  workflow_dispatch:
 
 jobs:
   release:
