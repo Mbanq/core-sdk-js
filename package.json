@@ -60,6 +60,7 @@
     "@babel/eslint-plugin": "^7.27.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.4",
     "@semantic-release/npm": "^12.0.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.2.1",
@@ -78,11 +79,10 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@mbanq-cloud/sls-utils": "^1.6.0",
-    "@semantic-release/github": "^11.0.4",
     "axios": "^1.11.0",
     "graphql": "^16.11.0",
     "jsonwebtoken": "^9.0.2",
-    "moment-timezone": "^0.6.0"
+    "moment-timezone": "^0.6.0",
+    "uuid": "^11.1.0"
   }
 }
