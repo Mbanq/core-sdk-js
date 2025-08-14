@@ -5,7 +5,6 @@ import { Credential } from '../types/config';
 export const generateTokenWithJWT = (secret: string, signee: string): string => {
   if (!secret) throw new Error('Missing JWT secret');
 
-  // default HS256 or HMAC SHA256
   const token = jwt.sign({ signee }, secret, { algorithm: 'HS512', expiresIn: '1d' });
 
   return token || '';
