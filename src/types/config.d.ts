@@ -1,4 +1,5 @@
 import type { DocumentNode } from 'graphql';
+import type { AxiosInstance } from 'axios';
 
 export interface Config {
   credential?: Credential;
@@ -8,7 +9,7 @@ export interface Config {
   signee?: string;
   graphqlPath?: string;
   middlewares?: Middleware[];
-  logger?: (instance: any) => void;
+  logger?: (instance: AxiosInstance) => void;
   traceId?: string;
   axiosConfig?: {
     timeout?: number;

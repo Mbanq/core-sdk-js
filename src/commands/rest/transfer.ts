@@ -9,8 +9,8 @@ import {
 } from '../../types/transfer';
 import baseRequest from '../../utils/baseRequest';
 import type { Command, Config } from '../../types';
-import newDate from '../../utils/newDate';
-import { handleAxiosError } from '../../utils/errorHandler';
+import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
+import axios from 'axios';
 
 export const CreateTransfer = (params: { transfer: CreateTransferInput, tenantId: string }): Command<{ transfer: CreateTransferInput, tenantId: string }, CreateTransferOutput> => {
   return {
@@ -62,9 +62,9 @@ export const GetTransfer = (params: { id: number, tenantId: string }): Command<{
 
 export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput, Array<Transfer>> => {
   const enrichedParams = {
-    paymentType: params.paymentType || 'ACH',
+    paymentType: params.paymentType,
     status: params.transferStatus || 'EXECUTION_SCHEDULED',
-    toExecuteDate: params.executedAt || newDate().toISOString(true).slice(0, 10),
+    toExecuteDate: params.executedAt,
     locale: 'en',
     dateFormat: 'yyyy-MM-dd',
     associateClientData: true,
@@ -113,8 +113,8 @@ export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput
 };
 
 export const MarkAsSuccess = (
-  params: { externalId: string; paymentType?: 'ACH' | 'SAMEDAYACH', tenantId?: string }
-): Command<{ externalId: string; paymentType?: 'ACH' | 'SAMEDAYACH', tenantId?: string }, ProcessOutput> => {
+  params: { externalId: string; paymentType?: PaymentRail, tenantId?: string }
+): Command<{ externalId: string; paymentType?: PaymentRail, tenantId?: string }, ProcessOutput> => {
   const enrichedParams = {
     ...params,
     paymentType: params.paymentType || 'ACH'
@@ -234,15 +234,24 @@ export const LogFailTransfer = (
         const response = await axiosInstance.post<ProcessOutput>(`/v1/external-transfers?command=LOG_FAILURE`, enrichedParams);
         return response.data;
       } catch (error) {
-        handleAxiosError(error);
+        if (axios.isAxiosError(error)) {
+          throw createCommandError({
+            message: 'LogFailTransfer command failed',
+            statusCode: error.response?.status,
+            code: error.code,
+            requestId: error.response?.headers?.['x-request-id'] as string,
+            originalError: error
+          });
+        }
+        throw error;
       }
     }
   };
 };
 
 export const MarkAsFail = (
-  params: { externalId: string, errorMessage: string, paymentType: 'ACH' | 'SAMEDAYACH', tenantId?: string }
-): Command<{ externalId: string, errorMessage: string, paymentType: 'ACH' | 'SAMEDAYACH', tenantId?: string }, ProcessOutput> => {
+  params: { externalId: string, errorMessage: string, paymentType: PaymentRail, tenantId?: string }
+): Command<{ externalId: string, errorMessage: string, paymentType: PaymentRail, tenantId?: string }, ProcessOutput> => {
 
   return {
     input: params,

@@ -1,7 +1,12 @@
 import type { Middleware } from '../types';
 
+export interface MetricsClient {
+  incrementCounter: (counterName: string) => void;
+  recordError?: (error: Error) => void;
+}
+
 export const createMetricsMiddleware = (
-  metricsClient: any
+  metricsClient: MetricsClient
 ): Middleware => ({
   before: async (command) => {
     metricsClient.incrementCounter(`${command.metadata.commandName}_started`);
@@ -11,6 +16,8 @@ export const createMetricsMiddleware = (
   },
   onError: async (command, error) => {
     metricsClient.incrementCounter(`${command.metadata.commandName}_error`);
-    metricsClient.recordError(error);
+    if (metricsClient.recordError && typeof metricsClient.recordError === 'function') {
+      metricsClient.recordError(error);
+    }
   }
 });

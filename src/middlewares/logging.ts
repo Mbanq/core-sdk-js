@@ -1,8 +1,14 @@
 import type { Middleware } from '../types';
-import { Console } from 'node:console';
+
+export interface Logger {
+  info: (message: string, ...args: unknown[]) => void;
+  error: (message: string, ...args: unknown[]) => void;
+  warn?: (message: string, ...args: unknown[]) => void;
+  log?: (message: string, ...args: unknown[]) => void;
+}
 
 export const createLoggingMiddleware = (
-  logger: Console = console
+  logger: Logger = console
 ): Middleware => ({
   before: async (command) => {
     logger.info(`Executing ${command.metadata.commandName}`, {

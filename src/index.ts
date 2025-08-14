@@ -15,5 +15,7 @@ export type {
   ProcessOutput,
   Command,
   Middleware,
-  Transfer
+  Transfer,
+  MetricsClient,
+  Logger
 } from './types';
