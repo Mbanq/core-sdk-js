@@ -1,4 +1,3 @@
-// vite.config.ts
 import { defineConfig } from 'vitest/config';
 import { loadEnv } from 'vite';
 
@@ -15,17 +14,17 @@ export default defineConfig(({ mode }) => {
       },
       coverage: {
         reporter: ['text', 'text-summary', 'html', 'json'],
-        provider: 'istanbul', // or 'c8'
+        provider: 'istanbul',
         thresholds: {
           lines: 50,
           functions: 50,
           branches: 50,
-          statements: 50,
+          statements: 50
         },
-        exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '**/__tests__/**']
+        exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '**/__tests__/**', '**/*.config.ts', '*.config.js']
       },
-      exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**'],
+      exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '*.config.ts', '*.config.js'],
       globals: true
     }
-  }
+  };
 });
