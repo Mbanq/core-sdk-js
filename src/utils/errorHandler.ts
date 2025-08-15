@@ -1,5 +1,5 @@
+import axios, { AxiosError } from 'axios';
 import type { ApiError } from '../types/error';
-import axios from 'axios';
 
 export const createCommandError = ({ message, statusCode, code, requestId, originalError }: Omit<ApiError, 'name'>): ApiError => ({
   name: 'CommandError',
@@ -15,29 +15,40 @@ export const isCommandError = (error: unknown): error is ApiError => {
     typeof error === 'object' &&
     error !== null &&
     'name' in error &&
-    error.name === 'CommandError'
+    (error as ApiError).name === 'CommandError'
   );
 };
 
-const cleanAxiosError = (error: any): any => {
+const cleanAxiosError = (error: Error | AxiosError): Error => {
   if (!error || typeof error !== 'object') return error;
 
-  const cleaned = { ...error };
+  const cleaned = { ...error } as Record<string, unknown>;
 
-  if (cleaned.config?.httpsAgent) {
-    delete cleaned.config.httpsAgent.sockets;
-    delete cleaned.config.httpsAgent.freeSockets;
-    delete cleaned.config.httpsAgent._sessionCache;
+  if (cleaned.config && typeof cleaned.config === 'object') {
+    const config = cleaned.config as Record<string, unknown>;
+    if (config.httpsAgent && typeof config.httpsAgent === 'object') {
+      const httpsAgent = config.httpsAgent as Record<string, unknown>;
+      delete httpsAgent.sockets;
+      delete httpsAgent.freeSockets;
+      delete httpsAgent._sessionCache;
+    }
   }
 
-  return cleaned;
+  return cleaned as unknown as Error;
 };
 
 export const handleAxiosError = (error: unknown): never => {
   if (axios.isAxiosError(error)) {
+    const responseMessage = error.response?.data?.message;
+    const defaultMessage = error.response?.status
+      ? `Request failed with status code ${error.response.status}`
+      : error.message || 'Request failed';
+
     throw createCommandError({
-      message: error.response?.data?.message || error.message,
+      message: responseMessage || defaultMessage,
       statusCode: error.response?.status,
+      code: error.code,
+      requestId: error.response?.headers?.['x-request-id'] as string,
       originalError: cleanAxiosError(error)
     });
   }

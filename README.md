@@ -4,6 +4,12 @@
 - ### Introduction
 - ### Installation
 - ### Authentication
+- ### Setup
+  - #### Axios Instance Logger
+- ### Middleware
+  - #### Logging Middleware
+  - #### Metrics Middleware
+  - #### Custom Middleware
 - ### API Reference
   - #### Transfer Operations
     - #### GetTransfers
@@ -23,12 +29,166 @@ This library provides a set of JavaScript functions for interacting with our tra
 ## Installation
 
 ```npm
-npm install @ymbanq-cloud/core-sdk
+npm install core-sdk-js
 ```
 ## Setup
 Before using any of the library functions, you need to initialize the client with your API credentials:
 ```javascript
-const coreSDK = createClient({ secret: 'testing123', signee: 'TESTING', baseUrl: 'https://example.com', tenantId: 'testing' });
+const coreSDK = createClient({ 
+  secret: 'testing123', 
+  signee: 'TESTING', 
+  baseUrl: 'https://example.com', 
+  tenantId: 'testing' 
+});
+```
+
+### Axios Instance Logger
+You can also configure an Axios instance logger to set up interceptors or other axios-specific configurations:
+
+```javascript
+const axiosLogger = (axiosInstance) => {
+  // Add request interceptor
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      console.log('Request:', config.method?.toUpperCase(), config.url);
+      return config;
+    }
+  );
+  
+  // Add response interceptor
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      console.log('Response:', response.status, response.config.url);
+      return response;
+    }
+  );
+};
+
+const coreSDK = createClient({
+  secret: 'testing123',
+  signee: 'TESTING',
+  baseUrl: 'https://example.com',
+  tenantId: 'testing',
+  logger: axiosLogger // Configure Axios instance
+});
+```
+
+## Middleware
+The SDK supports middleware for cross-cutting concerns like logging and metrics. Middleware functions are executed automatically around command execution.
+
+**Note**: This is different from the Axios instance logger above. Middleware loggers handle command-level logging, while the Axios logger handles HTTP request/response logging.
+
+### Available Middleware
+
+#### Logging Middleware
+Logs command execution details including inputs, outputs, and errors.
+
+```javascript
+import { createClient, createLoggingMiddleware } from '@ymbanq-cloud/core-sdk';
+
+const loggingMiddleware = createLoggingMiddleware(console); // or custom logger
+
+const client = createClient({
+  secret: 'testing123',
+  signee: 'TESTING',
+  baseUrl: 'https://example.com',
+  tenantId: 'testing',
+  middlewares: [loggingMiddleware]
+});
+```
+
+#### Logger Interface
+For custom loggers, implement the Logger interface:
+
+```typescript
+interface Logger {
+  info: (message: string, ...args: unknown[]) => void;
+  error: (message: string, ...args: unknown[]) => void;
+  warn?: (message: string, ...args: unknown[]) => void; // Optional
+  log?: (message: string, ...args: unknown[]) => void;  // Optional
+}
+
+// Example with a custom logger
+const customLogger = {
+  info: (message, ...args) => myLoggingService.info(message, args),
+  error: (message, ...args) => myLoggingService.error(message, args),
+  warn: (message, ...args) => myLoggingService.warn(message, args)
+};
+
+const middleware = createLoggingMiddleware(customLogger);
+```
+
+#### Metrics Middleware
+Tracks command execution metrics including counters for started, completed, and error events.
+
+```javascript
+import { createClient, createMetricsMiddleware } from '@ymbanq-cloud/core-sdk';
+
+// Your metrics client must implement the MetricsClient interface
+const metricsClient = {
+  incrementCounter: (counterName) => {
+    // Increment your counter (e.g., Prometheus, StatsD, etc.)
+    console.log(`Counter: ${counterName}`);
+  },
+  recordError: (error) => {
+    // Optional: Record error details
+    console.error('Command error:', error);
+  }
+};
+
+const metricsMiddleware = createMetricsMiddleware(metricsClient);
+
+const client = createClient({
+  secret: 'testing123',
+  signee: 'TESTING',
+  baseUrl: 'https://example.com',
+  tenantId: 'testing',
+  middlewares: [metricsMiddleware]
+});
+```
+
+#### MetricsClient Interface
+```typescript
+interface MetricsClient {
+  incrementCounter: (counterName: string) => void;
+  recordError?: (error: Error) => void; // Optional
+}
+```
+
+#### Using Multiple Middleware
+```javascript
+const client = createClient({
+  // ... other config
+  middlewares: [
+    createLoggingMiddleware(console),
+    createMetricsMiddleware(metricsClient)
+  ]
+});
+```
+
+#### Custom Middleware
+You can create custom middleware by implementing the Middleware interface:
+
+```javascript
+const customMiddleware = {
+  before: async (command) => {
+    // Called before command execution
+    console.log(`Starting ${command.metadata.commandName}`);
+  },
+  after: async (command, response) => {
+    // Called after successful execution
+    console.log(`Completed ${command.metadata.commandName}`, response);
+  },
+  onError: async (command, error) => {
+    // Called when command fails
+    console.error(`Error in ${command.metadata.commandName}`, error);
+  }
+};
+
+const client = createClient({
+  // ... other config
+  middlewares: [customMiddleware]
+});
 ```
 
 ## API Reference

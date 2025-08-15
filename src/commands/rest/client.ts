@@ -2,11 +2,42 @@ import { type Command, type Config, ProcessOutput } from '../../types';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 
+interface ClientData {
+  id: number;
+  accountNo: string;
+  displayName: string;
+  legalForm: {
+    code: string;
+    value: string;
+  };
+  [key: string]: string | number | boolean | object;
+}
+
+interface RiskRatingData {
+  riskScore: number;
+  rating: string;
+  [key: string]: string | number | boolean;
+}
+
+interface ClientAddressData {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  [key: string]: string | number | boolean;
+}
+
+interface ClientIdentifierData {
+  type: string;
+  value: string;
+  [key: string]: string | number | boolean;
+}
+
 interface ClientResponse {
-  clientData: any;
-  riskRatingData: any;
-  clientAddressData: any;
-  clientIdentifierData: any;
+  clientData?: ClientData;
+  riskRatingData?: RiskRatingData;
+  clientAddressData?: ClientAddressData;
+  clientIdentifierData?: ClientIdentifierData;
 }
 
 export const GetClientData = (params: { clientId: number; tenantId?: string; riskRating?: boolean; clientAddress?: boolean; clientIdentifier?: boolean; }): Command<{ clientId: number; tenantId?: string; riskRating?: boolean; clientAddress?: boolean; clientIdentifier?: boolean; }, ClientResponse> => {
