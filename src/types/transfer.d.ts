@@ -2,6 +2,15 @@ export type PaymentRail = 'ACH' | 'SAMEDAYACH';
 export type PaymentType = 'CREDIT' | 'DEBIT';
 export type AccountType = 'CHECKING' | 'SAVINGS';
 
+interface RawPaymentDetails {
+  [key: string]: string | number | boolean;
+}
+
+interface ClientIdentifier {
+  type: string;
+  value: string;
+}
+
 export interface Transfer {
   type: string;
   paymentType: PaymentRail;
@@ -11,7 +20,7 @@ export interface Transfer {
   amount: number;
   externalId: string;
   reference: Array<string>;
-  rawPaymentDetails?: any;
+  rawPaymentDetails?: RawPaymentDetails;
   statementDescription?: string;
   settlementDate?: string;
   errorCode?: string;
@@ -25,7 +34,7 @@ export interface Transfer {
       code: string,
       value: string
     },
-    identifiers: Array<any>,
+    identifiers: Array<ClientIdentifier>,
     ofLoanCycle: number,
     ofLoanActive: number,
     activeDepositAccount: number
@@ -80,7 +89,7 @@ export interface MarkAsReturnInput {
     incomingReturnFile?: string;
     outgoingReturnFile?: string;
   },
-  rawReturnDetails?: any;
+  rawReturnDetails?: RawPaymentDetails;
   tenantId?: string;
 }
 
