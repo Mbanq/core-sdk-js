@@ -1,6 +1,7 @@
 import type { Command, Config } from '../types';
 import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
+import { GetTransfers } from '../commands/rest/transfer';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -29,6 +30,18 @@ export const createClient = (initialConfig: Config) => {
   };
 
   let currentConfig = { ...initialConfig };
+
+  const requestHandler = async <TOutput>(command: Command<any, TOutput>): Promise<TOutput | undefined> => {
+    try {
+      await executeMiddlewares('before', command);
+      const response = await command.execute(currentConfig);
+      await executeMiddlewares('after', command, response);
+      return response;
+    } catch (error) {
+      await executeMiddlewares('onError', command, error);
+      throw error;
+    }
+  };
 
   return {
     setConfig: (config: Config) => {
@@ -60,15 +73,21 @@ export const createClient = (initialConfig: Config) => {
     resetConfig: () => {
       currentConfig = initialConfig;
     },
-    request: async <TOutput>(command: Command<any, TOutput>): Promise<TOutput | undefined> => {
-      try {
-        await executeMiddlewares('before', command);
-        const response = await command.execute(currentConfig);
-        await executeMiddlewares('after', command, response);
-        return response;
-      } catch (error) {
-        await executeMiddlewares('onError', command, error);
-        throw error;
+    request: requestHandler,
+    payment: {
+      list: () => {
+        const query = GetTransfers({ tenantId: currentConfig.tenantId });
+        const queryBuilder = query.list();
+
+        return {
+          where: queryBuilder.where,
+          limit: queryBuilder.limit,
+          offset: queryBuilder.offset,
+          execute: async () => {
+            const command = queryBuilder.execute();
+            return requestHandler(command);
+          }
+        };
       }
     }
   };

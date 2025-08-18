@@ -11,6 +11,47 @@ import baseRequest from '../../utils/baseRequest';
 import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 import axios from 'axios';
+import { VALID_PAYMENT_RAIL_VALUES, VALID_PAYMENT_TYPE_VALUES, VALID_SORT_ORDER_VALUES, VALID_STATUS_VALUES } from '../../utils/validation';
+import { VALID_PAYMENT_FILTER_KEYS } from '../../types/payment';
+
+const validateFilterKey = (key: string): void => {
+  if (!VALID_PAYMENT_FILTER_KEYS.includes(key as any)) {
+    throw createCommandError({
+      message: `Invalid filter key: '${key}'. Valid keys are: ${VALID_PAYMENT_FILTER_KEYS.join(', ')}`,
+      code: 'invalid_filter_key'
+    });
+  }
+};
+
+const validateFilterValue = (key: string, value: any): void => {
+  if (key === 'status' && !VALID_STATUS_VALUES.includes(value)) {
+    throw createCommandError({
+      message: `Invalid status value: '${value}'. Valid statuses are: ${VALID_STATUS_VALUES.join(', ')}`,
+      code: 'invalid_status_value'
+    });
+  }
+
+  if (key === 'paymentRail' && !VALID_PAYMENT_RAIL_VALUES.includes(value)) {
+    throw createCommandError({
+      message: `Invalid paymentRail value: '${value}'. Valid payment rails are: ${VALID_PAYMENT_RAIL_VALUES.join(', ')}`,
+      code: 'invalid_payment_rail_value'
+    });
+  }
+
+  if (key === 'paymentType' && !VALID_PAYMENT_TYPE_VALUES.includes(value)) {
+    throw createCommandError({
+      message: `Invalid paymentType value: '${value}'. Valid payment types are: ${VALID_PAYMENT_TYPE_VALUES.join(', ')}`,
+      code: 'invalid_payment_type_value'
+    });
+  }
+
+  if (key === 'sortOrder' && !VALID_SORT_ORDER_VALUES.includes(value)) {
+    throw createCommandError({
+      message: `Invalid sortOrder value: '${value}'. Valid sort orders are: ${VALID_SORT_ORDER_VALUES.join(', ')}`,
+      code: 'invalid_sort_order_value'
+    });
+  }
+};
 
 export const CreateTransfer = (params: { transfer: CreateTransferInput, tenantId: string }): Command<{ transfer: CreateTransferInput, tenantId: string }, CreateTransferOutput> => {
   return {
@@ -60,55 +101,94 @@ export const GetTransfer = (params: { id: number, tenantId: string }): Command<{
   };
 };
 
-export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput, Array<Transfer>> => {
-  const enrichedParams = {
-    paymentType: params.paymentType,
-    status: params.transferStatus || 'EXECUTION_SCHEDULED',
-    toExecuteDate: params.executedAt,
-    locale: 'en',
-    dateFormat: 'yyyy-MM-dd',
-    associateClientData: true,
-    originatedBy: 'us',
-    accountType: params.accountType
+const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset?: number, tenantId?: string) => {
+  const buildCommand = (): Command<any, Array<Transfer>> => {
+    const params: GetTransferInput = {
+      tenantId,
+      transferStatus: filters.status || 'EXECUTION_SCHEDULED',
+      paymentType: filters.paymentType,
+      executedAt: filters.executedAt,
+      accountType: filters.accountType,
+      queryLimit: limit || 200
+    };
+
+    const enrichedParams = {
+      paymentType: params.paymentType,
+      status: params.transferStatus || 'EXECUTION_SCHEDULED',
+      toExecuteDate: params.executedAt,
+      locale: 'en',
+      dateFormat: 'yyyy-MM-dd',
+      associateClientData: true,
+      originatedBy: 'us',
+      accountType: params.accountType
+    };
+
+    return {
+      input: params,
+      metadata: {
+        commandName: 'GetTransfers',
+        path: `/v1/transfers`,
+        method: 'GET'
+      },
+      execute: async (config: Config) => {
+        if (tenantId) {
+          config.tenantId = tenantId;
+        }
+        const axiosInstance = await baseRequest(config);
+
+        const allTransfers: Array<Transfer> = [];
+        const queryLimit = limit || 200;
+        let queryOffset = offset || 0;
+        let totalFilteredRecords = 0;
+
+        const newParams = {
+          ...enrichedParams,
+          limit: queryLimit,
+          offset: queryOffset
+        };
+
+        try {
+          do {
+            const response = await axiosInstance.get<TransferResponse>(`/v1/transfers`, { params: newParams });
+            const { totalFilteredRecords: total, pageItems } = response.data;
+            allTransfers.push(...pageItems);
+            totalFilteredRecords = total;
+            queryOffset += queryLimit;
+
+          } while (queryOffset < totalFilteredRecords && limit === undefined);
+
+          if (limit !== undefined) {
+            return allTransfers.slice(0, limit);
+          }
+          return allTransfers;
+        } catch (error) {
+          handleAxiosError(error);
+        }
+      }
+    };
   };
-  return {
-    input: params,
-    metadata: {
-      commandName: 'GetTransfers',
-      path: `/v1/transfers`,
-      method: 'GET'
-    },
-    execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
-      const axiosInstance = await baseRequest(config);
 
-      const allTransfers: Array<Transfer> = [];
-      const limit = params.queryLimit || 200;
-      let offset = 0;
-      let totalFilteredRecords = 0;
-
-      const newParams = {
-        ...enrichedParams,
-        limit,
-        offset
+  const queryMethods = {
+    where: (field: string) => {
+      validateFilterKey(field);
+      return {
+        eq: (value: any) => {
+          validateFilterValue(field, value);
+          return createPaymentQuery({ ...filters, [field]: value }, limit, offset, tenantId);
+        }
       };
+    },
+    limit: (value: number) => createPaymentQuery(filters, value, offset, tenantId),
+    offset: (value: number) => createPaymentQuery(filters, limit, value, tenantId),
+    execute: buildCommand
+  };
 
-      try {
-        do {
-          const response = await axiosInstance.get<TransferResponse>(`/v1/transfers`, { params: newParams });
-          const { totalFilteredRecords: total, pageItems } = response.data;
-          allTransfers.push(...pageItems);
-          totalFilteredRecords = total;
-          offset += limit;
+  return queryMethods;
+};
 
-        } while (offset < totalFilteredRecords);
-        return allTransfers;
-      } catch (error) {
-        handleAxiosError(error);
-      }
-    }
+export const GetTransfers = (params?: { tenantId?: string }) => {
+  return {
+    list: () => createPaymentQuery({}, undefined, undefined, params?.tenantId)
   };
 };
 
