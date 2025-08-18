@@ -11,45 +11,56 @@ import baseRequest from '../../utils/baseRequest';
 import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 import axios from 'axios';
-import { VALID_PAYMENT_RAIL_VALUES, VALID_PAYMENT_TYPE_VALUES, VALID_SORT_ORDER_VALUES, VALID_STATUS_VALUES } from '../../utils/validation';
-import { VALID_PAYMENT_FILTER_KEYS } from '../../types/payment';
+import {
+  validatePaymentFilterKey,
+  validatePaymentStatus,
+  validatePaymentRail,
+  validatePaymentType,
+  validateSortOrder
+} from '../../types/payment';
+import { ZodError } from 'zod';
 
 const validateFilterKey = (key: string): void => {
-  if (!VALID_PAYMENT_FILTER_KEYS.includes(key as any)) {
-    throw createCommandError({
-      message: `Invalid filter key: '${key}'. Valid keys are: ${VALID_PAYMENT_FILTER_KEYS.join(', ')}`,
-      code: 'invalid_filter_key'
-    });
+  try {
+    validatePaymentFilterKey(key);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw createCommandError({
+        message: `Invalid filter key: '${key}'. ${error.message}`,
+        code: 'invalid_filter_key'
+      });
+    }
+    throw error;
   }
 };
 
 const validateFilterValue = (key: string, value: any): void => {
-  if (key === 'status' && !VALID_STATUS_VALUES.includes(value)) {
-    throw createCommandError({
-      message: `Invalid status value: '${value}'. Valid statuses are: ${VALID_STATUS_VALUES.join(', ')}`,
-      code: 'invalid_status_value'
-    });
-  }
-
-  if (key === 'paymentRail' && !VALID_PAYMENT_RAIL_VALUES.includes(value)) {
-    throw createCommandError({
-      message: `Invalid paymentRail value: '${value}'. Valid payment rails are: ${VALID_PAYMENT_RAIL_VALUES.join(', ')}`,
-      code: 'invalid_payment_rail_value'
-    });
-  }
-
-  if (key === 'paymentType' && !VALID_PAYMENT_TYPE_VALUES.includes(value)) {
-    throw createCommandError({
-      message: `Invalid paymentType value: '${value}'. Valid payment types are: ${VALID_PAYMENT_TYPE_VALUES.join(', ')}`,
-      code: 'invalid_payment_type_value'
-    });
-  }
-
-  if (key === 'sortOrder' && !VALID_SORT_ORDER_VALUES.includes(value)) {
-    throw createCommandError({
-      message: `Invalid sortOrder value: '${value}'. Valid sort orders are: ${VALID_SORT_ORDER_VALUES.join(', ')}`,
-      code: 'invalid_sort_order_value'
-    });
+  try {
+    switch (key) {
+      case 'status':
+        validatePaymentStatus(value);
+        break;
+      case 'paymentRail':
+        validatePaymentRail(value);
+        break;
+      case 'paymentType':
+        validatePaymentType(value);
+        break;
+      case 'sortOrder':
+        validateSortOrder(value);
+        break;
+      // Other keys don't have specific validation rules yet
+      default:
+        break;
+    }
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw createCommandError({
+        message: `Invalid value for '${key}': '${value}'. ${error.message}`,
+        code: `invalid_${key}_value`
+      });
+    }
+    throw error;
   }
 };
 

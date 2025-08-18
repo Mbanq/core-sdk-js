@@ -1,7 +1,8 @@
 import type { Command, Config } from '../types';
 import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
-import { GetTransfers } from '../commands/rest/transfer';
+import { CreatePayment, GetPayment, UpdatePayment, GetPayments } from '../commands/rest/payment';
+import type { CreatePaymentInput, UpdatePaymentInput } from '../types/payment';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -43,6 +44,53 @@ export const createClient = (initialConfig: Config) => {
     }
   };
 
+  const createApiMethods = (tenantId?: string) => {
+    const effectiveTenantId = tenantId || currentConfig.tenantId;
+
+    return {
+      payment: {
+        create: async (data: CreatePaymentInput) => {
+          const command = CreatePayment({
+            payment: data,
+            tenantId: effectiveTenantId
+          });
+          return requestHandler(command);
+        },
+        get: async (id: string) => {
+          const command = GetPayment({
+            id,
+            tenantId: effectiveTenantId
+          });
+          return requestHandler(command);
+        },
+        update: async (id: string, data: UpdatePaymentInput) => {
+          const command = UpdatePayment({
+            id,
+            payment: data,
+            tenantId: effectiveTenantId
+          });
+          return requestHandler(command);
+        },
+        list: () => {
+          const query = GetPayments({ tenantId: effectiveTenantId });
+          const queryBuilder = query.list();
+
+          return {
+            where: queryBuilder.where,
+            limit: queryBuilder.limit,
+            offset: queryBuilder.offset,
+            execute: async () => {
+              const command = queryBuilder.execute();
+              return requestHandler(command);
+            }
+          };
+        }
+      }
+    };
+  };
+
+  const createTenantContext = (tenantId: string) => createApiMethods(tenantId);
+
   return {
     setConfig: (config: Config) => {
       currentConfig = config;
@@ -74,21 +122,7 @@ export const createClient = (initialConfig: Config) => {
       currentConfig = initialConfig;
     },
     request: requestHandler,
-    payment: {
-      list: () => {
-        const query = GetTransfers({ tenantId: currentConfig.tenantId });
-        const queryBuilder = query.list();
-
-        return {
-          where: queryBuilder.where,
-          limit: queryBuilder.limit,
-          offset: queryBuilder.offset,
-          execute: async () => {
-            const command = queryBuilder.execute();
-            return requestHandler(command);
-          }
-        };
-      }
-    }
+    tenant: createTenantContext,
+    ...createApiMethods()
   };
 };

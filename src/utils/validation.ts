@@ -23,22 +23,3 @@ export const validateConfig = (config: Partial<Config>): string[] => {
 
   return errors;
 };
-
-export const VALID_STATUS_VALUES = [
-  'DRAFT',
-  'AML_SCREENING',
-  'AML_REJECTED',
-  'EXECUTION_SCHEDULED',
-  'EXECUTION_PROCESSING',
-  'EXECUTION_SUCCESS',
-  'EXECUTION_FAILURE',
-  'RETURNED',
-  'CANCELLED',
-  'COMPLIANCE_FAILURE',
-  'DELETED',
-  'UNKNOWN'
-] as const;
-
-export const VALID_PAYMENT_RAIL_VALUES = ['ACH', 'WIRE', 'SWIFT', 'INTERNAL', 'FXPAY', 'CARD'] as const;
-export const VALID_PAYMENT_TYPE_VALUES = ['CREDIT', 'DEBIT'] as const;
-export const VALID_SORT_ORDER_VALUES = ['ASC', 'DESC'] as const;
