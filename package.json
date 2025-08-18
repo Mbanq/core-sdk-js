@@ -1,6 +1,6 @@
 {
   "name": "@mbanq/core-sdk-js",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
