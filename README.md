@@ -28,8 +28,8 @@
 This library provides a set of JavaScript functions for interacting with our transfer management API. It simplifies the process of handling transfers and managing their statuses throughout their lifecycle.
 ## Installation
 
-```npm
-npm install core-sdk-js
+```bash
+npm install @mbanq/core-sdk-js
 ```
 ## Setup
 Before using any of the library functions, you need to initialize the client with your API credentials:
@@ -84,7 +84,7 @@ The SDK supports middleware for cross-cutting concerns like logging and metrics.
 Logs command execution details including inputs, outputs, and errors.
 
 ```javascript
-import { createClient, createLoggingMiddleware } from '@ymbanq-cloud/core-sdk';
+import { createClient, createLoggingMiddleware } from '@mbanq/core-sdk-js';
 
 const loggingMiddleware = createLoggingMiddleware(console); // or custom logger
 
@@ -122,7 +122,7 @@ const middleware = createLoggingMiddleware(customLogger);
 Tracks command execution metrics including counters for started, completed, and error events.
 
 ```javascript
-import { createClient, createMetricsMiddleware } from '@ymbanq-cloud/core-sdk';
+import { createClient, createMetricsMiddleware } from '@mbanq/core-sdk-js';
 
 // Your metrics client must implement the MetricsClient interface
 const metricsClient = {
