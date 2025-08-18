@@ -1,3 +1,10 @@
+# [1.0.0-alpha.2](https://github.com/Mbanq/core-sdk-js/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2025-08-18)
+
+
+### Bug Fixes
+
+* update README and package.json ([ba7c8d7](https://github.com/Mbanq/core-sdk-js/commit/ba7c8d7a337f37489aed51b1046c50f6819e7e89))
+
 # 1.0.0-alpha.1 (2025-08-18)
 
 
