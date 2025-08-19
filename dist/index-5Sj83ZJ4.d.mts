@@ -1,4 +1,4 @@
-import { a as Command, G as GraphQLRequest } from './config.d-NcOIimSJ.js';
+import { C as Command, G as GraphQLRequest } from './config.d-CyK6ZM6s.mjs';
 
 type PaymentRail = 'ACH' | 'SAMEDAYACH';
 type PaymentType = 'CREDIT' | 'DEBIT';
@@ -112,68 +112,6 @@ interface CreateTransferOutput extends ProcessOutput {
   data: { amount: number }
 }
 
-declare const CreateTransfer: (params: {
-    transfer: CreateTransferInput;
-    tenantId: string;
-}) => Command<{
-    transfer: CreateTransferInput;
-    tenantId: string;
-}, CreateTransferOutput>;
-declare const GetTransfer: (params: {
-    id: number;
-    tenantId: string;
-}) => Command<{
-    id: number;
-    tenantId: string;
-}, any>;
-declare const GetTransfers: (params: GetTransferInput) => Command<GetTransferInput, Array<Transfer>>;
-declare const MarkAsSuccess: (params: {
-    externalId: string;
-    paymentType?: PaymentRail;
-    tenantId?: string;
-}) => Command<{
-    externalId: string;
-    paymentType?: PaymentRail;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const MarkAsProcessing: (params: {
-    externalId: string;
-    fileUrl: string;
-    paymentType: PaymentRail;
-    traceNumbers: {
-        outgoingTransfer: string;
-    };
-    tenantId?: string;
-}) => Command<{
-    externalId: string;
-    fileUrl: string;
-    paymentType: PaymentRail;
-    traceNumbers: {
-        outgoingTransfer: string;
-    };
-    tenantId?: string;
-}, ProcessOutput>;
-declare const MarkAsReturned: (params: MarkAsReturnInput) => Command<MarkAsReturnInput, ProcessOutput>;
-declare const LogFailTransfer: (params: {
-    payload: Transfer;
-    tenantId?: string;
-}) => Command<{
-    payload: Transfer;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const MarkAsFail: (params: {
-    externalId: string;
-    errorMessage: string;
-    paymentType: PaymentRail;
-    tenantId?: string;
-}) => Command<{
-    externalId: string;
-    errorMessage: string;
-    paymentType: PaymentRail;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const UpdateTraceNumber: (params: UpdateTraceNumbersInput) => Command<UpdateTraceNumbersInput, ProcessOutput>;
-
 interface SimpleCard {
   internalCardId: string,
   cardType?: string,
@@ -268,4 +206,4 @@ declare const UpdateClientIdentifier: (params: {
 
 declare const GraphQL: (request: GraphQLRequest) => Command<GraphQLRequest, any>;
 
-export { CreateTransfer as C, GetTransfers as G, LogFailTransfer as L, MarkAsFail as M, type ProcessOutput as P, SendAuthorizationToCore as S, type Transfer as T, UpdateTraceNumber as U, MarkAsProcessing as a, MarkAsReturned as b, MarkAsSuccess as c, GetTransfer as d, UpdateCardID as e, GetClientData as f, UpdateClient as g, UpdateClientIdentifier as h, GraphQL as i, type GetTransferInput as j, type MarkAsReturnInput as k, type CreateTransferInput as l, type CreateTransferOutput as m };
+export { type CreateTransferInput as C, GetClientData as G, type MarkAsReturnInput as M, type PaymentRail as P, SendAuthorizationToCore as S, type Transfer as T, UpdateCardID as U, UpdateClient as a, UpdateClientIdentifier as b, GraphQL as c, type ProcessOutput as d, type GetTransferInput as e, type UpdateTraceNumbersInput as f, type CreateTransferOutput as g };

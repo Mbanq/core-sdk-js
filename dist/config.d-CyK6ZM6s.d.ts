@@ -7,6 +7,7 @@ interface Config {
   baseUrl: string;
   tenantId: string;
   signee?: string;
+  bearerToken?: string;
   graphqlPath?: string;
   middlewares?: Middleware[];
   logger?: (instance: AxiosInstance) => void;
@@ -49,4 +50,4 @@ interface GraphQLRequest {
   operationName?: string;
 }
 
-export type { Config as C, GraphQLRequest as G, Middleware as M, Command as a };
+export type { Command as C, GraphQLRequest as G, Middleware as M, Config as a };
