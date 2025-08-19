@@ -56,7 +56,7 @@ export const createClient = (initialConfig: Config) => {
           });
           return {
             execute: async () => {
-              requestHandler(command);
+              return requestHandler(command);
             }
           };
         },
@@ -67,7 +67,7 @@ export const createClient = (initialConfig: Config) => {
           });
           return {
             execute: async () => {
-              requestHandler(command);
+              return requestHandler(command);
             }
           };
         },
@@ -79,7 +79,7 @@ export const createClient = (initialConfig: Config) => {
           });
           return {
             execute: async () => {
-              requestHandler(command);
+              return requestHandler(command);
             }
           };
         },
@@ -90,7 +90,7 @@ export const createClient = (initialConfig: Config) => {
           });
           return {
             execute: async () => {
-              requestHandler(command);
+              return requestHandler(command);
             }
           };
         },
