@@ -11,6 +11,7 @@ import baseRequest from '../../utils/baseRequest';
 import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 import axios from 'axios';
+import newDate from '../../utils/newDate';
 
 export const CreateTransfer = (params: { transfer: CreateTransferInput, tenantId: string }): Command<{ transfer: CreateTransferInput, tenantId: string }, CreateTransferOutput> => {
   return {
@@ -62,9 +63,9 @@ export const GetTransfer = (params: { id: number, tenantId: string }): Command<{
 
 export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput, Array<Transfer>> => {
   const enrichedParams = {
-    paymentType: params.paymentType,
+    paymentType: params.paymentType || 'ACH',
     status: params.transferStatus || 'EXECUTION_SCHEDULED',
-    toExecuteDate: params.executedAt,
+    toExecuteDate: params.executedAt || newDate().toISOString(true).slice(0, 10),
     locale: 'en',
     dateFormat: 'yyyy-MM-dd',
     associateClientData: true,

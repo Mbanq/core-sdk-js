@@ -901,7 +901,7 @@ describe('LogFailTransfer', () => {
 
   it('should rethrow non-axios errors unchanged', async () => {
     const nonAxiosError = new Error('Database connection failed');
-    
+
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(false);
     mockAxiosInstance.post.mockRejectedValueOnce(nonAxiosError);
 
@@ -1538,4 +1538,3 @@ describe('GetTransfer', () => {
     });
   });
 });
-
