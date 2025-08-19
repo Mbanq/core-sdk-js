@@ -22,3 +22,14 @@ export type {
   PaymentRailType,
   PaymentType
 } from './types/payment';
+
+export {
+  PaymentStatusZod,
+  PaymentFilterKeyZod,
+  PaymentRailZod,
+  SortOrderZod,
+  PaymentTypeZod,
+  CreatePaymentInputZod,
+  UpdatePaymentInputZod,
+  PaymentResponseZod
+} from './types/index';
