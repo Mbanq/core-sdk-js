@@ -54,14 +54,22 @@ export const createClient = (initialConfig: Config) => {
             payment: data,
             tenantId: effectiveTenantId
           });
-          return requestHandler(command);
+          return {
+            execute: async () => {
+              requestHandler(command);
+            }
+          };
         },
         get: async (id: string) => {
           const command = GetPayment({
             id,
             tenantId: effectiveTenantId
           });
-          return requestHandler(command);
+          return {
+            execute: async () => {
+              requestHandler(command);
+            }
+          };
         },
         update: async (id: string, data: UpdatePaymentInput) => {
           const command = UpdatePayment({
@@ -69,14 +77,22 @@ export const createClient = (initialConfig: Config) => {
             payment: data,
             tenantId: effectiveTenantId
           });
-          return requestHandler(command);
+          return {
+            execute: async () => {
+              requestHandler(command);
+            }
+          };
         },
         delete: async (id: string) => {
           const command = DeletePayment({
             id,
             tenantId: effectiveTenantId
           });
-          return requestHandler(command);
+          return {
+            execute: async () => {
+              requestHandler(command);
+            }
+          };
         },
         list: () => {
           const query = GetPayments({ tenantId: effectiveTenantId });
