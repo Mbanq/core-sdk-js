@@ -1,3 +1,11 @@
+# [1.0.0-alpha.7](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2025-08-19)
+
+
+### Bug Fixes
+
+* correct url of operation payment and update unit test ([27bde77](https://github.com/mbanq/core-sdk-js/commit/27bde779d584dc41658eb841164d712cd0f0722b))
+* now all Payment Operation will end with execute() ([b5f055f](https://github.com/mbanq/core-sdk-js/commit/b5f055f7047232e0ac43ea293860b3f3a3bb10cb))
+
 # [1.0.0-alpha.6](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2025-08-19)
 
 
