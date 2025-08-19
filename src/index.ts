@@ -24,12 +24,8 @@ export type {
 } from './types/payment';
 
 export {
-  PaymentStatusZod,
-  PaymentFilterKeyZod,
-  PaymentRailZod,
-  SortOrderZod,
-  PaymentTypeZod,
-  CreatePaymentInputZod,
-  UpdatePaymentInputZod,
-  PaymentResponseZod
-} from './types/index';
+  PaymentStatusSchema as PaymentStatusZod, PaymentFilterKeySchema as PaymentFilterKeyZod,
+  PaymentRailSchema as PaymentRailZod, PaymentTypeSchema as PaymentTypeZod,
+  SortOrderSchema as SortOrderZod, CreatePaymentInputSchema as CreatePaymentInputZod,
+  UpdatePaymentInputSchema as UpdatePaymentInputZod, PaymentResponseSchema as PaymentResponseZod
+} from './types/payment';
