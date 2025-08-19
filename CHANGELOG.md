@@ -1,3 +1,10 @@
+# [1.0.0-alpha.9](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2025-08-19)
+
+
+### Bug Fixes
+
+* downgrade zod to v3 ([4cfd03a](https://github.com/mbanq/core-sdk-js/commit/4cfd03a857d53443a28075089a16b5a52b3dfbb6))
+
 # [1.0.0-alpha.8](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2025-08-19)
 
 
