@@ -351,7 +351,8 @@ describe('Client', () => {
           }
         };
 
-        const result = await client.payment.create(paymentData);
+        const paymentOperation = await client.payment.create(paymentData);
+        const result = await paymentOperation.execute();
 
         expect(createPaymentSpy).toHaveBeenCalledWith({
           payment: paymentData,
@@ -396,7 +397,8 @@ describe('Client', () => {
         } as any);
 
         const client = createClient(validConfig);
-        const result = await client.payment.get('123');
+        const paymentOperation = await client.payment.get('123');
+        const result = await paymentOperation.execute();
 
         expect(getPaymentSpy).toHaveBeenCalledWith({
           id: '123',
@@ -435,7 +437,8 @@ describe('Client', () => {
         const client = createClient(validConfig);
         const updateData = { status: 'CANCELLED' as const };
 
-        const result = await client.payment.update('123', updateData);
+        const paymentOperation = await client.payment.update('123', updateData);
+        const result = await paymentOperation.execute();
 
         expect(updatePaymentSpy).toHaveBeenCalledWith({
           id: '123',
@@ -475,7 +478,8 @@ describe('Client', () => {
         } as any);
 
         const client = createClient(validConfig);
-        const result = await client.payment.delete('123');
+        const paymentOperation = await client.payment.delete('123');
+        const result = await paymentOperation.execute();
 
         expect(deletePaymentSpy).toHaveBeenCalledWith({
           id: '123',
