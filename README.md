@@ -1,25 +1,25 @@
 # Core SDK JS
 ## Table of Contents
 
-- ### Introduction
-- ### Installation
-- ### Quick Start
-- ### Setup
-  - #### Axios Instance Logger
-- ### Middleware
-  - #### Logging Middleware
-  - #### Metrics Middleware
-  - #### Custom Middleware
-- ### API Reference
-  - #### Payment Operations
-    - #### Create Payment
-    - #### Get Payment
-    - #### Update Payment
-    - #### List Payments
-  - #### Multi-Tenant Support
-- ### Type Safety & Validation
-- ### Error Handling
-- ### Examples
+- ### [Introduction](#introduction)
+- ### [Installation](#installation)
+- ### [Quick Start](#quick-start)
+- ### [Setup](#setup)
+  - #### [Axios Instance Logger](#axios-instance-logger)
+- ### [Middleware](#middleware)
+  - #### [Logging Middleware](#logging-middleware)
+  - #### [Metrics Middleware](#metrics-middleware)
+  - #### [Custom Middleware](#custom-middleware)
+- ### [API Reference](#api-reference)
+  - #### [Payment Operations](#payment-operations)
+    - #### [Create Payment](#create-payment)
+    - #### [Get Payment](#get-payment)
+    - #### [Update Payment](#update-payment)
+    - #### [List Payments](#list-payments)
+  - #### [Multi-Tenant Support](#multi-tenant-support)
+- ### [Type Safety & Validation](#type-safety--validation)
+- ### [Error Handling](#error-handling)
+- ### [Examples](#examples)
 
 ## Introduction
 This library provides a comprehensive JavaScript SDK for interacting with the Mbanq payment API. It offers type-safe payment operations with built-in validation, multi-tenant support, and a modern fluent API design.
