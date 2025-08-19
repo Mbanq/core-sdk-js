@@ -1,11 +1,11 @@
 {
-  "name": "core-sdk-js",
-  "version": "1.0.0",
-  "description": "",
-  "publishConfig": {
-    "@mbanq-cloud:registry": "https://gitlab.mbanq.com/api/v4/projects/715/packages/npm/"
-  },
+  "name": "@mbanq/core-sdk-js",
+  "version": "1.0.0-alpha.5",
+  "description": "A comprehensive JavaScript SDK for interacting with the Mbanq payment API. Features type-safe payment operations, multi-tenant support, and Zod validation.",
   "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -47,7 +47,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Mbanq/core-sdk-js.git"
+    "url": "git@github.com:mbanq/core-sdk-js.git"
+  },
+  "homepage": "https://github.com/mbanq/core-sdk-js",
+  "bugs": {
+    "url": "https://github.com/mbanq/core-sdk-js/issues"
   },
   "keywords": [
     "core",

@@ -26,13 +26,13 @@ This library provides a comprehensive JavaScript SDK for interacting with the Mb
 ## Installation
 
 ```bash
-npm install core-sdk-js
+npm install @mbanq/core-sdk-js
 ```
 
 ## Quick Start
 
 ```javascript
-import { createClient } from 'core-sdk-js';
+import { createClient } from '@mbanq/core-sdk-js';
 
 // Initialize the client
 const apiClient = createClient({ 
@@ -223,7 +223,7 @@ The SDK supports middleware for cross-cutting concerns like logging and metrics.
 Logs command execution details including inputs, outputs, and errors.
 
 ```javascript
-import { createClient, createLoggingMiddleware } from '@ymbanq-cloud/core-sdk';
+import { createClient, createLoggingMiddleware } from '@mbanq/core-sdk-js';
 
 const loggingMiddleware = createLoggingMiddleware(console); // or custom logger
 
@@ -261,7 +261,7 @@ const middleware = createLoggingMiddleware(customLogger);
 Tracks command execution metrics including counters for started, completed, and error events.
 
 ```javascript
-import { createClient, createMetricsMiddleware } from '@ymbanq-cloud/core-sdk';
+import { createClient, createMetricsMiddleware } from '@mbanq/core-sdk-js';
 
 // Your metrics client must implement the MetricsClient interface
 const metricsClient = {
@@ -524,7 +524,7 @@ The library uses a consistent error handling pattern. All API calls may throw th
 ### Complete Payment Flow Example
 
 ```javascript
-import { createClient } from 'core-sdk-js';
+import { createClient } from '@mbanq/core-sdk-js';
 
 // Initialize the client
 const apiClient = createClient({ 
@@ -635,7 +635,7 @@ const tenantPayment = await apiClient.tenant('different-tenant').payment.create(
 ### Error Handling Example
 
 ```javascript
-import { isCommandError } from 'core-sdk-js';
+import { isCommandError } from '@mbanq/core-sdk-js';
 
 try {
   const payment = await apiClient.payment.create({
