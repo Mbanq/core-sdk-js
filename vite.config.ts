@@ -16,10 +16,10 @@ export default defineConfig(({ mode }) => {
         reporter: ['text', 'text-summary', 'html', 'json'],
         provider: 'istanbul',
         thresholds: {
-          lines: 50,
-          functions: 50,
-          branches: 50,
-          statements: 50
+          lines: 95,
+          functions: 95,
+          branches: 95,
+          statements: 95
         },
         exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '**/__tests__/**', '**/*.config.ts', '*.config.js']
       },

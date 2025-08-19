@@ -3,7 +3,7 @@
 
 - ### Introduction
 - ### Installation
-- ### Authentication
+- ### Quick Start
 - ### Setup
   - #### Axios Instance Logger
 - ### Middleware
@@ -11,36 +11,175 @@
   - #### Metrics Middleware
   - #### Custom Middleware
 - ### API Reference
-  - #### Transfer Operations
-    - #### GetTransfers
-    - #### LogFail Transfer
-    - #### MarkAsFail
-    - #### MarkAsProcessing
-    - #### MarkAsReturned
-  - ### Custom API
-    - #### Custom Get
-    - #### Custom Create
-    - #### Custom Update
+  - #### Payment Operations
+    - #### Create Payment
+    - #### Get Payment
+    - #### Update Payment
+    - #### List Payments
+  - #### Multi-Tenant Support
+- ### Type Safety & Validation
 - ### Error Handling
 - ### Examples
 
 ## Introduction
-This library provides a set of JavaScript functions for interacting with our transfer management API. It simplifies the process of handling transfers and managing their statuses throughout their lifecycle.
+This library provides a comprehensive JavaScript SDK for interacting with the Mbanq payment API. It offers type-safe payment operations with built-in validation, multi-tenant support, and a modern fluent API design.
 ## Installation
 
 ```bash
 npm install @mbanq/core-sdk-js
 ```
-## Setup
-Before using any of the library functions, you need to initialize the client with your API credentials:
+
+## Quick Start
+
 ```javascript
-const coreSDK = createClient({ 
-  secret: 'testing123', 
-  signee: 'TESTING', 
-  baseUrl: 'https://example.com', 
-  tenantId: 'testing' 
+import { createClient } from '@mbanq/core-sdk-js';
+
+// Initialize the client
+const apiClient = createClient({ 
+  secret: 'your-api-secret', 
+  signee: 'YOUR-SIGNEE', 
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id' 
+});
+
+// Create a payment
+const payment = await apiClient.payment.create({
+  amount: 1000,
+  currency: 'USD',
+  paymentRail: 'ACH',
+  paymentType: 'CREDIT',
+  debtor: {
+    name: 'John Sender',
+    identifier: '123456789',
+    agent: {
+      name: 'First Bank',
+      identifier: '021000021'
+    }
+  },
+  creditor: {
+    name: 'Jane Receiver',
+    identifier: '987654321',
+    agent: {
+      name: 'Second Bank', 
+      identifier: '121000248'
+    }
+  }
+});
+
+// List payments with filtering
+const payments = await apiClient.payment.list()
+  .where('status').eq('DRAFT')
+  .where('paymentRail').eq('ACH')
+  .limit(10)
+  .execute();
+```
+
+## Setup
+
+### Authentication Options
+
+The SDK supports multiple authentication methods. Choose the one that fits your integration:
+
+#### 1. JWT Token Authentication (Recommended)
+Use your API secret and signee for JWT-based authentication:
+
+```javascript
+const client = createClient({
+  secret: 'your-jwt-secret',
+  signee: 'YOUR-SIGNEE', 
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
 });
 ```
+
+#### 2. Bearer Token Authentication
+If you already have a valid access token:
+
+```javascript
+// With "Bearer " prefix (recommended)
+const client = createClient({
+  bearerToken: 'Bearer your-access-token',
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id'
+});
+
+// Without "Bearer " prefix (automatically added)
+const client = createClient({
+  bearerToken: 'your-access-token', // "Bearer " will be added automatically
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id'
+});
+```
+
+#### 3. OAuth Credential Authentication
+For OAuth 2.0 password grant flow:
+
+```javascript
+const client = createClient({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
+  },
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
+});
+```
+
+#### Authentication Priority
+When multiple authentication methods are provided, the SDK uses them in this order:
+1. **`bearerToken`** - Takes highest priority if provided
+2. **`credential`** - OAuth flow is used if no bearerToken 
+3. **`secret` + `signee`** - JWT authentication used as fallback
+
+#### Additional Configuration Options
+```javascript
+const client = createClient({
+  // Choose one authentication method from above
+  secret: 'your-jwt-secret',
+  signee: 'YOUR-SIGNEE',
+  
+  // Required configuration
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id',
+  
+  // Optional configuration
+  traceId: 'custom-trace-id', // Custom request tracing identifier
+  axiosConfig: {
+    timeout: 30000, // Request timeout in milliseconds (default: 29000)
+    keepAlive: true, // HTTP keep-alive for connection reuse
+    headers: {
+      'Custom-Header': 'custom-value' // Additional HTTP headers
+    }
+  }
+});
+```
+
+### Security Best Practices
+
+#### Credential Management
+- **Never hardcode credentials** in your source code
+- Use environment variables or secure credential management systems
+- Rotate API secrets and tokens regularly
+- Use the minimum required permissions for your integration
+
+#### Environment Variables Example
+```javascript
+const client = createClient({
+  secret: process.env.MBANQ_API_SECRET,
+  signee: process.env.MBANQ_API_SIGNEE,
+  baseUrl: process.env.MBANQ_API_URL,
+  tenantId: process.env.MBANQ_TENANT_ID
+});
+```
+
+#### Production Considerations
+- Use HTTPS endpoints only (`https://`)
+- Implement proper error handling to avoid credential leakage in logs
+- Configure appropriate request timeouts
+- Use connection pooling for high-volume applications
 
 ### Axios Instance Logger
 You can also configure an Axios instance logger to set up interceptors or other axios-specific configurations:
@@ -192,212 +331,328 @@ const client = createClient({
 ```
 
 ## API Reference
-### Transfer Operations
-### `GetTransfers(options)`
 
-Retrieves a list of transfers based on the provided options.
-#### Parameters:
+### Payment Operations
 
-- `options (Object)`
-  - `transferStatus` (String, optional): Filter by transfer status
-  - `executedAt` (Date): Filter executed transfers from this date
-  - `queryLimit` (Date, optional): Number of results per page
-  - `paymentType` (String): Filter by paymentType
-  - `tenantId` (String, optional): Set tenant ID
+#### Create Payment
 
-#### Returns:
+Creates a new payment with comprehensive validation.
 
-- Promise`<Array>` of transfer objects
-
-#### Example:
 ```javascript
-const command = GetTransfers({
-  transferStatus: 'EXECUTION_SCHEDULED',
-  executedAt: '2025-01-22',
-  paymentType: 'ACH',
-  queryLimit: 200,
-  tenantId: 'default'
+const payment = await apiClient.payment.create({
+  // Required fields
+  amount: 1000,
+  currency: 'USD',
+  paymentRail: 'ACH', // ACH, WIRE, SWIFT, INTERNAL, FXPAY, CARD
+  paymentType: 'CREDIT', // CREDIT or DEBIT
+  
+  // Originator (sender)
+  debtor: {
+    name: 'John Sender',
+    identifier: '123456789', // Account number
+    accountType: 'CHECKING', // Optional: CHECKING or SAVINGS
+    agent: {
+      name: 'First Bank',
+      identifier: '021000021' // Routing code
+    }
+  },
+  
+  // Recipient (receiver)
+  creditor: {
+    name: 'Jane Receiver',
+    identifier: '987654321',
+    accountType: 'SAVINGS',
+    address: { // Required for WIRE transfers
+      streetAddress: '123 Main St',
+      city: 'New York',
+      state: 'NY',
+      country: 'US',
+      postalCode: '10001'
+    },
+    agent: {
+      name: 'Second Bank',
+      identifier: '121000248'
+    }
+  },
+  
+  // Optional fields
+  clientId: 'client-123',
+  reference: ['Invoice-001', 'Payment-ABC'],
+  exchangeRate: 1.25,
+  chargeBearer: 'OUR', // For SWIFT: OUR, BEN, SHA
+  valueDate: '2025-01-15',
+  paymentRailMetaData: {
+    priority: 'high',
+    category: 'business'
+  }
 });
-await coreSDK.request(command);
 ```
-### `LogFailTransfer(params)`
 
-Logs a failed transfer with the specified reason.
-#### Parameters:
-- `params (Object)`
-  - `payload` (Transfer): The payload of transfer
-  - `tanantId` (String): tenant ID
+#### Get Payment
 
-#### Returns:
+Retrieves a specific payment by ID.
 
-- Promise`<Object>`
+```javascript
+const payment = await apiClient.payment.get('payment-456');
+```
 
-### `MarkAsFail(options)`
+#### Update Payment
 
-Marks a transfer as failed.
-#### Parameters:
+Updates an existing payment. All fields are optional.
 
-- `options`
-  - `externalId`: (String)
-  - `paymentType`: (String, optional)
-  - `tenantId`: (String, optional)
+```javascript
+const updatedPayment = await apiClient.payment.update('payment-456', {
+  amount: 1500,
+  status: 'EXECUTION_SCHEDULED',
+  creditor: {
+    name: 'Updated Recipient Name'
+  },
+  errorCode: 'E001',
+  errorMessage: 'Insufficient funds',
+  exchangeRate: 1.30,
+  reference: ['Updated-Reference'],
+  paymentRailMetaData: {
+    updated: true
+  }
+});
+```
 
-#### Returns:
+#### List Payments
 
-- Promise`<Object>`
-  - `id`: (string)
-  - `clientId`: (number)
-  - `resourceId`: (number)
-  - `resourceIdentifier`: (string)
+Retrieves payments with powerful filtering capabilities.
 
-### `MarkAsProcessing(options)`
+```javascript
+// Simple list
+const payments = await apiClient.payment.list().execute();
 
-Marks a transfer as currently processing.
-#### Parameters:
+// With filters and pagination
+const payments = await apiClient.payment.list()
+  .where('status').eq('DRAFT')
+  .where('paymentRail').eq('ACH')
+  .where('paymentType').eq('CREDIT')
+  .where('originatorName').eq('John Doe')
+  .limit(50)
+  .offset(0)
+  .execute();
 
-- `options`
-  - `externalId`: (string)
-  - `fileUrl`: (string)
-  - `paymentType`: (string)
-  - `traceNumbers`: (Object)
-    - `outgoingTransfer`: (string)
-  - `tenantId`: (string, optional)
+// Available filter fields
+// originatorName, originatorAccount, originatorBankRoutingCode
+// recipientName, recipientAccount, recipientBankRoutingCode  
+// reference, traceNumber, externalId, clientId
+// dateFormat, locale, originatedBy, paymentRail, paymentType
+// fromValueDate, toValueDate, fromExecuteDate, toExecuteDate
+// status, fromReturnDate, toReturnDate, isSettlement, orderBy, sortOrder
+```
 
-#### Returns:
+### Multi-Tenant Support
 
-- Promise`<Object>`
-  - `id`: (string)
-  - `clientId`: (number)
-  - `resourceId`: (number)
-  - `resourceIdentifier`: (string)
+The SDK supports multi-tenant operations through tenant context.
 
-### `MarkAsReturned(transferId)`
+#### Default Tenant Operations
+Uses the `tenantId` from client configuration:
 
-Marks a transfer as returned.
-#### Parameters:
+```javascript
+const payment = await apiClient.payment.create(paymentData);
+const payments = await apiClient.payment.list().execute();
+```
 
-- `options`
-  - `paymentType`: (string)
-  - `externalId`: (string)
-  - `returnFileUrl`: (string)
-  - `errorCode`: (string)
-  - `errorMessage`: (string)
-  - `returnDate`: (Date, optional)
-  - `traceNumbers`: (Object)
-    - `incomingReturnFile`?: (string, optional)
-    - `outgoingReturnFile`: (string, optional)
-  - `rawReturnDetails`: (any, optional)
-  - `tenantId`: (string, optional)
+#### Tenant-Specific Operations
+Override tenant for specific operations:
 
-#### Returns:
+```javascript
+// Create payment for specific tenant
+const payment = await apiClient.tenant('tenant-123').payment.create(paymentData);
 
-- Promise`<Object>`
-  - `id`: (string)
-  - `clientId`: (number)
-  - `resourceId`: (number)
-  - `resourceIdentifier`: (string)
+// Get payment from specific tenant
+const payment = await apiClient.tenant('tenant-123').payment.get('payment-456');
 
-### Custom API
-### `Custom Get`
+// Update payment in specific tenant
+await apiClient.tenant('tenant-123').payment.update('payment-456', updateData);
 
-Retrieves any records based on the provided options.
+// List payments from specific tenant with filters
+const payments = await apiClient.tenant('tenant-123').payment.list()
+  .where('status').eq('DRAFT')
+  .limit(10)
+  .execute();
+```
 
-#### Parameters:
+## Type Safety & Validation
 
-- `options (Object)`
-  - `commandName` (String, optional): Set command name base on you want beside name CustomGet
-  - `url` (String): The url that use to request to get something but not include baseURL
-  - `tenantId` (String, optional): Set tenant ID
+The SDK uses [Zod](https://zod.dev/) for runtime type validation and TypeScript for compile-time type safety.
 
-#### Returns:
+### Supported Payment Rails
+- `ACH` - Automated Clearing House
+- `SAMEDAYACH` - Same Day ACH
+- `WIRE` - Domestic Wire Transfer
+- `SWIFT` - International Wire Transfer  
+- `INTERNAL` - Internal Transfer
+- `FXPAY` - Foreign Exchange Payment
+- `CARD` - Card Payment
 
-- Promise`<any>`
+### Payment Statuses
+- `DRAFT`, `AML_SCREENING`, `AML_REJECTED`
+- `EXECUTION_SCHEDULED`, `EXECUTION_PROCESSING`, `EXECUTION_SUCCESS`, `EXECUTION_FAILURE`
+- `RETURNED`, `CANCELLED`, `COMPLIANCE_FAILURE`, `DELETED`, `UNKNOWN`
 
-### `Custom Create`
-
-Create any record or something based on the provided options.
-
-#### Parameters:
-
-- `options (Object)`
-  -  `data` (Object): any values that use to create somthing
-  - `commandName` (String, optional): Set command name base on you want beside name CustomGet
-  - `url` (String): The url that use to request to get something but not include baseURL
-  - `tenantId` (String, optional): Set tenant ID
-
-#### Returns:
-
-- Promise`<any>`
-
-### `Custom Update`
-
-Update any record or something based on the provided options.
-
-#### Parameters:
-
-- `options (Object)`
-  -  `update` (Object): any values that use to update somthing
-  - `commandName` (String, optional): Set command name base on you want beside name CustomGet
-  - `url` (String): The url that use to request to get something but not include baseURL
-  - `tenantId` (String, optional): Set tenant ID
-
-#### Returns:
-
-- Promise`<any>`
+### Validation Features
+- **Input Validation**: All create/update operations validate data structure
+- **Response Validation**: API responses are validated before returning
+- **Custom Rules**: WIRE transfers require recipient address with state/country
+- **Type Safety**: Full TypeScript support with inferred types
 
 ## Error Handling
 The library uses a consistent error handling pattern. All API calls may throw the following errors:
 
-- `AuthenticationError`: Invalid or missing API credentials
-- `ValidationError`: Invalid parameters provided
-- `ApiError`: General API error with specific error code and message
-- `NetworkError`: Network-related issues
+### Error Types
+- **`CommandError`**: Base error type with `code`, `message`, `statusCode`, and optional `requestId`
+- **Authentication Errors**: Invalid or missing API credentials
+  - Invalid JWT secret/signee combination
+  - Expired or invalid bearer token
+  - OAuth credential authentication failure
+- **Validation Errors**: Invalid parameters provided (uses Zod validation)
+- **API Errors**: Server-side errors with specific error codes
+- **Network Errors**: Network connectivity or timeout issues
+
+### Common Authentication Error Scenarios
+- **Missing credentials**: No authentication method provided
+- **Invalid JWT**: Incorrect secret or signee values
+- **Expired token**: Bearer token has expired and needs refresh
+- **OAuth failure**: Invalid username/password or client credentials
 
 ## Examples
-### Complete Transfer Flow Example
+
+### Complete Payment Flow Example
+
 ```javascript
+import { createClient } from '@mbanq/core-sdk-js';
+
 // Initialize the client
-const coreSDK = createClient({ secret: 'testing123', signee: 'TESTING', baseUrl: 'https://example.com', tenantId: 'testing' });
-
-// Get schedule transfers
-const command = GetTransfers({
-  transferStatus: 'EXECUTION_SCHEDULED',
-  executedAt: '2025-01-22',
-  paymentType: 'ACH',
-  queryLimit: 200,
-  tenantId: 'default'
+const apiClient = createClient({ 
+  secret: 'your-secret', 
+  signee: 'YOUR-SIGNEE', 
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id' 
 });
-const scheduleTransfers = await coreSDK.request(command);
 
-// Process each transfer
-for (const transfer of scheduleTransfers) {
-  try {
-    // Mark as processing
-    const markProcessing = MarkAsProcessing({
-      externalId: transfer.externalId,
-      fileUrl: transfer.fileUrl,
-      paymentType: 'ACH',
-      traceNumbers: {
-          outgoingTransfer: '123456'
-      },
-      tenantId: 'default'
-    })
-    await coreSDK.request(markProcessing);
-
-    // Your processing logic here
-
-    // If processing fails
-    if (/* some condition */) {
-      const markFail = MarkAsFail({
-        externalId: transfer.externalId,
-        errorMessage: 'error testing',
-        paymentType: 'ACH',
-        tenantId: 'default'
-      })
-      await coreSDK.request(markFail);
+// Create an ACH payment
+const achPayment = await apiClient.payment.create({
+  amount: 1500,
+  currency: 'USD',
+  paymentRail: 'ACH',
+  paymentType: 'CREDIT',
+  debtor: {
+    name: 'Alice Corporation',
+    identifier: '111222333',
+    accountType: 'CHECKING',
+    agent: {
+      name: 'First National Bank',
+      identifier: '021000021'
     }
-  } catch (error) {
-    console.error(`Error processing transfer ${transfer.id}:`, error);
+  },
+  creditor: {
+    name: 'Bob Enterprises',
+    identifier: '444555666',
+    accountType: 'CHECKING',
+    agent: {
+      name: 'Second Federal Bank',
+      identifier: '121000248'
+    }
+  },
+  clientId: 'client-abc123',
+  reference: ['Invoice-2025-001']
+});
+
+console.log('Created payment:', achPayment.id);
+
+// Create an international WIRE payment
+const wirePayment = await apiClient.payment.create({
+  amount: 5000,
+  currency: 'USD',
+  paymentRail: 'SWIFT',
+  paymentType: 'CREDIT',
+  debtor: {
+    name: 'US Company',
+    identifier: '123456789',
+    agent: {
+      name: 'Chase Bank',
+      identifier: 'CHASUS33XXX'
+    }
+  },
+  creditor: {
+    name: 'European Partner',
+    identifier: '987654321',
+    address: {
+      streetAddress: '123 Business Ave',
+      city: 'London', 
+      state: 'England',
+      country: 'GB',
+      postalCode: 'SW1A 1AA'
+    },
+    agent: {
+      name: 'HSBC Bank',
+      identifier: 'HBUKGB4BXXX'
+    }
+  },
+  chargeBearer: 'OUR',
+  reference: ['Contract-2025-002'],
+  exchangeRate: 0.85
+});
+
+// Retrieve and monitor payments
+const payment = await apiClient.payment.get(achPayment.id);
+console.log('Payment status:', payment.status);
+
+// Update payment if needed
+if (payment.status === 'DRAFT') {
+  await apiClient.payment.update(payment.id, {
+    status: 'EXECUTION_SCHEDULED',
+    reference: ['Updated-Reference']
+  });
+}
+
+// List recent payments with filters
+const recentPayments = await apiClient.payment.list()
+  .where('status').eq('EXECUTION_SCHEDULED')
+  .where('paymentRail').eq('ACH')
+  .where('fromExecuteDate').eq('2025-01-01')
+  .where('toExecuteDate').eq('2025-01-31')
+  .limit(25)
+  .execute();
+
+console.log(`Found ${recentPayments.length} scheduled ACH payments`);
+
+// Multi-tenant example
+const tenantPayment = await apiClient.tenant('different-tenant').payment.create({
+  amount: 750,
+  currency: 'USD',
+  paymentRail: 'INTERNAL',
+  paymentType: 'CREDIT',
+  debtor: { name: 'Internal Sender', identifier: '111111' },
+  creditor: { name: 'Internal Receiver', identifier: '222222' }
+});
+```
+
+### Error Handling Example
+
+```javascript
+import { isCommandError } from '@mbanq/core-sdk-js';
+
+try {
+  const payment = await apiClient.payment.create({
+    amount: -100, // Invalid: negative amount
+    currency: 'INVALID', // Invalid: not 3-character code
+    // Missing required fields
+  });
+} catch (error) {
+  if (isCommandError(error)) {
+    console.error('Payment creation failed:');
+    console.error('Code:', error.code);
+    console.error('Message:', error.message);
+    if (error.requestId) {
+      console.error('Request ID:', error.requestId);
+    }
+  } else {
+    console.error('Unexpected error:', error);
   }
 }
 ```
