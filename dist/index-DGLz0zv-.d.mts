@@ -240,36 +240,44 @@ type PaymentResponse = z.infer<typeof PaymentResponseSchema>;
 declare const createClient: (initialConfig: Config) => {
     payment: {
         create: (data: CreatePaymentInput) => Promise<{
-            [x: string]: any;
-            id: string;
-            amount: number;
-            clientId: string;
-            currency: string;
-            status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
-            createdAt?: string | undefined;
-            updatedAt?: string | undefined;
-        } | undefined>;
+            execute: () => Promise<{
+                [x: string]: any;
+                id: string;
+                amount: number;
+                clientId: string;
+                currency: string;
+                status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
+                createdAt?: string | undefined;
+                updatedAt?: string | undefined;
+            } | undefined>;
+        }>;
         get: (id: string) => Promise<{
-            [x: string]: any;
-            id: string;
-            amount: number;
-            clientId: string;
-            currency: string;
-            status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
-            createdAt?: string | undefined;
-            updatedAt?: string | undefined;
-        } | undefined>;
+            execute: () => Promise<{
+                [x: string]: any;
+                id: string;
+                amount: number;
+                clientId: string;
+                currency: string;
+                status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
+                createdAt?: string | undefined;
+                updatedAt?: string | undefined;
+            } | undefined>;
+        }>;
         update: (id: string, data: UpdatePaymentInput) => Promise<{
-            [x: string]: any;
-            id: string;
-            amount: number;
-            clientId: string;
-            currency: string;
-            status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
-            createdAt?: string | undefined;
-            updatedAt?: string | undefined;
-        } | undefined>;
-        delete: (id: string) => Promise<void | undefined>;
+            execute: () => Promise<{
+                [x: string]: any;
+                id: string;
+                amount: number;
+                clientId: string;
+                currency: string;
+                status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
+                createdAt?: string | undefined;
+                updatedAt?: string | undefined;
+            } | undefined>;
+        }>;
+        delete: (id: string) => Promise<{
+            execute: () => Promise<void | undefined>;
+        }>;
         list: () => {
             where: (field: string) => {
                 eq: (value: any) => {
@@ -314,36 +322,44 @@ declare const createClient: (initialConfig: Config) => {
     tenant: (tenantId: string) => {
         payment: {
             create: (data: CreatePaymentInput) => Promise<{
-                [x: string]: any;
-                id: string;
-                amount: number;
-                clientId: string;
-                currency: string;
-                status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
-                createdAt?: string | undefined;
-                updatedAt?: string | undefined;
-            } | undefined>;
+                execute: () => Promise<{
+                    [x: string]: any;
+                    id: string;
+                    amount: number;
+                    clientId: string;
+                    currency: string;
+                    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
+                    createdAt?: string | undefined;
+                    updatedAt?: string | undefined;
+                } | undefined>;
+            }>;
             get: (id: string) => Promise<{
-                [x: string]: any;
-                id: string;
-                amount: number;
-                clientId: string;
-                currency: string;
-                status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
-                createdAt?: string | undefined;
-                updatedAt?: string | undefined;
-            } | undefined>;
+                execute: () => Promise<{
+                    [x: string]: any;
+                    id: string;
+                    amount: number;
+                    clientId: string;
+                    currency: string;
+                    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
+                    createdAt?: string | undefined;
+                    updatedAt?: string | undefined;
+                } | undefined>;
+            }>;
             update: (id: string, data: UpdatePaymentInput) => Promise<{
-                [x: string]: any;
-                id: string;
-                amount: number;
-                clientId: string;
-                currency: string;
-                status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
-                createdAt?: string | undefined;
-                updatedAt?: string | undefined;
-            } | undefined>;
-            delete: (id: string) => Promise<void | undefined>;
+                execute: () => Promise<{
+                    [x: string]: any;
+                    id: string;
+                    amount: number;
+                    clientId: string;
+                    currency: string;
+                    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
+                    createdAt?: string | undefined;
+                    updatedAt?: string | undefined;
+                } | undefined>;
+            }>;
+            delete: (id: string) => Promise<{
+                execute: () => Promise<void | undefined>;
+            }>;
             list: () => {
                 where: (field: string) => {
                     eq: (value: any) => {
