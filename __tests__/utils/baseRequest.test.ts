@@ -256,6 +256,86 @@ describe('baseRequest', () => {
     );
   });
 
+  it('should use bearer token when provided with Bearer prefix', async () => {
+    const configWithBearerToken = {
+      ...mockConfig,
+      secret: undefined,
+      bearerToken: 'Bearer abc123token'
+    };
+
+    await baseRequest(configWithBearerToken);
+
+    expect(mockAxios.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'Bearer abc123token'
+        })
+      })
+    );
+  });
+
+  it('should automatically add Bearer prefix when bearerToken is provided without it', async () => {
+    const configWithBearerToken = {
+      ...mockConfig,
+      secret: undefined,
+      bearerToken: 'abc123token'
+    };
+
+    await baseRequest(configWithBearerToken);
+
+    expect(mockAxios.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'Bearer abc123token'
+        })
+      })
+    );
+  });
+
+  it('should prioritize bearerToken over credential authentication', async () => {
+    const configWithBoth = {
+      ...mockConfig,
+      secret: undefined,
+      bearerToken: 'token123',
+      credential: {
+        client_secret: 'test-client-secret',
+        grant_type: 'password',
+        client_id: 'test-client-id',
+        username: 'test-user',
+        password: 'test-password'
+      }
+    };
+
+    await baseRequest(configWithBoth);
+
+    expect(generateTokenModule.getAccessTokenWithCredential).not.toHaveBeenCalled();
+    expect(mockAxios.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token123'
+        })
+      })
+    );
+  });
+
+  it('should handle empty bearerToken gracefully', async () => {
+    const configWithEmptyBearerToken = {
+      ...mockConfig,
+      secret: undefined,
+      bearerToken: ''
+    };
+
+    await baseRequest(configWithEmptyBearerToken);
+
+    expect(mockAxios.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: ''
+        })
+      })
+    );
+  });
+
   it('should return the created axios instance', async () => {
     const result = await baseRequest(mockConfig);
 

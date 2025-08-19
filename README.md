@@ -75,7 +75,111 @@ const payments = await apiClient.payment.list()
 ```
 
 ## Setup
-Initialize the client with your API credentials:
+
+### Authentication Options
+
+The SDK supports multiple authentication methods. Choose the one that fits your integration:
+
+#### 1. JWT Token Authentication (Recommended)
+Use your API secret and signee for JWT-based authentication:
+
+```javascript
+const client = createClient({
+  secret: 'your-jwt-secret',
+  signee: 'YOUR-SIGNEE', 
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
+});
+```
+
+#### 2. Bearer Token Authentication
+If you already have a valid access token:
+
+```javascript
+// With "Bearer " prefix (recommended)
+const client = createClient({
+  bearerToken: 'Bearer your-access-token',
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id'
+});
+
+// Without "Bearer " prefix (automatically added)
+const client = createClient({
+  bearerToken: 'your-access-token', // "Bearer " will be added automatically
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id'
+});
+```
+
+#### 3. OAuth Credential Authentication
+For OAuth 2.0 password grant flow:
+
+```javascript
+const client = createClient({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
+  },
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
+});
+```
+
+#### Authentication Priority
+When multiple authentication methods are provided, the SDK uses them in this order:
+1. **`bearerToken`** - Takes highest priority if provided
+2. **`credential`** - OAuth flow is used if no bearerToken 
+3. **`secret` + `signee`** - JWT authentication used as fallback
+
+#### Additional Configuration Options
+```javascript
+const client = createClient({
+  // Choose one authentication method from above
+  secret: 'your-jwt-secret',
+  signee: 'YOUR-SIGNEE',
+  
+  // Required configuration
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id',
+  
+  // Optional configuration
+  traceId: 'custom-trace-id', // Custom request tracing identifier
+  axiosConfig: {
+    timeout: 30000, // Request timeout in milliseconds (default: 29000)
+    keepAlive: true, // HTTP keep-alive for connection reuse
+    headers: {
+      'Custom-Header': 'custom-value' // Additional HTTP headers
+    }
+  }
+});
+```
+
+### Security Best Practices
+
+#### Credential Management
+- **Never hardcode credentials** in your source code
+- Use environment variables or secure credential management systems
+- Rotate API secrets and tokens regularly
+- Use the minimum required permissions for your integration
+
+#### Environment Variables Example
+```javascript
+const client = createClient({
+  secret: process.env.MBANQ_API_SECRET,
+  signee: process.env.MBANQ_API_SIGNEE,
+  baseUrl: process.env.MBANQ_API_URL,
+  tenantId: process.env.MBANQ_TENANT_ID
+});
+```
+
+#### Production Considerations
+- Use HTTPS endpoints only (`https://`)
+- Implement proper error handling to avoid credential leakage in logs
+- Configure appropriate request timeouts
+- Use connection pooling for high-volume applications
 
 ### Axios Instance Logger
 You can also configure an Axios instance logger to set up interceptors or other axios-specific configurations:
@@ -399,10 +503,21 @@ The SDK uses [Zod](https://zod.dev/) for runtime type validation and TypeScript 
 ## Error Handling
 The library uses a consistent error handling pattern. All API calls may throw the following errors:
 
-- `AuthenticationError`: Invalid or missing API credentials
-- `ValidationError`: Invalid parameters provided
-- `ApiError`: General API error with specific error code and message
-- `NetworkError`: Network-related issues
+### Error Types
+- **`CommandError`**: Base error type with `code`, `message`, `statusCode`, and optional `requestId`
+- **Authentication Errors**: Invalid or missing API credentials
+  - Invalid JWT secret/signee combination
+  - Expired or invalid bearer token
+  - OAuth credential authentication failure
+- **Validation Errors**: Invalid parameters provided (uses Zod validation)
+- **API Errors**: Server-side errors with specific error codes
+- **Network Errors**: Network connectivity or timeout issues
+
+### Common Authentication Error Scenarios
+- **Missing credentials**: No authentication method provided
+- **Invalid JWT**: Incorrect secret or signee values
+- **Expired token**: Bearer token has expired and needs refresh
+- **OAuth failure**: Invalid username/password or client credentials
 
 ## Examples
 
