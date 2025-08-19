@@ -1,7 +1,7 @@
 import type { Command, Config } from '../types';
 import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
-import { CreatePayment, GetPayment, UpdatePayment, GetPayments } from '../commands/rest/payment';
+import { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } from '../commands/rest/payment';
 import type { CreatePaymentInput, UpdatePaymentInput } from '../types/payment';
 
 export const createClient = (initialConfig: Config) => {
@@ -67,6 +67,13 @@ export const createClient = (initialConfig: Config) => {
           const command = UpdatePayment({
             id,
             payment: data,
+            tenantId: effectiveTenantId
+          });
+          return requestHandler(command);
+        },
+        delete: async (id: string) => {
+          const command = DeletePayment({
+            id,
             tenantId: effectiveTenantId
           });
           return requestHandler(command);

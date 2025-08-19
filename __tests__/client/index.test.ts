@@ -466,6 +466,43 @@ describe('Client', () => {
       });
     });
 
+    describe('payment.delete', () => {
+      it('should delete payment by ID with correct parameters', async () => {
+        const deletePaymentSpy = vi.spyOn(paymentCommands, 'DeletePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'DeletePayment', path: '/v1/payments/123', method: 'DELETE' },
+          execute: vi.fn().mockResolvedValue(undefined)
+        } as any);
+
+        const client = createClient(validConfig);
+        const result = await client.payment.delete('123');
+
+        expect(deletePaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          tenantId: 'test-tenant'
+        });
+        expect(result).toBeUndefined();
+      });
+
+      it('should use custom tenantId when provided via tenant context', async () => {
+        const deletePaymentSpy = vi.spyOn(paymentCommands, 'DeletePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'DeletePayment', path: '/v1/payments/123', method: 'DELETE' },
+          execute: vi.fn().mockResolvedValue(undefined)
+        } as any);
+
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('custom-tenant');
+
+        await tenantClient.payment.delete('123');
+
+        expect(deletePaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          tenantId: 'custom-tenant'
+        });
+      });
+    });
+
     describe('payment.list', () => {
       it('should create payment list query with correct tenantId', async () => {
         const getPaymentsSpy = vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
@@ -576,6 +613,7 @@ describe('Client', () => {
         expect(tenantClient.payment.create).toBeInstanceOf(Function);
         expect(tenantClient.payment.get).toBeInstanceOf(Function);
         expect(tenantClient.payment.update).toBeInstanceOf(Function);
+        expect(tenantClient.payment.delete).toBeInstanceOf(Function);
         expect(tenantClient.payment.list).toBeInstanceOf(Function);
       });
     });

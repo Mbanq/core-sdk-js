@@ -3,7 +3,8 @@ import {
   CreatePayment,
   GetPayment,
   UpdatePayment,
-  GetPayments
+  GetPayments,
+  DeletePayment
 } from '../../../src/commands/rest/payment';
 import { isCommandError } from '../../../src/utils/errorHandler';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
@@ -867,5 +868,133 @@ describe('GetPayments', () => {
     expect(command.metadata.commandName).toBe('GetPayments');
     expect(command.metadata.path).toBe('/v1/payments');
     expect(command.metadata.method).toBe('GET');
+  });
+});
+
+describe('DeletePayment', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  const mockConfig = {
+    secret: 'your_secret',
+    signee: 'your_signee',
+    tenantId: 'your_tenant_id',
+    baseUrl: 'https://your.api.url'
+  };
+
+  it('should delete payment by ID successfully', async () => {
+    mockAxiosInstance.delete.mockResolvedValue(undefined);
+
+    const command = DeletePayment({
+      id: '123'
+    });
+
+    const result = await command.execute(mockConfig);
+
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
+    expect(result).toBeUndefined();
+  });
+
+  it('should use custom tenantId when provided', async () => {
+    mockAxiosInstance.delete.mockResolvedValue(undefined);
+
+    const command = DeletePayment({
+      id: '123',
+      tenantId: 'custom-tenant'
+    });
+
+    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    await command.execute(mockConfig);
+
+    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
+  });
+
+  it('should throw CommandError on API error', async () => {
+    const axiosError = new Error('Request failed with status code 404') as MockAxiosError;
+    axiosError.response = {
+      status: 404,
+      data: {
+        message: 'Not Found',
+        developerMessage: 'Payment not found'
+      }
+    };
+    axiosError.isAxiosError = true;
+
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+    mockAxiosInstance.delete.mockRejectedValue(axiosError);
+
+    const command = DeletePayment({
+      id: 'non-existent-id'
+    });
+
+    try {
+      await command.execute(mockConfig);
+      expect.fail('Should have thrown an error');
+    } catch (error) {
+      expect(isCommandError(error)).toBe(true);
+      if (isCommandError(error)) {
+        expect(error.statusCode).toBe(404);
+      }
+    }
+  });
+
+  it('should throw CommandError on forbidden error', async () => {
+    const axiosError = new Error('Request failed with status code 403') as MockAxiosError;
+    axiosError.response = {
+      status: 403,
+      data: {
+        message: 'Forbidden',
+        developerMessage: 'Payment cannot be deleted in current status'
+      }
+    };
+    axiosError.isAxiosError = true;
+
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+    mockAxiosInstance.delete.mockRejectedValue(axiosError);
+
+    const command = DeletePayment({
+      id: '123'
+    });
+
+    try {
+      await command.execute(mockConfig);
+      expect.fail('Should have thrown an error');
+    } catch (error) {
+      expect(isCommandError(error)).toBe(true);
+      if (isCommandError(error)) {
+        expect(error.statusCode).toBe(403);
+      }
+    }
+  });
+
+  it('should have correct metadata', () => {
+    const command = DeletePayment({
+      id: '123'
+    });
+
+    expect(command.metadata.commandName).toBe('DeletePayment');
+    expect(command.metadata.path).toBe('/v1/payments/123');
+    expect(command.metadata.method).toBe('DELETE');
   });
 });

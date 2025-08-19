@@ -212,3 +212,26 @@ export const GetPayments = (params?: { tenantId?: string }) => {
     list: () => createPaymentQuery({}, undefined, undefined, params?.tenantId)
   };
 };
+
+export const DeletePayment = (params: { id: string, tenantId?: string }): Command<{ id: string, tenantId?: string }, void> => {
+  return {
+    input: params,
+    metadata: {
+      commandName: 'DeletePayment',
+      path: `/v1/payments/${params.id}`,
+      method: 'DELETE'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        await axiosInstance.delete(`/v1/payments/${params.id}`);
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
