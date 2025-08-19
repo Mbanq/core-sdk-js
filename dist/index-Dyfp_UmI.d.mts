@@ -1,6 +1,33 @@
-import { a as Config, C as Command } from './config.d-CyK6ZM6s.js';
+import { a as Config, C as Command } from './config.d-CyK6ZM6s.mjs';
 import { z } from 'zod';
 
+declare const PaymentFilterKeySchema: z.ZodEnum<{
+    originatorName: "originatorName";
+    originatorAccount: "originatorAccount";
+    originatorBankRoutingCode: "originatorBankRoutingCode";
+    recipientName: "recipientName";
+    recipientAccount: "recipientAccount";
+    recipientBankRoutingCode: "recipientBankRoutingCode";
+    reference: "reference";
+    traceNumber: "traceNumber";
+    externalId: "externalId";
+    clientId: "clientId";
+    dateFormat: "dateFormat";
+    locale: "locale";
+    originatedBy: "originatedBy";
+    paymentRail: "paymentRail";
+    paymentType: "paymentType";
+    fromValueDate: "fromValueDate";
+    toValueDate: "toValueDate";
+    fromExecuteDate: "fromExecuteDate";
+    toExecuteDate: "toExecuteDate";
+    status: "status";
+    fromReturnDate: "fromReturnDate";
+    toReturnDate: "toReturnDate";
+    isSettlement: "isSettlement";
+    orderBy: "orderBy";
+    sortOrder: "sortOrder";
+}>;
 declare const PaymentStatusSchema: z.ZodEnum<{
     DRAFT: "DRAFT";
     AML_SCREENING: "AML_SCREENING";
@@ -27,6 +54,10 @@ declare const PaymentRailSchema: z.ZodEnum<{
 declare const PaymentTypeSchema: z.ZodEnum<{
     CREDIT: "CREDIT";
     DEBIT: "DEBIT";
+}>;
+declare const SortOrderSchema: z.ZodEnum<{
+    ASC: "ASC";
+    DESC: "DESC";
 }>;
 type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 type PaymentRailType = z.infer<typeof PaymentRailSchema>;
@@ -400,4 +431,4 @@ declare const createClient: (initialConfig: Config) => {
     };
 };
 
-export { type CreatePaymentInput as C, type Payment as P, type UpdatePaymentInput as U, type PaymentResponse as a, type PaymentStatus as b, createClient as c, type PaymentRailType as d, type PaymentType as e };
+export { type CreatePaymentInput as C, type Payment as P, SortOrderSchema as S, type UpdatePaymentInput as U, type PaymentResponse as a, type PaymentStatus as b, createClient as c, type PaymentRailType as d, type PaymentType as e, PaymentStatusSchema as f, PaymentFilterKeySchema as g, PaymentRailSchema as h, PaymentTypeSchema as i, CreatePaymentInputSchema as j, UpdatePaymentInputSchema as k, PaymentResponseSchema as l };
