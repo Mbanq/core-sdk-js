@@ -1,3 +1,11 @@
+# [1.0.0-alpha.8](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2025-08-19)
+
+
+### Bug Fixes
+
+* expose type of zod ([4dc9a6c](https://github.com/mbanq/core-sdk-js/commit/4dc9a6cd919e076eb04d05e184c30e7ec718d383))
+* fix build ([a9bc39f](https://github.com/mbanq/core-sdk-js/commit/a9bc39f00a38b86ccdbc7704b3daf8d6997991a4))
+
 # [1.0.0-alpha.7](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2025-08-19)
 
 
