@@ -1,3 +1,15 @@
+# [1.0.0-alpha.6](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2025-08-19)
+
+
+### Bug Fixes
+
+* missing library zod ([dcb7125](https://github.com/mbanq/core-sdk-js/commit/dcb7125aa71803a8b2e8458462f43d95c93e9c7e))
+
+
+### Features
+
+* completed payment API with comprehensive Zod-based validation and TypeScript types and bearer token authentication support ([23654a5](https://github.com/mbanq/core-sdk-js/commit/23654a5ceea0a3da06d10eeb6e620fa69758bda2))
+
 # [1.0.0-alpha.5](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2025-08-19)
 
 
