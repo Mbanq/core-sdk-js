@@ -1,25 +1,34 @@
+<p align="center">
+  <img src="https://avatars.githubusercontent.com/u/26124358?s=200&v=4" alt="Mbanq Logo" width="120"/>
+</p>
+
 # Core SDK JS
+
+![npm version](https://img.shields.io/npm/v/@mbanq/core-sdk-js.svg)
+[![Download](https://img.shields.io/npm/dm/@mbanq/core-sdk-js)](https://www.npmjs.com/package/@mbanq/core-sdk-js)
+![license](https://img.shields.io/github/license/Mbanq/core-sdk-js)
+
 ## Table of Contents
 
-- ### [Introduction](#introduction)
-- ### [Installation](#installation)
-- ### [Quick Start](#quick-start)
-- ### [Setup](#setup)
-  - #### [Axios Instance Logger](#axios-instance-logger)
-- ### [Middleware](#middleware)
-  - #### [Logging Middleware](#logging-middleware)
-  - #### [Metrics Middleware](#metrics-middleware)
-  - #### [Custom Middleware](#custom-middleware)
-- ### [API Reference](#api-reference)
-  - #### [Payment Operations](#payment-operations)
-    - #### [Create Payment](#create-payment)
-    - #### [Get Payment](#get-payment)
-    - #### [Update Payment](#update-payment)
-    - #### [List Payments](#list-payments)
-  - #### [Multi-Tenant Support](#multi-tenant-support)
-- ### [Type Safety & Validation](#type-safety--validation)
-- ### [Error Handling](#error-handling)
-- ### [Examples](#examples)
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Setup](#setup)
+  - [Axios Instance Logger](#axios-instance-logger)
+- [Middleware](#middleware)
+  - [Logging Middleware](#logging-middleware)
+  - [Metrics Middleware](#metrics-middleware)
+  - [Custom Middleware](#custom-middleware)
+- [API Reference](#api-reference)
+  - [Payment Operations](#payment-operations)
+    - [Create Payment](#create-payment)
+    - [Get Payment](#get-payment)
+    - [Update Payment](#update-payment)
+    - [List Payments](#list-payments)
+  - [Multi-Tenant Support](#multi-tenant-support)
+- [Type Safety & Validation](#type-safety--validation)
+- [Error Handling](#error-handling)
+- [Examples](#examples)
 
 ## Introduction
 This library provides a comprehensive JavaScript SDK for interacting with the Mbanq payment API. It offers type-safe payment operations with built-in validation, multi-tenant support, and a modern fluent API design.
@@ -385,7 +394,7 @@ const payment = await apiClient.payment.create({
     priority: 'high',
     category: 'business'
   }
-});
+}).execute();
 ```
 
 #### Get Payment
@@ -393,7 +402,7 @@ const payment = await apiClient.payment.create({
 Retrieves a specific payment by ID.
 
 ```javascript
-const payment = await apiClient.payment.get('payment-456');
+const payment = await apiClient.payment.get('payment-456').execute();
 ```
 
 #### Update Payment
@@ -414,7 +423,7 @@ const updatedPayment = await apiClient.payment.update('payment-456', {
   paymentRailMetaData: {
     updated: true
   }
-});
+}).execute();
 ```
 
 #### List Payments
@@ -452,7 +461,7 @@ The SDK supports multi-tenant operations through tenant context.
 Uses the `tenantId` from client configuration:
 
 ```javascript
-const payment = await apiClient.payment.create(paymentData);
+const payment = await apiClient.payment.create(paymentData).execute();
 const payments = await apiClient.payment.list().execute();
 ```
 
@@ -461,13 +470,13 @@ Override tenant for specific operations:
 
 ```javascript
 // Create payment for specific tenant
-const payment = await apiClient.tenant('tenant-123').payment.create(paymentData);
+const payment = await apiClient.tenant('tenant-123').payment.create(paymentData).execute();
 
 // Get payment from specific tenant
-const payment = await apiClient.tenant('tenant-123').payment.get('payment-456');
+const payment = await apiClient.tenant('tenant-123').payment.get('payment-456').execute();
 
 // Update payment in specific tenant
-await apiClient.tenant('tenant-123').payment.update('payment-456', updateData);
+await apiClient.tenant('tenant-123').payment.update('payment-456', updateData).execute();
 
 // List payments from specific tenant with filters
 const payments = await apiClient.tenant('tenant-123').payment.list()
@@ -560,7 +569,7 @@ const achPayment = await apiClient.payment.create({
   },
   clientId: 'client-abc123',
   reference: ['Invoice-2025-001']
-});
+}).execute();
 
 console.log('Created payment:', achPayment.id);
 
@@ -596,10 +605,10 @@ const wirePayment = await apiClient.payment.create({
   chargeBearer: 'OUR',
   reference: ['Contract-2025-002'],
   exchangeRate: 0.85
-});
+}).execute();
 
 // Retrieve and monitor payments
-const payment = await apiClient.payment.get(achPayment.id);
+const payment = await apiClient.payment.get(achPayment.id).execute();
 console.log('Payment status:', payment.status);
 
 // Update payment if needed
@@ -629,7 +638,7 @@ const tenantPayment = await apiClient.tenant('different-tenant').payment.create(
   paymentType: 'CREDIT',
   debtor: { name: 'Internal Sender', identifier: '111111' },
   creditor: { name: 'Internal Receiver', identifier: '222222' }
-});
+}).execute();
 ```
 
 ### Error Handling Example
@@ -642,7 +651,7 @@ try {
     amount: -100, // Invalid: negative amount
     currency: 'INVALID', // Invalid: not 3-character code
     // Missing required fields
-  });
+  }).execute();
 } catch (error) {
   if (isCommandError(error)) {
     console.error('Payment creation failed:');
