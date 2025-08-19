@@ -131,7 +131,7 @@ describe('CreatePayment', () => {
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/payments', validPaymentData);
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/transfers', validPaymentData);
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -238,7 +238,7 @@ describe('CreatePayment', () => {
     });
 
     expect(command.metadata.commandName).toBe('CreatePayment');
-    expect(command.metadata.path).toBe('/v1/payments');
+    expect(command.metadata.path).toBe('/v1/transfers');
     expect(command.metadata.method).toBe('POST');
   });
 });
@@ -294,7 +294,7 @@ describe('GetPayment', () => {
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments/123');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers/123');
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -356,7 +356,7 @@ describe('GetPayment', () => {
     });
 
     expect(command.metadata.commandName).toBe('GetPayment');
-    expect(command.metadata.path).toBe('/v1/payments/123');
+    expect(command.metadata.path).toBe('/v1/transfers/123');
     expect(command.metadata.method).toBe('GET');
   });
 });
@@ -418,7 +418,7 @@ describe('UpdatePayment', () => {
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/payments/123', updateData);
+    expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/transfers/123', updateData);
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -535,7 +535,7 @@ describe('UpdatePayment', () => {
     });
 
     expect(command.metadata.commandName).toBe('UpdatePayment');
-    expect(command.metadata.path).toBe('/v1/payments/123');
+    expect(command.metadata.path).toBe('/v1/transfers/123');
     expect(command.metadata.method).toBe('PUT');
   });
 });
@@ -600,7 +600,7 @@ describe('GetPayments', () => {
     const command = query.execute();
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
       params: {
         limit: 200,
         offset: 0
@@ -634,7 +634,7 @@ describe('GetPayments', () => {
     const command = query.execute();
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
       params: {
         status: 'EXECUTION_SUCCESS',
         limit: 200,
@@ -661,7 +661,7 @@ describe('GetPayments', () => {
     const command = query.execute();
     await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
       params: {
         limit: 50,
         offset: 25
@@ -816,7 +816,7 @@ describe('GetPayments', () => {
     const command = query.execute();
     await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
       params: {
         status: 'EXECUTION_SUCCESS',
         paymentRail: 'ACH',
@@ -866,7 +866,7 @@ describe('GetPayments', () => {
     const command = query.execute();
 
     expect(command.metadata.commandName).toBe('GetPayments');
-    expect(command.metadata.path).toBe('/v1/payments');
+    expect(command.metadata.path).toBe('/v1/transfers');
     expect(command.metadata.method).toBe('GET');
   });
 });
@@ -911,7 +911,7 @@ describe('DeletePayment', () => {
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/transfers/123');
     expect(result).toBeUndefined();
   });
 
@@ -927,7 +927,7 @@ describe('DeletePayment', () => {
     await command.execute(mockConfig);
 
     expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/transfers/123');
   });
 
   it('should throw CommandError on API error', async () => {
@@ -994,7 +994,7 @@ describe('DeletePayment', () => {
     });
 
     expect(command.metadata.commandName).toBe('DeletePayment');
-    expect(command.metadata.path).toBe('/v1/payments/123');
+    expect(command.metadata.path).toBe('/v1/transfers/123');
     expect(command.metadata.method).toBe('DELETE');
   });
 });
