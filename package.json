@@ -3,6 +3,9 @@
   "version": "1.0.0-alpha.4",
   "description": "A comprehensive JavaScript SDK for interacting with the Mbanq payment API. Features type-safe payment operations, multi-tenant support, and Zod validation.",
   "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
