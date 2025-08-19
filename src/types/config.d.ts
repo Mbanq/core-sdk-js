@@ -7,6 +7,7 @@ export interface Config {
   baseUrl: string;
   tenantId: string;
   signee?: string;
+  bearerToken?: string;
   graphqlPath?: string;
   middlewares?: Middleware[];
   logger?: (instance: AxiosInstance) => void;

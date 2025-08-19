@@ -1,5 +1,5 @@
 export { createClient } from './client/index';
-export { GetTransfers, CreateTransfer, LogFailTransfer, MarkAsFail, MarkAsProcessing, MarkAsReturned, MarkAsSuccess, UpdateTraceNumber, GetTransfer } from './commands/rest/transfer';
+export { CreatePayment, GetPayment, UpdatePayment, GetPayments } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetClientData, UpdateClient, UpdateClientIdentifier } from './commands/rest/client';
 export { GraphQL } from './commands/graphql/index';
@@ -8,14 +8,17 @@ export { createLoggingMiddleware } from './middlewares/logging';
 export { createMetricsMiddleware } from './middlewares/metrics';
 export type {
   Config,
-  GetTransferInput,
-  MarkAsReturnInput,
-  CreateTransferInput,
-  CreateTransferOutput,
-  ProcessOutput,
   Command,
   Middleware,
-  Transfer,
   MetricsClient,
   Logger
 } from './types';
+export type {
+  Payment,
+  CreatePaymentInput,
+  UpdatePaymentInput,
+  PaymentResponse,
+  PaymentStatus,
+  PaymentRailType,
+  PaymentType
+} from './types/payment';

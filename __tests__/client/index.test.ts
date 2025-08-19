@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createClient } from '../../src/client/index';
 import * as validationModule from '../../src/utils/validation';
+import * as paymentCommands from '../../src/commands/rest/payment';
 import { Command, Config } from '../../src/types';
 
 interface TestInput {
@@ -317,6 +318,304 @@ describe('Client', () => {
       await client.request(mockCommand);
 
       expect(mockCommand.execute).toHaveBeenCalledWith(validConfig);
+    });
+  });
+
+  describe('payment API methods', () => {
+    beforeEach(() => {
+      vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
+      vi.clearAllMocks();
+    });
+
+    describe('payment.create', () => {
+      it('should create payment with correct parameters', async () => {
+        const createPaymentSpy = vi.spyOn(paymentCommands, 'CreatePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'CreatePayment', path: '/v1/payments', method: 'POST' },
+          execute: vi.fn().mockResolvedValue({ id: '123', status: 'CREATED' })
+        } as any);
+
+        const client = createClient(validConfig);
+        const paymentData = {
+          amount: 100.50,
+          currency: 'USD',
+          paymentRail: 'ACH' as const,
+          paymentType: 'CREDIT' as const,
+          debtor: {
+            name: 'John Doe',
+            identifier: '123456789'
+          },
+          creditor: {
+            name: 'Jane Smith',
+            identifier: '987654321'
+          }
+        };
+
+        const result = await client.payment.create(paymentData);
+
+        expect(createPaymentSpy).toHaveBeenCalledWith({
+          payment: paymentData,
+          tenantId: 'test-tenant'
+        });
+        expect(result).toEqual({ id: '123', status: 'CREATED' });
+      });
+
+      it('should use custom tenantId when provided via tenant context', async () => {
+        const createPaymentSpy = vi.spyOn(paymentCommands, 'CreatePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'CreatePayment', path: '/v1/payments', method: 'POST' },
+          execute: vi.fn().mockResolvedValue({ id: '123' })
+        } as any);
+
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('custom-tenant');
+        const paymentData = {
+          amount: 100,
+          currency: 'USD',
+          paymentRail: 'ACH' as const,
+          paymentType: 'CREDIT' as const,
+          debtor: { name: 'John', identifier: '123' },
+          creditor: { name: 'Jane', identifier: '456' }
+        };
+
+        await tenantClient.payment.create(paymentData);
+
+        expect(createPaymentSpy).toHaveBeenCalledWith({
+          payment: paymentData,
+          tenantId: 'custom-tenant'
+        });
+      });
+    });
+
+    describe('payment.get', () => {
+      it('should get payment by ID with correct parameters', async () => {
+        const getPaymentSpy = vi.spyOn(paymentCommands, 'GetPayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'GetPayment', path: '/v1/payments/123', method: 'GET' },
+          execute: vi.fn().mockResolvedValue({ id: '123', status: 'SUCCESS' })
+        } as any);
+
+        const client = createClient(validConfig);
+        const result = await client.payment.get('123');
+
+        expect(getPaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          tenantId: 'test-tenant'
+        });
+        expect(result).toEqual({ id: '123', status: 'SUCCESS' });
+      });
+
+      it('should use custom tenantId when provided via tenant context', async () => {
+        const getPaymentSpy = vi.spyOn(paymentCommands, 'GetPayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'GetPayment', path: '/v1/payments/123', method: 'GET' },
+          execute: vi.fn().mockResolvedValue({ id: '123' })
+        } as any);
+
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('custom-tenant');
+
+        await tenantClient.payment.get('123');
+
+        expect(getPaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          tenantId: 'custom-tenant'
+        });
+      });
+    });
+
+    describe('payment.update', () => {
+      it('should update payment with correct parameters', async () => {
+        const updatePaymentSpy = vi.spyOn(paymentCommands, 'UpdatePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'UpdatePayment', path: '/v1/payments/123', method: 'PUT' },
+          execute: vi.fn().mockResolvedValue({ id: '123', status: 'UPDATED' })
+        } as any);
+
+        const client = createClient(validConfig);
+        const updateData = { status: 'CANCELLED' as const };
+
+        const result = await client.payment.update('123', updateData);
+
+        expect(updatePaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          payment: updateData,
+          tenantId: 'test-tenant'
+        });
+        expect(result).toEqual({ id: '123', status: 'UPDATED' });
+      });
+
+      it('should use custom tenantId when provided via tenant context', async () => {
+        const updatePaymentSpy = vi.spyOn(paymentCommands, 'UpdatePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'UpdatePayment', path: '/v1/payments/123', method: 'PUT' },
+          execute: vi.fn().mockResolvedValue({ id: '123' })
+        } as any);
+
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('custom-tenant');
+        const updateData = { amount: 200 };
+
+        await tenantClient.payment.update('123', updateData);
+
+        expect(updatePaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          payment: updateData,
+          tenantId: 'custom-tenant'
+        });
+      });
+    });
+
+    describe('payment.delete', () => {
+      it('should delete payment by ID with correct parameters', async () => {
+        const deletePaymentSpy = vi.spyOn(paymentCommands, 'DeletePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'DeletePayment', path: '/v1/payments/123', method: 'DELETE' },
+          execute: vi.fn().mockResolvedValue(undefined)
+        } as any);
+
+        const client = createClient(validConfig);
+        const result = await client.payment.delete('123');
+
+        expect(deletePaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          tenantId: 'test-tenant'
+        });
+        expect(result).toBeUndefined();
+      });
+
+      it('should use custom tenantId when provided via tenant context', async () => {
+        const deletePaymentSpy = vi.spyOn(paymentCommands, 'DeletePayment').mockReturnValue({
+          input: {},
+          metadata: { commandName: 'DeletePayment', path: '/v1/payments/123', method: 'DELETE' },
+          execute: vi.fn().mockResolvedValue(undefined)
+        } as any);
+
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('custom-tenant');
+
+        await tenantClient.payment.delete('123');
+
+        expect(deletePaymentSpy).toHaveBeenCalledWith({
+          id: '123',
+          tenantId: 'custom-tenant'
+        });
+      });
+    });
+
+    describe('payment.list', () => {
+      it('should create payment list query with correct tenantId', async () => {
+        const getPaymentsSpy = vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+          list: () => ({
+            where: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockReturnThis(),
+            offset: vi.fn().mockReturnThis(),
+            execute: () => ({
+              input: {},
+              metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+              execute: vi.fn().mockResolvedValue([{ id: '1' }, { id: '2' }])
+            })
+          })
+        } as any);
+
+        const client = createClient(validConfig);
+        const queryBuilder = client.payment.list();
+
+        expect(getPaymentsSpy).toHaveBeenCalledWith({ tenantId: 'test-tenant' });
+        expect(queryBuilder.where).toBeInstanceOf(Function);
+        expect(queryBuilder.limit).toBeInstanceOf(Function);
+        expect(queryBuilder.offset).toBeInstanceOf(Function);
+        expect(queryBuilder.execute).toBeInstanceOf(Function);
+      });
+
+      it('should execute payment list query and return results', async () => {
+        const mockExecute = vi.fn().mockResolvedValue([{ id: '1' }, { id: '2' }]);
+
+        vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+          list: () => ({
+            where: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockReturnThis(),
+            offset: vi.fn().mockReturnThis(),
+            execute: () => ({
+              input: {},
+              metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+              execute: mockExecute
+            })
+          })
+        } as any);
+
+        const client = createClient(validConfig);
+        const result = await client.payment.list().execute();
+
+        expect(result).toEqual([{ id: '1' }, { id: '2' }]);
+        expect(mockExecute).toHaveBeenCalledWith(validConfig);
+      });
+
+      it('should use custom tenantId when provided via tenant context', async () => {
+        const getPaymentsSpy = vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+          list: () => ({
+            where: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockReturnThis(),
+            offset: vi.fn().mockReturnThis(),
+            execute: () => ({
+              input: {},
+              metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+              execute: vi.fn().mockResolvedValue([])
+            })
+          })
+        } as any);
+
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('custom-tenant');
+
+        tenantClient.payment.list();
+
+        expect(getPaymentsSpy).toHaveBeenCalledWith({ tenantId: 'custom-tenant' });
+      });
+
+      it('should support query builder chaining', async () => {
+        const mockQueryBuilder = {
+          where: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockReturnThis(),
+          offset: vi.fn().mockReturnThis(),
+          execute: () => ({
+            input: {},
+            metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+            execute: vi.fn().mockResolvedValue([])
+          })
+        };
+
+        vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+          list: () => mockQueryBuilder
+        } as any);
+
+        const client = createClient(validConfig);
+        const queryBuilder = client.payment.list();
+
+        // Test that the builder methods are available and chainable
+        queryBuilder.where('status');
+        queryBuilder.limit(10);
+        queryBuilder.offset(20);
+
+        expect(mockQueryBuilder.where).toHaveBeenCalledWith('status');
+        expect(mockQueryBuilder.limit).toHaveBeenCalledWith(10);
+        expect(mockQueryBuilder.offset).toHaveBeenCalledWith(20);
+      });
+    });
+
+    describe('tenant context', () => {
+      it('should create tenant context with correct tenantId', () => {
+        const client = createClient(validConfig);
+        const tenantClient = client.tenant('new-tenant');
+
+        expect(tenantClient).toBeDefined();
+        expect(tenantClient.payment).toBeDefined();
+        expect(tenantClient.payment.create).toBeInstanceOf(Function);
+        expect(tenantClient.payment.get).toBeInstanceOf(Function);
+        expect(tenantClient.payment.update).toBeInstanceOf(Function);
+        expect(tenantClient.payment.delete).toBeInstanceOf(Function);
+        expect(tenantClient.payment.list).toBeInstanceOf(Function);
+      });
     });
   });
 });

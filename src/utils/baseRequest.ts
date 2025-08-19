@@ -8,6 +8,11 @@ const core = {
   token: ''
 };
 
+const formatBearerToken = (token: string): string => {
+  if (!token) return token;
+  return token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+};
+
 export default async (config: Config): Promise<AxiosInstance> => {
   const verifyCoreSsl = true;
   const instance = axios.create({
@@ -16,7 +21,7 @@ export default async (config: Config): Promise<AxiosInstance> => {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'JWT-Token': config?.secret ? `${generateTokenWithJWT(config?.secret, config?.signee || '')}` : undefined,
-      Authorization: config.credential ? `Bearer ${core.token || await getAccessTokenWithCredential(core.token, config.baseUrl, config.tenantId, config.credential )}` : undefined,
+      Authorization: config.bearerToken !== undefined ? formatBearerToken(config.bearerToken) : config.credential ? `Bearer ${core.token || await getAccessTokenWithCredential(core.token, config.baseUrl, config.tenantId, config.credential )}` : undefined,
       'trace-id': config.traceId || `RequestUUID=${uuidv4()}`,
       tenantId: config.tenantId
     },
