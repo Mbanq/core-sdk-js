@@ -31,7 +31,8 @@ import {
   type Payment,
   type CreatePaymentInput,
   type UpdatePaymentInput,
-  type PaymentResponse
+  type PaymentResponse,
+  type PaymentFilters
 } from '../../types/payment';
 import { ZodError } from 'zod';
 
@@ -234,6 +235,21 @@ export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput,
 };
 
 const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset?: number, tenantId?: string) => {
+  // Validate parameters
+  if (limit !== undefined && limit !== 0 && limit <= 0) {
+    throw createCommandError({
+      message: `Invalid limit: ${limit}. Limit must be positive or 0 for fetching all records.`,
+      code: 'invalid_limit'
+    });
+  }
+
+  if (offset !== undefined && offset < 0) {
+    throw createCommandError({
+      message: `Invalid offset: ${offset}. Offset must be non-negative.`,
+      code: 'invalid_offset'
+    });
+  }
+
   const buildCommand = (): Command<any, PaymentResponse> => {
     const queryParams = {
       ...filters,
@@ -244,7 +260,7 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
     return {
       input: { filters, limit, offset, tenantId },
       metadata: {
-        commandName: 'GetPayments',
+        commandName: 'ListPayments',
         path: '/v1/payments',
         method: 'GET'
       },
@@ -255,8 +271,34 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
         const axiosInstance = await baseRequest(config);
 
         try {
-          const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: queryParams });
-          return response.data;
+          // If limit is 0, fetch all records using pagination
+          if (limit === 0) {
+            const allPayments: Array<Payment> = [];
+            const pageLimit = 200;
+            let currentOffset = offset || 0;
+            let totalFilteredRecords = 0;
+
+            do {
+              const paginationParams = {
+                ...filters,
+                limit: pageLimit,
+                offset: currentOffset
+              };
+
+              const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: paginationParams });
+              const { totalFilteredRecords: total, pageItems } = response.data;
+
+              allPayments.push(...pageItems);
+              totalFilteredRecords = total;
+              currentOffset += pageLimit;
+            } while (currentOffset < totalFilteredRecords);
+
+            return { totalFilteredRecords, pageItems: allPayments };
+          } else {
+            // Regular paginated request
+            const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: queryParams });
+            return response.data;
+          }
         } catch (error) {
           handleAxiosError(error);
         }
@@ -276,15 +318,62 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
     },
     limit: (value: number) => createPaymentQuery(filters, value, offset, tenantId),
     offset: (value: number) => createPaymentQuery(filters, limit, value, tenantId),
+    all: () => createPaymentQuery(filters, 0, offset, tenantId), // Set limit to 0 to fetch all records
     execute: buildCommand
   };
 
   return queryMethods;
 };
 
-export const GetPayments = (params?: { tenantId?: string }) => {
+export const ListPayments = (params?: { tenantId?: string }) => {
   return {
     list: () => createPaymentQuery({}, undefined, undefined, params?.tenantId)
+  };
+};
+
+export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: string }) : Command<{params: PaymentFilters, configuration: { tenantId?: string }}, PaymentResponse> => {
+  return {
+    input: { params, configuration },
+    metadata: {
+      commandName: 'GetPayments',
+      path: `/v1/payments`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (configuration.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      const allTransfers: Array<Payment> = [];
+      const limit = params.limit || 20;
+      let offset = params.offset || 0;
+      let totalFilteredRecords = 0;
+
+      const newParams = {
+        ...params,
+        limit,
+        offset
+      };
+
+      try {
+        if (params.limit === 0) {
+          do {
+            const response = await axiosInstance.get<PaymentResponse>(`/v1/payments`, { params: newParams });
+            const { totalFilteredRecords: total, pageItems } = response.data;
+            allTransfers.push(...pageItems);
+            totalFilteredRecords = total;
+            offset += limit;
+          } while (offset < totalFilteredRecords);
+          return { totalFilteredRecords, pageItems: allTransfers };
+        } else {
+          const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: newParams });
+          return response.data;
+        }
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
   };
 };
 

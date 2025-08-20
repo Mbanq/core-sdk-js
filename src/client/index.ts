@@ -1,9 +1,8 @@
 import type { Command, Config } from '../types';
 import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
-import { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } from '../commands/rest/payment';
+import { CreatePayment, GetPayment, UpdatePayment, DeletePayment, ListPayments } from '../commands/rest/payment';
 import type { CreatePaymentInput, UpdatePaymentInput } from '../types/payment';
-import { GetTransfer } from '../commands';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -96,7 +95,7 @@ export const createClient = (initialConfig: Config) => {
           };
         },
         list: () => {
-          const query = GetPayments({ tenantId: effectiveTenantId });
+          const query = ListPayments({ tenantId: effectiveTenantId });
           const currentBuilder = query.list();
 
           const createChainableObject = (builder: any) => ({
@@ -107,6 +106,10 @@ export const createClient = (initialConfig: Config) => {
             },
             offset: (value: number) => {
               const newBuilder = builder.offset(value);
+              return createChainableObject(newBuilder);
+            },
+            all: () => {
+              const newBuilder = builder.all();
               return createChainableObject(newBuilder);
             },
             execute: async () => {

@@ -509,14 +509,15 @@ describe('Client', () => {
 
     describe('payment.list', () => {
       it('should create payment list query with correct tenantId', async () => {
-        const getPaymentsSpy = vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+        const getPaymentsSpy = vi.spyOn(paymentCommands, 'ListPayments').mockReturnValue({
           list: () => ({
             where: vi.fn().mockReturnThis(),
             limit: vi.fn().mockReturnThis(),
             offset: vi.fn().mockReturnThis(),
+            all: vi.fn().mockReturnThis(),
             execute: () => ({
               input: {},
-              metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+              metadata: { commandName: 'ListPayments', path: '/v1/payments', method: 'GET' },
               execute: vi.fn().mockResolvedValue([{ id: '1' }, { id: '2' }])
             })
           })
@@ -529,20 +530,22 @@ describe('Client', () => {
         expect(queryBuilder.where).toBeInstanceOf(Function);
         expect(queryBuilder.limit).toBeInstanceOf(Function);
         expect(queryBuilder.offset).toBeInstanceOf(Function);
+        expect(queryBuilder.all).toBeInstanceOf(Function);
         expect(queryBuilder.execute).toBeInstanceOf(Function);
       });
 
       it('should execute payment list query and return results', async () => {
         const mockExecute = vi.fn().mockResolvedValue([{ id: '1' }, { id: '2' }]);
 
-        vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+        vi.spyOn(paymentCommands, 'ListPayments').mockReturnValue({
           list: () => ({
             where: vi.fn().mockReturnThis(),
             limit: vi.fn().mockReturnThis(),
             offset: vi.fn().mockReturnThis(),
+            all: vi.fn().mockReturnThis(),
             execute: () => ({
               input: {},
-              metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+              metadata: { commandName: 'ListPayments', path: '/v1/payments', method: 'GET' },
               execute: mockExecute
             })
           })
@@ -556,14 +559,15 @@ describe('Client', () => {
       });
 
       it('should use custom tenantId when provided via tenant context', async () => {
-        const getPaymentsSpy = vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+        const getPaymentsSpy = vi.spyOn(paymentCommands, 'ListPayments').mockReturnValue({
           list: () => ({
             where: vi.fn().mockReturnThis(),
             limit: vi.fn().mockReturnThis(),
             offset: vi.fn().mockReturnThis(),
+            all: vi.fn().mockReturnThis(),
             execute: () => ({
               input: {},
-              metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+              metadata: { commandName: 'ListPayments', path: '/v1/payments', method: 'GET' },
               execute: vi.fn().mockResolvedValue([])
             })
           })
@@ -584,12 +588,12 @@ describe('Client', () => {
           offset: vi.fn().mockReturnThis(),
           execute: () => ({
             input: {},
-            metadata: { commandName: 'GetPayments', path: '/v1/payments', method: 'GET' },
+            metadata: { commandName: 'ListPayments', path: '/v1/payments', method: 'GET' },
             execute: vi.fn().mockResolvedValue([])
           })
         };
 
-        vi.spyOn(paymentCommands, 'GetPayments').mockReturnValue({
+        vi.spyOn(paymentCommands, 'ListPayments').mockReturnValue({
           list: () => mockQueryBuilder
         } as any);
 
@@ -604,6 +608,35 @@ describe('Client', () => {
         expect(mockQueryBuilder.where).toHaveBeenCalledWith('status');
         expect(mockQueryBuilder.limit).toHaveBeenCalledWith(10);
         expect(mockQueryBuilder.offset).toHaveBeenCalledWith(20);
+      });
+
+      it('should support all() method for fetching all records', async () => {
+        const mockAllMethod = vi.fn().mockReturnThis();
+        const mockQueryBuilder = {
+          where: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockReturnThis(),
+          offset: vi.fn().mockReturnThis(),
+          all: mockAllMethod,
+          execute: () => ({
+            input: {},
+            metadata: { commandName: 'ListPayments', path: '/v1/payments', method: 'GET' },
+            execute: vi.fn().mockResolvedValue({ totalFilteredRecords: 100, pageItems: [] })
+          })
+        };
+
+        vi.spyOn(paymentCommands, 'ListPayments').mockReturnValue({
+          list: () => mockQueryBuilder
+        } as any);
+
+        const client = createClient(validConfig);
+        const queryBuilder = client.payment.list();
+
+        // Test that the all() method is available and chainable
+        const allBuilder = queryBuilder.all();
+
+        expect(mockAllMethod).toHaveBeenCalled();
+        expect(allBuilder).toBeDefined();
+        expect(allBuilder.execute).toBeInstanceOf(Function);
       });
     });
 
