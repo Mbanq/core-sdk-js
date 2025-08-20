@@ -3578,6 +3578,7 @@ declare const createClient: (initialConfig: Config) => {
             where: any;
             limit: (value: number) => /*elided*/ any;
             offset: (value: number) => /*elided*/ any;
+            all: () => /*elided*/ any;
             execute: () => Promise<unknown>;
         };
     };
@@ -3993,10 +3994,11 @@ declare const createClient: (initialConfig: Config) => {
                 where: any;
                 limit: (value: number) => /*elided*/ any;
                 offset: (value: number) => /*elided*/ any;
+                all: () => /*elided*/ any;
                 execute: () => Promise<unknown>;
             };
         };
     };
 };
 
-export { type CreatePaymentInput as C, type Payment as P, SortOrderSchema as S, type UpdatePaymentInput as U, type PaymentResponse as a, type PaymentStatus as b, createClient as c, type PaymentRailType as d, type PaymentType as e, type PaymentFilters as f, PaymentStatusSchema as g, PaymentFilterKeySchema as h, PaymentRailSchema as i, PaymentTypeSchema as j, CreatePaymentInputSchema as k, UpdatePaymentInputSchema as l, PaymentResponseSchema as m, PaymentFiltersSchema as n, PaymentFilterShape as o };
+export { type CreatePaymentInput as C, type Payment as P, SortOrderSchema as S, type UpdatePaymentInput as U, type PaymentFilters as a, type PaymentResponse as b, createClient as c, type PaymentStatus as d, type PaymentRailType as e, type PaymentType as f, PaymentStatusSchema as g, PaymentFilterKeySchema as h, PaymentRailSchema as i, PaymentTypeSchema as j, CreatePaymentInputSchema as k, UpdatePaymentInputSchema as l, PaymentResponseSchema as m, PaymentFiltersSchema as n, PaymentFilterShape as o };
