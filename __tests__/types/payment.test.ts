@@ -10,6 +10,25 @@ import {
   validateCreatePaymentInput,
   validateUpdatePaymentInput,
   validatePaymentResponse,
+  validateOriginatorName,
+  validateOriginatorAccount,
+  validateOriginatorBankRoutingCode,
+  validateRecipientName,
+  validateRecipientAccount,
+  validateRecipientBankRoutingCode,
+  validateReference,
+  validateTraceNumber,
+  validateExternalId,
+  validateClientId,
+  validateDateFormat,
+  validateLocale,
+  validateOriginatedBy,
+  validateValueDate,
+  validateExecuteDate,
+  validateReturnDate,
+  validateIsSettlement,
+  validateOrderBy,
+  validatePaymentFilters,
   VALID_PAYMENT_FILTER_KEYS,
   VALID_STATUS_VALUES,
   VALID_PAYMENT_RAIL_VALUES,
@@ -113,19 +132,257 @@ describe('Payment Type Validations', () => {
       expect(result).toBe('ASC');
     });
   });
+
+  describe('Filter Value Validations', () => {
+    describe('validateOriginatorName', () => {
+      it('should validate valid originator names', () => {
+        expect(() => validateOriginatorName('John Doe')).not.toThrow();
+        expect(validateOriginatorName('Test Company')).toBe('Test Company');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateOriginatorName('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateOriginatorAccount', () => {
+      it('should validate valid account numbers', () => {
+        expect(() => validateOriginatorAccount('123456789')).not.toThrow();
+        expect(validateOriginatorAccount('987654321')).toBe('987654321');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateOriginatorAccount('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateOriginatorBankRoutingCode', () => {
+      it('should validate valid routing codes', () => {
+        expect(() => validateOriginatorBankRoutingCode('021000021')).not.toThrow();
+        expect(validateOriginatorBankRoutingCode('111000025')).toBe('111000025');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateOriginatorBankRoutingCode('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateRecipientName', () => {
+      it('should validate valid recipient names', () => {
+        expect(() => validateRecipientName('Jane Smith')).not.toThrow();
+        expect(validateRecipientName('Recipient Corp')).toBe('Recipient Corp');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateRecipientName('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateRecipientAccount', () => {
+      it('should validate valid recipient accounts', () => {
+        expect(() => validateRecipientAccount('555666777')).not.toThrow();
+        expect(validateRecipientAccount('111222333')).toBe('111222333');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateRecipientAccount('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateRecipientBankRoutingCode', () => {
+      it('should validate valid recipient routing codes', () => {
+        expect(() => validateRecipientBankRoutingCode('321070007')).not.toThrow();
+        expect(validateRecipientBankRoutingCode('021000021')).toBe('021000021');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateRecipientBankRoutingCode('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateReference', () => {
+      it('should validate valid references', () => {
+        expect(() => validateReference('REF123456')).not.toThrow();
+        expect(validateReference('PAYMENT-REF')).toBe('PAYMENT-REF');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateReference('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateTraceNumber', () => {
+      it('should validate valid trace numbers', () => {
+        expect(() => validateTraceNumber('TRACE123')).not.toThrow();
+        expect(validateTraceNumber('987654321')).toBe('987654321');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateTraceNumber('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateExternalId', () => {
+      it('should validate valid external IDs', () => {
+        expect(() => validateExternalId('EXT123456')).not.toThrow();
+        expect(validateExternalId('1755660740713zV')).toBe('1755660740713zV');
+      });
+
+      it('should throw ZodError for empty strings', () => {
+        expect(() => validateExternalId('')).toThrow(ZodError);
+      });
+    });
+
+    describe('validateClientId', () => {
+      it('should validate valid client IDs as strings', () => {
+        expect(() => validateClientId('client-123')).not.toThrow();
+        expect(validateClientId('client-456')).toBe('client-456');
+      });
+
+      it('should validate valid client IDs as numbers', () => {
+        expect(() => validateClientId(4742)).not.toThrow();
+        expect(validateClientId(1234)).toBe(1234);
+      });
+    });
+
+    describe('validateDateFormat', () => {
+      it('should validate valid date formats', () => {
+        expect(() => validateDateFormat('YYYY-MM-DD')).not.toThrow();
+        expect(validateDateFormat('MM/DD/YYYY')).toBe('MM/DD/YYYY');
+      });
+    });
+
+    describe('validateLocale', () => {
+      it('should validate valid locales', () => {
+        expect(() => validateLocale('en-US')).not.toThrow();
+        expect(validateLocale('fr-FR')).toBe('fr-FR');
+      });
+    });
+
+    describe('validateOriginatedBy', () => {
+      it('should validate valid originated by values', () => {
+        expect(() => validateOriginatedBy('SYSTEM')).not.toThrow();
+        expect(validateOriginatedBy('USER')).toBe('USER');
+      });
+    });
+
+    describe('validateValueDate', () => {
+      it('should validate valid value dates', () => {
+        expect(() => validateValueDate('2023-01-01')).not.toThrow();
+        expect(validateValueDate('2023-12-31')).toBe('2023-12-31');
+      });
+    });
+
+    describe('validateExecuteDate', () => {
+      it('should validate valid execute dates', () => {
+        expect(() => validateExecuteDate('2023-01-01')).not.toThrow();
+        expect(validateExecuteDate('2023-12-31')).toBe('2023-12-31');
+      });
+    });
+
+    describe('validateReturnDate', () => {
+      it('should validate valid return dates', () => {
+        expect(() => validateReturnDate('2023-01-01')).not.toThrow();
+        expect(validateReturnDate('2023-12-31')).toBe('2023-12-31');
+      });
+    });
+
+    describe('validateIsSettlement', () => {
+      it('should validate valid settlement flags', () => {
+        expect(() => validateIsSettlement(true)).not.toThrow();
+        expect(() => validateIsSettlement(false)).not.toThrow();
+        expect(validateIsSettlement(true)).toBe(true);
+        expect(validateIsSettlement(false)).toBe(false);
+      });
+
+      it('should throw ZodError for non-boolean values', () => {
+        expect(() => validateIsSettlement('true' as any)).toThrow(ZodError);
+        expect(() => validateIsSettlement(1 as any)).toThrow(ZodError);
+      });
+    });
+
+    describe('validateOrderBy', () => {
+      it('should validate valid order by values', () => {
+        expect(() => validateOrderBy('createdAt')).not.toThrow();
+        expect(validateOrderBy('amount')).toBe('amount');
+      });
+    });
+
+    describe('validatePaymentFilters', () => {
+      it('should validate valid payment filters', () => {
+        const validFilters = {
+          status: 'DRAFT',
+          paymentRail: 'ACH',
+          originatorName: 'John Doe',
+          limit: 10,
+          offset: 0
+        };
+
+        expect(() => validatePaymentFilters(validFilters)).not.toThrow();
+        const result = validatePaymentFilters(validFilters);
+        expect(result.status).toBe('DRAFT');
+        expect(result.limit).toBe(10);
+      });
+
+      it('should validate empty filters object', () => {
+        expect(() => validatePaymentFilters({})).not.toThrow();
+      });
+
+      it('should validate partial filters', () => {
+        const partialFilters = {
+          status: 'EXECUTION_SUCCESS'
+        };
+
+        expect(() => validatePaymentFilters(partialFilters)).not.toThrow();
+        const result = validatePaymentFilters(partialFilters);
+        expect(result.status).toBe('EXECUTION_SUCCESS');
+      });
+    });
+  });
 });
 
 describe('Payment Entity Validations', () => {
   describe('validatePayment', () => {
     it('should validate valid payment object', () => {
       const validPayment = {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
-        currency: 'USD',
-        status: 'DRAFT',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
         createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z'
+        externalId: '1755660740713zV',
+        status: 'DRAFT',
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
+        currency: 'USD'
       };
 
       expect(() => validatePayment(validPayment)).not.toThrow();
@@ -135,9 +392,35 @@ describe('Payment Entity Validations', () => {
 
     it('should validate payment with minimum required fields', () => {
       const minimalPayment = {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
+        status: 'DRAFT',
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
         currency: 'USD'
       };
 
@@ -146,9 +429,35 @@ describe('Payment Entity Validations', () => {
 
     it('should allow additional properties with catchall', () => {
       const paymentWithExtra = {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
+        status: 'DRAFT',
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
         currency: 'USD',
         customField: 'custom-value',
         metadata: { key: 'value' }
@@ -159,17 +468,17 @@ describe('Payment Entity Validations', () => {
 
     it('should throw ZodError for invalid payment objects', () => {
       expect(() => validatePayment({})).toThrow(ZodError);
-      expect(() => validatePayment({ id: '123' })).toThrow(ZodError);
+      expect(() => validatePayment({ id: 123 })).toThrow(ZodError);
       expect(() => validatePayment({
-        id: '123',
+        id: 123,
         amount: -100,
-        clientId: 'client-123',
+        clientId: 4742,
         currency: 'USD'
       })).toThrow(ZodError);
       expect(() => validatePayment({
-        id: '123',
+        id: 123,
         amount: 100,
-        clientId: 'client-123',
+        clientId: 4742,
         currency: 'INVALID'
       })).toThrow(ZodError);
     });
@@ -334,15 +643,67 @@ describe('Payment Entity Validations', () => {
         totalFilteredRecords: 2,
         pageItems: [
           {
-            id: '1',
+            id: 1,
+            clientId: 4742,
             amount: 100,
-            clientId: 'client-1',
+            correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+            paymentType: 'DEBIT',
+            paymentRail: 'CARD',
+            recipient: {
+              recipientType: 'INDIVIDUAL',
+              address: { countryCode: 'US' },
+              name: 'Test Recipient'
+            },
+            originator: {
+              recipientType: 'INDIVIDUAL',
+              address: { countryCode: 'US' },
+              name: 'Test Originator'
+            },
+            executedAt: '2023-01-01T00:00:00Z',
+            createdAt: '2023-01-01T00:00:00Z',
+            externalId: '1755660740713zV',
+            status: 'DRAFT',
+            currencyData: {
+              code: 'USD',
+              name: 'US Dollar',
+              decimalPlaces: 2,
+              displaySymbol: '$',
+              nameCode: 'US Dollar',
+              currencyCodeInDigit: 0,
+              isBaseCurrency: false
+            },
             currency: 'USD'
           },
           {
-            id: '2',
+            id: 2,
+            clientId: 4743,
             amount: 200,
-            clientId: 'client-2',
+            correlationId: '46005ded-a9e8-41fe-b26e-831e02c79716',
+            paymentType: 'CREDIT',
+            paymentRail: 'ACH',
+            recipient: {
+              recipientType: 'INDIVIDUAL',
+              address: { countryCode: 'US' },
+              name: 'Test Recipient 2'
+            },
+            originator: {
+              recipientType: 'INDIVIDUAL',
+              address: { countryCode: 'US' },
+              name: 'Test Originator 2'
+            },
+            executedAt: '2023-01-02T00:00:00Z',
+            createdAt: '2023-01-02T00:00:00Z',
+            externalId: '1755660740713zW',
+            status: 'EXECUTION_SUCCESS',
+            currencyData: {
+              code: 'EUR',
+              name: 'Euro',
+              decimalPlaces: 2,
+              displaySymbol: '€',
+              nameCode: 'Euro',
+              currencyCodeInDigit: 1,
+              isBaseCurrency: false
+            },
             currency: 'EUR'
           }
         ]

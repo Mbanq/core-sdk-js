@@ -3,6 +3,7 @@ import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
 import { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } from '../commands/rest/payment';
 import type { CreatePaymentInput, UpdatePaymentInput } from '../types/payment';
+import { GetTransfer } from '../commands';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -49,7 +50,7 @@ export const createClient = (initialConfig: Config) => {
 
     return {
       payment: {
-        create: async (data: CreatePaymentInput) => {
+        create: (data: CreatePaymentInput) => {
           const command = CreatePayment({
             payment: data,
             tenantId: effectiveTenantId
@@ -60,7 +61,7 @@ export const createClient = (initialConfig: Config) => {
             }
           };
         },
-        get: async (id: string) => {
+        get: (id: number) => {
           const command = GetPayment({
             id,
             tenantId: effectiveTenantId
@@ -71,7 +72,7 @@ export const createClient = (initialConfig: Config) => {
             }
           };
         },
-        update: async (id: string, data: UpdatePaymentInput) => {
+        update: (id: number, data: UpdatePaymentInput) => {
           const command = UpdatePayment({
             id,
             payment: data,
@@ -83,7 +84,7 @@ export const createClient = (initialConfig: Config) => {
             }
           };
         },
-        delete: async (id: string) => {
+        delete: (id: number) => {
           const command = DeletePayment({
             id,
             tenantId: effectiveTenantId
@@ -96,17 +97,25 @@ export const createClient = (initialConfig: Config) => {
         },
         list: () => {
           const query = GetPayments({ tenantId: effectiveTenantId });
-          const queryBuilder = query.list();
+          const currentBuilder = query.list();
 
-          return {
-            where: queryBuilder.where,
-            limit: queryBuilder.limit,
-            offset: queryBuilder.offset,
+          const createChainableObject = (builder: any) => ({
+            where: builder.where,
+            limit: (value: number) => {
+              const newBuilder = builder.limit(value);
+              return createChainableObject(newBuilder);
+            },
+            offset: (value: number) => {
+              const newBuilder = builder.offset(value);
+              return createChainableObject(newBuilder);
+            },
             execute: async () => {
-              const command = queryBuilder.execute();
+              const command = builder.execute();
               return requestHandler(command);
             }
-          };
+          });
+
+          return createChainableObject(currentBuilder);
         }
       }
     };
