@@ -1,3 +1,10 @@
+# [1.0.0-alpha.12](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.11...v1.0.0-alpha.12) (2025-08-20)
+
+
+### Features
+
+* now support get payments using command and allow to get all records ([18fdf64](https://github.com/mbanq/core-sdk-js/commit/18fdf647f788e547db46b8ec3e5ceff869ea69f9))
+
 # [1.0.0-alpha.11](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2025-08-20)
 
 
