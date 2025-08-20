@@ -29,5 +29,5 @@ export {
   PaymentRailSchema as PaymentRailZod, PaymentTypeSchema as PaymentTypeZod,
   SortOrderSchema as SortOrderZod, CreatePaymentInputSchema as CreatePaymentInputZod,
   UpdatePaymentInputSchema as UpdatePaymentInputZod, PaymentResponseSchema as PaymentResponseZod,
-  PaymentFiltersSchema as PaymentFiltersZod
+  PaymentFiltersSchema as PaymentFiltersZod, PaymentFilterShape
 } from './types/payment';

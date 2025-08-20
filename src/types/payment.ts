@@ -209,7 +209,7 @@ export const validateOrderBy = (orderBy: string): OrderBy => {
 };
 
 // Combined Payment Filters Schema
-export const PaymentFiltersSchema = z.object({
+export const PaymentFilterShape = {
   originatorName: OriginatorNameSchema.optional(),
   originatorAccount: OriginatorAccountSchema.optional(),
   originatorBankRoutingCode: OriginatorBankRoutingCodeSchema.optional(),
@@ -237,7 +237,9 @@ export const PaymentFiltersSchema = z.object({
   sortOrder: SortOrderSchema.optional(),
   limit: z.number().positive().optional(),
   offset: z.number().min(0).optional()
-}).partial();
+};
+
+export const PaymentFiltersSchema = z.object(PaymentFilterShape).partial();
 
 // Type inference for PaymentFilters
 export type PaymentFilters = z.infer<typeof PaymentFiltersSchema>;
