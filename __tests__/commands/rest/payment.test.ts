@@ -114,12 +114,44 @@ describe('CreatePayment', () => {
   it('should create payment successfully', async () => {
     const mockResponse = {
       data: {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
-        currency: 'USD',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
         status: 'DRAFT',
-        createdAt: '2023-01-01T00:00:00Z'
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
+        currency: 'USD'
       }
     };
 
@@ -131,16 +163,50 @@ describe('CreatePayment', () => {
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/transfers', validPaymentData);
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/payments', validPaymentData);
     expect(result).toEqual(mockResponse.data);
   });
 
   it('should use custom tenantId when provided', async () => {
     const mockResponse = {
       data: {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
+        status: 'DRAFT',
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
         currency: 'USD'
       }
     };
@@ -238,7 +304,7 @@ describe('CreatePayment', () => {
     });
 
     expect(command.metadata.commandName).toBe('CreatePayment');
-    expect(command.metadata.path).toBe('/v1/transfers');
+    expect(command.metadata.path).toBe('/v1/payments');
     expect(command.metadata.method).toBe('POST');
   });
 });
@@ -277,33 +343,43 @@ describe('GetPayment', () => {
   it('should get payment by ID successfully', async () => {
     const mockResponse = {
       data: {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
-        currency: 'USD',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
         status: 'EXECUTION_SUCCESS',
-        createdAt: '2023-01-01T00:00:00Z'
-      }
-    };
-
-    mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-    const command = GetPayment({
-      id: '123'
-    });
-
-    const result = await command.execute(mockConfig);
-
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers/123');
-    expect(result).toEqual(mockResponse.data);
-  });
-
-  it('should use custom tenantId when provided', async () => {
-    const mockResponse = {
-      data: {
-        id: '123',
-        amount: 100.50,
-        clientId: 'client-123',
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
         currency: 'USD'
       }
     };
@@ -311,7 +387,63 @@ describe('GetPayment', () => {
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
     const command = GetPayment({
-      id: '123',
+      id: 123
+    });
+
+    const result = await command.execute(mockConfig);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments/123');
+    expect(result).toEqual(mockResponse.data);
+  });
+
+  it('should use custom tenantId when provided', async () => {
+    const mockResponse = {
+      data: {
+        id: 123,
+        clientId: 4742,
+        amount: 100.50,
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
+        status: 'DRAFT',
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
+        currency: 'USD'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = GetPayment({
+      id: 123,
       tenantId: 'custom-tenant'
     });
 
@@ -336,7 +468,7 @@ describe('GetPayment', () => {
     mockAxiosInstance.get.mockRejectedValue(axiosError);
 
     const command = GetPayment({
-      id: 'non-existent-id'
+      id: 999
     });
 
     try {
@@ -352,11 +484,11 @@ describe('GetPayment', () => {
 
   it('should have correct metadata', () => {
     const command = GetPayment({
-      id: '123'
+      id: 123
     });
 
     expect(command.metadata.commandName).toBe('GetPayment');
-    expect(command.metadata.path).toBe('/v1/transfers/123');
+    expect(command.metadata.path).toBe('/v1/payments/123');
     expect(command.metadata.method).toBe('GET');
   });
 });
@@ -400,25 +532,57 @@ describe('UpdatePayment', () => {
 
     const mockResponse = {
       data: {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 150.75,
-        clientId: 'client-123',
-        currency: 'USD',
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
         status: 'CANCELLED',
-        updatedAt: '2023-01-02T00:00:00Z'
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
+        currency: 'USD'
       }
     };
 
     mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
     const command = UpdatePayment({
-      id: '123',
+      id: 123,
       payment: updateData
     });
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/transfers/123', updateData);
+    expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/payments/123', updateData);
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -429,18 +593,51 @@ describe('UpdatePayment', () => {
 
     const mockResponse = {
       data: {
-        id: '123',
+        id: 123,
+        clientId: 4742,
         amount: 100.50,
-        clientId: 'client-123',
-        currency: 'USD',
-        status: 'CANCELLED'
+        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
+        paymentType: 'DEBIT',
+        paymentRail: 'CARD',
+        recipient: {
+          cardId: '437',
+          recipientType: 'INDIVIDUAL',
+          address: { countryCode: 'US' },
+          name: 'Test Recipient'
+        },
+        originator: {
+          accountId: '4193',
+          recipientType: 'INDIVIDUAL',
+          address: {
+            line1: 'Test Address',
+            stateCode: 'NY',
+            countryCode: 'US',
+            postalCode: '12345'
+          },
+          name: 'Test Originator'
+        },
+        executedAt: '2023-01-01T00:00:00Z',
+        createdAt: '2023-01-01T00:00:00Z',
+        externalId: '1755660740713zV',
+        status: 'CANCELLED',
+        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar',
+          currencyCodeInDigit: 0,
+          isBaseCurrency: false
+        },
+        currency: 'USD'
       }
     };
 
     mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
     const command = UpdatePayment({
-      id: '123',
+      id: 123,
       payment: updateData,
       tenantId: 'custom-tenant'
     });
@@ -458,7 +655,7 @@ describe('UpdatePayment', () => {
     };
 
     const command = UpdatePayment({
-      id: '123',
+      id: 123,
       payment: invalidUpdateData as any
     });
 
@@ -489,7 +686,7 @@ describe('UpdatePayment', () => {
     mockAxiosInstance.put.mockRejectedValue(axiosError);
 
     const command = UpdatePayment({
-      id: '123',
+      id: 123,
       payment: { status: 'CANCELLED' }
     });
 
@@ -513,7 +710,7 @@ describe('UpdatePayment', () => {
     });
 
     const command = UpdatePayment({
-      id: '123',
+      id: 123,
       payment: { status: 'CANCELLED' }
     });
 
@@ -530,12 +727,12 @@ describe('UpdatePayment', () => {
 
   it('should have correct metadata', () => {
     const command = UpdatePayment({
-      id: '123',
+      id: 123,
       payment: { status: 'CANCELLED' }
     });
 
     expect(command.metadata.commandName).toBe('UpdatePayment');
-    expect(command.metadata.path).toBe('/v1/transfers/123');
+    expect(command.metadata.path).toBe('/v1/payments/123');
     expect(command.metadata.method).toBe('PUT');
   });
 });
@@ -600,13 +797,13 @@ describe('GetPayments', () => {
     const command = query.execute();
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
         limit: 200,
         offset: 0
       }
     });
-    expect(result).toEqual(mockResponse.data.pageItems);
+    expect(result).toEqual(mockResponse.data);
   });
 
   it('should apply filters correctly', async () => {
@@ -634,14 +831,14 @@ describe('GetPayments', () => {
     const command = query.execute();
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
         status: 'EXECUTION_SUCCESS',
         limit: 200,
         offset: 0
       }
     });
-    expect(result).toEqual(mockResponse.data.pageItems);
+    expect(result).toEqual(mockResponse.data);
   });
 
   it('should apply limit and offset correctly', async () => {
@@ -661,7 +858,7 @@ describe('GetPayments', () => {
     const command = query.execute();
     await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
         limit: 50,
         offset: 25
@@ -751,12 +948,202 @@ describe('GetPayments', () => {
         .eq('ASC');
     }).not.toThrow();
 
-    // Test unknown filter key that doesn't need validation (default case)
+    // Test originatorName validation
     expect(() => {
       GetPayments()
         .list()
         .where('originatorName')
-        .eq('some-value');
+        .eq('John Doe');
+    }).not.toThrow();
+
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('originatorName')
+        .eq('');
+    }).toThrow();
+
+    // Test originatorAccount validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('originatorAccount')
+        .eq('123456789');
+    }).not.toThrow();
+
+    // Test originatorBankRoutingCode validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('originatorBankRoutingCode')
+        .eq('021000021');
+    }).not.toThrow();
+
+    // Test recipientName validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('recipientName')
+        .eq('Jane Smith');
+    }).not.toThrow();
+
+    // Test recipientAccount validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('recipientAccount')
+        .eq('987654321');
+    }).not.toThrow();
+
+    // Test recipientBankRoutingCode validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('recipientBankRoutingCode')
+        .eq('321070007');
+    }).not.toThrow();
+
+    // Test reference validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('reference')
+        .eq('REF123456');
+    }).not.toThrow();
+
+    // Test traceNumber validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('traceNumber')
+        .eq('TRACE123');
+    }).not.toThrow();
+
+    // Test externalId validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('externalId')
+        .eq('EXT123456');
+    }).not.toThrow();
+
+    // Test clientId validation (string)
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('clientId')
+        .eq('client-123');
+    }).not.toThrow();
+
+    // Test clientId validation (number)
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('clientId')
+        .eq(4742);
+    }).not.toThrow();
+
+    // Test dateFormat validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('dateFormat')
+        .eq('YYYY-MM-DD');
+    }).not.toThrow();
+
+    // Test locale validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('locale')
+        .eq('en-US');
+    }).not.toThrow();
+
+    // Test originatedBy validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('originatedBy')
+        .eq('SYSTEM');
+    }).not.toThrow();
+
+    // Test fromValueDate validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('fromValueDate')
+        .eq('2023-01-01');
+    }).not.toThrow();
+
+    // Test toValueDate validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('toValueDate')
+        .eq('2023-12-31');
+    }).not.toThrow();
+
+    // Test fromExecuteDate validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('fromExecuteDate')
+        .eq('2023-01-01');
+    }).not.toThrow();
+
+    // Test toExecuteDate validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('toExecuteDate')
+        .eq('2023-12-31');
+    }).not.toThrow();
+
+    // Test fromReturnDate validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('fromReturnDate')
+        .eq('2023-01-01');
+    }).not.toThrow();
+
+    // Test toReturnDate validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('toReturnDate')
+        .eq('2023-12-31');
+    }).not.toThrow();
+
+    // Test isSettlement validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('isSettlement')
+        .eq(true);
+    }).not.toThrow();
+
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('isSettlement')
+        .eq(false);
+    }).not.toThrow();
+
+    // Test isSettlement invalid value
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('isSettlement')
+        .eq('true' as any);
+    }).toThrow();
+
+    // Test orderBy validation
+    expect(() => {
+      GetPayments()
+        .list()
+        .where('orderBy')
+        .eq('createdAt');
     }).not.toThrow();
   });
 
@@ -816,7 +1203,7 @@ describe('GetPayments', () => {
     const command = query.execute();
     await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers', {
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
         status: 'EXECUTION_SUCCESS',
         paymentRail: 'ACH',
@@ -866,7 +1253,7 @@ describe('GetPayments', () => {
     const command = query.execute();
 
     expect(command.metadata.commandName).toBe('GetPayments');
-    expect(command.metadata.path).toBe('/v1/transfers');
+    expect(command.metadata.path).toBe('/v1/payments');
     expect(command.metadata.method).toBe('GET');
   });
 });
@@ -906,12 +1293,12 @@ describe('DeletePayment', () => {
     mockAxiosInstance.delete.mockResolvedValue(undefined);
 
     const command = DeletePayment({
-      id: '123'
+      id: 123
     });
 
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/transfers/123');
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
     expect(result).toBeUndefined();
   });
 
@@ -919,7 +1306,7 @@ describe('DeletePayment', () => {
     mockAxiosInstance.delete.mockResolvedValue(undefined);
 
     const command = DeletePayment({
-      id: '123',
+      id: 123,
       tenantId: 'custom-tenant'
     });
 
@@ -927,7 +1314,7 @@ describe('DeletePayment', () => {
     await command.execute(mockConfig);
 
     expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/transfers/123');
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
   });
 
   it('should throw CommandError on API error', async () => {
@@ -945,7 +1332,7 @@ describe('DeletePayment', () => {
     mockAxiosInstance.delete.mockRejectedValue(axiosError);
 
     const command = DeletePayment({
-      id: 'non-existent-id'
+      id: 999
     });
 
     try {
@@ -974,7 +1361,7 @@ describe('DeletePayment', () => {
     mockAxiosInstance.delete.mockRejectedValue(axiosError);
 
     const command = DeletePayment({
-      id: '123'
+      id: 123
     });
 
     try {
@@ -990,11 +1377,11 @@ describe('DeletePayment', () => {
 
   it('should have correct metadata', () => {
     const command = DeletePayment({
-      id: '123'
+      id: 123
     });
 
     expect(command.metadata.commandName).toBe('DeletePayment');
-    expect(command.metadata.path).toBe('/v1/transfers/123');
+    expect(command.metadata.path).toBe('/v1/payments/123');
     expect(command.metadata.method).toBe('DELETE');
   });
 });

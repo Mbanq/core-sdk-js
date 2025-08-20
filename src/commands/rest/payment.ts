@@ -7,6 +7,24 @@ import {
   validatePaymentRail,
   validatePaymentType,
   validateSortOrder,
+  validateOriginatorName,
+  validateOriginatorAccount,
+  validateOriginatorBankRoutingCode,
+  validateRecipientName,
+  validateRecipientAccount,
+  validateRecipientBankRoutingCode,
+  validateReference,
+  validateTraceNumber,
+  validateExternalId,
+  validateClientId,
+  validateDateFormat,
+  validateLocale,
+  validateOriginatedBy,
+  validateValueDate,
+  validateExecuteDate,
+  validateReturnDate,
+  validateIsSettlement,
+  validateOrderBy,
   validateCreatePaymentInput,
   validateUpdatePaymentInput,
   validatePayment,
@@ -46,6 +64,63 @@ const validateFilterValue = (key: string, value: any): void => {
       case 'sortOrder':
         validateSortOrder(value);
         break;
+      case 'originatorName':
+        validateOriginatorName(value);
+        break;
+      case 'originatorAccount':
+        validateOriginatorAccount(value);
+        break;
+      case 'originatorBankRoutingCode':
+        validateOriginatorBankRoutingCode(value);
+        break;
+      case 'recipientName':
+        validateRecipientName(value);
+        break;
+      case 'recipientAccount':
+        validateRecipientAccount(value);
+        break;
+      case 'recipientBankRoutingCode':
+        validateRecipientBankRoutingCode(value);
+        break;
+      case 'reference':
+        validateReference(value);
+        break;
+      case 'traceNumber':
+        validateTraceNumber(value);
+        break;
+      case 'externalId':
+        validateExternalId(value);
+        break;
+      case 'clientId':
+        validateClientId(value);
+        break;
+      case 'dateFormat':
+        validateDateFormat(value);
+        break;
+      case 'locale':
+        validateLocale(value);
+        break;
+      case 'originatedBy':
+        validateOriginatedBy(value);
+        break;
+      case 'fromValueDate':
+      case 'toValueDate':
+        validateValueDate(value);
+        break;
+      case 'fromExecuteDate':
+      case 'toExecuteDate':
+        validateExecuteDate(value);
+        break;
+      case 'fromReturnDate':
+      case 'toReturnDate':
+        validateReturnDate(value);
+        break;
+      case 'isSettlement':
+        validateIsSettlement(value);
+        break;
+      case 'orderBy':
+        validateOrderBy(value);
+        break;
       default:
         break;
     }
@@ -65,7 +140,7 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
     input: params,
     metadata: {
       commandName: 'CreatePayment',
-      path: '/v1/transfers',
+      path: '/v1/payments',
       method: 'POST'
     },
     execute: async (config: Config) => {
@@ -88,7 +163,7 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<Payment>('/v1/transfers', params.payment);
+        const response = await axiosInstance.post<Payment>('/v1/payments', params.payment);
         return validatePayment(response.data);
       } catch (error) {
         handleAxiosError(error);
@@ -97,12 +172,12 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
   };
 };
 
-export const GetPayment = (params: { id: string, tenantId?: string }): Command<{ id: string; tenantId?: string }, Payment> => {
+export const GetPayment = (params: { id: number, tenantId?: string }): Command<{ id: number; tenantId?: string }, Payment> => {
   return {
     input: params,
     metadata: {
       commandName: 'GetPayment',
-      path: `/v1/transfers/${params.id}`,
+      path: `/v1/payments/${params.id}`,
       method: 'GET'
     },
     execute: async (config: Config) => {
@@ -112,7 +187,7 @@ export const GetPayment = (params: { id: string, tenantId?: string }): Command<{
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<Payment>(`/v1/transfers/${params.id}`);
+        const response = await axiosInstance.get<Payment>(`/v1/payments/${params.id}`);
         return validatePayment(response.data);
       } catch (error) {
         handleAxiosError(error);
@@ -121,12 +196,12 @@ export const GetPayment = (params: { id: string, tenantId?: string }): Command<{
   };
 };
 
-export const UpdatePayment = (params: { id: string, payment: UpdatePaymentInput, tenantId?: string }): Command<{ id: string, payment: UpdatePaymentInput, tenantId?: string }, Payment> => {
+export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput, tenantId?: string }): Command<{ id: number, payment: UpdatePaymentInput, tenantId?: string }, Payment> => {
   return {
     input: params,
     metadata: {
       commandName: 'UpdatePayment',
-      path: `/v1/transfers/${params.id}`,
+      path: `/v1/payments/${params.id}`,
       method: 'PUT'
     },
     execute: async (config: Config) => {
@@ -149,7 +224,7 @@ export const UpdatePayment = (params: { id: string, payment: UpdatePaymentInput,
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.put<Payment>(`/v1/transfers/${params.id}`, params.payment);
+        const response = await axiosInstance.put<Payment>(`/v1/payments/${params.id}`, params.payment);
         return validatePayment(response.data);
       } catch (error) {
         handleAxiosError(error);
@@ -159,7 +234,7 @@ export const UpdatePayment = (params: { id: string, payment: UpdatePaymentInput,
 };
 
 const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset?: number, tenantId?: string) => {
-  const buildCommand = (): Command<any, Array<Payment>> => {
+  const buildCommand = (): Command<any, PaymentResponse> => {
     const queryParams = {
       ...filters,
       limit: limit || 200,
@@ -170,7 +245,7 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
       input: { filters, limit, offset, tenantId },
       metadata: {
         commandName: 'GetPayments',
-        path: '/v1/transfers',
+        path: '/v1/payments',
         method: 'GET'
       },
       execute: async (config: Config) => {
@@ -180,8 +255,8 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
         const axiosInstance = await baseRequest(config);
 
         try {
-          const response = await axiosInstance.get<PaymentResponse>('/v1/transfers', { params: queryParams });
-          return response.data.pageItems;
+          const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: queryParams });
+          return response.data;
         } catch (error) {
           handleAxiosError(error);
         }
@@ -213,12 +288,12 @@ export const GetPayments = (params?: { tenantId?: string }) => {
   };
 };
 
-export const DeletePayment = (params: { id: string, tenantId?: string }): Command<{ id: string, tenantId?: string }, void> => {
+export const DeletePayment = (params: { id: number, tenantId?: string }): Command<{ id: number, tenantId?: string }, void> => {
   return {
     input: params,
     metadata: {
       commandName: 'DeletePayment',
-      path: `/v1/transfers/${params.id}`,
+      path: `/v1/payments/${params.id}`,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
@@ -228,7 +303,7 @@ export const DeletePayment = (params: { id: string, tenantId?: string }): Comman
       const axiosInstance = await baseRequest(config);
 
       try {
-        await axiosInstance.delete(`/v1/transfers/${params.id}`);
+        await axiosInstance.delete(`/v1/payments/${params.id}`);
       } catch (error) {
         handleAxiosError(error);
       }
