@@ -20,12 +20,14 @@ export type {
   PaymentResponse,
   PaymentStatus,
   PaymentRailType,
-  PaymentType
+  PaymentType,
+  PaymentFilters
 } from './types/payment';
 
 export {
   PaymentStatusSchema as PaymentStatusZod, PaymentFilterKeySchema as PaymentFilterKeyZod,
   PaymentRailSchema as PaymentRailZod, PaymentTypeSchema as PaymentTypeZod,
   SortOrderSchema as SortOrderZod, CreatePaymentInputSchema as CreatePaymentInputZod,
-  UpdatePaymentInputSchema as UpdatePaymentInputZod, PaymentResponseSchema as PaymentResponseZod
+  UpdatePaymentInputSchema as UpdatePaymentInputZod, PaymentResponseSchema as PaymentResponseZod,
+  PaymentFiltersSchema as PaymentFiltersZod
 } from './types/payment';
