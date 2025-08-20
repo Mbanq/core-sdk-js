@@ -1,3 +1,10 @@
+# [1.0.0-alpha.11](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.10...v1.0.0-alpha.11) (2025-08-20)
+
+
+### Bug Fixes
+
+* expose PaymentFilterShape ([864e23a](https://github.com/mbanq/core-sdk-js/commit/864e23a2d4b5f574a962c727325824c831ae8c47))
+
 # [1.0.0-alpha.10](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2025-08-20)
 
 

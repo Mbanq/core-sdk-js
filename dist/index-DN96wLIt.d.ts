@@ -10,6 +10,35 @@ declare const SortOrderSchema: z.ZodEnum<["ASC", "DESC"]>;
 type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 type PaymentRailType = z.infer<typeof PaymentRailSchema>;
 type PaymentType = z.infer<typeof PaymentTypeSchema>;
+declare const PaymentFilterShape: {
+    originatorName: z.ZodOptional<z.ZodString>;
+    originatorAccount: z.ZodOptional<z.ZodString>;
+    originatorBankRoutingCode: z.ZodOptional<z.ZodString>;
+    recipientName: z.ZodOptional<z.ZodString>;
+    recipientAccount: z.ZodOptional<z.ZodString>;
+    recipientBankRoutingCode: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodString>;
+    traceNumber: z.ZodOptional<z.ZodString>;
+    externalId: z.ZodOptional<z.ZodString>;
+    clientId: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodNumber]>>;
+    dateFormat: z.ZodOptional<z.ZodString>;
+    locale: z.ZodOptional<z.ZodString>;
+    originatedBy: z.ZodOptional<z.ZodString>;
+    paymentRail: z.ZodOptional<z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>>;
+    paymentType: z.ZodOptional<z.ZodEnum<["CREDIT", "DEBIT"]>>;
+    fromValueDate: z.ZodOptional<z.ZodString>;
+    toValueDate: z.ZodOptional<z.ZodString>;
+    fromExecuteDate: z.ZodOptional<z.ZodString>;
+    toExecuteDate: z.ZodOptional<z.ZodString>;
+    status: z.ZodOptional<z.ZodEnum<["DRAFT", "AML_SCREENING", "AML_REJECTED", "EXECUTION_SCHEDULED", "EXECUTION_PROCESSING", "EXECUTION_SUCCESS", "EXECUTION_FAILURE", "RETURNED", "CANCELLED", "COMPLIANCE_FAILURE", "DELETED", "UNKNOWN"]>>;
+    fromReturnDate: z.ZodOptional<z.ZodString>;
+    toReturnDate: z.ZodOptional<z.ZodString>;
+    isSettlement: z.ZodOptional<z.ZodBoolean>;
+    orderBy: z.ZodOptional<z.ZodString>;
+    sortOrder: z.ZodOptional<z.ZodEnum<["ASC", "DESC"]>>;
+    limit: z.ZodOptional<z.ZodNumber>;
+    offset: z.ZodOptional<z.ZodNumber>;
+};
 declare const PaymentFiltersSchema: z.ZodObject<{
     originatorName: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     originatorAccount: z.ZodOptional<z.ZodOptional<z.ZodString>>;
@@ -3970,4 +3999,4 @@ declare const createClient: (initialConfig: Config) => {
     };
 };
 
-export { type CreatePaymentInput as C, type Payment as P, SortOrderSchema as S, type UpdatePaymentInput as U, type PaymentResponse as a, type PaymentStatus as b, createClient as c, type PaymentRailType as d, type PaymentType as e, type PaymentFilters as f, PaymentStatusSchema as g, PaymentFilterKeySchema as h, PaymentRailSchema as i, PaymentTypeSchema as j, CreatePaymentInputSchema as k, UpdatePaymentInputSchema as l, PaymentResponseSchema as m, PaymentFiltersSchema as n };
+export { type CreatePaymentInput as C, type Payment as P, SortOrderSchema as S, type UpdatePaymentInput as U, type PaymentResponse as a, type PaymentStatus as b, createClient as c, type PaymentRailType as d, type PaymentType as e, type PaymentFilters as f, PaymentStatusSchema as g, PaymentFilterKeySchema as h, PaymentRailSchema as i, PaymentTypeSchema as j, CreatePaymentInputSchema as k, UpdatePaymentInputSchema as l, PaymentResponseSchema as m, PaymentFiltersSchema as n, PaymentFilterShape as o };
