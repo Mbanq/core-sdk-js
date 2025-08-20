@@ -1,3 +1,10 @@
+# [1.0.0-alpha.10](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2025-08-20)
+
+
+### Bug Fixes
+
+* fix error of payment operation and improve type schema ([c2a9255](https://github.com/mbanq/core-sdk-js/commit/c2a9255f180d74322fdded97e2885fcc25d69318))
+
 # [1.0.0-alpha.9](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2025-08-19)
 
 
