@@ -1,5 +1,5 @@
-import { C as CreatePaymentInput, P as Payment, U as UpdatePaymentInput } from './index-DOr1ruyx.js';
-export { j as CreatePaymentInputZod, g as PaymentFilterKeyZod, d as PaymentRailType, h as PaymentRailZod, a as PaymentResponse, l as PaymentResponseZod, b as PaymentStatus, f as PaymentStatusZod, e as PaymentType, i as PaymentTypeZod, S as SortOrderZod, k as UpdatePaymentInputZod, c as createClient } from './index-DOr1ruyx.js';
+import { C as CreatePaymentInput, P as Payment, U as UpdatePaymentInput, a as PaymentResponse } from './index-Dn5rWIBE.js';
+export { k as CreatePaymentInputZod, h as PaymentFilterKeyZod, f as PaymentFilters, n as PaymentFiltersZod, d as PaymentRailType, i as PaymentRailZod, m as PaymentResponseZod, b as PaymentStatus, g as PaymentStatusZod, e as PaymentType, j as PaymentTypeZod, S as SortOrderZod, l as UpdatePaymentInputZod, c as createClient } from './index-Dn5rWIBE.js';
 import { M as Middleware, C as Command } from './config.d-CyK6ZM6s.js';
 export { a as Config } from './config.d-CyK6ZM6s.js';
 export { G as GetClientData, c as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from './index-DXK5OdKW.js';
@@ -29,18 +29,18 @@ declare const CreatePayment: (params: {
     tenantId?: string;
 }, Payment>;
 declare const GetPayment: (params: {
-    id: string;
+    id: number;
     tenantId?: string;
 }) => Command<{
-    id: string;
+    id: number;
     tenantId?: string;
 }, Payment>;
 declare const UpdatePayment: (params: {
-    id: string;
+    id: number;
     payment: UpdatePaymentInput;
     tenantId?: string;
 }) => Command<{
-    id: string;
+    id: number;
     payment: UpdatePaymentInput;
     tenantId?: string;
 }, Payment>;
@@ -53,7 +53,7 @@ declare const GetPayments: (params?: {
         };
         limit: (value: number) => /*elided*/ any;
         offset: (value: number) => /*elided*/ any;
-        execute: () => Command<any, Array<Payment>>;
+        execute: () => Command<any, PaymentResponse>;
     };
 };
 
@@ -68,4 +68,4 @@ interface ApiError {
 
 declare const isCommandError: (error: unknown) => error is ApiError;
 
-export { Command, CreatePayment, CreatePaymentInput, GetPayment, GetPayments, type Logger, type MetricsClient, Middleware, Payment, UpdatePayment, UpdatePaymentInput, createLoggingMiddleware, createMetricsMiddleware, isCommandError };
+export { Command, CreatePayment, CreatePaymentInput, GetPayment, GetPayments, type Logger, type MetricsClient, Middleware, Payment, PaymentResponse, UpdatePayment, UpdatePaymentInput, createLoggingMiddleware, createMetricsMiddleware, isCommandError };
