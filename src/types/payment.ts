@@ -430,3 +430,12 @@ export const validateUpdatePaymentInput = (input: unknown): UpdatePaymentInput =
 export const validatePaymentResponse = (response: unknown): PaymentResponse => {
   return PaymentResponseSchema.parse(response);
 };
+
+export const ProcessOutputSchema = z.object({
+  id: z.string(),
+  clientId: z.number(),
+  resourceId: z.number(),
+  resourceIdentifier: z.string()
+});
+
+export type ProcessOutput = z.infer<typeof ProcessOutputSchema>;
