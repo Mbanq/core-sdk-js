@@ -251,7 +251,16 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
   }
 
   const buildCommand = (): Command<any, PaymentResponse> => {
+    // Always include default query parameters
+    const defaultParams = {
+      locale: 'en',
+      originatedBy: 'us',
+      orderBy: 'id',
+      sortOrder: 'DESC'
+    };
+
     const queryParams = {
+      ...defaultParams,
       ...filters,
       limit: limit || 200,
       offset: offset || 0
@@ -280,6 +289,7 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
 
             do {
               const paginationParams = {
+                ...defaultParams,
                 ...filters,
                 limit: pageLimit,
                 offset: currentOffset
@@ -350,7 +360,16 @@ export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: 
       let offset = params.offset || 0;
       let totalFilteredRecords = 0;
 
+      // Always include default query parameters
+      const defaultParams = {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC'
+      };
+
       const newParams = {
+        ...defaultParams,
         ...params,
         limit,
         offset
