@@ -800,6 +800,10 @@ describe('ListPayments', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 200,
         offset: 0
       }
@@ -834,6 +838,10 @@ describe('ListPayments', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         status: 'EXECUTION_SUCCESS',
         limit: 200,
         offset: 0
@@ -861,6 +869,10 @@ describe('ListPayments', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 50,
         offset: 25
       }
@@ -1206,6 +1218,10 @@ describe('ListPayments', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         status: 'EXECUTION_SUCCESS',
         paymentRail: 'ACH',
         limit: 10,
@@ -1370,6 +1386,10 @@ describe('ListPayments', () => {
     // First call with limit 200, offset 0
     expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(1, '/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 200,
         offset: 0
       }
@@ -1378,6 +1398,10 @@ describe('ListPayments', () => {
     // Second call with limit 200, offset 200
     expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(2, '/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 200,
         offset: 200
       }
@@ -1647,6 +1671,10 @@ describe('GetPayments (legacy function)', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 10,
         offset: 0
       }
@@ -1738,6 +1766,10 @@ describe('GetPayments (legacy function)', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 20,
         offset: 0
       }
@@ -1763,6 +1795,10 @@ describe('GetPayments (legacy function)', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
       params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
         limit: 20,
         offset: 0
       }
