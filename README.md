@@ -40,47 +40,42 @@ npm install @mbanq/core-sdk-js
 
 ## Quick Start
 
+Choose your preferred API pattern:
+
+### Modern Fluent API
 ```javascript
-import { createClient } from '@mbanq/core-sdk-js';
+import { CoreSDK } from '@zacbank/core-sdk-js';
 
-// Initialize the client
-const apiClient = createClient({ 
-  secret: 'your-api-secret', 
-  signee: 'YOUR-SIGNEE', 
-  baseUrl: 'https://api.cloud.mbanq.com', 
-  tenantId: 'your-tenant-id' 
+const coreSDK = new CoreSDK({
+  sandbox: true,
+  apiKey: 'your-api-key',
+  apiVersion: 'v2'
 });
 
-// Create a payment
-const payment = await apiClient.payment.create({
-  amount: 1000,
+// Create payment using fluent API
+const payment = await coreSDK.payment.create({
+  amount: 100.00,
   currency: 'USD',
-  paymentRail: 'ACH',
-  paymentType: 'CREDIT',
-  debtor: {
-    name: 'John Sender',
-    identifier: '123456789',
-    agent: {
-      name: 'First Bank',
-      identifier: '021000021'
-    }
-  },
-  creditor: {
-    name: 'Jane Receiver',
-    identifier: '987654321',
-    agent: {
-      name: 'Second Bank', 
-      identifier: '121000248'
-    }
-  }
+  description: 'Payment for invoice #123'
+}).execute();
+```
+
+### Command Pattern
+```javascript
+import { CoreSDK, GetTransfers } from '@zacbank/core-sdk-js';
+
+const coreSDK = new CoreSDK({
+  sandbox: true,
+  apiKey: 'your-api-key',
+  apiVersion: 'v2'
 });
 
-// List payments with filtering
-const payments = await apiClient.payment.list()
-  .where('status').eq('DRAFT')
-  .where('paymentRail').eq('ACH')
-  .limit(10)
-  .execute();
+// Get transfers using command pattern
+const command = GetTransfers({
+  transferStatus: 'EXECUTION_SCHEDULED',
+  tenantId: 'default'
+});
+const transfers = await coreSDK.request(command);
 ```
 
 ## Setup
@@ -340,6 +335,117 @@ const client = createClient({
 ```
 
 ## API Reference
+
+The SDK provides two API patterns for different operations:
+
+### Modern Fluent API (Recommended)
+For payment operations, use the modern fluent API with method chaining:
+
+```javascript
+// Create payment
+const payment = await apiClient.payment.create(paymentData).execute();
+
+// Get payment
+const payment = await apiClient.payment.get('payment-456').execute();
+
+// List with filters
+const payments = await apiClient.payment.list()
+  .where('status').eq('DRAFT')
+  .where('paymentRail').eq('ACH')
+  .execute();
+```
+
+### Command Pattern (Legacy Support)
+For transfer operations, the SDK also supports the traditional command pattern:
+
+```javascript
+// Get transfers with filters
+const getTransfersCommand = GetTransfers({
+  transferStatus: 'EXECUTION_SCHEDULED',
+  executedAt: '2025-01-22',
+  paymentType: 'ACH',
+  queryLimit: 200,
+  tenantId: 'default'
+});
+const transfers = await coreSDK.request(getTransfersCommand);
+
+// Create a new transfer
+const createTransferCommand = CreateTransfer({
+  amount: 1000,
+  currency: 'USD',
+  paymentRail: 'ACH',
+  paymentType: 'CREDIT',
+  debtor: {
+    name: 'Sender Name',
+    identifier: '123456789',
+    agent: { name: 'Bank Name', identifier: '021000021' }
+  },
+  creditor: {
+    name: 'Recipient Name',
+    identifier: '987654321',
+    agent: { name: 'Recipient Bank', identifier: '121000248' }
+  },
+  tenantId: 'default'
+});
+const newTransfer = await coreSDK.request(createTransferCommand);
+
+// Get specific transfer by ID
+const getTransferCommand = GetTransfer({
+  transferId: 'transfer-123',
+  tenantId: 'default'
+});
+const transfer = await coreSDK.request(getTransferCommand);
+
+// Mark transfer as successful
+const markSuccessCommand = MarkAsSuccess({
+  transferId: 'transfer-123',
+  tenantId: 'default'
+});
+await coreSDK.request(markSuccessCommand);
+
+// Mark transfer as processing
+const markProcessingCommand = MarkAsProcessing({
+  transferId: 'transfer-123',
+  tenantId: 'default'
+});
+await coreSDK.request(markProcessingCommand);
+
+// Mark transfer as returned
+const markReturnedCommand = MarkAsReturned({
+  transferId: 'transfer-123',
+  returnCode: 'R01',
+  returnReason: 'Insufficient funds',
+  tenantId: 'default'
+});
+await coreSDK.request(markReturnedCommand);
+
+// Log failed transfer
+const logFailCommand = LogFailTransfer({
+  transferId: 'transfer-123',
+  errorCode: 'E001',
+  errorMessage: 'Processing error',
+  tenantId: 'default'
+});
+await coreSDK.request(logFailCommand);
+
+// Mark transfer as failed
+const markFailCommand = MarkAsFail({
+  transferId: 'transfer-123',
+  failureReason: 'Bank rejected',
+  tenantId: 'default'
+});
+await coreSDK.request(markFailCommand);
+
+// Update trace number
+const updateTraceCommand = UpdateTraceNumber({
+  transferId: 'transfer-123',
+  traceNumber: 'TRC123456789',
+  tenantId: 'default'
+});
+await coreSDK.request(updateTraceCommand);
+```
+
+Available transfer commands: `GetTransfers`, `CreateTransfer`, `GetTransfer`, `MarkAsSuccess`, `MarkAsProcessing`, `MarkAsReturned`, `LogFailTransfer`, `MarkAsFail`, `UpdateTraceNumber`
 
 ### Payment Operations
 
