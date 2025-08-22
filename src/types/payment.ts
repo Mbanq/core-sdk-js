@@ -249,8 +249,7 @@ export const validatePaymentFilters = (filters: unknown): PaymentFilters => {
   return PaymentFiltersSchema.parse(filters);
 };
 
-// Payment entity schemas
-export const PaymentSchema = z.object({
+export const PaymentShape = {
   id: z.number(),
   clientId: z.number(),
   amount: z.number().positive(),
@@ -296,7 +295,9 @@ export const PaymentSchema = z.object({
     isBaseCurrency: z.boolean()
   }),
   currency: z.string().min(3).max(3)
-}).catchall(z.any()); // Allow additional properties
+};
+
+export const PaymentSchema = z.object(PaymentShape).catchall(z.any()); // Allow additional properties
 
 // Address schema for recipient/originator addresses
 const AddressSchema = z.object({
@@ -323,7 +324,7 @@ const AccountHolderSchema = z.object({
   agent: AgentSchema
 });
 
-export const CreatePaymentInputSchema = z.object({
+export const CreatePaymentInputShape = {
   // Core payment fields
   amount: z.number().positive(),
   currency: z.string().min(3).max(3), // ISO 4217 currency codes
@@ -351,7 +352,9 @@ export const CreatePaymentInputSchema = z.object({
   // Execution details
   valueDate: z.string().optional(), // ISO date format
   executionDate: z.string().optional() // ISO date format
-}).catchall(z.any()) // Allow additional properties
+};
+
+export const CreatePaymentInputSchema = z.object(CreatePaymentInputShape).catchall(z.any()) // Allow additional properties
   .refine((data) => {
     // Custom validation: For WIRE transfers, recipient address is mandatory
     if ((data.paymentRail === 'WIRE' || data.paymentRail === 'SWIFT') && data.creditor) {
@@ -364,7 +367,7 @@ export const CreatePaymentInputSchema = z.object({
     message: 'For WIRE transfers, recipient address with state and country is mandatory'
   });
 
-export const UpdatePaymentInputSchema = z.object({
+export const UpdatePaymentInputShape = {
   amount: z.number().positive().optional(),
   correspondent: z.object({
     name: z.string().optional(),
@@ -396,7 +399,9 @@ export const UpdatePaymentInputSchema = z.object({
   reference: z.union([z.string(), z.array(z.string())]).optional(),
   paymentRailMetaData: z.record(z.string(), z.any()).optional(),
   status: PaymentStatusSchema.optional()
-}).catchall(z.any()); // Allow additional properties
+};
+
+export const UpdatePaymentInputSchema = z.object(UpdatePaymentInputShape).catchall(z.any()); // Allow additional properties
 
 export const PaymentResponseSchema = z.object({
   totalFilteredRecords: z.number(),
