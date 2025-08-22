@@ -1,3 +1,10 @@
+# [1.0.0-alpha.15](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.14...v1.0.0-alpha.15) (2025-08-22)
+
+
+### Bug Fixes
+
+* add missing default query parameters for list payments ([220b324](https://github.com/mbanq/core-sdk-js/commit/220b324d5046da24eaa2c5b9ec8678a8045dd38c))
+
 # [1.0.0-alpha.14](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.13...v1.0.0-alpha.14) (2025-08-22)
 
 
