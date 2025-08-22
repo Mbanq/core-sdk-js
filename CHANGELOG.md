@@ -1,3 +1,10 @@
+# [1.0.0-alpha.14](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.13...v1.0.0-alpha.14) (2025-08-22)
+
+
+### Bug Fixes
+
+* update document ([05bb176](https://github.com/mbanq/core-sdk-js/commit/05bb17618e622a1959779c3d456bff0fbace11ca))
+
 # [1.0.0-alpha.13](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2025-08-22)
 
 
