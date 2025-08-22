@@ -44,12 +44,13 @@ Choose your preferred API pattern:
 
 ### Modern Fluent API
 ```javascript
-import { CoreSDK } from '@zacbank/core-sdk-js';
+import { CoreSDK } from '@mbanq/core-sdk-js';
 
 const coreSDK = new CoreSDK({
-  sandbox: true,
-  apiKey: 'your-api-key',
-  apiVersion: 'v2'
+  secret: 'your-jwt-secret',
+  signee: 'YOUR-SIGNEE', 
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
 });
 
 // Create payment using fluent API
@@ -62,12 +63,13 @@ const payment = await coreSDK.payment.create({
 
 ### Command Pattern
 ```javascript
-import { CoreSDK, GetTransfers } from '@zacbank/core-sdk-js';
+import { CoreSDK, GetTransfers } from '@mbanq/core-sdk-js';
 
 const coreSDK = new CoreSDK({
-  sandbox: true,
-  apiKey: 'your-api-key',
-  apiVersion: 'v2'
+  secret: 'your-jwt-secret',
+  signee: 'YOUR-SIGNEE', 
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
 });
 
 // Get transfers using command pattern
