@@ -16,26 +16,6 @@
         "assets": ["package.json", "dist/", "CHANGELOG.md"],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
-    ],
-    [
-      "semantic-release-slack-bot",
-      {
-        "notifyOnSuccess": false,
-        "notifyOnFail": false,
-        "slackToken": "${env.SLACK_TOKEN}",
-        "branchesConfig": [
-          {
-            "pattern": "master",
-            "notifyOnSuccess": true,
-            "notifyOnFail": true
-          },
-          {
-            "pattern": "beta",
-            "notifyOnSuccess": true,
-            "notifyOnFail": true
-          }
-        ]
-      }
     ]
   ]
 }
