@@ -1382,7 +1382,7 @@ describe('ListPayments', () => {
 
     // Should make two API calls for pagination
     expect(mockAxiosInstance.get).toHaveBeenCalledTimes(2);
-    
+
     // First call with limit 200, offset 0
     expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(1, '/v1/payments', {
       params: {
@@ -1862,5 +1862,36 @@ describe('GetPayments (legacy function)', () => {
     expect(command.metadata.commandName).toBe('GetPayments');
     expect(command.metadata.path).toBe('/v1/payments');
     expect(command.metadata.method).toBe('GET');
+  });
+
+  it('should automatically set dateFormat param when any params fromValueDate, toValueDate, fromExecuteDate, toExecuteDate, fromReturnDate, toReturnDate are set', async () => {
+    const mockResponse = {
+      data: {
+        totalFilteredRecords: 1,
+        pageItems: []
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = GetPayments(
+      { limit: 10, fromValueDate: '2023-01-01' },
+      { tenantId: 'test-tenant' }
+    );
+
+    await command.execute(mockConfig);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
+      params: {
+        locale: 'en',
+        originatedBy: 'us',
+        orderBy: 'id',
+        sortOrder: 'DESC',
+        limit: 10,
+        offset: 0,
+        fromValueDate: '2023-01-01',
+        dateFormat: 'yyyy-MM-dd'
+      }
+    });
   });
 });
