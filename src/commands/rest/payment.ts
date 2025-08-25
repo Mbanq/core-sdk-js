@@ -368,9 +368,30 @@ export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: 
         sortOrder: 'DESC'
       };
 
+      // Extracted helper: If any date-range filters are present and dateFormat
+      // isn't provided, set a sensible default so the API receives consistent
+      // date strings.
+      const applyDefaultDateFormat = (inputParams: Record<string, any>) => {
+        const dateFilterKeys = [
+          'fromValueDate',
+          'toValueDate',
+          'fromExecuteDate',
+          'toExecuteDate',
+          'fromReturnDate',
+          'toReturnDate'
+        ];
+
+        const hasDateFilter = dateFilterKeys.some((k) => inputParams[k] !== undefined);
+        const paramsCopy = { ...inputParams };
+        if (hasDateFilter && paramsCopy.dateFormat === undefined) {
+          paramsCopy.dateFormat = 'yyyy-MM-dd';
+        }
+        return paramsCopy;
+      };
+
       const newParams = {
         ...defaultParams,
-        ...params,
+        ...applyDefaultDateFormat(params as Record<string, any>),
         limit,
         offset
       };
