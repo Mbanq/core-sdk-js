@@ -1,3 +1,10 @@
+# [1.0.0-alpha.16](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.15...v1.0.0-alpha.16) (2025-08-25)
+
+
+### Bug Fixes
+
+* add default dateFormat ([c4210fb](https://github.com/mbanq/core-sdk-js/commit/c4210fb5c4a499ddb1a4d6d1522f5c28cc5852ab))
+
 # [1.0.0-alpha.15](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.14...v1.0.0-alpha.15) (2025-08-22)
 
 
