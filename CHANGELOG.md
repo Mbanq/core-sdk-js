@@ -1,3 +1,38 @@
+# 1.0.0 (2025-08-25)
+
+
+### Bug Fixes
+
+* add default dateFormat ([8ed4628](https://github.com/mbanq/core-sdk-js/commit/8ed46283f4ee1c3f794baf958999949436ffe2fe))
+* Add description to limit param ([5a5366f](https://github.com/mbanq/core-sdk-js/commit/5a5366f3c18a5753cf65a2fd0c98848637be6734))
+* add missing default query parameters for list payments ([304436b](https://github.com/mbanq/core-sdk-js/commit/304436b4d2e317d2b1003457889c7accfc5cdfa4))
+* complete unit test , type safety and update document ([377d667](https://github.com/mbanq/core-sdk-js/commit/377d667ba17100b2369d683dfa4e74365a105624))
+* correct url of operation payment and update unit test ([8fcb48f](https://github.com/mbanq/core-sdk-js/commit/8fcb48f1a6d852df4120a9e19effae5cc8f404df))
+* downgrade zod to v3 ([96ca19d](https://github.com/mbanq/core-sdk-js/commit/96ca19df175cd6c3885ac059c8c5b9d7713d728b))
+* expose more type and update document ([4755c0d](https://github.com/mbanq/core-sdk-js/commit/4755c0d411489d8de96c3f5f4605e075d4a3902c))
+* expose PaymentFilterShape ([28c3f66](https://github.com/mbanq/core-sdk-js/commit/28c3f66f29bb400f09fae5c224818ab866f932f6))
+* expose type of zod ([bced766](https://github.com/mbanq/core-sdk-js/commit/bced7665e0ad65e7f5dfa052534fbff4866dc212))
+* fix build ([4d27117](https://github.com/mbanq/core-sdk-js/commit/4d27117866ba7798172985dcc652ab48bab19842))
+* fix error of payment operation and improve type schema ([edff973](https://github.com/mbanq/core-sdk-js/commit/edff97325b5f3a302648f7428f1fc90e8e042cd6))
+* fix release ([3ad1020](https://github.com/mbanq/core-sdk-js/commit/3ad1020ee6ba928b538490a9e270e9e163f677bc))
+* fix release ([3829db0](https://github.com/mbanq/core-sdk-js/commit/3829db0dadfb6d60dc000069cd190b8352182e20))
+* fix release ([056475a](https://github.com/mbanq/core-sdk-js/commit/056475ac7d36ab27c5003e4602ea83a285747d3e))
+* fix release ([35ca8dc](https://github.com/mbanq/core-sdk-js/commit/35ca8dcc30a483d0784abbf3c38b36906603094b))
+* init release alpha version ([b9bae76](https://github.com/mbanq/core-sdk-js/commit/b9bae76c47f1a7ee6d4b21ccc0f34903b7d92584))
+* missing library zod ([aa46dc7](https://github.com/mbanq/core-sdk-js/commit/aa46dc708c360eb97a97c248e0d61509cb432584))
+* now all Payment Operation will end with execute() ([515b828](https://github.com/mbanq/core-sdk-js/commit/515b82892d259efb0bfbd3e1332eb13574788e20))
+* remove sls-utils and add option traceId in config ([03a5fcd](https://github.com/mbanq/core-sdk-js/commit/03a5fcdc6fc2fa9853c40218636ed2d2dc1a9457))
+* update document ([52a061d](https://github.com/mbanq/core-sdk-js/commit/52a061dcaf724fd63625013ca7677793bab66a0d))
+* update README and package.json ([9e4341b](https://github.com/mbanq/core-sdk-js/commit/9e4341bb3d05b2d1eb149171b4c4b5e8d2ab08aa))
+* update unit test of transfer ([cbd4103](https://github.com/mbanq/core-sdk-js/commit/cbd41030ef36d94366b7c7145c3774e202002374))
+
+
+### Features
+
+* completed payment API with comprehensive Zod-based validation and TypeScript types and bearer token authentication support ([b3b0364](https://github.com/mbanq/core-sdk-js/commit/b3b0364d101cf2842b56b224daf0be46f3024400))
+* init project ([8ed4dab](https://github.com/mbanq/core-sdk-js/commit/8ed4dab6cba51ffef994d410837330de6ff773ce))
+* now support get payments using command and allow to get all records ([c081b59](https://github.com/mbanq/core-sdk-js/commit/c081b596fd54cb7a678d9437355f7aa0de2d263b))
+
 # [1.0.0-alpha.16](https://github.com/mbanq/core-sdk-js/compare/v1.0.0-alpha.15...v1.0.0-alpha.16) (2025-08-25)
 
 
