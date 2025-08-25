@@ -235,7 +235,7 @@ export const PaymentFilterShape = {
   isSettlement: IsSettlementSchema.optional(),
   orderBy: OrderBySchema.optional(),
   sortOrder: SortOrderSchema.optional(),
-  limit: z.number().positive().optional().describe('Max number of records to return. Defaults to 20 if not provided. To fetch all records, set to 0.'),
+  limit: z.number().positive().optional().describe('Maximum number of records to return. Defaults to 20 if not specified. Set to 0 to fetch all records.'),
   offset: z.number().min(0).optional()
 };
 
