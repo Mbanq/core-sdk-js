@@ -31,7 +31,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          SLACK_TOKEN: https://hooks.slack.com/services/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
-          SLACK_NAME: Alert Update Package
-          SLACK_CHANNEL: internal-package-release-notification
         run: npx semantic-release
