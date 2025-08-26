@@ -1,8 +1,8 @@
-import { P as PaymentRail, d as ProcessOutput, M as MarkAsReturnInput, T as Transfer, e as GetTransferInput, f as UpdateTraceNumbersInput, C as CreateTransferInput, g as CreateTransferOutput } from '../index-5Sj83ZJ4.mjs';
-export { G as GetClientData, c as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from '../index-5Sj83ZJ4.mjs';
-import { C as Command } from '../config.d-CyK6ZM6s.mjs';
+export { C as CreateClient, D as DeleteClient, G as GetClient, c as GetClients, d as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from '../index-BHzajnME.mjs';
+import { d as PaymentRail, C as Command, P as ProcessOutput, e as MarkAsReturnInput, T as Transfer, G as GetTransferInput, f as UpdateTraceNumbersInput, g as CreateTransferInput, h as CreateTransferOutput } from '../client-DhU5QMWd.mjs';
 import 'graphql';
 import 'axios';
+import 'zod';
 
 interface CustomUpdateInput {
   commandName?: string;

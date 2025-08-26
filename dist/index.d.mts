@@ -1,8 +1,8 @@
-import { C as CreatePaymentInput, P as Payment, U as UpdatePaymentInput, a as PaymentFilters, b as PaymentResponse } from './index-DvE2ddFU.mjs';
-export { q as CreatePaymentInputShape, k as CreatePaymentInputZod, h as PaymentFilterKeyZod, o as PaymentFilterShape, n as PaymentFiltersZod, e as PaymentRailType, i as PaymentRailZod, m as PaymentResponseZod, p as PaymentShape, d as PaymentStatus, g as PaymentStatusZod, f as PaymentType, j as PaymentTypeZod, S as SortOrderZod, r as UpdatePaymentInputShape, l as UpdatePaymentInputZod, c as createClient } from './index-DvE2ddFU.mjs';
-import { M as Middleware, C as Command } from './config.d-CyK6ZM6s.mjs';
-export { a as Config } from './config.d-CyK6ZM6s.mjs';
-export { G as GetClientData, c as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from './index-5Sj83ZJ4.mjs';
+import { C as CreatePaymentInput, P as Payment, U as UpdatePaymentInput, a as PaymentFilters, b as PaymentResponse } from './index-BC3pkS--.mjs';
+export { q as CreatePaymentInputShape, k as CreatePaymentInputZod, h as PaymentFilterKeyZod, o as PaymentFilterShape, n as PaymentFiltersZod, e as PaymentRailType, i as PaymentRailZod, m as PaymentResponseZod, p as PaymentShape, d as PaymentStatus, g as PaymentStatusZod, f as PaymentType, j as PaymentTypeZod, S as SortOrderZod, r as UpdatePaymentInputShape, l as UpdatePaymentInputZod, c as createClient } from './index-BC3pkS--.mjs';
+import { M as Middleware, C as Command } from './client-DhU5QMWd.mjs';
+export { a as Config } from './client-DhU5QMWd.mjs';
+export { C as CreateClient, D as DeleteClient, G as GetClient, c as GetClients, d as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from './index-BHzajnME.mjs';
 import 'zod';
 import 'graphql';
 import 'axios';
@@ -20,6 +20,15 @@ interface Logger {
     log?: (message: string, ...args: unknown[]) => void;
 }
 declare const createLoggingMiddleware: (logger?: Logger) => Middleware;
+
+interface ApiError {
+  name: string;
+  message: string;
+  statusCode?: number;
+  code?: string;
+  requestId?: string;
+  originalError?: Error;
+}
 
 declare const CreatePayment: (params: {
     payment: CreatePaymentInput;
@@ -53,15 +62,7 @@ declare const GetPayments: (params: PaymentFilters, configuration: {
     };
 }, PaymentResponse>;
 
-interface ApiError {
-  name: string;
-  message: string;
-  statusCode?: number;
-  code?: string;
-  requestId?: string;
-  originalError?: Error;
-}
-
+declare const createCommandError: ({ message, statusCode, code, requestId, originalError }: Omit<ApiError, "name">) => ApiError;
 declare const isCommandError: (error: unknown) => error is ApiError;
 
-export { Command, CreatePayment, CreatePaymentInput, GetPayment, GetPayments, type Logger, type MetricsClient, Middleware, Payment, PaymentFilters, PaymentResponse, UpdatePayment, UpdatePaymentInput, createLoggingMiddleware, createMetricsMiddleware, isCommandError };
+export { type ApiError, Command, CreatePayment, CreatePaymentInput, GetPayment, GetPayments, type Logger, type MetricsClient, Middleware, Payment, PaymentFilters, PaymentResponse, UpdatePayment, UpdatePaymentInput, createCommandError, createLoggingMiddleware, createMetricsMiddleware, isCommandError };

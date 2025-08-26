@@ -1,5 +1,5 @@
+import '../client-DhU5QMWd.mjs';
+export { c as createClient } from '../index-BC3pkS--.mjs';
 import 'zod';
-import '../config.d-CyK6ZM6s.mjs';
-export { c as createClient } from '../index-DvE2ddFU.mjs';
 import 'graphql';
 import 'axios';
