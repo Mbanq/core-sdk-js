@@ -3,6 +3,8 @@ import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
 import { CreatePayment, GetPayment, UpdatePayment, DeletePayment, ListPayments } from '../commands/rest/payment';
 import type { CreatePaymentInput, UpdatePaymentInput } from '../types/payment';
+import { CreateClientRequest, UpdateClientIdentifierRequest, UpdateClientRequest } from '../types/client';
+import { CreateClient, GetClient, ListClients, UpdateClient, UpdateClientIdentifier, DeleteClient } from '../commands/rest/client';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -96,6 +98,92 @@ export const createClient = (initialConfig: Config) => {
         },
         list: () => {
           const query = ListPayments({ tenantId: effectiveTenantId });
+          const currentBuilder = query.list();
+
+          const createChainableObject = (builder: any) => ({
+            where: builder.where,
+            limit: (value: number) => {
+              const newBuilder = builder.limit(value);
+              return createChainableObject(newBuilder);
+            },
+            offset: (value: number) => {
+              const newBuilder = builder.offset(value);
+              return createChainableObject(newBuilder);
+            },
+            all: () => {
+              const newBuilder = builder.all();
+              return createChainableObject(newBuilder);
+            },
+            execute: async () => {
+              const command = builder.execute();
+              return requestHandler(command);
+            }
+          });
+
+          return createChainableObject(currentBuilder);
+        }
+      },
+      client: {
+        create: (data: CreateClientRequest) => {
+          const command = CreateClient({
+            clientData: data,
+            tenantId: effectiveTenantId
+          });
+          return {
+            execute: async () => {
+              return requestHandler(command);
+            }
+          };
+        },
+        get: (id: number) => {
+          const command = GetClient({
+            clientId: id,
+            tenantId: effectiveTenantId
+          });
+          return {
+            execute: async () => {
+              return requestHandler(command);
+            }
+          };
+        },
+        update: (id: number, data: UpdateClientRequest) => {
+          const command = UpdateClient({
+            clientId: id,
+            updates: data,
+            tenantId: effectiveTenantId
+          });
+          return {
+            execute: async () => {
+              return requestHandler(command);
+            }
+          };
+        },
+        updateDocumentRecord: (id: number, data: UpdateClientIdentifierRequest) => {
+          const command = UpdateClientIdentifier({
+            clientId: id,
+            identifierId: data.id,
+            updates: data,
+            tenantId: effectiveTenantId
+          });
+          return {
+            execute: async () => {
+              return requestHandler(command);
+            }
+          };
+        },
+        delete: (id: number) => {
+          const command = DeleteClient({
+            clientId: id,
+            tenantId: effectiveTenantId
+          });
+          return {
+            execute: async () => {
+              return requestHandler(command);
+            }
+          };
+        },
+        list: () => {
+          const query = ListClients({ tenantId: effectiveTenantId });
           const currentBuilder = query.list();
 
           const createChainableObject = (builder: any) => ({

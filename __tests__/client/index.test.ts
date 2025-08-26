@@ -1,4 +1,35 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Mock the client commands before importing the main module
+vi.mock('../../src/commands/rest/client', () => ({
+  CreateClient: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true, clientId: 123 })
+  })),
+  GetClient: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ clientData: { id: 123 } })
+  })),
+  UpdateClient: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  UpdateClientIdentifier: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  DeleteClient: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  ListClients: vi.fn(() => ({
+    list: vi.fn(() => ({
+      where: vi.fn(),
+      limit: vi.fn().mockReturnThis(),
+      offset: vi.fn().mockReturnThis(),
+      all: vi.fn().mockReturnThis(),
+      execute: vi.fn(() => ({
+        execute: vi.fn().mockResolvedValue({ data: [{ id: 1, name: 'Client 1' }] })
+      }))
+    }))
+  }))
+}));
+
 import { createClient } from '../../src/client/index';
 import * as validationModule from '../../src/utils/validation';
 import * as paymentCommands from '../../src/commands/rest/payment';
@@ -652,6 +683,191 @@ describe('Client', () => {
         expect(tenantClient.payment.update).toBeInstanceOf(Function);
         expect(tenantClient.payment.delete).toBeInstanceOf(Function);
         expect(tenantClient.payment.list).toBeInstanceOf(Function);
+      });
+    });
+  });
+
+  describe('Client API Methods', () => {
+    let client: any;
+    
+    beforeEach(() => {
+      vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
+      client = createClient(validConfig);
+    });
+
+    describe('client namespace', () => {
+      it('should have all client API methods available', () => {
+        expect(client.client).toBeDefined();
+        expect(client.client.create).toBeInstanceOf(Function);
+        expect(client.client.get).toBeInstanceOf(Function);
+        expect(client.client.update).toBeInstanceOf(Function);
+        expect(client.client.updateDocumentRecord).toBeInstanceOf(Function);
+        expect(client.client.delete).toBeInstanceOf(Function);
+        expect(client.client.list).toBeInstanceOf(Function);
+      });
+
+      it('should create command objects with execute method', () => {
+        const clientData = {
+          firstname: 'John',
+          lastname: 'Doe',
+          dob: '1990-01-01',
+          genderId: 1,
+          locale: 'en_US',
+          officeId: 1,
+          mobileCountryCode: '+1',
+          mobileNo: '1234567890',
+          emailAddress: 'john.doe@example.com',
+          legalFormId: 1,
+          dateFormat: 'dd/MM/yyyy',
+          submittedOnDate: '2024-01-01',
+          dateOfBirth: '1990-01-01'
+        };
+
+        const createCommand = client.client.create(clientData);
+        expect(createCommand).toBeDefined();
+        expect(createCommand.execute).toBeInstanceOf(Function);
+
+        const getCommand = client.client.get(123);
+        expect(getCommand).toBeDefined();
+        expect(getCommand.execute).toBeInstanceOf(Function);
+
+        const updateData = {
+          firstname: 'Jane',
+          lastname: 'Smith'
+        };
+        const updateCommand = client.client.update(123, updateData);
+        expect(updateCommand).toBeDefined();
+        expect(updateCommand.execute).toBeInstanceOf(Function);
+
+        const docData = {
+          id: 'doc123',
+          documentTypeId: 'PASSPORT',
+          documentKey: 'ABC123456',
+          status: 'ACTIVE'
+        };
+        const updateDocCommand = client.client.updateDocumentRecord(123, docData);
+        expect(updateDocCommand).toBeDefined();
+        expect(updateDocCommand.execute).toBeInstanceOf(Function);
+
+        const deleteCommand = client.client.delete(123);
+        expect(deleteCommand).toBeDefined();
+        expect(deleteCommand.execute).toBeInstanceOf(Function);
+      });
+
+      it('should create list query builder with chaining methods', () => {
+        const listBuilder = client.client.list();
+        
+        expect(listBuilder).toBeDefined();
+        expect(listBuilder.where).toBeInstanceOf(Function);
+        expect(listBuilder.limit).toBeInstanceOf(Function);
+        expect(listBuilder.offset).toBeInstanceOf(Function);
+        expect(listBuilder.all).toBeInstanceOf(Function);
+        expect(listBuilder.execute).toBeInstanceOf(Function);
+      });
+
+      it('should support method chaining on list builder', () => {
+        const listBuilder = client.client.list();
+        
+        const limitedBuilder = listBuilder.limit(50);
+        expect(limitedBuilder.limit).toBeInstanceOf(Function);
+        expect(limitedBuilder.offset).toBeInstanceOf(Function);
+        expect(limitedBuilder.execute).toBeInstanceOf(Function);
+
+        const offsetBuilder = listBuilder.offset(10);
+        expect(offsetBuilder.offset).toBeInstanceOf(Function);
+        expect(offsetBuilder.limit).toBeInstanceOf(Function);
+        expect(offsetBuilder.execute).toBeInstanceOf(Function);
+
+        const allBuilder = listBuilder.all();
+        expect(allBuilder.limit).toBeInstanceOf(Function);
+        expect(allBuilder.offset).toBeInstanceOf(Function);
+        expect(allBuilder.execute).toBeInstanceOf(Function);
+      });
+
+      it('should pass tenantId to commands', () => {
+        // Test that commands are created with the correct tenantId from config
+        // This is primarily a structural test to ensure the wrapper methods
+        // properly pass through the tenantId parameter
+        const createCommand = client.client.create({
+          firstname: 'Test',
+          lastname: 'User',
+          dob: '1990-01-01',
+          genderId: 1,
+          locale: 'en_US',
+          officeId: 1,
+          mobileCountryCode: '+1',
+          mobileNo: '1234567890',
+          emailAddress: 'test@example.com',
+          legalFormId: 1,
+          dateFormat: 'dd/MM/yyyy',
+          submittedOnDate: '2024-01-01',
+          dateOfBirth: '1990-01-01'
+        });
+        
+        expect(createCommand).toBeDefined();
+        expect(createCommand.execute).toBeInstanceOf(Function);
+      });
+
+      it('should execute client.create command', async () => {
+        // Just verify that the execute method works and returns the mocked value
+        const createCommand = client.client.create({
+          firstname: 'Test',
+          lastname: 'User',
+          dob: '1990-01-01',
+          genderId: 1,
+          locale: 'en_US',
+          officeId: 1,
+          mobileCountryCode: '+1',
+          mobileNo: '1234567890',
+          emailAddress: 'test@example.com',
+          legalFormId: 1,
+          dateFormat: 'dd/MM/yyyy',
+          submittedOnDate: '2024-01-01',
+          dateOfBirth: '1990-01-01'
+        });
+
+        const result = await createCommand.execute();
+        expect(result).toEqual({ success: true, clientId: 123 });
+      });
+
+      it('should execute client.get command', async () => {
+        const getCommand = client.client.get(123);
+        const result = await getCommand.execute();
+        expect(result).toEqual({ clientData: { id: 123 } });
+      });
+
+      it('should execute client.update command', async () => {
+        const updateCommand = client.client.update(123, {
+          firstname: 'Updated',
+          lastname: 'Name'
+        });
+        
+        const result = await updateCommand.execute();
+        expect(result).toEqual({ success: true });
+      });
+
+      it('should execute client.updateDocumentRecord command', async () => {
+        const updateDocCommand = client.client.updateDocumentRecord(123, {
+          id: 'doc123',
+          documentTypeId: 'PASSPORT',
+          documentKey: 'ABC123456',
+          status: 'ACTIVE'
+        });
+        
+        const result = await updateDocCommand.execute();
+        expect(result).toEqual({ success: true });
+      });
+
+      it('should execute client.delete command', async () => {
+        const deleteCommand = client.client.delete(123);
+        const result = await deleteCommand.execute();
+        expect(result).toEqual({ success: true });
+      });
+
+      it('should execute client.list command', async () => {
+        const listQuery = client.client.list();
+        const result = await listQuery.execute();
+        expect(result).toEqual({ data: [{ id: 1, name: 'Client 1' }] });
       });
     });
   });

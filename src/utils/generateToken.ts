@@ -1,9 +1,15 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { Credential } from '../types/config';
+import { createCommandError } from './errorHandler';
 
 export const generateTokenWithJWT = (secret: string, signee: string): string => {
-  if (!secret) throw new Error('Missing JWT secret');
+  if (!secret) {
+    throw createCommandError({
+      message: 'Missing JWT secret',
+      code: 'missing_jwt_secret'
+    });
+  }
 
   const token = jwt.sign({ signee }, secret, { algorithm: 'HS512', expiresIn: '1d' });
 

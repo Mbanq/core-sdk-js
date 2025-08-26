@@ -5,6 +5,7 @@ import type { GetTransferInput, MarkAsReturnInput, ProcessOutput, CreateTransfer
 import type { CustomGetInput, CustomCreateInput, CustomUpdateInput } from './custom';
 import type { MetricsClient } from '../middlewares/metrics';
 import type { Logger } from '../middlewares/logging';
+import type { ApiError } from './error';
 import {
   PaymentStatusSchema as PaymentStatusZod, PaymentFilterKeySchema as PaymentFilterKeyZod,
   PaymentRailSchema as PaymentRailZod, PaymentTypeSchema as PaymentTypeZod,
@@ -30,6 +31,7 @@ export {
   CustomUpdateInput,
   MetricsClient,
   Logger,
+  ApiError,
   PaymentStatusZod,
   PaymentFilterKeyZod,
   PaymentRailZod,
