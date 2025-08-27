@@ -20,12 +20,11 @@
   - [Metrics Middleware](#metrics-middleware)
   - [Custom Middleware](#custom-middleware)
 - [API Reference](#api-reference)
+  - [Client Operations](#client-operations)
+  - [Account Operations](#account-operations)
   - [Payment Operations](#payment-operations)
-    - [Create Payment](#create-payment)
-    - [Get Payment](#get-payment)
-    - [Update Payment](#update-payment)
-    - [List Payments](#list-payments)
   - [Multi-Tenant Support](#multi-tenant-support)
+- [Documentation](#documentation)
 - [Type Safety & Validation](#type-safety--validation)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
@@ -341,7 +340,7 @@ const client = createClient({
 The SDK provides two API patterns for different operations:
 
 ### Modern Fluent API (Recommended)
-For payment operations, use the modern fluent API with method chaining:
+For payment, client, and account operations, use the modern fluent API with method chaining:
 
 ```javascript
 // Create payment
@@ -449,149 +448,208 @@ await coreSDK.request(updateTraceCommand);
 
 Available transfer commands: `GetTransfers`, `CreateTransfer`, `GetTransfer`, `MarkAsSuccess`, `MarkAsProcessing`, `MarkAsReturned`, `LogFailTransfer`, `MarkAsFail`, `UpdateTraceNumber`
 
-### Payment Operations
+### Client Operations
 
-#### Create Payment
-
-Creates a new payment with comprehensive validation.
+The SDK provides comprehensive client management capabilities with full CRUD operations and advanced filtering. For complete documentation, see [Client API Documentation](./docs/CLIENT_API.md).
 
 ```javascript
-const payment = await apiClient.payment.create({
-  // Required fields
-  amount: 1000,
-  currency: 'USD',
-  paymentRail: 'ACH', // ACH, WIRE, SWIFT, INTERNAL, FXPAY, CARD
-  paymentType: 'CREDIT', // CREDIT or DEBIT
-  
-  // Originator (sender)
-  debtor: {
-    name: 'John Sender',
-    identifier: '123456789', // Account number
-    accountType: 'CHECKING', // Optional: CHECKING or SAVINGS
-    agent: {
-      name: 'First Bank',
-      identifier: '021000021' // Routing code
-    }
-  },
-  
-  // Recipient (receiver)
-  creditor: {
-    name: 'Jane Receiver',
-    identifier: '987654321',
-    accountType: 'SAVINGS',
-    address: { // Required for WIRE transfers
-      streetAddress: '123 Main St',
-      city: 'New York',
-      state: 'NY',
-      country: 'US',
-      postalCode: '10001'
-    },
-    agent: {
-      name: 'Second Bank',
-      identifier: '121000248'
-    }
-  },
-  
-  // Optional fields
-  clientId: 'client-123',
-  reference: ['Invoice-001', 'Payment-ABC'],
-  exchangeRate: 1.25,
-  chargeBearer: 'OUR', // For SWIFT: OUR, BEN, SHA
-  valueDate: '2025-01-15',
-  paymentRailMetaData: {
-    priority: 'high',
-    category: 'business'
-  }
+// Create a new client
+const client = await apiClient.client.create({
+  firstname: 'John',
+  lastname: 'Doe',
+  emailAddress: 'john.doe@example.com',
+  dateOfBirth: '1990-01-01',
+  locale: 'en'
 }).execute();
-```
 
-#### Get Payment
+// Get client details
+const clientDetails = await apiClient.client.get(123).execute();
 
-Retrieves a specific payment by ID.
-
-```javascript
-const payment = await apiClient.payment.get('payment-456').execute();
-```
-
-#### Update Payment
-
-Updates an existing payment. All fields are optional.
-
-```javascript
-const updatedPayment = await apiClient.payment.update('payment-456', {
-  amount: 1500,
-  status: 'EXECUTION_SCHEDULED',
-  creditor: {
-    name: 'Updated Recipient Name'
-  },
-  errorCode: 'E001',
-  errorMessage: 'Insufficient funds',
-  exchangeRate: 1.30,
-  reference: ['Updated-Reference'],
-  paymentRailMetaData: {
-    updated: true
-  }
-}).execute();
-```
-
-#### List Payments
-
-Retrieves payments with powerful filtering capabilities.
-
-```javascript
-// Simple list
-const payments = await apiClient.payment.list().execute();
-
-// With filters and pagination
-const payments = await apiClient.payment.list()
-  .where('status').eq('DRAFT')
-  .where('paymentRail').eq('ACH')
-  .where('paymentType').eq('CREDIT')
-  .where('originatorName').eq('John Doe')
-  .limit(50)
-  .offset(0)
+// List clients with filtering
+const clients = await apiClient.client.list()
+  .where('status').eq('active')
+  .limit(10)
   .execute();
 
-// Available filter fields
-// originatorName, originatorAccount, originatorBankRoutingCode
-// recipientName, recipientAccount, recipientBankRoutingCode  
-// reference, traceNumber, externalId, clientId
-// dateFormat, locale, originatedBy, paymentRail, paymentType
-// fromValueDate, toValueDate, fromExecuteDate, toExecuteDate
-// status, fromReturnDate, toReturnDate, isSettlement, orderBy, sortOrder
+// Update client information
+const updatedClient = await apiClient.client.update(123, {
+  emailAddress: 'john.updated@example.com'
+}).execute();
 ```
+
+### Account Operations
+
+Manage client accounts using the scoped account API with comprehensive CRUD operations and advanced query capabilities. For complete documentation, see [Account API Documentation](./docs/ACCOUNT_API.md).
+
+```javascript
+// List all accounts for a client
+const accounts = await apiClient.client.for('client-123').accounts.list().execute();
+
+// Get specific account details
+const account = await apiClient.client.for('client-123').accounts.get(789).execute();
+
+// Filter accounts by criteria
+const savingsAccounts = await apiClient.client.for('client-123').accounts.list()
+  .where('productName').eq('Savings Account')
+  .execute();
+
+// Update account settings
+const updateResult = await apiClient.client.for('client-123').accounts.update('acc_789', {
+  nominalAnnualInterestRate: '2.5',
+  allowOverdraft: true,
+  overdraftLimit: 1000
+}).execute();
+
+// Delete account
+const deleteResult = await apiClient.client.for('client-123').accounts.delete('acc_789').execute();
+```
+
+
+### Payment Operations
+
+The SDK provides comprehensive payment operations with support for multiple payment rails, advanced filtering, and full validation. For complete documentation, see [Payment API Documentation](./docs/PAYMENT_API.md).
+
+```javascript
+// Create payment
+const payment = await client.for('tenant-123').payment.create({
+  originatorName: "John Doe",
+  originatorAccount: "123456789",
+  originatorBankRoutingCode: "021000021",
+  recipientName: "Jane Smith",
+  recipientAccount: "987654321",
+  recipientBankRoutingCode: "021000021",
+  amount: 1000.50,
+  currency: "USD",
+  paymentRail: "ACH",
+  paymentType: "CREDIT",
+  reference: "Invoice #12345"
+});
+
+// Get payment
+const payment = await client.for('tenant-123').payment.get(12345);
+
+// Update payment
+const updated = await client.for('tenant-123').payment.update(12345, {
+  reference: "Updated reference"
+});
+
+// Delete payment
+await client.for('tenant-123').payment.delete(12345);
+
+// List payments with filtering
+const payments = await client.for('tenant-123').payments.list()
+  .where('status', 'EXECUTION_SUCCESS')
+  .where('paymentRail', 'ACH')
+  .execute();
+```
+
+**Supported Payment Rails:** ACH, SAMEDAYACH, WIRE, SWIFT, INTERNAL, FXPAY, CARD
+
+**Available Payment Commands:** `CreatePayment`, `GetPayment`, `UpdatePayment`, `DeletePayment`, `ListPayments`, `GetPayments`
 
 ### Multi-Tenant Support
 
-The SDK supports multi-tenant operations through tenant context.
-
-#### Default Tenant Operations
-Uses the `tenantId` from client configuration:
-
-```javascript
-const payment = await apiClient.payment.create(paymentData).execute();
-const payments = await apiClient.payment.list().execute();
-```
+The SDK supports multi-tenant operations through the `.for()` method, allowing you to specify tenant context for operations.
 
 #### Tenant-Specific Operations
-Override tenant for specific operations:
+
+All operations can be scoped to a specific tenant:
 
 ```javascript
-// Create payment for specific tenant
-const payment = await apiClient.tenant('tenant-123').payment.create(paymentData).execute();
+// Initialize client
+const client = createClient({
+  baseURL: 'https://api.mbanq.com',
+  apiKey: 'your-api-key'
+});
 
-// Get payment from specific tenant
-const payment = await apiClient.tenant('tenant-123').payment.get('payment-456').execute();
+// Payment operations for specific tenant
+const payment = await client.for('tenant-123').payment.create(paymentData);
+const payments = await client.for('tenant-123').payments.list().execute();
+const payment = await client.for('tenant-123').payment.get(12345);
+const updated = await client.for('tenant-123').payment.update(12345, updateData);
+await client.for('tenant-123').payment.delete(12345);
 
-// Update payment in specific tenant
-await apiClient.tenant('tenant-123').payment.update('payment-456', updateData).execute();
+// Account operations for specific tenant
+const account = await client.for('tenant-123').accounts.get(98765);
+const accounts = await client.for('tenant-123').accounts.list().execute();
+const updated = await client.for('tenant-123').accounts.update(98765, accountData);
+await client.for('tenant-123').accounts.delete(98765);
 
-// List payments from specific tenant with filters
-const payments = await apiClient.tenant('tenant-123').payment.list()
-  .where('status').eq('DRAFT')
-  .limit(10)
+// Query with filters for specific tenant
+const filteredPayments = await client.for('tenant-123').payments.list()
+  .where('status', 'EXECUTION_SUCCESS')
+  .where('paymentRail', 'ACH')
   .execute();
 ```
+
+#### Default Tenant Configuration
+
+You can also configure a default tenant in the client configuration:
+
+```javascript
+const client = createClient({
+  baseURL: 'https://api.mbanq.com',
+  apiKey: 'your-api-key',
+  tenantId: 'default-tenant-123' // Optional default tenant
+});
+
+// Operations will use default tenant if no .for() is specified
+const payment = await client.payment.create(paymentData); // Uses default-tenant-123
+
+// Override default tenant for specific operations
+const payment = await client.for('other-tenant-456').payment.create(paymentData);
+```
+
+#### Tenant Context Best Practices
+
+```javascript
+// Good: Always specify tenant context
+const processPayments = async (tenantId: string) => {
+  const payments = await client.for(tenantId).payments.list()
+    .where('status', 'DRAFT')
+    .execute();
+    
+  for (const payment of payments) {
+    await client.for(tenantId).payment.update(payment.id, {
+      status: 'EXECUTION_SCHEDULED'
+    });
+  }
+};
+
+// Good: Consistent tenant usage across operations
+const transferFunds = async (tenantId: string, fromAccount: number, toAccount: number, amount: number) => {
+  const clientContext = client.for(tenantId);
+  
+  const fromAcc = await clientContext.accounts.get(fromAccount);
+  const toAcc = await clientContext.accounts.get(toAccount);
+  
+  const payment = await clientContext.payment.create({
+    originatorAccount: fromAcc.accountNumber,
+    recipientAccount: toAcc.accountNumber,
+    amount: amount,
+    // ... other payment data
+  });
+  
+  return payment;
+};
+```
+
+## Documentation
+
+For detailed information about specific features and APIs, refer to the dedicated documentation:
+
+### API Documentation
+- **[Client API Documentation](./docs/CLIENT_API.md)** - Comprehensive guide to client configuration, initialization, and usage patterns
+- **[Account API Documentation](./docs/ACCOUNT_API.md)** - Complete reference for account operations, query building, and data types
+- **[Payment API Documentation](./docs/PAYMENT_API.md)** - Complete reference for payment operations, filtering, and payment rails
+
+### Quick Links
+- [Client Configuration Options](./docs/CLIENT_API.md#configuration-options) - Environment settings, authentication, and middleware
+- [Account Operations](./docs/ACCOUNT_API.md#account-operations) - Get, list, update, and delete account operations
+- [Payment Operations](./docs/PAYMENT_API.md#payment-operations) - Create, get, update, delete, and query payments
+- [Payment Filtering](./docs/PAYMENT_API.md#payment-filter-system) - Advanced payment search and filtering
+- [Error Handling Patterns](./docs/CLIENT_API.md#error-handling) - Error types and handling strategies
+- [Type Definitions](./docs/ACCOUNT_API.md#data-types-and-schemas) - Complete schema and type reference
 
 ## Type Safety & Validation
 

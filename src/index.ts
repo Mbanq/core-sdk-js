@@ -2,6 +2,7 @@ export { createClient } from './client/index';
 export { CreatePayment, GetPayment, UpdatePayment, GetPayments } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetClient, UpdateClient, UpdateClientIdentifier, CreateClient, GetClients, DeleteClient } from './commands/rest/client';
+export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './commands/rest/account';
 export { GraphQL } from './commands/graphql/index';
 export { isCommandError, createCommandError } from './utils/errorHandler';
 export { createLoggingMiddleware } from './middlewares/logging';
@@ -34,3 +35,11 @@ export {
   UpdatePaymentInputSchema as UpdatePaymentInputZod, PaymentResponseSchema as PaymentResponseZod,
   PaymentFiltersSchema as PaymentFiltersZod, PaymentFilterShape, PaymentShape, CreatePaymentInputShape, UpdatePaymentInputShape
 } from './types/payment';
+
+export {
+  SavingAccountSchema as SavingAccountZod, SavingAccountShape,
+  SavingAccount, ListAccountsOfClientResponseShape, ListAccountsOfClientResponseSchema as ListAccountsOfClientResponseZod,
+  ListAccountsRequestShape, ListAccountsRequestSchema as ListAccountsRequestZod,
+  UpdateAccountRequest, UpdateAccountRequestSchema as UpdateAccountRequestZod,
+  UpdateAccountRequestShape
+} from './types/account';
