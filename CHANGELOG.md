@@ -1,3 +1,17 @@
+# [0.3.0](https://github.com/mbanq/core-sdk-js/compare/v0.2.1...v0.3.0) (2025-08-28)
+
+
+### Bug Fixes
+
+* update delete account feature ([c2568d1](https://github.com/mbanq/core-sdk-js/commit/c2568d1f2b75ddb47e63444e2f1825f3b27b0021))
+* update type account id in client/index.ts ([52f767f](https://github.com/mbanq/core-sdk-js/commit/52f767fe1bcdd31ab44aac7dc346f971d6ee9f3f))
+* update type of accountId on each function in account feature ([ea17768](https://github.com/mbanq/core-sdk-js/commit/ea177684972e280aeacf800b01bc70f56743cafc))
+
+
+### Features
+
+* completed saving account of client API with comprehensive Zod-based validation and Typescript types ([0fd1129](https://github.com/mbanq/core-sdk-js/commit/0fd1129c6a264360b2d923d69644ec706ec87762))
+
 ## [0.2.1](https://github.com/mbanq/core-sdk-js/compare/v0.2.0...v0.2.1) (2025-08-28)
 
 
