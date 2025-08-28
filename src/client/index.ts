@@ -236,7 +236,6 @@ export const createClient = (initialConfig: Config) => {
               },
               delete: (accountId: string) => {
                 const command = DeleteAccount({
-                  clientId: clientIdNumber,
                   accountId,
                   tenantId: effectiveTenantId
                 });

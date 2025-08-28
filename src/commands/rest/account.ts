@@ -62,7 +62,7 @@ export const UpdateAccount = (params: {
   };
 };
 
-export const DeleteAccount = (params: { clientId: number, accountId: string, tenantId?: string }): Command<{ clientId: number, accountId: string, tenantId?: string }, ProcessOutput> => {
+export const DeleteAccount = (params: { accountId: string, tenantId?: string }): Command<{ accountId: string, tenantId?: string }, ProcessOutput> => {
   return {
     input: params,
     metadata: {
