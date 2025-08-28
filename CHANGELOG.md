@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/mbanq/core-sdk-js/compare/v0.2.0...v0.2.1) (2025-08-28)
+
+
+### Bug Fixes
+
+* Limit should be 0 or greater ([42c2296](https://github.com/mbanq/core-sdk-js/commit/42c22963959f392917b46eb14df68dfdb709bd59))
+
 # [0.2.0](https://github.com/mbanq/core-sdk-js/compare/v0.1.1...v0.2.0) (2025-08-26)
 
 
