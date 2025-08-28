@@ -30,12 +30,12 @@ export const GetAccount = (params: { id: number, tenantId?: string }): Command<{
 
 export const UpdateAccount = (params: {
   clientId: number;
-  accountId: string;
+  accountId: number;
   updates: UpdateAccountRequest;
   tenantId?: string;
 }): Command<{
   clientId: number;
-  accountId: string;
+  accountId: number;
   updates: UpdateAccountRequest;
   tenantId?: string;
 }, any> => {
@@ -62,7 +62,7 @@ export const UpdateAccount = (params: {
   };
 };
 
-export const DeleteAccount = (params: { accountId: string, tenantId?: string }): Command<{ accountId: string, tenantId?: string }, ProcessOutput> => {
+export const DeleteAccount = (params: { accountId: number, tenantId?: string }): Command<{ accountId: number, tenantId?: string }, ProcessOutput> => {
   return {
     input: params,
     metadata: {
