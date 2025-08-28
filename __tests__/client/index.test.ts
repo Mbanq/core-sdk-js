@@ -30,6 +30,47 @@ vi.mock('../../src/commands/rest/client', () => ({
   }))
 }));
 
+// Mock the account commands
+vi.mock('../../src/commands/rest/account', () => ({
+  ListAccountsOfClient: vi.fn().mockImplementation(() => ({
+    list: vi.fn().mockReturnValue({
+      where: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnThis(),
+          execute: vi.fn().mockReturnValue({
+            execute: vi.fn().mockResolvedValue({
+              savingsAccounts: [
+                { id: 1, accountNo: '000000001', productName: 'Savings Account' }
+              ]
+            })
+          })
+        })
+      }),
+      execute: vi.fn().mockReturnValue({
+        execute: vi.fn().mockResolvedValue({
+          savingsAccounts: [
+            { id: 1, accountNo: '000000001', productName: 'Savings Account' },
+            { id: 2, accountNo: '000000002', productName: 'Current Account' }
+          ]
+        })
+      })
+    })
+  })),
+  UpdateAccount: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true, accountId: 'acc_123' })
+  })),
+  GetAccount: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({
+      id: 1,
+      accountNo: '000000001',
+      productName: 'Savings Account'
+    })
+  })),
+  DeleteAccount: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  }))
+}));
+
 import { createClient } from '../../src/client/index';
 import * as validationModule from '../../src/utils/validation';
 import * as paymentCommands from '../../src/commands/rest/payment';
@@ -225,7 +266,7 @@ describe('Client', () => {
       client.setConfig(newConfig);
 
       const mockCommand: Command<TestInput, TestOutput> = {
-        input: {},
+        input: { test: 'test-value' },
         metadata: { commandName: 'Test', path: '/test', method: 'GET' },
         execute: vi.fn().mockResolvedValue({})
       };
@@ -295,7 +336,7 @@ describe('Client', () => {
       });
 
       const mockCommand: Command<TestInput, TestOutput> = {
-        input: {},
+        input: { test: 'header-test' },
         metadata: { commandName: 'Test', path: '/test', method: 'GET' },
         execute: vi.fn().mockResolvedValue({})
       };
@@ -341,7 +382,7 @@ describe('Client', () => {
       client.resetConfig();
 
       const mockCommand: Command<TestInput, TestOutput> = {
-        input: {},
+        input: { test: 'before-test' },
         metadata: { commandName: 'Test', path: '/test', method: 'GET' },
         execute: vi.fn().mockResolvedValue({})
       };
@@ -428,11 +469,11 @@ describe('Client', () => {
         } as any);
 
         const client = createClient(validConfig);
-        const paymentOperation = await client.payment.get('123');
+        const paymentOperation = await client.payment.get(123);
         const result = await paymentOperation.execute();
 
         expect(getPaymentSpy).toHaveBeenCalledWith({
-          id: '123',
+          id: 123,
           tenantId: 'test-tenant'
         });
         expect(result).toEqual({ id: '123', status: 'SUCCESS' });
@@ -448,10 +489,10 @@ describe('Client', () => {
         const client = createClient(validConfig);
         const tenantClient = client.tenant('custom-tenant');
 
-        await tenantClient.payment.get('123');
+        await tenantClient.payment.get(123);
 
         expect(getPaymentSpy).toHaveBeenCalledWith({
-          id: '123',
+          id: 123,
           tenantId: 'custom-tenant'
         });
       });
@@ -468,11 +509,11 @@ describe('Client', () => {
         const client = createClient(validConfig);
         const updateData = { status: 'CANCELLED' as const };
 
-        const paymentOperation = await client.payment.update('123', updateData);
+        const paymentOperation = await client.payment.update(123, updateData);
         const result = await paymentOperation.execute();
 
         expect(updatePaymentSpy).toHaveBeenCalledWith({
-          id: '123',
+          id: 123,
           payment: updateData,
           tenantId: 'test-tenant'
         });
@@ -490,10 +531,10 @@ describe('Client', () => {
         const tenantClient = client.tenant('custom-tenant');
         const updateData = { amount: 200 };
 
-        await tenantClient.payment.update('123', updateData);
+        await tenantClient.payment.update(123, updateData);
 
         expect(updatePaymentSpy).toHaveBeenCalledWith({
-          id: '123',
+          id: 123,
           payment: updateData,
           tenantId: 'custom-tenant'
         });
@@ -509,11 +550,11 @@ describe('Client', () => {
         } as any);
 
         const client = createClient(validConfig);
-        const paymentOperation = await client.payment.delete('123');
+        const paymentOperation = await client.payment.delete(123);
         const result = await paymentOperation.execute();
 
         expect(deletePaymentSpy).toHaveBeenCalledWith({
-          id: '123',
+          id: 123,
           tenantId: 'test-tenant'
         });
         expect(result).toBeUndefined();
@@ -529,10 +570,10 @@ describe('Client', () => {
         const client = createClient(validConfig);
         const tenantClient = client.tenant('custom-tenant');
 
-        await tenantClient.payment.delete('123');
+        await tenantClient.payment.delete(123);
 
         expect(deletePaymentSpy).toHaveBeenCalledWith({
-          id: '123',
+          id: 123,
           tenantId: 'custom-tenant'
         });
       });
@@ -870,5 +911,28 @@ describe('Client', () => {
         expect(result).toEqual({ data: [{ id: 1, name: 'Client 1' }] });
       });
     });
+  });
+});
+
+describe('Account API Tests', () => {
+  // Note: Account commands are fully tested in __tests__/commands/rest/account.test.ts
+  // This test verifies basic client structure for accounts
+  
+  it('should have client structure that supports account operations', () => {
+    vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
+    const client = createClient({
+      baseUrl: 'https://api.example.com',
+      tenantId: 'test-tenant',
+      secret: 'test-secret'
+    });
+
+    // Verify the basic client structure exists
+    expect(client).toBeDefined();
+    expect(client.client).toBeDefined();
+    expect(typeof client.client.for).toBe('function');
+    
+    // Note: The actual account API calls are tested in the command unit tests
+    // Integration testing of the full client.for().accounts chain requires
+    // complex mocking that is better covered by the individual command tests
   });
 });

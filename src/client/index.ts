@@ -5,6 +5,8 @@ import { CreatePayment, GetPayment, UpdatePayment, DeletePayment, ListPayments }
 import type { CreatePaymentInput, UpdatePaymentInput } from '../types/payment';
 import { CreateClientRequest, UpdateClientIdentifierRequest, UpdateClientRequest } from '../types/client';
 import { CreateClient, GetClient, ListClients, UpdateClient, UpdateClientIdentifier, DeleteClient } from '../commands/rest/client';
+import { DeleteAccount, GetAccount, ListAccountsOfClient, UpdateAccount } from '../commands/rest/account';
+import type { UpdateAccountRequest } from '../types/account';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -179,6 +181,76 @@ export const createClient = (initialConfig: Config) => {
           return {
             execute: async () => {
               return requestHandler(command);
+            }
+          };
+        },
+        for: (clientId: string) => {
+          const clientIdNumber = parseInt(clientId, 10);
+          const query = ListAccountsOfClient({ clientId: clientIdNumber, tenantId: effectiveTenantId });
+          const currentBuilder = query.list();
+
+          // Shared function to execute and get all accounts
+          const getAllAccounts = async () => {
+            const command = currentBuilder.execute();
+            const result: any = await requestHandler(command);
+            return result?.savingsAccounts || [];
+          };
+
+          const createAccountChainableObject = (builder: any) => ({
+            where: builder.where,
+            execute: async () => {
+              const command = builder.execute();
+              return requestHandler(command);
+            }
+          });
+
+          return {
+            accounts: {
+              get: (accountId: number) => ({
+                execute: async () => {
+                  const command = GetAccount({
+                    id: accountId,
+                    tenantId: effectiveTenantId
+                  });
+                  return requestHandler(command);
+                }
+              } as const),
+              getFromList: (accountId: number) => ({
+                execute: async () => {
+                  const accounts = await getAllAccounts();
+                  return accounts.find((acc: any) => acc.id === accountId) || null;
+                }
+              } as const),
+              update: (accountId: number, updates: UpdateAccountRequest) => {
+                const command = UpdateAccount({
+                  clientId: clientIdNumber,
+                  accountId,
+                  updates,
+                  tenantId: effectiveTenantId
+                });
+                return {
+                  execute: async () => {
+                    return requestHandler(command);
+                  }
+                };
+              },
+              delete: (accountId: number) => {
+                const command = DeleteAccount({
+                  accountId,
+                  tenantId: effectiveTenantId
+                });
+                return {
+                  execute: async () => {
+                    return requestHandler(command);
+                  }
+                };
+              },
+              where: () => ({
+                eq: () => ({
+                  list: () => createAccountChainableObject(currentBuilder)
+                })
+              }),
+              list: () => createAccountChainableObject(currentBuilder)
             }
           };
         },

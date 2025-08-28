@@ -15,6 +15,14 @@ import {
   CreatePaymentInput, UpdatePaymentInput, PaymentResponse
 } from './payment';
 
+import {
+  SavingAccountSchema as SavingAccountZod, SavingAccountShape,
+  SavingAccount, ListAccountsOfClientResponseShape, ListAccountsOfClientResponseSchema as ListAccountsOfClientResponseZod,
+  ListAccountsRequestShape, ListAccountsRequestSchema as ListAccountsRequestZod,
+  UpdateAccountRequest, UpdateAccountRequestSchema as UpdateAccountRequestZod,
+  UpdateAccountRequestShape
+} from './account';
+
 export {
   Config,
   GetTransferInput,
@@ -48,5 +56,15 @@ export {
   Payment,
   CreatePaymentInput,
   UpdatePaymentInput,
-  PaymentResponse
+  PaymentResponse,
+  SavingAccountZod,
+  SavingAccountShape,
+  SavingAccount,
+  ListAccountsOfClientResponseShape,
+  ListAccountsOfClientResponseZod,
+  ListAccountsRequestShape,
+  ListAccountsRequestZod,
+  UpdateAccountRequest,
+  UpdateAccountRequestZod,
+  UpdateAccountRequestShape
 };
