@@ -1,5 +1,5 @@
-export { C as CreateClient, D as DeleteClient, G as GetClient, c as GetClients, d as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from '../index-BHzajnME.mjs';
-import { d as PaymentRail, C as Command, P as ProcessOutput, e as MarkAsReturnInput, T as Transfer, G as GetTransferInput, f as UpdateTraceNumbersInput, g as CreateTransferInput, h as CreateTransferOutput } from '../client-DhU5QMWd.mjs';
+export { f as CreateClient, C as CreatePayment, k as DeleteAccount, D as DeleteClient, m as DeletePayment, h as GetAccount, i as GetAccountsOfClient, c as GetClient, g as GetClients, G as GetPayment, a as GetPayments, l as GraphQL, L as ListAccountsOfClient, S as SendAuthorizationToCore, j as UpdateAccount, b as UpdateCardID, d as UpdateClient, e as UpdateClientIdentifier, U as UpdatePayment } from '../index-D3PYCZYG.mjs';
+import { H as PaymentRail, a as Command, F as ProcessOutput, I as MarkAsReturnInput, T as Transfer, J as GetTransferInput, K as UpdateTraceNumbersInput, N as CreateTransferInput, O as CreateTransferOutput } from '../client-z_1PDcj6.mjs';
 import 'graphql';
 import 'axios';
 import 'zod';

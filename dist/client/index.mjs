@@ -1,1 +1,1 @@
-import{r as a}from"../chunk-VHSZ6TM7.mjs";import"../chunk-SQZ4PAOL.mjs";export{a as createClient};
+import{a}from"../chunk-I22UNKNA.mjs";import"../chunk-ZPWW7X3U.mjs";export{a as createClient};

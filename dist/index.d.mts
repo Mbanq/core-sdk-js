@@ -1,8 +1,7 @@
-import { C as CreatePaymentInput, P as Payment, U as UpdatePaymentInput, a as PaymentFilters, b as PaymentResponse } from './index-BC3pkS--.mjs';
-export { q as CreatePaymentInputShape, k as CreatePaymentInputZod, h as PaymentFilterKeyZod, o as PaymentFilterShape, n as PaymentFiltersZod, e as PaymentRailType, i as PaymentRailZod, m as PaymentResponseZod, p as PaymentShape, d as PaymentStatus, g as PaymentStatusZod, f as PaymentType, j as PaymentTypeZod, S as SortOrderZod, r as UpdatePaymentInputShape, l as UpdatePaymentInputZod, c as createClient } from './index-BC3pkS--.mjs';
-import { M as Middleware, C as Command } from './client-DhU5QMWd.mjs';
-export { a as Config } from './client-DhU5QMWd.mjs';
-export { C as CreateClient, D as DeleteClient, G as GetClient, c as GetClients, d as GraphQL, S as SendAuthorizationToCore, U as UpdateCardID, a as UpdateClient, b as UpdateClientIdentifier } from './index-BHzajnME.mjs';
+export { createClient } from './client/index.mjs';
+export { f as CreateClient, C as CreatePayment, k as DeleteAccount, D as DeleteClient, h as GetAccount, i as GetAccountsOfClient, c as GetClient, g as GetClients, G as GetPayment, a as GetPayments, l as GraphQL, L as ListAccountsOfClient, S as SendAuthorizationToCore, j as UpdateAccount, b as UpdateCardID, d as UpdateClient, e as UpdateClientIdentifier, U as UpdatePayment } from './index-D3PYCZYG.mjs';
+import { M as Middleware } from './client-z_1PDcj6.mjs';
+export { a as Command, C as Config, b as CreatePaymentInput, r as CreatePaymentInputShape, l as CreatePaymentInputZod, L as ListAccountsOfClientResponseShape, w as ListAccountsOfClientResponseZod, x as ListAccountsRequestShape, y as ListAccountsRequestZod, P as Payment, i as PaymentFilterKeyZod, p as PaymentFilterShape, g as PaymentFilters, o as PaymentFiltersZod, e as PaymentRailType, j as PaymentRailZod, c as PaymentResponse, n as PaymentResponseZod, q as PaymentShape, d as PaymentStatus, h as PaymentStatusZod, f as PaymentType, k as PaymentTypeZod, v as SavingAccount, u as SavingAccountShape, t as SavingAccountZod, S as SortOrderZod, z as UpdateAccountRequest, B as UpdateAccountRequestShape, A as UpdateAccountRequestZod, U as UpdatePaymentInput, s as UpdatePaymentInputShape, m as UpdatePaymentInputZod } from './client-z_1PDcj6.mjs';
 import 'zod';
 import 'graphql';
 import 'axios';
@@ -30,39 +29,7 @@ interface ApiError {
   originalError?: Error;
 }
 
-declare const CreatePayment: (params: {
-    payment: CreatePaymentInput;
-    tenantId?: string;
-}) => Command<{
-    payment: CreatePaymentInput;
-    tenantId?: string;
-}, Payment>;
-declare const GetPayment: (params: {
-    id: number;
-    tenantId?: string;
-}) => Command<{
-    id: number;
-    tenantId?: string;
-}, Payment>;
-declare const UpdatePayment: (params: {
-    id: number;
-    payment: UpdatePaymentInput;
-    tenantId?: string;
-}) => Command<{
-    id: number;
-    payment: UpdatePaymentInput;
-    tenantId?: string;
-}, Payment>;
-declare const GetPayments: (params: PaymentFilters, configuration: {
-    tenantId?: string;
-}) => Command<{
-    params: PaymentFilters;
-    configuration: {
-        tenantId?: string;
-    };
-}, PaymentResponse>;
-
 declare const createCommandError: ({ message, statusCode, code, requestId, originalError }: Omit<ApiError, "name">) => ApiError;
 declare const isCommandError: (error: unknown) => error is ApiError;
 
-export { type ApiError, Command, CreatePayment, CreatePaymentInput, GetPayment, GetPayments, type Logger, type MetricsClient, Middleware, Payment, PaymentFilters, PaymentResponse, UpdatePayment, UpdatePaymentInput, createCommandError, createLoggingMiddleware, createMetricsMiddleware, isCommandError };
+export { type ApiError, type Logger, type MetricsClient, Middleware, createCommandError, createLoggingMiddleware, createMetricsMiddleware, isCommandError };
