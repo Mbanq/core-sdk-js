@@ -221,7 +221,7 @@ export const createClient = (initialConfig: Config) => {
                   return accounts.find((acc: any) => acc.id === accountId) || null;
                 }
               } as const),
-              update: (accountId: string, updates: UpdateAccountRequest) => {
+              update: (accountId: number, updates: UpdateAccountRequest) => {
                 const command = UpdateAccount({
                   clientId: clientIdNumber,
                   accountId,
@@ -234,7 +234,7 @@ export const createClient = (initialConfig: Config) => {
                   }
                 };
               },
-              delete: (accountId: string) => {
+              delete: (accountId: number) => {
                 const command = DeleteAccount({
                   accountId,
                   tenantId: effectiveTenantId
