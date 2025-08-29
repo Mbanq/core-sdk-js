@@ -36,11 +36,11 @@ const UPDATE_RECIPIENT_MUTATION = `
 `;
 
 export const UpdateRecipientGQL = (params: {
-  id: string;
+  id: number;
   input: UpdateRecipientRequest;
   tenantId?: string;
 }): Command<{
-  id: string;
+  id: number;
   input: UpdateRecipientRequest;
   tenantId?: string;
 }, { updateRecipient: Recipient }> => {
