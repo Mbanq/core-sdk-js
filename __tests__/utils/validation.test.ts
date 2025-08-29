@@ -170,8 +170,8 @@ describe('Validation Utils', () => {
       });
 
       it('should handle multiple filters and throw for invalid values', () => {
-        expect(() => validateListAccountFilters({ 
-          showReservedAccount: 'not_boolean' 
+        expect(() => validateListAccountFilters({
+          showReservedAccount: 'not_boolean'
         })).toThrow('Validation error');
       });
 
