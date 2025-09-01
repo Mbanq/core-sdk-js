@@ -99,17 +99,11 @@ export const validateFilterKey = (key: string): void => {
   }
 };
 
-const nameSchema = z.string();
-type nameType = z.infer<typeof nameSchema>;
-const validateName = (name: string): nameType => {
-  return nameSchema.parse(name);
-};
-
 export const validateFilterValue = (key: string, value: any): void => {
   try {
     switch (key) {
       case 'name':
-        validateName(value);
+        z.string().parse(value);
         break;
       default:
         break;
