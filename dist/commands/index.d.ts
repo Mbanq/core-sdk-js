@@ -1,8 +1,8 @@
-export { f as CreateClient, C as CreatePayment, k as DeleteAccount, D as DeleteClient, m as DeletePayment, h as GetAccount, i as GetAccountsOfClient, c as GetClient, g as GetClients, G as GetPayment, a as GetPayments, l as GraphQL, L as ListAccountsOfClient, S as SendAuthorizationToCore, j as UpdateAccount, b as UpdateCardID, d as UpdateClient, e as UpdateClientIdentifier, U as UpdatePayment } from '../index-BcDxuEgp.js';
-import { H as PaymentRail, a as Command, F as ProcessOutput, I as MarkAsReturnInput, T as Transfer, J as GetTransferInput, K as UpdateTraceNumbersInput, N as CreateTransferInput, O as CreateTransferOutput } from '../client-z_1PDcj6.js';
+export { f as CreateClient, C as CreatePayment, k as DeleteAccount, D as DeleteClient, m as DeletePayment, h as GetAccount, i as GetAccountsOfClient, c as GetClient, g as GetClients, G as GetPayment, a as GetPayments, l as GraphQL, L as ListAccountsOfClient, S as SendAuthorizationToCore, j as UpdateAccount, b as UpdateCardID, d as UpdateClient, e as UpdateClientIdentifier, U as UpdatePayment } from '../index-CtgEbUxK.js';
+import { I as UpdateRecipientRequest, a as Command, R as Recipient, J as PaymentRail, F as ProcessOutput, K as MarkAsReturnInput, T as Transfer, N as GetTransferInput, O as UpdateTraceNumbersInput, Q as CreateTransferInput, V as CreateTransferOutput, H as CreateRecipientRequest, W as RecipientRequest, X as Recipients } from '../client-BUCNGFJy.js';
+import 'zod';
 import 'graphql';
 import 'axios';
-import 'zod';
 
 interface CustomUpdateInput {
   commandName?: string;
@@ -26,6 +26,18 @@ interface CustomGetInput {
   tenantId?: string;
   params?: Record<string, any>;
 }
+
+declare const UpdateRecipientGQL: (params: {
+    id: number;
+    input: UpdateRecipientRequest;
+    tenantId?: string;
+}) => Command<{
+    id: number;
+    input: UpdateRecipientRequest;
+    tenantId?: string;
+}, {
+    updateRecipient: Recipient;
+}>;
 
 declare const CreateTransfer: (params: {
     transfer: CreateTransferInput;
@@ -93,4 +105,40 @@ declare const CustomUpdate: (params: CustomUpdateInput) => Command<CustomUpdateI
 declare const CustomCreate: (params: CustomCreateInput) => Command<CustomCreateInput, ProcessOutput>;
 declare const CustomGet: (params: CustomGetInput) => Command<CustomGetInput, any>;
 
-export { CreateTransfer, CustomCreate, CustomGet, CustomUpdate, GetTransfer, GetTransfers, LogFailTransfer, MarkAsFail, MarkAsProcessing, MarkAsReturned, MarkAsSuccess, UpdateTraceNumber };
+declare const GetRecipient: (params: {
+    clientId: number;
+    id: number;
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    id: number;
+    tenantId?: string;
+}, Recipient>;
+declare const CreateRecipient: (params: {
+    clientId: number;
+    recipient: CreateRecipientRequest;
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    recipient: CreateRecipientRequest;
+    tenantId?: string;
+}, Recipient>;
+declare const DeleteRecipient: (params: {
+    clientId: number;
+    recipientId: number;
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    recipientId: number;
+    tenantId?: string;
+}, ProcessOutput>;
+declare const GetRecipients: (clientId: number, params: RecipientRequest, configuration: {
+    tenantId?: string;
+}) => Command<{
+    params: RecipientRequest;
+    configuration: {
+        tenantId?: string;
+    };
+}, Recipients>;
+
+export { CreateRecipient, CreateTransfer, CustomCreate, CustomGet, CustomUpdate, DeleteRecipient, GetRecipient, GetRecipients, GetTransfer, GetTransfers, LogFailTransfer, MarkAsFail, MarkAsProcessing, MarkAsReturned, MarkAsSuccess, UpdateRecipientGQL as UpdateRecipient, UpdateTraceNumber };

@@ -1,6 +1,569 @@
+import z__default, { z } from 'zod';
 import { DocumentNode } from 'graphql';
 import { AxiosInstance } from 'axios';
-import z__default, { z } from 'zod';
+
+declare const RecipientSchema: z.ZodObject<{
+    id: z.ZodNumber;
+    clientId: z.ZodNumber;
+    nickName: z.ZodString;
+    firstName: z.ZodString;
+    lastName: z.ZodString;
+    businessName: z.ZodString;
+    emailAddress: z.ZodString;
+    phoneNumber: z.ZodString;
+    recipientType: z.ZodString;
+    paymentRail: z.ZodString;
+    isOwnAccount: z.ZodBoolean;
+    address: z.ZodObject<{
+        line1: z.ZodString;
+        line2: z.ZodString;
+        city: z.ZodString;
+        stateCode: z.ZodString;
+        countryCode: z.ZodString;
+        postalCode: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }>;
+    accountDetailsData: z.ZodObject<{
+        accountNumber: z.ZodString;
+        bankInformation: z.ZodObject<{
+            routingNumber: z.ZodString;
+            swiftCode: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+            swiftCode: string;
+        }, {
+            routingNumber: string;
+            swiftCode: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    paymentRail: string;
+    recipientType: string;
+    address: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    };
+    id: number;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    businessName: string;
+    phoneNumber: string;
+    isOwnAccount: boolean;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+}, {
+    clientId: number;
+    paymentRail: string;
+    recipientType: string;
+    address: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    };
+    id: number;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    businessName: string;
+    phoneNumber: string;
+    isOwnAccount: boolean;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+}>;
+declare const RecipientsSchema: z.ZodArray<z.ZodObject<{
+    id: z.ZodNumber;
+    clientId: z.ZodNumber;
+    nickName: z.ZodString;
+    firstName: z.ZodString;
+    lastName: z.ZodString;
+    businessName: z.ZodString;
+    emailAddress: z.ZodString;
+    phoneNumber: z.ZodString;
+    recipientType: z.ZodString;
+    paymentRail: z.ZodString;
+    isOwnAccount: z.ZodBoolean;
+    address: z.ZodObject<{
+        line1: z.ZodString;
+        line2: z.ZodString;
+        city: z.ZodString;
+        stateCode: z.ZodString;
+        countryCode: z.ZodString;
+        postalCode: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }>;
+    accountDetailsData: z.ZodObject<{
+        accountNumber: z.ZodString;
+        bankInformation: z.ZodObject<{
+            routingNumber: z.ZodString;
+            swiftCode: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+            swiftCode: string;
+        }, {
+            routingNumber: string;
+            swiftCode: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    paymentRail: string;
+    recipientType: string;
+    address: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    };
+    id: number;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    businessName: string;
+    phoneNumber: string;
+    isOwnAccount: boolean;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+}, {
+    clientId: number;
+    paymentRail: string;
+    recipientType: string;
+    address: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    };
+    id: number;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    businessName: string;
+    phoneNumber: string;
+    isOwnAccount: boolean;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+}>, "many">;
+declare const RecipientRequestSchema: z.ZodObject<{
+    limit: z.ZodOptional<z.ZodNumber>;
+    offset: z.ZodOptional<z.ZodNumber>;
+    name: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    limit?: number | undefined;
+    offset?: number | undefined;
+    name?: string | undefined;
+}, {
+    limit?: number | undefined;
+    offset?: number | undefined;
+    name?: string | undefined;
+}>;
+declare const CreateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
+    nickName: z.ZodString;
+    firstName: z.ZodString;
+    lastName: z.ZodString;
+    businessName: z.ZodOptional<z.ZodString>;
+    emailAddress: z.ZodString;
+    phoneNumber: z.ZodString;
+    recipientType: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    isOwnAccount: z.ZodOptional<z.ZodBoolean>;
+    address: z.ZodOptional<z.ZodObject<{
+        line1: z.ZodString;
+        line2: z.ZodString;
+        city: z.ZodString;
+        stateCode: z.ZodString;
+        countryCode: z.ZodString;
+        postalCode: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }>>;
+    accountDetailsData: z.ZodObject<{
+        accountNumber: z.ZodString;
+        bankInformation: z.ZodObject<{
+            routingNumber: z.ZodString;
+            swiftCode: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+            swiftCode: string;
+        }, {
+            routingNumber: string;
+            swiftCode: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
+    recipientType: string;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    businessName?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+}, {
+    paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
+    recipientType: string;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    businessName?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+}>, {
+    paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
+    recipientType: string;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    businessName?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+}, {
+    paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
+    recipientType: string;
+    emailAddress: string;
+    nickName: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    accountDetailsData: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    };
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    businessName?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+}>;
+declare const UpdateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
+    nickName: z.ZodOptional<z.ZodString>;
+    firstName: z.ZodOptional<z.ZodString>;
+    lastName: z.ZodOptional<z.ZodString>;
+    businessName: z.ZodOptional<z.ZodString>;
+    emailAddress: z.ZodOptional<z.ZodString>;
+    phoneNumber: z.ZodOptional<z.ZodString>;
+    recipientType: z.ZodOptional<z.ZodString>;
+    paymentRail: z.ZodOptional<z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>>;
+    isOwnAccount: z.ZodOptional<z.ZodBoolean>;
+    address: z.ZodOptional<z.ZodObject<{
+        line1: z.ZodString;
+        line2: z.ZodString;
+        city: z.ZodString;
+        stateCode: z.ZodString;
+        countryCode: z.ZodString;
+        postalCode: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }, {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    }>>;
+    accountDetailsData: z.ZodOptional<z.ZodObject<{
+        accountNumber: z.ZodString;
+        bankInformation: z.ZodObject<{
+            routingNumber: z.ZodString;
+            swiftCode: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+            swiftCode: string;
+        }, {
+            routingNumber: string;
+            swiftCode: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }, {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    }>>;
+}, "strip", z.ZodTypeAny, {
+    paymentRail?: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD" | undefined;
+    recipientType?: string | undefined;
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    businessName?: string | undefined;
+    phoneNumber?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+    accountDetailsData?: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    } | undefined;
+}, {
+    paymentRail?: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD" | undefined;
+    recipientType?: string | undefined;
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    businessName?: string | undefined;
+    phoneNumber?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+    accountDetailsData?: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    } | undefined;
+}>, {
+    paymentRail?: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD" | undefined;
+    recipientType?: string | undefined;
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    businessName?: string | undefined;
+    phoneNumber?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+    accountDetailsData?: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    } | undefined;
+}, {
+    paymentRail?: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD" | undefined;
+    recipientType?: string | undefined;
+    address?: {
+        line1: string;
+        line2: string;
+        stateCode: string;
+        countryCode: string;
+        postalCode: string;
+        city: string;
+    } | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    businessName?: string | undefined;
+    phoneNumber?: string | undefined;
+    isOwnAccount?: boolean | undefined;
+    accountDetailsData?: {
+        accountNumber: string;
+        bankInformation: {
+            routingNumber: string;
+            swiftCode: string;
+        };
+    } | undefined;
+}>;
+type Recipient = z.infer<typeof RecipientSchema>;
+type Recipients = z.infer<typeof RecipientsSchema>;
+type RecipientRequest = z.infer<typeof RecipientRequestSchema>;
+type CreateRecipientRequest = z.infer<typeof CreateRecipientRequestSchema>;
+type UpdateRecipientRequest = z.infer<typeof UpdateRecipientRequestSchema>;
 
 interface Config {
   credential?: Credential;
@@ -7968,4 +8531,4 @@ type UpdateClientIdentifierResponse = z__default.infer<typeof UpdateClientIdenti
 type ListClientsRequest = z__default.infer<typeof ListClientsRequestSchema>;
 type ListClientsResponse = z__default.infer<typeof ListClientsResponseSchema>;
 
-export { UpdateAccountRequestSchema as A, UpdateAccountRequestShape as B, type Config as C, type CreateClientRequest as D, type UpdateClientRequest as E, type ProcessOutput as F, type UpdateClientIdentifierRequest as G, type PaymentRail as H, type MarkAsReturnInput as I, type GetTransferInput as J, type UpdateTraceNumbersInput as K, ListAccountsOfClientResponseShape as L, type Middleware as M, type CreateTransferInput as N, type CreateTransferOutput as O, type Payment as P, type UpdateClientIdentifierResponse as Q, type CreateClientResponse as R, SortOrderSchema as S, type Transfer as T, type UpdatePaymentInput as U, type ListClientsRequest as V, type ListClientsResponse as W, type ListAccountsOfClientRequest as X, type GraphQLRequest as Y, type Command as a, type CreatePaymentInput as b, type PaymentResponse as c, type PaymentStatus as d, type PaymentRailType as e, type PaymentType as f, type PaymentFilters as g, PaymentStatusSchema as h, PaymentFilterKeySchema as i, PaymentRailSchema as j, PaymentTypeSchema as k, CreatePaymentInputSchema as l, UpdatePaymentInputSchema as m, PaymentResponseSchema as n, PaymentFiltersSchema as o, PaymentFilterShape as p, PaymentShape as q, CreatePaymentInputShape as r, UpdatePaymentInputShape as s, SavingAccountSchema as t, SavingAccountShape as u, type SavingAccount as v, ListAccountsOfClientResponseSchema as w, ListAccountsRequestShape as x, ListAccountsRequestSchema as y, type UpdateAccountRequest as z };
+export { type ListClientsResponse as $, UpdateAccountRequestSchema as A, UpdateAccountRequestShape as B, type Config as C, type CreateClientRequest as D, type UpdateClientRequest as E, type ProcessOutput as F, type UpdateClientIdentifierRequest as G, type CreateRecipientRequest as H, type UpdateRecipientRequest as I, type PaymentRail as J, type MarkAsReturnInput as K, ListAccountsOfClientResponseShape as L, type Middleware as M, type GetTransferInput as N, type UpdateTraceNumbersInput as O, type Payment as P, type CreateTransferInput as Q, type Recipient as R, SortOrderSchema as S, type Transfer as T, type UpdatePaymentInput as U, type CreateTransferOutput as V, type RecipientRequest as W, type Recipients as X, type UpdateClientIdentifierResponse as Y, type CreateClientResponse as Z, type ListClientsRequest as _, type Command as a, type ListAccountsOfClientRequest as a0, type GraphQLRequest as a1, type CreatePaymentInput as b, type PaymentResponse as c, type PaymentStatus as d, type PaymentRailType as e, type PaymentType as f, type PaymentFilters as g, PaymentStatusSchema as h, PaymentFilterKeySchema as i, PaymentRailSchema as j, PaymentTypeSchema as k, CreatePaymentInputSchema as l, UpdatePaymentInputSchema as m, PaymentResponseSchema as n, PaymentFiltersSchema as o, PaymentFilterShape as p, PaymentShape as q, CreatePaymentInputShape as r, UpdatePaymentInputShape as s, SavingAccountSchema as t, SavingAccountShape as u, type SavingAccount as v, ListAccountsOfClientResponseSchema as w, ListAccountsRequestShape as x, ListAccountsRequestSchema as y, type UpdateAccountRequest as z };

@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/mbanq/core-sdk-js/compare/v0.3.0...v0.4.0) (2025-09-01)
+
+
+### Features
+
+* completed recipient API with comprehensive Zod-based validation and Typescript types ([3845c4f](https://github.com/mbanq/core-sdk-js/commit/3845c4fd9a9e43f70459e8cc4580ace8695d8bb7))
+
 # [0.3.0](https://github.com/mbanq/core-sdk-js/compare/v0.2.1...v0.3.0) (2025-08-28)
 
 

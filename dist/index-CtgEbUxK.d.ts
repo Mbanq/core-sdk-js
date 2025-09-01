@@ -1,4 +1,4 @@
-import { b as CreatePaymentInput, a as Command, P as Payment, U as UpdatePaymentInput, g as PaymentFilters, c as PaymentResponse, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, Q as UpdateClientIdentifierResponse, D as CreateClientRequest, R as CreateClientResponse, V as ListClientsRequest, W as ListClientsResponse, v as SavingAccount, X as ListAccountsOfClientRequest, z as UpdateAccountRequest, Y as GraphQLRequest } from './client-z_1PDcj6.mjs';
+import { b as CreatePaymentInput, a as Command, P as Payment, U as UpdatePaymentInput, g as PaymentFilters, c as PaymentResponse, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, Y as UpdateClientIdentifierResponse, D as CreateClientRequest, Z as CreateClientResponse, _ as ListClientsRequest, $ as ListClientsResponse, v as SavingAccount, a0 as ListAccountsOfClientRequest, z as UpdateAccountRequest, a1 as GraphQLRequest } from './client-BUCNGFJy.js';
 
 declare const CreatePayment: (params: {
     payment: CreatePaymentInput;

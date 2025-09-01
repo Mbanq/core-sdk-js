@@ -1,4 +1,4 @@
-import { C as Config, b as CreatePaymentInput, U as UpdatePaymentInput, D as CreateClientRequest, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, z as UpdateAccountRequest, a as Command } from '../client-z_1PDcj6.js';
+import { C as Config, b as CreatePaymentInput, U as UpdatePaymentInput, D as CreateClientRequest, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, z as UpdateAccountRequest, H as CreateRecipientRequest, I as UpdateRecipientRequest, R as Recipient, a as Command } from '../client-BUCNGFJy.js';
 import * as z from 'zod';
 import 'graphql';
 import 'axios';
@@ -621,16 +621,110 @@ declare const createClient: (initialConfig: Config) => {
                 delete: (accountId: number) => {
                     execute: () => Promise<ProcessOutput | undefined>;
                 };
-                where: () => {
-                    eq: () => {
+                where: (field: string) => {
+                    eq: (value: any) => {
+                        where: (nextField: string) => /*elided*/ any;
                         list: () => {
-                            where: any;
+                            where: (field: string) => /*elided*/ any;
                             execute: () => Promise<unknown>;
                         };
                     };
                 };
                 list: () => {
-                    where: any;
+                    where: (field: string) => {
+                        eq: (value: any) => {
+                            where: (nextField: string) => /*elided*/ any;
+                            list: () => /*elided*/ any;
+                        };
+                    };
+                    execute: () => Promise<unknown>;
+                };
+            };
+            recipients: {
+                create: (data: CreateRecipientRequest) => {
+                    execute: () => Promise<{
+                        clientId: number;
+                        paymentRail: string;
+                        recipientType: string;
+                        address: {
+                            line1: string;
+                            line2: string;
+                            stateCode: string;
+                            countryCode: string;
+                            postalCode: string;
+                            city: string;
+                        };
+                        id: number;
+                        emailAddress: string;
+                        nickName: string;
+                        firstName: string;
+                        lastName: string;
+                        businessName: string;
+                        phoneNumber: string;
+                        isOwnAccount: boolean;
+                        accountDetailsData: {
+                            accountNumber: string;
+                            bankInformation: {
+                                routingNumber: string;
+                                swiftCode: string;
+                            };
+                        };
+                    } | undefined>;
+                };
+                get: (recipientId: number) => {
+                    readonly execute: () => Promise<{
+                        clientId: number;
+                        paymentRail: string;
+                        recipientType: string;
+                        address: {
+                            line1: string;
+                            line2: string;
+                            stateCode: string;
+                            countryCode: string;
+                            postalCode: string;
+                            city: string;
+                        };
+                        id: number;
+                        emailAddress: string;
+                        nickName: string;
+                        firstName: string;
+                        lastName: string;
+                        businessName: string;
+                        phoneNumber: string;
+                        isOwnAccount: boolean;
+                        accountDetailsData: {
+                            accountNumber: string;
+                            bankInformation: {
+                                routingNumber: string;
+                                swiftCode: string;
+                            };
+                        };
+                    } | undefined>;
+                };
+                update: (recipientId: number, updates: UpdateRecipientRequest) => {
+                    execute: () => Promise<{
+                        updateRecipient: Recipient;
+                    } | undefined>;
+                };
+                delete: (recipientId: number) => {
+                    execute: () => Promise<ProcessOutput | undefined>;
+                };
+                where: (field: string) => {
+                    eq: (value: any) => {
+                        where: (nextField: string) => /*elided*/ any;
+                        list: () => {
+                            where: (field: string) => /*elided*/ any;
+                            execute: () => Promise<unknown>;
+                        };
+                    };
+                };
+                list: () => {
+                    where: (field: string) => {
+                        eq: (value: any) => {
+                            where: (nextField: string) => /*elided*/ any;
+                            list: () => /*elided*/ any;
+                        };
+                    };
                     execute: () => Promise<unknown>;
                 };
             };
@@ -1265,16 +1359,110 @@ declare const createClient: (initialConfig: Config) => {
                     delete: (accountId: number) => {
                         execute: () => Promise<ProcessOutput | undefined>;
                     };
-                    where: () => {
-                        eq: () => {
+                    where: (field: string) => {
+                        eq: (value: any) => {
+                            where: (nextField: string) => /*elided*/ any;
                             list: () => {
-                                where: any;
+                                where: (field: string) => /*elided*/ any;
                                 execute: () => Promise<unknown>;
                             };
                         };
                     };
                     list: () => {
-                        where: any;
+                        where: (field: string) => {
+                            eq: (value: any) => {
+                                where: (nextField: string) => /*elided*/ any;
+                                list: () => /*elided*/ any;
+                            };
+                        };
+                        execute: () => Promise<unknown>;
+                    };
+                };
+                recipients: {
+                    create: (data: CreateRecipientRequest) => {
+                        execute: () => Promise<{
+                            clientId: number;
+                            paymentRail: string;
+                            recipientType: string;
+                            address: {
+                                line1: string;
+                                line2: string;
+                                stateCode: string;
+                                countryCode: string;
+                                postalCode: string;
+                                city: string;
+                            };
+                            id: number;
+                            emailAddress: string;
+                            nickName: string;
+                            firstName: string;
+                            lastName: string;
+                            businessName: string;
+                            phoneNumber: string;
+                            isOwnAccount: boolean;
+                            accountDetailsData: {
+                                accountNumber: string;
+                                bankInformation: {
+                                    routingNumber: string;
+                                    swiftCode: string;
+                                };
+                            };
+                        } | undefined>;
+                    };
+                    get: (recipientId: number) => {
+                        readonly execute: () => Promise<{
+                            clientId: number;
+                            paymentRail: string;
+                            recipientType: string;
+                            address: {
+                                line1: string;
+                                line2: string;
+                                stateCode: string;
+                                countryCode: string;
+                                postalCode: string;
+                                city: string;
+                            };
+                            id: number;
+                            emailAddress: string;
+                            nickName: string;
+                            firstName: string;
+                            lastName: string;
+                            businessName: string;
+                            phoneNumber: string;
+                            isOwnAccount: boolean;
+                            accountDetailsData: {
+                                accountNumber: string;
+                                bankInformation: {
+                                    routingNumber: string;
+                                    swiftCode: string;
+                                };
+                            };
+                        } | undefined>;
+                    };
+                    update: (recipientId: number, updates: UpdateRecipientRequest) => {
+                        execute: () => Promise<{
+                            updateRecipient: Recipient;
+                        } | undefined>;
+                    };
+                    delete: (recipientId: number) => {
+                        execute: () => Promise<ProcessOutput | undefined>;
+                    };
+                    where: (field: string) => {
+                        eq: (value: any) => {
+                            where: (nextField: string) => /*elided*/ any;
+                            list: () => {
+                                where: (field: string) => /*elided*/ any;
+                                execute: () => Promise<unknown>;
+                            };
+                        };
+                    };
+                    list: () => {
+                        where: (field: string) => {
+                            eq: (value: any) => {
+                                where: (nextField: string) => /*elided*/ any;
+                                list: () => /*elided*/ any;
+                            };
+                        };
                         execute: () => Promise<unknown>;
                     };
                 };
