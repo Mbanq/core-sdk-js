@@ -68,7 +68,7 @@ describe('Client Type Validations', () => {
     });
   });
 
-    describe('validateUpdateClientIdentifierRequest', () => {
+  describe('validateUpdateClientIdentifierRequest', () => {
     it('should validate valid update client identifier request', () => {
       const validRequest = {
         documentTypeId: 'PASSPORT',
@@ -123,7 +123,7 @@ describe('Client Type Validations', () => {
     });
   });
 
-    describe('validateApiErrorResponse', () => {
+  describe('validateApiErrorResponse', () => {
     it('should validate valid API error response', () => {
       const validError = {
         developerMessage: 'Validation failed',
@@ -192,7 +192,7 @@ describe('Client Type Validations', () => {
   describe('validateClientFilterKey', () => {
     it('should validate valid filter keys', () => {
       const validKeys = ['firstname', 'lastname', 'displayName', 'mobileNo', 'externalId'];
-      
+
       validKeys.forEach(key => {
         expect(() => validateClientFilterKey(key)).not.toThrow();
       });
@@ -206,7 +206,7 @@ describe('Client Type Validations', () => {
   describe('validateClientOrderBy', () => {
     it('should validate valid order by values', () => {
       const validOrderBy = ['displayName', 'accountNo', 'officeId', 'officeName'];
-      
+
       validOrderBy.forEach(orderBy => {
         expect(() => validateClientOrderBy(orderBy)).not.toThrow();
       });
@@ -220,7 +220,7 @@ describe('Client Type Validations', () => {
   describe('validateClientSortOrder', () => {
     it('should validate valid sort order values', () => {
       const validSortOrders = ['ASC', 'DESC'];
-      
+
       validSortOrders.forEach(sortOrder => {
         expect(() => validateClientSortOrder(sortOrder)).not.toThrow();
       });
@@ -234,7 +234,7 @@ describe('Client Type Validations', () => {
   describe('validateClientStatus', () => {
     it('should validate valid client status values', () => {
       const validStatuses = ['ACTIVE', 'PENDING', 'INACTIVE'];
-      
+
       validStatuses.forEach(status => {
         expect(() => validateClientStatus(status)).not.toThrow();
       });

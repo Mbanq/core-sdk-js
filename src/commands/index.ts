@@ -5,3 +5,5 @@ export { GetPayment, GetPayments, CreatePayment, UpdatePayment, DeletePayment } 
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './rest/account';
 export { GraphQL } from './graphql';
 export { CustomGet, CustomCreate, CustomUpdate } from './rest/custom';
+export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './rest/recipient';
+export { UpdateRecipientGQL as UpdateRecipient } from './graphql/recipient';

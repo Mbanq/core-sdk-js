@@ -7,6 +7,9 @@ import { CreateClientRequest, UpdateClientIdentifierRequest, UpdateClientRequest
 import { CreateClient, GetClient, ListClients, UpdateClient, UpdateClientIdentifier, DeleteClient } from '../commands/rest/client';
 import { DeleteAccount, GetAccount, ListAccountsOfClient, UpdateAccount } from '../commands/rest/account';
 import type { UpdateAccountRequest } from '../types/account';
+import { GetRecipient, CreateRecipient, DeleteRecipient, ListRecipient } from '../commands/rest/recipient';
+import { UpdateRecipientGQL as UpdateRecipient } from '../commands/graphql/recipient';
+import type { UpdateRecipientRequest, CreateRecipientRequest } from '../types/recipient';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -186,18 +189,32 @@ export const createClient = (initialConfig: Config) => {
         },
         for: (clientId: string) => {
           const clientIdNumber = parseInt(clientId, 10);
-          const query = ListAccountsOfClient({ clientId: clientIdNumber, tenantId: effectiveTenantId });
-          const currentBuilder = query.list();
+          const queryAccount = ListAccountsOfClient({ clientId: clientIdNumber, tenantId: effectiveTenantId });
+          const currentBuilderAccount = queryAccount.list();
+
+          const queryRecipient = ListRecipient({ clientId: clientIdNumber, tenantId: effectiveTenantId });
+          const currentBuilderRecipient = queryRecipient.list();
 
           // Shared function to execute and get all accounts
           const getAllAccounts = async () => {
-            const command = currentBuilder.execute();
+            const command = currentBuilderAccount.execute();
             const result: any = await requestHandler(command);
             return result?.savingsAccounts || [];
           };
 
           const createAccountChainableObject = (builder: any) => ({
-            where: builder.where,
+            where: (field: string) => {
+              const newBuilder = builder.where ? builder.where(field) : builder;
+              return {
+                eq: (value: any) => {
+                  const eqBuilder = newBuilder.eq ? newBuilder.eq(value) : newBuilder;
+                  return {
+                    where: (nextField: string) => createAccountChainableObject(eqBuilder).where(nextField),
+                    list: () => createAccountChainableObject(eqBuilder)
+                  };
+                }
+              };
+            },
             execute: async () => {
               const command = builder.execute();
               return requestHandler(command);
@@ -245,12 +262,58 @@ export const createClient = (initialConfig: Config) => {
                   }
                 };
               },
-              where: () => ({
-                eq: () => ({
-                  list: () => createAccountChainableObject(currentBuilder)
-                })
-              }),
-              list: () => createAccountChainableObject(currentBuilder)
+              where: (field: string) => createAccountChainableObject(currentBuilderAccount).where(field),
+              list: () => createAccountChainableObject(currentBuilderAccount)
+            },
+            recipients: {
+              create: (data: CreateRecipientRequest) => {
+                const command = CreateRecipient({
+                  clientId: clientIdNumber,
+                  recipient: data,
+                  tenantId: effectiveTenantId
+                });
+                return {
+                  execute: async () => {
+                    return requestHandler(command);
+                  }
+                };
+              },
+              get: (recipientId: number) => ({
+                execute: async () => {
+                  const command = GetRecipient({
+                    clientId: clientIdNumber,
+                    id: recipientId,
+                    tenantId: effectiveTenantId
+                  });
+                  return requestHandler(command);
+                }
+              } as const),
+              update: (recipientId: number, updates: UpdateRecipientRequest) => {
+                const command = UpdateRecipient({
+                  id: recipientId,
+                  input: updates,
+                  tenantId: effectiveTenantId
+                });
+                return {
+                  execute: async () => {
+                    return requestHandler(command);
+                  }
+                };
+              },
+              delete: (recipientId: number) => {
+                const command = DeleteRecipient({
+                  clientId: clientIdNumber,
+                  recipientId,
+                  tenantId: effectiveTenantId
+                });
+                return {
+                  execute: async () => {
+                    return requestHandler(command);
+                  }
+                };
+              },
+              where: (field: string) => createAccountChainableObject(currentBuilderRecipient).where(field),
+              list: () => createAccountChainableObject(currentBuilderRecipient)
             }
           };
         },

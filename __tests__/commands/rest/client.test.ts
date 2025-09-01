@@ -601,7 +601,7 @@ describe('Client Commands', () => {
 
     it('should throw error for invalid limit (negative)', () => {
       const listClients = ListClients();
-      
+
       expect(() => {
         listClients.list().limit(-5);
       }).toThrow('Invalid limit: -5. Limit must be positive or 0 for fetching all records.');
@@ -609,7 +609,7 @@ describe('Client Commands', () => {
 
     it('should throw error for invalid offset (negative)', () => {
       const listClients = ListClients();
-      
+
       expect(() => {
         listClients.list().offset(-1);
       }).toThrow('Invalid offset: -1. Offset must be non-negative.');
@@ -704,7 +704,7 @@ describe('Client Commands', () => {
 
     it('should validate filters when using where clause', () => {
       const listClients = ListClients();
-      
+
       // This should not throw since firstname is a valid filter key
       expect(() => {
         listClients.list().where('firstname').eq('John');

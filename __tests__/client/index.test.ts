@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock the client commands before importing the main module
 vi.mock('../../src/commands/rest/client', () => ({
@@ -32,7 +32,7 @@ vi.mock('../../src/commands/rest/client', () => ({
 
 // Mock the account commands
 vi.mock('../../src/commands/rest/account', () => ({
-  ListAccountsOfClient: vi.fn().mockImplementation(() => ({
+  ListAccountsOfClient: vi.fn(() => ({
     list: vi.fn().mockReturnValue({
       where: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
@@ -71,6 +71,105 @@ vi.mock('../../src/commands/rest/account', () => ({
   }))
 }));
 
+// Mock the recipient commands
+vi.mock('../../src/commands/rest/recipient', () => ({
+  CreateRecipient: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({
+      success: true,
+      recipientId: 789,
+      id: 789,
+      clientId: 123,
+      nickName: 'Test Recipient'
+    })
+  })),
+  GetRecipient: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({
+      id: 789,
+      clientId: 123,
+      nickName: 'Test Recipient',
+      firstName: 'John',
+      lastName: 'Doe'
+    })
+  })),
+  UpdateRecipient: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  DeleteRecipient: vi.fn().mockImplementation(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  ListRecipient: vi.fn(() => ({
+    list: vi.fn().mockReturnValue({
+      where: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnThis(),
+          list: vi.fn().mockReturnThis(),
+          execute: vi.fn().mockReturnValue({
+            execute: vi.fn().mockResolvedValue({
+              recipients: [
+                { id: 1, nickName: 'Recipient 1' }
+              ]
+            })
+          })
+        })
+      }),
+      execute: vi.fn().mockReturnValue({
+        execute: vi.fn().mockResolvedValue({
+          recipients: [
+            { id: 1, nickName: 'Recipient 1' },
+            { id: 2, nickName: 'Recipient 2' }
+          ]
+        })
+      })
+    })
+  }))
+}));
+
+// Mock the payment commands
+vi.mock('../../src/commands/rest/payment', () => ({
+  CreatePayment: vi.fn(() => ({
+    input: {},
+    metadata: { commandName: 'CreatePayment', path: '/v1/payments', method: 'POST' },
+    execute: vi.fn().mockResolvedValue({ id: '123', status: 'CREATED' })
+  })),
+  GetPayment: vi.fn(() => ({
+    input: {},
+    metadata: { commandName: 'GetPayment', path: '/v1/payments/123', method: 'GET' },
+    execute: vi.fn().mockResolvedValue({ id: '123', status: 'SUCCESS' })
+  })),
+  UpdatePayment: vi.fn(() => ({
+    input: {},
+    metadata: { commandName: 'UpdatePayment', path: '/v1/payments/123', method: 'PUT' },
+    execute: vi.fn().mockResolvedValue({ id: '123', status: 'UPDATED' })
+  })),
+  DeletePayment: vi.fn(() => ({
+    input: {},
+    metadata: { commandName: 'DeletePayment', path: '/v1/payments/123', method: 'DELETE' },
+    execute: vi.fn().mockResolvedValue(undefined)
+  })),
+  ListPayments: vi.fn(() => ({
+    list: () => ({
+      where: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      offset: vi.fn().mockReturnThis(),
+      all: vi.fn().mockReturnThis(),
+      execute: () => ({
+        input: {},
+        metadata: { commandName: 'ListPayments', path: '/v1/payments', method: 'GET' },
+        execute: vi.fn().mockResolvedValue([{ id: '1' }, { id: '2' }])
+      })
+    })
+  }))
+}));
+
+// Mock the GraphQL recipient commands
+vi.mock('../../src/commands/graphql/recipient', () => ({
+  UpdateRecipientGQL: vi.fn(() => ({
+    input: {},
+    metadata: { commandName: 'UpdateRecipientGQL', path: '/graphql', method: 'POST' },
+    execute: vi.fn().mockResolvedValue({ updateRecipient: { id: 789, nickName: 'Updated Recipient' } })
+  }))
+}));
+
 import { createClient } from '../../src/client/index';
 import * as validationModule from '../../src/utils/validation';
 import * as paymentCommands from '../../src/commands/rest/payment';
@@ -88,10 +187,6 @@ interface TestOutput {
 describe('Client', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   const validConfig = {
@@ -730,7 +825,7 @@ describe('Client', () => {
 
   describe('Client API Methods', () => {
     let client: any;
-    
+
     beforeEach(() => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
       client = createClient(validConfig);
@@ -797,7 +892,7 @@ describe('Client', () => {
 
       it('should create list query builder with chaining methods', () => {
         const listBuilder = client.client.list();
-        
+
         expect(listBuilder).toBeDefined();
         expect(listBuilder.where).toBeInstanceOf(Function);
         expect(listBuilder.limit).toBeInstanceOf(Function);
@@ -808,7 +903,7 @@ describe('Client', () => {
 
       it('should support method chaining on list builder', () => {
         const listBuilder = client.client.list();
-        
+
         const limitedBuilder = listBuilder.limit(50);
         expect(limitedBuilder.limit).toBeInstanceOf(Function);
         expect(limitedBuilder.offset).toBeInstanceOf(Function);
@@ -844,7 +939,7 @@ describe('Client', () => {
           submittedOnDate: '2024-01-01',
           dateOfBirth: '1990-01-01'
         });
-        
+
         expect(createCommand).toBeDefined();
         expect(createCommand.execute).toBeInstanceOf(Function);
       });
@@ -882,7 +977,7 @@ describe('Client', () => {
           firstname: 'Updated',
           lastname: 'Name'
         });
-        
+
         const result = await updateCommand.execute();
         expect(result).toEqual({ success: true });
       });
@@ -894,7 +989,7 @@ describe('Client', () => {
           documentKey: 'ABC123456',
           status: 'ACTIVE'
         });
-        
+
         const result = await updateDocCommand.execute();
         expect(result).toEqual({ success: true });
       });
@@ -917,7 +1012,7 @@ describe('Client', () => {
 describe('Account API Tests', () => {
   // Note: Account commands are fully tested in __tests__/commands/rest/account.test.ts
   // This test verifies basic client structure for accounts
-  
+
   it('should have client structure that supports account operations', () => {
     vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
     const client = createClient({
@@ -930,9 +1025,205 @@ describe('Account API Tests', () => {
     expect(client).toBeDefined();
     expect(client.client).toBeDefined();
     expect(typeof client.client.for).toBe('function');
-    
+
     // Note: The actual account API calls are tested in the command unit tests
     // Integration testing of the full client.for().accounts chain requires
     // complex mocking that is better covered by the individual command tests
+  });
+});
+
+describe('Client For API Tests - Lines 191-316', () => {
+  let client: any;
+
+  beforeEach(() => {
+    vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
+    client = createClient({
+      baseUrl: 'https://api.example.com',
+      tenantId: 'test-tenant',
+      secret: 'test-secret'
+    });
+  });
+
+  describe('client.client.for(clientId) functionality', () => {
+    it('should create client.for() with accounts and recipients structure', () => {
+      const clientFor = client.client.for('123');
+
+      // Test the structure exists (lines 191-316)
+      expect(clientFor).toBeDefined();
+      expect(clientFor.accounts).toBeDefined();
+      expect(clientFor.recipients).toBeDefined();
+
+      // Test accounts structure
+      expect(typeof clientFor.accounts.get).toBe('function');
+      expect(typeof clientFor.accounts.getFromList).toBe('function');
+      expect(typeof clientFor.accounts.update).toBe('function');
+      expect(typeof clientFor.accounts.delete).toBe('function');
+      expect(typeof clientFor.accounts.where).toBe('function');
+      expect(typeof clientFor.accounts.list).toBe('function');
+
+      // Test recipients structure
+      expect(typeof clientFor.recipients.create).toBe('function');
+      expect(typeof clientFor.recipients.get).toBe('function');
+      expect(typeof clientFor.recipients.update).toBe('function');
+      expect(typeof clientFor.recipients.delete).toBe('function');
+      expect(typeof clientFor.recipients.where).toBe('function');
+      expect(typeof clientFor.recipients.list).toBe('function');
+    });
+
+    it('should execute accounts.get command (lines 225-235)', async () => {
+      const clientFor = client.client.for('123');
+      const getCommand = clientFor.accounts.get(456);
+
+      expect(getCommand).toBeDefined();
+      expect(typeof getCommand.execute).toBe('function');
+
+      const result = await getCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute accounts.getFromList command (lines 236-241)', async () => {
+      const clientFor = client.client.for('123');
+      const getFromListCommand = clientFor.accounts.getFromList(456);
+
+      expect(getFromListCommand).toBeDefined();
+      expect(typeof getFromListCommand.execute).toBe('function');
+
+      const result = await getFromListCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute accounts.update command (lines 242-252)', async () => {
+      const clientFor = client.client.for('123');
+      const updateData = { nickname: 'Updated Account' };
+      const updateCommand = clientFor.accounts.update(456, updateData);
+
+      expect(updateCommand).toBeDefined();
+      expect(typeof updateCommand.execute).toBe('function');
+
+      const result = await updateCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute accounts.delete command (lines 254-264)', async () => {
+      const clientFor = client.client.for('123');
+      const deleteCommand = clientFor.accounts.delete(456);
+
+      expect(deleteCommand).toBeDefined();
+      expect(typeof deleteCommand.execute).toBe('function');
+
+      const result = await deleteCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute accounts.where and accounts.list methods (lines 265-266)', () => {
+      const clientFor = client.client.for('123');
+
+      // Test where method
+      const whereQuery = clientFor.accounts.where('accountType');
+      expect(whereQuery).toBeDefined();
+
+      // Test list method
+      const listQuery = clientFor.accounts.list();
+      expect(listQuery).toBeDefined();
+    });
+
+    it('should execute recipients.create command (lines 268-278)', async () => {
+      const clientFor = client.client.for('123');
+      const recipientData = {
+        nickName: 'Test Recipient',
+        firstName: 'John',
+        lastName: 'Doe',
+        emailAddress: 'john@example.com',
+        phoneNumber: '+1234567890',
+        recipientType: 'INDIVIDUAL',
+        paymentRail: 'ACH',
+        accountDetailsData: {
+          accountNumber: '123456789',
+          bankInformation: {
+            routingNumber: '021000021',
+            swiftCode: 'CHASUS33XXX'
+          }
+        }
+      };
+
+      const createCommand = clientFor.recipients.create(recipientData);
+
+      expect(createCommand).toBeDefined();
+      expect(typeof createCommand.execute).toBe('function');
+
+      const result = await createCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute recipients.get command (lines 279-288)', async () => {
+      const clientFor = client.client.for('123');
+      const getCommand = clientFor.recipients.get(789);
+
+      expect(getCommand).toBeDefined();
+      expect(typeof getCommand.execute).toBe('function');
+
+      const result = await getCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute recipients.update command (lines 289-299)', async () => {
+      const clientFor = client.client.for('123');
+      const updateData = { nickName: 'Updated Recipient' };
+      const updateCommand = clientFor.recipients.update(789, updateData);
+
+      expect(updateCommand).toBeDefined();
+      expect(typeof updateCommand.execute).toBe('function');
+
+      const result = await updateCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute recipients.delete command (lines 300-310)', async () => {
+      const clientFor = client.client.for('123');
+      const deleteCommand = clientFor.recipients.delete(789);
+
+      expect(deleteCommand).toBeDefined();
+      expect(typeof deleteCommand.execute).toBe('function');
+
+      const result = await deleteCommand.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should execute recipients.where and recipients.list methods (lines 311-312)', () => {
+      const clientFor = client.client.for('123');
+
+      // Test where method
+      const whereQuery = clientFor.recipients.where('name');
+      expect(whereQuery).toBeDefined();
+
+      // Test list method
+      const listQuery = clientFor.recipients.list();
+      expect(listQuery).toBeDefined();
+    });
+
+    it('should test createAccountChainableObject functionality (lines 208-222)', () => {
+      const clientFor = client.client.for('123');
+
+      // Test chaining functionality
+      const whereQuery = clientFor.accounts.where('accountType');
+      expect(whereQuery).toBeDefined();
+      expect(typeof whereQuery.eq).toBe('function');
+
+      const eqQuery = whereQuery.eq('SAVINGS');
+      expect(eqQuery).toBeDefined();
+      expect(typeof eqQuery.where).toBe('function');
+      expect(typeof eqQuery.list).toBe('function');
+    });
+
+    it('should test getAllAccounts functionality (lines 202-206)', async () => {
+      const clientFor = client.client.for('123');
+
+      // Test getFromList which uses getAllAccounts internally
+      const getFromListCommand = clientFor.accounts.getFromList(1);
+      const result = await getFromListCommand.execute();
+
+      // Should return account data or null
+      expect(result).toBeDefined();
+    });
   });
 });
