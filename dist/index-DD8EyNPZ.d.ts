@@ -23,11 +23,11 @@ declare const UpdatePayment: (params: {
     payment: UpdatePaymentInput;
     tenantId?: string;
 }, Payment>;
-declare const GetPayments: (params: PaymentFilters, configuration: {
+declare const GetPayments: (params: PaymentFilters, configuration?: {
     tenantId?: string;
 }) => Command<{
     params: PaymentFilters;
-    configuration: {
+    configuration?: {
         tenantId?: string;
     };
 }, PaymentResponse>;

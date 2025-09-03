@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/mbanq/core-sdk-js/compare/v0.4.0...v0.4.1) (2025-09-03)
+
+
+### Bug Fixes
+
+* make config param optional in GetPayments ([6b960c7](https://github.com/mbanq/core-sdk-js/commit/6b960c78a39db5cc039a5444c87b3cfd0b7eeaf3))
+
 # [0.4.0](https://github.com/mbanq/core-sdk-js/compare/v0.3.0...v0.4.0) (2025-09-01)
 
 
