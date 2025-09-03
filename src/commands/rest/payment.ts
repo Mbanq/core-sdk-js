@@ -341,7 +341,7 @@ export const ListPayments = (params?: { tenantId?: string }) => {
   };
 };
 
-export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: string }) : Command<{params: PaymentFilters, configuration: { tenantId?: string }}, PaymentResponse> => {
+export const GetPayments = (params: PaymentFilters, configuration?: { tenantId?: string }) : Command<{params: PaymentFilters, configuration?: { tenantId?: string }}, PaymentResponse> => {
   return {
     input: { params, configuration },
     metadata: {
@@ -350,7 +350,7 @@ export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: 
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration.tenantId) {
+      if (configuration?.tenantId) {
         config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
