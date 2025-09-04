@@ -19,33 +19,32 @@ export const isCommandError = (error: unknown): error is ApiError => {
   );
 };
 
-// Note: This function is not currently used but can be useful for future enhancements
-// const cleanAxiosError = (error: Error | AxiosError): Error => {
-//   if (!error || typeof error !== 'object') return error;
+const cleanAxiosError = (error: Error | AxiosError): Error => {
+  if (!error || typeof error !== 'object') return error;
 
-//   const cleaned = { ...error } as Record<string, unknown>;
+  const cleaned = { ...error } as Record<string, unknown>;
 
-//   if (cleaned.config && typeof cleaned.config === 'object') {
-//     const config = cleaned.config as { httpsAgent?: Record<string, unknown> };
-//     if (config.httpsAgent && typeof config.httpsAgent === 'object') {
-//       try {
-//         if (config.httpsAgent.sockets) {
-//           delete config.httpsAgent.sockets;
-//         }
-//         if (config.httpsAgent.freeSockets) {
-//           delete config.httpsAgent.freeSockets;
-//         }
-//         if (config.httpsAgent._sessionCache) {
-//           delete config.httpsAgent._sessionCache;
-//         }
-//       } catch {
-//         // Silently handle cleanup errors to prevent crashing on socket management issues
-//       }
-//     }
-//   }
+  if (cleaned.config && typeof cleaned.config === 'object') {
+    const config = cleaned.config as { httpsAgent?: Record<string, unknown> };
+    if (config.httpsAgent && typeof config.httpsAgent === 'object') {
+      try {
+        if (config.httpsAgent.sockets) {
+          delete config.httpsAgent.sockets;
+        }
+        if (config.httpsAgent.freeSockets) {
+          delete config.httpsAgent.freeSockets;
+        }
+        if (config.httpsAgent._sessionCache) {
+          delete config.httpsAgent._sessionCache;
+        }
+      } catch {
+        // Silently handle cleanup errors to prevent crashing on socket management issues
+      }
+    }
+  }
 
-//   return cleaned as unknown as Error;
-// };
+  return cleaned as unknown as Error;
+};
 
 export const handleAxiosError = (error: unknown): never => {
   if (axios.isAxiosError(error)) {
@@ -59,7 +58,7 @@ export const handleAxiosError = (error: unknown): never => {
       statusCode: error.response?.status,
       code: error.code,
       requestId: error.response?.headers?.['x-request-id'] as string,
-      originalError: error
+      originalError: cleanAxiosError(error)
     });
   }
   throw error;

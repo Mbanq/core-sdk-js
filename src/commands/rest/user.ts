@@ -20,7 +20,7 @@ export const GetUserDetail = (
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<UserDetail>(`/v1/userdetails`);
+        const response = await axiosInstance.get<UserDetail>(`/v1/userdetails`);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

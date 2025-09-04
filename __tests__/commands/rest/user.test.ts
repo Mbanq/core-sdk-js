@@ -79,12 +79,12 @@ describe('GetUserDetail', () => {
       }
     };
 
-    mockAxiosInstance.post.mockResolvedValue(mockResponse);
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
     const command = GetUserDetail();
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/userdetails');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/userdetails');
     expect(result).toEqual(mockResponse.data);
     expect(result.username).toBe('john.doe');
     expect(result.userId).toBe(12345);
@@ -108,12 +108,12 @@ describe('GetUserDetail', () => {
       }
     };
 
-    mockAxiosInstance.post.mockResolvedValue(mockResponse);
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
     const command = GetUserDetail();
     const result = await command.execute(mockConfig);
 
-    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/userdetails');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/userdetails');
     expect(result).toEqual(mockResponse.data);
   });
 
@@ -134,7 +134,7 @@ describe('GetUserDetail', () => {
       }
     };
 
-    mockAxiosInstance.post.mockResolvedValue(mockResponse);
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
     const command = GetUserDetail({
       tenantId: 'custom-tenant'
@@ -144,7 +144,7 @@ describe('GetUserDetail', () => {
     await command.execute(mockConfig);
 
     expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/userdetails');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/userdetails');
   });
 
   it('should throw CommandError on API error', async () => {
@@ -159,7 +159,7 @@ describe('GetUserDetail', () => {
     axiosError.isAxiosError = true;
 
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
-    mockAxiosInstance.post.mockRejectedValue(axiosError);
+    mockAxiosInstance.get.mockRejectedValue(axiosError);
 
     const command = GetUserDetail();
 
@@ -186,7 +186,7 @@ describe('GetUserDetail', () => {
     axiosError.isAxiosError = true;
 
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
-    mockAxiosInstance.post.mockRejectedValue(axiosError);
+    mockAxiosInstance.get.mockRejectedValue(axiosError);
 
     const command = GetUserDetail();
 
@@ -213,7 +213,7 @@ describe('GetUserDetail', () => {
     axiosError.isAxiosError = true;
 
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
-    mockAxiosInstance.post.mockRejectedValue(axiosError);
+    mockAxiosInstance.get.mockRejectedValue(axiosError);
 
     const command = GetUserDetail();
 
