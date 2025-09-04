@@ -1,6 +1,6 @@
 {
   "name": "@mbanq/core-sdk-js",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A comprehensive JavaScript SDK for interacting with the Mbanq payment API. Features type-safe payment operations, multi-tenant support, and Zod validation.",
   "main": "dist/index.js",
   "publishConfig": {

@@ -1,3 +1,11 @@
+## [0.5.2](https://github.com/mbanq/core-sdk-js/compare/v0.5.1...v0.5.2) (2025-09-04)
+
+
+### Bug Fixes
+
+* remove cleanup axios error ([4248266](https://github.com/mbanq/core-sdk-js/commit/4248266976acaec53465ebc434dd5a73797cde19))
+* wrong method of get user detail ([e9ce5b2](https://github.com/mbanq/core-sdk-js/commit/e9ce5b29c787d575307a393da3f5395e5f1135ca))
+
 ## [0.5.1](https://github.com/mbanq/core-sdk-js/compare/v0.5.0...v0.5.1) (2025-09-04)
 
 
