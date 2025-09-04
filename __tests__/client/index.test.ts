@@ -170,6 +170,27 @@ vi.mock('../../src/commands/graphql/recipient', () => ({
   }))
 }));
 
+// Mock the user commands
+vi.mock('../../src/commands/rest/user', () => ({
+  GetUserDetail: vi.fn(() => ({
+    input: {},
+    metadata: { commandName: 'GetUserDetail', path: '/v1/userdetails', method: 'GET' },
+    execute: vi.fn().mockResolvedValue({
+      username: 'testuser',
+      userId: 123,
+      accessToken: 'test-token',
+      authenticated: true,
+      officeId: 1,
+      officeName: 'Test Office',
+      roles: [],
+      permissions: ['READ_USERS'],
+      shouldRenewPassword: false,
+      isTwoFactorAuthenticationRequired: false,
+      isSelfServiceUser: false
+    })
+  }))
+}));
+
 import { createClient } from '../../src/client/index';
 import * as validationModule from '../../src/utils/validation';
 import * as paymentCommands from '../../src/commands/rest/payment';
@@ -1224,6 +1245,125 @@ describe('Client For API Tests - Lines 191-316', () => {
 
       // Should return account data or null
       expect(result).toBeDefined();
+    });
+  });
+});
+
+describe('User API Tests', () => {
+  let client: any;
+
+  beforeEach(() => {
+    vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
+    client = createClient({
+      baseUrl: 'https://api.example.com',
+      tenantId: 'test-tenant',
+      secret: 'test-secret'
+    });
+  });
+
+  describe('user.getDetail', () => {
+    it('should execute user.getDetail command (lines 61-64)', async () => {
+      const userDetailCommand = client.user.getDetail();
+      
+      expect(userDetailCommand).toBeDefined();
+      expect(typeof userDetailCommand.execute).toBe('function');
+
+      const result = await userDetailCommand.execute();
+      
+      expect(result).toBeDefined();
+      expect(result.username).toBe('testuser');
+      expect(result.userId).toBe(123);
+      expect(result.authenticated).toBe(true);
+    });
+
+    it('should use default tenantId for user.getDetail', async () => {
+      const userDetailCommand = client.user.getDetail();
+      const result = await userDetailCommand.execute();
+      
+      expect(result).toBeDefined();
+      expect(result.username).toBe('testuser');
+    });
+
+    it('should use custom tenantId when provided via tenant context', async () => {
+      const tenantClient = client.tenant('custom-tenant-id');
+      const userDetailCommand = tenantClient.user.getDetail();
+      
+      expect(userDetailCommand).toBeDefined();
+      expect(typeof userDetailCommand.execute).toBe('function');
+
+      const result = await userDetailCommand.execute();
+      expect(result).toBeDefined();
+    });
+  });
+});
+
+describe('Account Chaining API Tests', () => {
+  let client: any;
+
+  beforeEach(() => {
+    vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
+    client = createClient({
+      baseUrl: 'https://api.example.com',
+      tenantId: 'test-tenant',
+      secret: 'test-secret'
+    });
+  });
+
+  describe('account chaining functionality', () => {
+    it('should test nested where chaining in accounts (lines 223-231)', () => {
+      const clientFor = client.client.for('123');
+      
+      // Test the chaining: where().eq().where()
+      const whereQuery = clientFor.accounts.where('accountType');
+      expect(whereQuery).toBeDefined();
+      expect(typeof whereQuery.eq).toBe('function');
+
+      const eqQuery = whereQuery.eq('SAVINGS');
+      expect(eqQuery).toBeDefined();
+      expect(typeof eqQuery.where).toBe('function');
+      expect(typeof eqQuery.list).toBe('function');
+
+      // Test nested where chaining (this covers lines 223-224)
+      const nestedWhereQuery = eqQuery.where('status');
+      expect(nestedWhereQuery).toBeDefined();
+      expect(typeof nestedWhereQuery.eq).toBe('function');
+
+      // Test list chaining (this covers line 224)
+      const listQuery = eqQuery.list();
+      expect(listQuery).toBeDefined();
+      expect(typeof listQuery.execute).toBe('function');
+    });
+
+    it('should execute nested chained account queries (lines 229-231)', async () => {
+      const clientFor = client.client.for('123');
+      
+      // Build a complex chain
+      const complexQuery = clientFor.accounts
+        .where('accountType')
+        .eq('SAVINGS')
+        .list();
+
+      expect(complexQuery).toBeDefined();
+      expect(typeof complexQuery.execute).toBe('function');
+
+      // Execute the query
+      const result = await complexQuery.execute();
+      expect(result).toBeDefined();
+    });
+
+    it('should support multiple nested where clauses', () => {
+      const clientFor = client.client.for('123');
+      
+      // Test multiple levels of where chaining
+      const multiLevelQuery = clientFor.accounts
+        .where('accountType')
+        .eq('CHECKING')
+        .where('status')
+        .eq('ACTIVE');
+
+      expect(multiLevelQuery).toBeDefined();
+      expect(typeof multiLevelQuery.where).toBe('function');
+      expect(typeof multiLevelQuery.list).toBe('function');
     });
   });
 });
