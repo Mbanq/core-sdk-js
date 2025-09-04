@@ -44,3 +44,5 @@ export {
   UpdateAccountRequest, UpdateAccountRequestSchema as UpdateAccountRequestZod,
   UpdateAccountRequestShape
 } from './types/account';
+
+export { UserDetail, UserDetailSchema, UserDetailShape } from './types/user';

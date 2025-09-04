@@ -23,6 +23,8 @@ import {
   UpdateAccountRequestShape
 } from './account';
 
+import { UserDetail, UserDetailSchema, UserDetailShape } from './user';
+
 export {
   Config,
   GetTransferInput,
@@ -66,5 +68,8 @@ export {
   ListAccountsRequestZod,
   UpdateAccountRequest,
   UpdateAccountRequestZod,
-  UpdateAccountRequestShape
+  UpdateAccountRequestShape,
+  UserDetail,
+  UserDetailSchema,
+  UserDetailShape
 };
