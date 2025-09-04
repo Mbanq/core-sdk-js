@@ -7,6 +7,7 @@ export { GraphQL } from './commands/graphql/index';
 export { isCommandError, createCommandError } from './utils/errorHandler';
 export { createLoggingMiddleware } from './middlewares/logging';
 export { createMetricsMiddleware } from './middlewares/metrics';
+export { GetUserDetail } from './commands/rest/user';
 export type {
   Config,
   Command,

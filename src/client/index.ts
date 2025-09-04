@@ -10,6 +10,7 @@ import type { UpdateAccountRequest } from '../types/account';
 import { GetRecipient, CreateRecipient, DeleteRecipient, ListRecipient } from '../commands/rest/recipient';
 import { UpdateRecipientGQL as UpdateRecipient } from '../commands/graphql/recipient';
 import type { UpdateRecipientRequest, CreateRecipientRequest } from '../types/recipient';
+import { GetUserDetail } from '../commands/rest/user';
 
 export const createClient = (initialConfig: Config) => {
   const errors = validateConfig(initialConfig);
@@ -55,6 +56,16 @@ export const createClient = (initialConfig: Config) => {
     const effectiveTenantId = tenantId || currentConfig.tenantId;
 
     return {
+      user: {
+        getDetail: () => {
+          const command = GetUserDetail({ tenantId: effectiveTenantId });
+          return {
+            execute: async () => {
+              return requestHandler(command);
+            }
+          };
+        }
+      },
       payment: {
         create: (data: CreatePaymentInput) => {
           const command = CreatePayment({
