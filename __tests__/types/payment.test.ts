@@ -29,6 +29,8 @@ import {
   validateIsSettlement,
   validateOrderBy,
   validatePaymentFilters,
+  validateFilterKey,
+  validateFilterValue,
   VALID_PAYMENT_FILTER_KEYS,
   VALID_STATUS_VALUES,
   VALID_PAYMENT_RAIL_VALUES,
@@ -490,48 +492,23 @@ describe('Payment Entity Validations', () => {
       currency: 'USD',
       paymentRail: 'ACH',
       paymentType: 'CREDIT',
-      debtor: {
-        name: 'John Doe',
-        identifier: '123456789',
-        accountType: 'CHECKING',
-        address: {
-          streetAddress: '123 Main St',
-          city: 'Anytown',
-          state: 'NY',
-          country: 'US',
-          postalCode: '12345'
-        },
-        agent: {
-          name: 'Bank of Example',
-          identifier: '021000021',
-          address: {
-            streetAddress: '456 Bank St',
-            city: 'Banking City',
-            state: 'NY',
-            country: 'US'
-          }
-        }
+      originator: {
+        accountId: '123456789'
       },
-      creditor: {
+      recipient: {
         name: 'Jane Smith',
-        identifier: '987654321',
+        accountNumber: '987654321',
         accountType: 'SAVINGS',
+        recipientType: 'INDIVIDUAL',
         address: {
-          streetAddress: '789 Oak Ave',
+          line1: '789 Oak Ave',
           city: 'Another Town',
-          state: 'CA',
-          country: 'US',
+          stateCode: 'CA',
+          countryCode: 'US',
           postalCode: '54321'
         },
-        agent: {
-          name: 'Credit Union',
-          identifier: '321070007',
-          address: {
-            streetAddress: '321 Credit Ave',
-            city: 'Credit City',
-            state: 'CA',
-            country: 'US'
-          }
+        bankInformation: {
+          routingNumber: '321070007'
         }
       }
     };
@@ -571,11 +548,12 @@ describe('Payment Entity Validations', () => {
       const wireInputInvalid = {
         ...validCreateInput,
         paymentRail: 'WIRE',
-        creditor: {
-          ...validCreateInput.creditor,
+        recipient: {
+          ...validCreateInput.recipient,
           address: {
-            streetAddress: '789 Oak Ave',
+            line1: '789 Oak Ave',
             city: 'Another Town'
+            // Missing stateCode and countryCode required for WIRE
           }
         }
       };
@@ -590,6 +568,77 @@ describe('Payment Entity Validations', () => {
         amount: -100,
         currency: 'USD'
       })).toThrow(ZodError);
+    });
+
+    it('should validate INTERNAL transfers with required accountIds', () => {
+      const internalInput = {
+        ...validCreateInput,
+        paymentRail: 'INTERNAL',
+        recipient: {
+          ...validCreateInput.recipient,
+          accountId: 'recipient-account-123'
+        }
+      };
+
+      expect(() => validateCreatePaymentInput(internalInput)).not.toThrow();
+    });
+
+    it('should throw ZodError for INTERNAL transfers without recipient accountId', () => {
+      const internalInputInvalid = {
+        ...validCreateInput,
+        paymentRail: 'INTERNAL'
+        // Missing recipient.accountId
+      };
+
+      expect(() => validateCreatePaymentInput(internalInputInvalid)).toThrow(ZodError);
+    });
+
+    it('should validate CARD payments with required cardId', () => {
+      const cardInput = {
+        ...validCreateInput,
+        paymentRail: 'CARD',
+        recipient: {
+          ...validCreateInput.recipient,
+          cardId: 'card-123'
+        }
+      };
+
+      expect(() => validateCreatePaymentInput(cardInput)).not.toThrow();
+    });
+
+    it('should throw ZodError for CARD payments without cardId', () => {
+      const cardInputInvalid = {
+        ...validCreateInput,
+        paymentRail: 'CARD'
+        // Missing recipient.cardId
+      };
+
+      expect(() => validateCreatePaymentInput(cardInputInvalid)).toThrow(ZodError);
+    });
+
+    it('should validate FXPAY transfers with all required fields', () => {
+      const fxpayInput = {
+        ...validCreateInput,
+        paymentRail: 'FXPAY',
+        recipient: {
+          ...validCreateInput.recipient,
+          recipientId: 'recipient-123',
+          accountEntity: 'PERSONAL'
+        },
+        paymentRailMetaData: { fxRate: 1.25 }
+      };
+
+      expect(() => validateCreatePaymentInput(fxpayInput)).not.toThrow();
+    });
+
+    it('should throw ZodError for FXPAY transfers without required fields', () => {
+      const fxpayInputInvalid = {
+        ...validCreateInput,
+        paymentRail: 'FXPAY'
+        // Missing recipientId, accountEntity, and paymentRailMetaData
+      };
+
+      expect(() => validateCreatePaymentInput(fxpayInputInvalid)).toThrow(ZodError);
     });
   });
 
@@ -734,6 +783,49 @@ describe('Payment Entity Validations', () => {
         pageItems: 'not-array'
       })).toThrow(ZodError);
     });
+  });
+});
+
+describe('Filter Validation Functions', () => {
+  describe('validateFilterKey', () => {
+    it('should validate valid filter keys', () => {
+      expect(() => validateFilterKey('status')).not.toThrow();
+      expect(() => validateFilterKey('paymentRail')).not.toThrow();
+      expect(() => validateFilterKey('originatorName')).not.toThrow();
+    });
+
+    it('should throw CommandError for invalid filter keys', () => {
+      expect(() => validateFilterKey('invalidKey')).toThrow();
+    });
+
+  });
+
+  describe('validateFilterValue', () => {
+    it('should validate valid filter values for status', () => {
+      expect(() => validateFilterValue('status', 'DRAFT')).not.toThrow();
+      expect(() => validateFilterValue('status', 'EXECUTION_SUCCESS')).not.toThrow();
+    });
+
+    it('should validate valid filter values for paymentRail', () => {
+      expect(() => validateFilterValue('paymentRail', 'ACH')).not.toThrow();
+      expect(() => validateFilterValue('paymentRail', 'WIRE')).not.toThrow();
+    });
+
+    it('should validate valid filter values for other fields', () => {
+      expect(() => validateFilterValue('originatorName', 'John Doe')).not.toThrow();
+      expect(() => validateFilterValue('clientId', 12345)).not.toThrow();
+      expect(() => validateFilterValue('isSettlement', true)).not.toThrow();
+    });
+
+    it('should handle unknown filter keys without throwing (default case)', () => {
+      expect(() => validateFilterValue('unknownKey', 'anyValue')).not.toThrow();
+    });
+
+    it('should throw CommandError for invalid filter values', () => {
+      expect(() => validateFilterValue('status', 'INVALID_STATUS')).toThrow();
+      expect(() => validateFilterValue('paymentRail', 'INVALID_RAIL')).toThrow();
+    });
+
   });
 });
 

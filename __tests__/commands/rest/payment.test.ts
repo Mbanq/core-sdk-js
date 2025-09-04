@@ -66,48 +66,23 @@ describe('CreatePayment', () => {
     currency: 'USD',
     paymentRail: 'ACH' as const,
     paymentType: 'CREDIT' as const,
-    debtor: {
-      name: 'John Doe',
-      identifier: '123456789',
-      accountType: 'CHECKING' as const,
-      address: {
-        streetAddress: '123 Main St',
-        city: 'Anytown',
-        state: 'NY',
-        country: 'US',
-        postalCode: '12345'
-      },
-      agent: {
-        name: 'Bank of Example',
-        identifier: '021000021',
-        address: {
-          streetAddress: '456 Bank St',
-          city: 'Banking City',
-          state: 'NY',
-          country: 'US'
-        }
-      }
+    originator: {
+      accountId: '123456789'
     },
-    creditor: {
+    recipient: {
       name: 'Jane Smith',
-      identifier: '987654321',
+      accountNumber: '987654321',
       accountType: 'SAVINGS' as const,
+      recipientType: 'INDIVIDUAL' as const,
       address: {
-        streetAddress: '789 Oak Ave',
+        line1: '789 Oak Ave',
         city: 'Another Town',
-        state: 'CA',
-        country: 'US',
+        stateCode: 'CA',
+        countryCode: 'US',
         postalCode: '54321'
       },
-      agent: {
-        name: 'Credit Union',
-        identifier: '321070007',
-        address: {
-          streetAddress: '321 Credit Ave',
-          city: 'Credit City',
-          state: 'CA',
-          country: 'US'
-        }
+      bankInformation: {
+        routingNumber: '321070007'
       }
     }
   };
@@ -804,7 +779,7 @@ describe('ListPayments', () => {
         originatedBy: 'us',
         orderBy: 'id',
         sortOrder: 'DESC',
-        limit: 200,
+        limit: 20,
         offset: 0
       }
     });
@@ -843,7 +818,7 @@ describe('ListPayments', () => {
         orderBy: 'id',
         sortOrder: 'DESC',
         status: 'EXECUTION_SUCCESS',
-        limit: 200,
+        limit: 20,
         offset: 0
       }
     });
@@ -1233,8 +1208,8 @@ describe('ListPayments', () => {
   it('should rethrow non-ZodError from filter key validation', () => {
     const nonZodError = new Error('System error in filter key validation');
 
-    // Spy on validatePaymentFilterKey and make it throw a non-ZodError
-    const validateSpy = vi.spyOn(paymentTypes, 'validatePaymentFilterKey').mockImplementation(() => {
+    // Spy on validateFilterKey and make it throw a non-ZodError
+    const validateSpy = vi.spyOn(paymentTypes, 'validateFilterKey').mockImplementation(() => {
       throw nonZodError;
     });
 
@@ -1250,8 +1225,8 @@ describe('ListPayments', () => {
   it('should rethrow non-ZodError from filter value validation', () => {
     const nonZodError = new Error('System error in filter value validation');
 
-    // Spy on validatePaymentStatus and make it throw a non-ZodError
-    const validateSpy = vi.spyOn(paymentTypes, 'validatePaymentStatus').mockImplementation(() => {
+    // Spy on validateFilterValue and make it throw a non-ZodError
+    const validateSpy = vi.spyOn(paymentTypes, 'validateFilterValue').mockImplementation(() => {
       throw nonZodError;
     });
 
