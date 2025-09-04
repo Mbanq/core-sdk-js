@@ -1,5 +1,113 @@
-import { b as CreatePaymentInput, a as Command, Y as ProcessOutput, P as Payment, U as UpdatePaymentInput, g as PaymentFilters, c as PaymentResponse, E as UpdateClientRequest, F as ProcessOutput$1, G as UpdateClientIdentifierRequest, Z as UpdateClientIdentifierResponse, D as CreateClientRequest, _ as CreateClientResponse, $ as ListClientsRequest, a0 as ListClientsResponse, v as SavingAccount, a1 as ListAccountsOfClientRequest, z as UpdateAccountRequest, a2 as GraphQLRequest } from './client-CHyhpYj2.mjs';
+import { b as CreatePaymentInput, a as Command, Y as ProcessOutput, P as Payment, U as UpdatePaymentInput, g as PaymentFilters, c as PaymentResponse, E as UpdateClientRequest, F as ProcessOutput$1, G as UpdateClientIdentifierRequest, Z as UpdateClientIdentifierResponse, D as CreateClientRequest, _ as CreateClientResponse, $ as ListClientsRequest, a0 as ListClientsResponse, v as SavingAccount, a1 as ListAccountsOfClientRequest, z as UpdateAccountRequest, a2 as GraphQLRequest } from './client-Cx8h8Q3_.js';
 import { z } from 'zod';
+
+declare const UserDetailShape: {
+    username: z.ZodString;
+    userId: z.ZodNumber;
+    accessToken: z.ZodString;
+    authenticated: z.ZodBoolean;
+    officeId: z.ZodNumber;
+    officeName: z.ZodString;
+    roles: z.ZodArray<z.ZodObject<{
+        id: z.ZodNumber;
+        name: z.ZodString;
+        description: z.ZodString;
+        disabled: z.ZodBoolean;
+        isSelfService: z.ZodBoolean;
+        position: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        id: number;
+        description: string;
+        disabled: boolean;
+        isSelfService: boolean;
+        position: number;
+    }, {
+        name: string;
+        id: number;
+        description: string;
+        disabled: boolean;
+        isSelfService: boolean;
+        position: number;
+    }>, "many">;
+    permissions: z.ZodArray<z.ZodString, "many">;
+    shouldRenewPassword: z.ZodBoolean;
+    isTwoFactorAuthenticationRequired: z.ZodBoolean;
+    isSelfServiceUser: z.ZodBoolean;
+};
+declare const UserDetailSchema: z.ZodObject<{
+    username: z.ZodString;
+    userId: z.ZodNumber;
+    accessToken: z.ZodString;
+    authenticated: z.ZodBoolean;
+    officeId: z.ZodNumber;
+    officeName: z.ZodString;
+    roles: z.ZodArray<z.ZodObject<{
+        id: z.ZodNumber;
+        name: z.ZodString;
+        description: z.ZodString;
+        disabled: z.ZodBoolean;
+        isSelfService: z.ZodBoolean;
+        position: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        id: number;
+        description: string;
+        disabled: boolean;
+        isSelfService: boolean;
+        position: number;
+    }, {
+        name: string;
+        id: number;
+        description: string;
+        disabled: boolean;
+        isSelfService: boolean;
+        position: number;
+    }>, "many">;
+    permissions: z.ZodArray<z.ZodString, "many">;
+    shouldRenewPassword: z.ZodBoolean;
+    isTwoFactorAuthenticationRequired: z.ZodBoolean;
+    isSelfServiceUser: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    username: string;
+    userId: number;
+    accessToken: string;
+    authenticated: boolean;
+    officeId: number;
+    officeName: string;
+    roles: {
+        name: string;
+        id: number;
+        description: string;
+        disabled: boolean;
+        isSelfService: boolean;
+        position: number;
+    }[];
+    permissions: string[];
+    shouldRenewPassword: boolean;
+    isTwoFactorAuthenticationRequired: boolean;
+    isSelfServiceUser: boolean;
+}, {
+    username: string;
+    userId: number;
+    accessToken: string;
+    authenticated: boolean;
+    officeId: number;
+    officeName: string;
+    roles: {
+        name: string;
+        id: number;
+        description: string;
+        disabled: boolean;
+        isSelfService: boolean;
+        position: number;
+    }[];
+    permissions: string[];
+    shouldRenewPassword: boolean;
+    isTwoFactorAuthenticationRequired: boolean;
+    isSelfServiceUser: boolean;
+}>;
+type UserDetail = z.infer<typeof UserDetailSchema>;
 
 declare const CreatePayment: (params: {
     payment: CreatePaymentInput;
@@ -174,84 +282,10 @@ declare const GetAccountsOfClient: (clientId: number, params: ListAccountsOfClie
 
 declare const GraphQL: (request: GraphQLRequest) => Command<GraphQLRequest, any>;
 
-declare const UserDetailSchema: z.ZodObject<{
-    username: z.ZodString;
-    userId: z.ZodNumber;
-    accessToken: z.ZodString;
-    authenticated: z.ZodBoolean;
-    officeId: z.ZodNumber;
-    officeName: z.ZodString;
-    roles: z.ZodArray<z.ZodObject<{
-        id: z.ZodNumber;
-        name: z.ZodString;
-        description: z.ZodString;
-        disabled: z.ZodBoolean;
-        isSelfService: z.ZodBoolean;
-        position: z.ZodNumber;
-    }, "strip", z.ZodTypeAny, {
-        name: string;
-        id: number;
-        description: string;
-        disabled: boolean;
-        isSelfService: boolean;
-        position: number;
-    }, {
-        name: string;
-        id: number;
-        description: string;
-        disabled: boolean;
-        isSelfService: boolean;
-        position: number;
-    }>, "many">;
-    permissions: z.ZodArray<z.ZodString, "many">;
-    shouldRenewPassword: z.ZodBoolean;
-    isTwoFactorAuthenticationRequired: z.ZodBoolean;
-    isSelfServiceUser: z.ZodBoolean;
-}, "strip", z.ZodTypeAny, {
-    officeId: number;
-    officeName: string;
-    username: string;
-    userId: number;
-    accessToken: string;
-    authenticated: boolean;
-    roles: {
-        name: string;
-        id: number;
-        description: string;
-        disabled: boolean;
-        isSelfService: boolean;
-        position: number;
-    }[];
-    permissions: string[];
-    shouldRenewPassword: boolean;
-    isTwoFactorAuthenticationRequired: boolean;
-    isSelfServiceUser: boolean;
-}, {
-    officeId: number;
-    officeName: string;
-    username: string;
-    userId: number;
-    accessToken: string;
-    authenticated: boolean;
-    roles: {
-        name: string;
-        id: number;
-        description: string;
-        disabled: boolean;
-        isSelfService: boolean;
-        position: number;
-    }[];
-    permissions: string[];
-    shouldRenewPassword: boolean;
-    isTwoFactorAuthenticationRequired: boolean;
-    isSelfServiceUser: boolean;
-}>;
-type UserDetail = z.infer<typeof UserDetailSchema>;
-
 declare const GetUserDetail: (params?: {
     tenantId?: string;
 }) => Command<{
     tenantId?: string;
 }, UserDetail>;
 
-export { CreatePayment as C, DeleteClient as D, GetPayment as G, ListAccountsOfClient as L, SendAuthorizationToCore as S, UpdatePayment as U, GetPayments as a, UpdateCardID as b, GetClient as c, UpdateClient as d, UpdateClientIdentifier as e, CreateClient as f, GetClients as g, GetAccount as h, GetAccountsOfClient as i, UpdateAccount as j, DeleteAccount as k, GraphQL as l, GetUserDetail as m, DeletePayment as n };
+export { CreatePayment as C, DeleteClient as D, GetPayment as G, ListAccountsOfClient as L, SendAuthorizationToCore as S, UpdatePayment as U, GetPayments as a, UpdateCardID as b, GetClient as c, UpdateClient as d, UpdateClientIdentifier as e, CreateClient as f, GetClients as g, GetAccount as h, GetAccountsOfClient as i, UpdateAccount as j, DeleteAccount as k, GraphQL as l, GetUserDetail as m, type UserDetail as n, UserDetailSchema as o, UserDetailShape as p, DeletePayment as q };

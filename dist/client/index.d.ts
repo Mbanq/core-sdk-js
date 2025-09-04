@@ -1,4 +1,4 @@
-import { C as Config, b as CreatePaymentInput, U as UpdatePaymentInput, D as CreateClientRequest, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, z as UpdateAccountRequest, H as CreateRecipientRequest, I as UpdateRecipientRequest, R as Recipient, a as Command } from '../client-CHyhpYj2.js';
+import { C as Config, b as CreatePaymentInput, U as UpdatePaymentInput, D as CreateClientRequest, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, z as UpdateAccountRequest, H as CreateRecipientRequest, I as UpdateRecipientRequest, R as Recipient, a as Command } from '../client-Cx8h8Q3_.js';
 import * as z from 'zod';
 import 'graphql';
 import 'axios';
@@ -7,12 +7,12 @@ declare const createClient: (initialConfig: Config) => {
     user: {
         getDetail: () => {
             execute: () => Promise<{
-                officeId: number;
-                officeName: string;
                 username: string;
                 userId: number;
                 accessToken: string;
                 authenticated: boolean;
+                officeId: number;
+                officeName: string;
                 roles: {
                     name: string;
                     id: number;
@@ -644,12 +644,12 @@ declare const createClient: (initialConfig: Config) => {
         user: {
             getDetail: () => {
                 execute: () => Promise<{
-                    officeId: number;
-                    officeName: string;
                     username: string;
                     userId: number;
                     accessToken: string;
                     authenticated: boolean;
+                    officeId: number;
+                    officeName: string;
                     roles: {
                         name: string;
                         id: number;

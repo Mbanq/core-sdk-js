@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/mbanq/core-sdk-js/compare/v0.5.0...v0.5.1) (2025-09-04)
+
+
+### Bug Fixes
+
+* expose type of user feature ([0b27b50](https://github.com/mbanq/core-sdk-js/commit/0b27b50be3a446d638fc9693de0dce0c68c2b8d5))
+
 # [0.5.0](https://github.com/mbanq/core-sdk-js/compare/v0.4.2...v0.5.0) (2025-09-04)
 
 

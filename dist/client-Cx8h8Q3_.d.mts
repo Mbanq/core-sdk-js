@@ -7294,11 +7294,11 @@ declare const ListClientsRequestSchema: z__default.ZodObject<{
     limit?: number | undefined;
     offset?: number | undefined;
     tenantId?: string | undefined;
+    officeId?: number | undefined;
     firstname?: string | undefined;
     lastname?: string | undefined;
     displayName?: string | undefined;
     mobileNo?: string | undefined;
-    officeId?: number | undefined;
     orphansOnly?: boolean | undefined;
     clientStatus?: string | undefined;
     createdStartDate?: string | undefined;
@@ -7314,11 +7314,11 @@ declare const ListClientsRequestSchema: z__default.ZodObject<{
     limit?: number | undefined;
     offset?: number | undefined;
     tenantId?: string | undefined;
+    officeId?: number | undefined;
     firstname?: string | undefined;
     lastname?: string | undefined;
     displayName?: string | undefined;
     mobileNo?: string | undefined;
-    officeId?: number | undefined;
     orphansOnly?: boolean | undefined;
     clientStatus?: string | undefined;
     createdStartDate?: string | undefined;
