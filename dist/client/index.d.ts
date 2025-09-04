@@ -4,6 +4,30 @@ import 'graphql';
 import 'axios';
 
 declare const createClient: (initialConfig: Config) => {
+    user: {
+        getDetail: () => {
+            execute: () => Promise<{
+                officeId: number;
+                officeName: string;
+                username: string;
+                userId: number;
+                accessToken: string;
+                authenticated: boolean;
+                roles: {
+                    name: string;
+                    id: number;
+                    description: string;
+                    disabled: boolean;
+                    isSelfService: boolean;
+                    position: number;
+                }[];
+                permissions: string[];
+                shouldRenewPassword: boolean;
+                isTwoFactorAuthenticationRequired: boolean;
+                isSelfServiceUser: boolean;
+            } | undefined>;
+        };
+    };
     payment: {
         create: (data: CreatePaymentInput) => {
             execute: () => Promise<{
@@ -617,6 +641,30 @@ declare const createClient: (initialConfig: Config) => {
     resetConfig: () => void;
     request: <TOutput>(command: Command<any, TOutput>) => Promise<TOutput | undefined>;
     tenant: (tenantId: string) => {
+        user: {
+            getDetail: () => {
+                execute: () => Promise<{
+                    officeId: number;
+                    officeName: string;
+                    username: string;
+                    userId: number;
+                    accessToken: string;
+                    authenticated: boolean;
+                    roles: {
+                        name: string;
+                        id: number;
+                        description: string;
+                        disabled: boolean;
+                        isSelfService: boolean;
+                        position: number;
+                    }[];
+                    permissions: string[];
+                    shouldRenewPassword: boolean;
+                    isTwoFactorAuthenticationRequired: boolean;
+                    isSelfServiceUser: boolean;
+                } | undefined>;
+            };
+        };
         payment: {
             create: (data: CreatePaymentInput) => {
                 execute: () => Promise<{

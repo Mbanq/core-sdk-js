@@ -1,3 +1,15 @@
+# [0.5.0](https://github.com/mbanq/core-sdk-js/compare/v0.4.2...v0.5.0) (2025-09-04)
+
+
+### Bug Fixes
+
+* add unit test for user feature ([bfc20d2](https://github.com/mbanq/core-sdk-js/commit/bfc20d29d8920f10953f7a8e9ae8ccd1b6244857))
+
+
+### Features
+
+* now support new feature User ([bc1f3d2](https://github.com/mbanq/core-sdk-js/commit/bc1f3d23f3e2cf037a861c529e23710379bf5fb9))
+
 ## [0.4.2](https://github.com/mbanq/core-sdk-js/compare/v0.4.1...v0.4.2) (2025-09-04)
 
 
