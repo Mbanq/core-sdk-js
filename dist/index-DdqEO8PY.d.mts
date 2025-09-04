@@ -1,4 +1,4 @@
-import { b as CreatePaymentInput, a as Command, P as Payment, U as UpdatePaymentInput, g as PaymentFilters, c as PaymentResponse, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, Y as UpdateClientIdentifierResponse, D as CreateClientRequest, Z as CreateClientResponse, _ as ListClientsRequest, $ as ListClientsResponse, v as SavingAccount, a0 as ListAccountsOfClientRequest, z as UpdateAccountRequest, a1 as GraphQLRequest } from './client-BUCNGFJy.js';
+import { b as CreatePaymentInput, a as Command, Y as ProcessOutput, P as Payment, U as UpdatePaymentInput, g as PaymentFilters, c as PaymentResponse, E as UpdateClientRequest, F as ProcessOutput$1, G as UpdateClientIdentifierRequest, Z as UpdateClientIdentifierResponse, D as CreateClientRequest, _ as CreateClientResponse, $ as ListClientsRequest, a0 as ListClientsResponse, v as SavingAccount, a1 as ListAccountsOfClientRequest, z as UpdateAccountRequest, a2 as GraphQLRequest } from './client-CHyhpYj2.mjs';
 
 declare const CreatePayment: (params: {
     payment: CreatePaymentInput;
@@ -6,7 +6,7 @@ declare const CreatePayment: (params: {
 }) => Command<{
     payment: CreatePaymentInput;
     tenantId?: string;
-}, Payment>;
+}, ProcessOutput>;
 declare const GetPayment: (params: {
     id: number;
     tenantId?: string;
@@ -91,7 +91,7 @@ declare const UpdateClient: (params: {
     tenantId?: string;
     clientId: number;
     updates: UpdateClientRequest;
-}, ProcessOutput>;
+}, ProcessOutput$1>;
 declare const UpdateClientIdentifier: (params: {
     tenantId?: string;
     clientId: number;
@@ -124,7 +124,7 @@ declare const DeleteClient: (params: {
 }) => Command<{
     clientId: number;
     tenantId?: string;
-}, ProcessOutput>;
+}, ProcessOutput$1>;
 
 declare const GetAccount: (params: {
     id: number;
@@ -150,7 +150,7 @@ declare const DeleteAccount: (params: {
 }) => Command<{
     accountId: number;
     tenantId?: string;
-}, ProcessOutput>;
+}, ProcessOutput$1>;
 declare const ListAccountsOfClient: (params?: {
     clientId: number;
     tenantId?: string;

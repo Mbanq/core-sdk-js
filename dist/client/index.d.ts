@@ -1,4 +1,4 @@
-import { C as Config, b as CreatePaymentInput, U as UpdatePaymentInput, D as CreateClientRequest, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, z as UpdateAccountRequest, H as CreateRecipientRequest, I as UpdateRecipientRequest, R as Recipient, a as Command } from '../client-BUCNGFJy.js';
+import { C as Config, b as CreatePaymentInput, U as UpdatePaymentInput, D as CreateClientRequest, E as UpdateClientRequest, F as ProcessOutput, G as UpdateClientIdentifierRequest, z as UpdateAccountRequest, H as CreateRecipientRequest, I as UpdateRecipientRequest, R as Recipient, a as Command } from '../client-CHyhpYj2.js';
 import * as z from 'zod';
 import 'graphql';
 import 'axios';
@@ -6,137 +6,12 @@ import 'axios';
 declare const createClient: (initialConfig: Config) => {
     payment: {
         create: (data: CreatePaymentInput) => {
-            execute: () => Promise<z.objectOutputType<{
-                id: z.ZodNumber;
-                clientId: z.ZodNumber;
-                amount: z.ZodNumber;
-                correlationId: z.ZodString;
-                paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-                paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
-                recipient: z.ZodObject<{
-                    cardId: z.ZodOptional<z.ZodString>;
-                    recipientType: z.ZodString;
-                    address: z.ZodObject<{
-                        line1: z.ZodOptional<z.ZodString>;
-                        line2: z.ZodOptional<z.ZodString>;
-                        stateCode: z.ZodOptional<z.ZodString>;
-                        countryCode: z.ZodString;
-                        postalCode: z.ZodOptional<z.ZodString>;
-                    }, "strip", z.ZodTypeAny, {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    }, {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    }>;
-                    name: z.ZodString;
-                }, "strip", z.ZodTypeAny, {
-                    recipientType: string;
-                    address: {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    };
-                    name: string;
-                    cardId?: string | undefined;
-                }, {
-                    recipientType: string;
-                    address: {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    };
-                    name: string;
-                    cardId?: string | undefined;
-                }>;
-                originator: z.ZodObject<{
-                    accountId: z.ZodOptional<z.ZodString>;
-                    recipientType: z.ZodString;
-                    address: z.ZodObject<{
-                        line1: z.ZodOptional<z.ZodString>;
-                        line2: z.ZodOptional<z.ZodString>;
-                        stateCode: z.ZodOptional<z.ZodString>;
-                        countryCode: z.ZodString;
-                        postalCode: z.ZodOptional<z.ZodString>;
-                    }, "strip", z.ZodTypeAny, {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    }, {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    }>;
-                    name: z.ZodString;
-                }, "strip", z.ZodTypeAny, {
-                    recipientType: string;
-                    address: {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    };
-                    name: string;
-                    accountId?: string | undefined;
-                }, {
-                    recipientType: string;
-                    address: {
-                        countryCode: string;
-                        line1?: string | undefined;
-                        line2?: string | undefined;
-                        stateCode?: string | undefined;
-                        postalCode?: string | undefined;
-                    };
-                    name: string;
-                    accountId?: string | undefined;
-                }>;
-                executedAt: z.ZodString;
-                createdAt: z.ZodString;
-                externalId: z.ZodString;
-                status: z.ZodEnum<["DRAFT", "AML_SCREENING", "AML_REJECTED", "EXECUTION_SCHEDULED", "EXECUTION_PROCESSING", "EXECUTION_SUCCESS", "EXECUTION_FAILURE", "RETURNED", "CANCELLED", "COMPLIANCE_FAILURE", "DELETED", "UNKNOWN"]>;
-                paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
-                currencyData: z.ZodObject<{
-                    code: z.ZodString;
-                    name: z.ZodString;
-                    decimalPlaces: z.ZodNumber;
-                    displaySymbol: z.ZodString;
-                    nameCode: z.ZodString;
-                    currencyCodeInDigit: z.ZodNumber;
-                    isBaseCurrency: z.ZodBoolean;
-                }, "strip", z.ZodTypeAny, {
-                    code: string;
-                    name: string;
-                    decimalPlaces: number;
-                    displaySymbol: string;
-                    nameCode: string;
-                    currencyCodeInDigit: number;
-                    isBaseCurrency: boolean;
-                }, {
-                    code: string;
-                    name: string;
-                    decimalPlaces: number;
-                    displaySymbol: string;
-                    nameCode: string;
-                    currencyCodeInDigit: number;
-                    isBaseCurrency: boolean;
-                }>;
-                currency: z.ZodString;
-            }, z.ZodAny, "strip"> | undefined>;
+            execute: () => Promise<{
+                clientId: number;
+                id: string;
+                resourceId: number;
+                resourceIdentifier: string;
+            } | undefined>;
         };
         get: (id: number) => {
             execute: () => Promise<z.objectOutputType<{
@@ -170,6 +45,7 @@ declare const createClient: (initialConfig: Config) => {
                     }>;
                     name: z.ZodString;
                 }, "strip", z.ZodTypeAny, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -178,9 +54,9 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     cardId?: string | undefined;
                 }, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -189,7 +65,6 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     cardId?: string | undefined;
                 }>;
                 originator: z.ZodObject<{
@@ -216,6 +91,7 @@ declare const createClient: (initialConfig: Config) => {
                     }>;
                     name: z.ZodString;
                 }, "strip", z.ZodTypeAny, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -224,9 +100,9 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     accountId?: string | undefined;
                 }, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -235,7 +111,6 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     accountId?: string | undefined;
                 }>;
                 executedAt: z.ZodString;
@@ -252,16 +127,16 @@ declare const createClient: (initialConfig: Config) => {
                     currencyCodeInDigit: z.ZodNumber;
                     isBaseCurrency: z.ZodBoolean;
                 }, "strip", z.ZodTypeAny, {
-                    code: string;
                     name: string;
+                    code: string;
                     decimalPlaces: number;
                     displaySymbol: string;
                     nameCode: string;
                     currencyCodeInDigit: number;
                     isBaseCurrency: boolean;
                 }, {
-                    code: string;
                     name: string;
+                    code: string;
                     decimalPlaces: number;
                     displaySymbol: string;
                     nameCode: string;
@@ -303,6 +178,7 @@ declare const createClient: (initialConfig: Config) => {
                     }>;
                     name: z.ZodString;
                 }, "strip", z.ZodTypeAny, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -311,9 +187,9 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     cardId?: string | undefined;
                 }, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -322,7 +198,6 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     cardId?: string | undefined;
                 }>;
                 originator: z.ZodObject<{
@@ -349,6 +224,7 @@ declare const createClient: (initialConfig: Config) => {
                     }>;
                     name: z.ZodString;
                 }, "strip", z.ZodTypeAny, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -357,9 +233,9 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     accountId?: string | undefined;
                 }, {
+                    name: string;
                     recipientType: string;
                     address: {
                         countryCode: string;
@@ -368,7 +244,6 @@ declare const createClient: (initialConfig: Config) => {
                         stateCode?: string | undefined;
                         postalCode?: string | undefined;
                     };
-                    name: string;
                     accountId?: string | undefined;
                 }>;
                 executedAt: z.ZodString;
@@ -385,16 +260,16 @@ declare const createClient: (initialConfig: Config) => {
                     currencyCodeInDigit: z.ZodNumber;
                     isBaseCurrency: z.ZodBoolean;
                 }, "strip", z.ZodTypeAny, {
-                    code: string;
                     name: string;
+                    code: string;
                     decimalPlaces: number;
                     displaySymbol: string;
                     nameCode: string;
                     currencyCodeInDigit: number;
                     isBaseCurrency: boolean;
                 }, {
-                    code: string;
                     name: string;
+                    code: string;
                     decimalPlaces: number;
                     displaySymbol: string;
                     nameCode: string;
@@ -446,10 +321,9 @@ declare const createClient: (initialConfig: Config) => {
             accounts: {
                 get: (accountId: number) => {
                     readonly execute: () => Promise<{
-                        clientId: number;
                         status: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                             submittedAndPendingApproval: boolean;
                             approved: boolean;
@@ -462,10 +336,11 @@ declare const createClient: (initialConfig: Config) => {
                             transferOnHold: boolean;
                             matured: boolean;
                         };
+                        clientId: number;
                         id: number;
                         currency: {
-                            code: string;
                             name: string;
+                            code: string;
                             decimalPlaces: number;
                             displaySymbol: string;
                             nameCode: string;
@@ -490,8 +365,8 @@ declare const createClient: (initialConfig: Config) => {
                             activatedByLastname?: string | undefined;
                         };
                         subStatus: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                             none: boolean;
                             inactive: boolean;
@@ -503,8 +378,8 @@ declare const createClient: (initialConfig: Config) => {
                         };
                         lastActiveTransactionDate: number[];
                         depositType: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                         };
                         allowPrepaidCard: boolean;
@@ -524,37 +399,37 @@ declare const createClient: (initialConfig: Config) => {
                         fieldOfficerId: number;
                         nominalAnnualInterestRate: number;
                         interestCompoundingPeriodType: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                         };
                         interestPostingPeriodType: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                         };
                         interestCalculationType: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                         };
                         interestCalculationDaysInYearType: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                         };
                         lockinPeriodFrequency: number;
                         lockinPeriodFrequencyType: {
-                            value: string;
                             code: string;
+                            value: string;
                             id: number;
                         };
                         onHoldFunds: number;
                         savingsAmountOnHold: number;
                         summary: {
                             currency: {
-                                code: string;
                                 name: string;
+                                code: string;
                                 decimalPlaces: number;
                                 displaySymbol: string;
                                 nameCode: string;
@@ -577,8 +452,8 @@ declare const createClient: (initialConfig: Config) => {
                         floatingRateId: number;
                         isFloatingInterestRateCalculationAllowed: boolean;
                         bankDetails: {
-                            address: string;
                             name: string;
+                            address: string;
                             city: string;
                             routingNumber: string;
                             swiftCode: string;
@@ -744,137 +619,12 @@ declare const createClient: (initialConfig: Config) => {
     tenant: (tenantId: string) => {
         payment: {
             create: (data: CreatePaymentInput) => {
-                execute: () => Promise<z.objectOutputType<{
-                    id: z.ZodNumber;
-                    clientId: z.ZodNumber;
-                    amount: z.ZodNumber;
-                    correlationId: z.ZodString;
-                    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-                    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
-                    recipient: z.ZodObject<{
-                        cardId: z.ZodOptional<z.ZodString>;
-                        recipientType: z.ZodString;
-                        address: z.ZodObject<{
-                            line1: z.ZodOptional<z.ZodString>;
-                            line2: z.ZodOptional<z.ZodString>;
-                            stateCode: z.ZodOptional<z.ZodString>;
-                            countryCode: z.ZodString;
-                            postalCode: z.ZodOptional<z.ZodString>;
-                        }, "strip", z.ZodTypeAny, {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        }, {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        }>;
-                        name: z.ZodString;
-                    }, "strip", z.ZodTypeAny, {
-                        recipientType: string;
-                        address: {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        };
-                        name: string;
-                        cardId?: string | undefined;
-                    }, {
-                        recipientType: string;
-                        address: {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        };
-                        name: string;
-                        cardId?: string | undefined;
-                    }>;
-                    originator: z.ZodObject<{
-                        accountId: z.ZodOptional<z.ZodString>;
-                        recipientType: z.ZodString;
-                        address: z.ZodObject<{
-                            line1: z.ZodOptional<z.ZodString>;
-                            line2: z.ZodOptional<z.ZodString>;
-                            stateCode: z.ZodOptional<z.ZodString>;
-                            countryCode: z.ZodString;
-                            postalCode: z.ZodOptional<z.ZodString>;
-                        }, "strip", z.ZodTypeAny, {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        }, {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        }>;
-                        name: z.ZodString;
-                    }, "strip", z.ZodTypeAny, {
-                        recipientType: string;
-                        address: {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        };
-                        name: string;
-                        accountId?: string | undefined;
-                    }, {
-                        recipientType: string;
-                        address: {
-                            countryCode: string;
-                            line1?: string | undefined;
-                            line2?: string | undefined;
-                            stateCode?: string | undefined;
-                            postalCode?: string | undefined;
-                        };
-                        name: string;
-                        accountId?: string | undefined;
-                    }>;
-                    executedAt: z.ZodString;
-                    createdAt: z.ZodString;
-                    externalId: z.ZodString;
-                    status: z.ZodEnum<["DRAFT", "AML_SCREENING", "AML_REJECTED", "EXECUTION_SCHEDULED", "EXECUTION_PROCESSING", "EXECUTION_SUCCESS", "EXECUTION_FAILURE", "RETURNED", "CANCELLED", "COMPLIANCE_FAILURE", "DELETED", "UNKNOWN"]>;
-                    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
-                    currencyData: z.ZodObject<{
-                        code: z.ZodString;
-                        name: z.ZodString;
-                        decimalPlaces: z.ZodNumber;
-                        displaySymbol: z.ZodString;
-                        nameCode: z.ZodString;
-                        currencyCodeInDigit: z.ZodNumber;
-                        isBaseCurrency: z.ZodBoolean;
-                    }, "strip", z.ZodTypeAny, {
-                        code: string;
-                        name: string;
-                        decimalPlaces: number;
-                        displaySymbol: string;
-                        nameCode: string;
-                        currencyCodeInDigit: number;
-                        isBaseCurrency: boolean;
-                    }, {
-                        code: string;
-                        name: string;
-                        decimalPlaces: number;
-                        displaySymbol: string;
-                        nameCode: string;
-                        currencyCodeInDigit: number;
-                        isBaseCurrency: boolean;
-                    }>;
-                    currency: z.ZodString;
-                }, z.ZodAny, "strip"> | undefined>;
+                execute: () => Promise<{
+                    clientId: number;
+                    id: string;
+                    resourceId: number;
+                    resourceIdentifier: string;
+                } | undefined>;
             };
             get: (id: number) => {
                 execute: () => Promise<z.objectOutputType<{
@@ -908,6 +658,7 @@ declare const createClient: (initialConfig: Config) => {
                         }>;
                         name: z.ZodString;
                     }, "strip", z.ZodTypeAny, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -916,9 +667,9 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         cardId?: string | undefined;
                     }, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -927,7 +678,6 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         cardId?: string | undefined;
                     }>;
                     originator: z.ZodObject<{
@@ -954,6 +704,7 @@ declare const createClient: (initialConfig: Config) => {
                         }>;
                         name: z.ZodString;
                     }, "strip", z.ZodTypeAny, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -962,9 +713,9 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         accountId?: string | undefined;
                     }, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -973,7 +724,6 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         accountId?: string | undefined;
                     }>;
                     executedAt: z.ZodString;
@@ -990,16 +740,16 @@ declare const createClient: (initialConfig: Config) => {
                         currencyCodeInDigit: z.ZodNumber;
                         isBaseCurrency: z.ZodBoolean;
                     }, "strip", z.ZodTypeAny, {
-                        code: string;
                         name: string;
+                        code: string;
                         decimalPlaces: number;
                         displaySymbol: string;
                         nameCode: string;
                         currencyCodeInDigit: number;
                         isBaseCurrency: boolean;
                     }, {
-                        code: string;
                         name: string;
+                        code: string;
                         decimalPlaces: number;
                         displaySymbol: string;
                         nameCode: string;
@@ -1041,6 +791,7 @@ declare const createClient: (initialConfig: Config) => {
                         }>;
                         name: z.ZodString;
                     }, "strip", z.ZodTypeAny, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -1049,9 +800,9 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         cardId?: string | undefined;
                     }, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -1060,7 +811,6 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         cardId?: string | undefined;
                     }>;
                     originator: z.ZodObject<{
@@ -1087,6 +837,7 @@ declare const createClient: (initialConfig: Config) => {
                         }>;
                         name: z.ZodString;
                     }, "strip", z.ZodTypeAny, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -1095,9 +846,9 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         accountId?: string | undefined;
                     }, {
+                        name: string;
                         recipientType: string;
                         address: {
                             countryCode: string;
@@ -1106,7 +857,6 @@ declare const createClient: (initialConfig: Config) => {
                             stateCode?: string | undefined;
                             postalCode?: string | undefined;
                         };
-                        name: string;
                         accountId?: string | undefined;
                     }>;
                     executedAt: z.ZodString;
@@ -1123,16 +873,16 @@ declare const createClient: (initialConfig: Config) => {
                         currencyCodeInDigit: z.ZodNumber;
                         isBaseCurrency: z.ZodBoolean;
                     }, "strip", z.ZodTypeAny, {
-                        code: string;
                         name: string;
+                        code: string;
                         decimalPlaces: number;
                         displaySymbol: string;
                         nameCode: string;
                         currencyCodeInDigit: number;
                         isBaseCurrency: boolean;
                     }, {
-                        code: string;
                         name: string;
+                        code: string;
                         decimalPlaces: number;
                         displaySymbol: string;
                         nameCode: string;
@@ -1184,10 +934,9 @@ declare const createClient: (initialConfig: Config) => {
                 accounts: {
                     get: (accountId: number) => {
                         readonly execute: () => Promise<{
-                            clientId: number;
                             status: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                                 submittedAndPendingApproval: boolean;
                                 approved: boolean;
@@ -1200,10 +949,11 @@ declare const createClient: (initialConfig: Config) => {
                                 transferOnHold: boolean;
                                 matured: boolean;
                             };
+                            clientId: number;
                             id: number;
                             currency: {
-                                code: string;
                                 name: string;
+                                code: string;
                                 decimalPlaces: number;
                                 displaySymbol: string;
                                 nameCode: string;
@@ -1228,8 +978,8 @@ declare const createClient: (initialConfig: Config) => {
                                 activatedByLastname?: string | undefined;
                             };
                             subStatus: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                                 none: boolean;
                                 inactive: boolean;
@@ -1241,8 +991,8 @@ declare const createClient: (initialConfig: Config) => {
                             };
                             lastActiveTransactionDate: number[];
                             depositType: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                             };
                             allowPrepaidCard: boolean;
@@ -1262,37 +1012,37 @@ declare const createClient: (initialConfig: Config) => {
                             fieldOfficerId: number;
                             nominalAnnualInterestRate: number;
                             interestCompoundingPeriodType: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                             };
                             interestPostingPeriodType: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                             };
                             interestCalculationType: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                             };
                             interestCalculationDaysInYearType: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                             };
                             lockinPeriodFrequency: number;
                             lockinPeriodFrequencyType: {
-                                value: string;
                                 code: string;
+                                value: string;
                                 id: number;
                             };
                             onHoldFunds: number;
                             savingsAmountOnHold: number;
                             summary: {
                                 currency: {
-                                    code: string;
                                     name: string;
+                                    code: string;
                                     decimalPlaces: number;
                                     displaySymbol: string;
                                     nameCode: string;
@@ -1315,8 +1065,8 @@ declare const createClient: (initialConfig: Config) => {
                             floatingRateId: number;
                             isFloatingInterestRateCalculationAllowed: boolean;
                             bankDetails: {
-                                address: string;
                                 name: string;
+                                address: string;
                                 city: string;
                                 routingNumber: string;
                                 swiftCode: string;

@@ -1,3 +1,11 @@
+## [0.4.2](https://github.com/mbanq/core-sdk-js/compare/v0.4.1...v0.4.2) (2025-09-04)
+
+
+### Bug Fixes
+
+* fix error on handle axios error and enhanced type of payment and fix logic of fetch all payments ([e804689](https://github.com/mbanq/core-sdk-js/commit/e8046897a1d0523a5eef3f4f60e0dac93235a81b))
+* fix unit test of payment feature ([c9cbc7d](https://github.com/mbanq/core-sdk-js/commit/c9cbc7d279a5a3eab0140ccf8cf7d8199579f6c4))
+
 ## [0.4.1](https://github.com/mbanq/core-sdk-js/compare/v0.4.0...v0.4.1) (2025-09-03)
 
 

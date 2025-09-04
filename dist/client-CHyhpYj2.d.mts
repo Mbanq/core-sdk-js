@@ -235,13 +235,13 @@ declare const RecipientRequestSchema: z.ZodObject<{
     offset: z.ZodOptional<z.ZodNumber>;
     name: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
+    name?: string | undefined;
     limit?: number | undefined;
     offset?: number | undefined;
-    name?: string | undefined;
 }, {
+    name?: string | undefined;
     limit?: number | undefined;
     offset?: number | undefined;
-    name?: string | undefined;
 }>;
 declare const CreateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
     nickName: z.ZodString;
@@ -715,14 +715,14 @@ interface UpdateTraceNumbersInput {
   tenantId?: string
 }
 
-interface ProcessOutput {
+interface ProcessOutput$1 {
   id: string;
   clientId: number;
   resourceId: number;
   resourceIdentifier: string;
 }
 
-interface CreateTransferOutput extends ProcessOutput {
+interface CreateTransferOutput extends ProcessOutput$1 {
   data: { amount: number }
 }
 
@@ -792,6 +792,7 @@ declare const PaymentFiltersSchema: z.ZodObject<{
     limit: z.ZodOptional<z.ZodOptional<z.ZodNumber>>;
     offset: z.ZodOptional<z.ZodOptional<z.ZodNumber>>;
 }, "strip", z.ZodTypeAny, {
+    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
     originatorName?: string | undefined;
     originatorAccount?: string | undefined;
     originatorBankRoutingCode?: string | undefined;
@@ -811,7 +812,6 @@ declare const PaymentFiltersSchema: z.ZodObject<{
     toValueDate?: string | undefined;
     fromExecuteDate?: string | undefined;
     toExecuteDate?: string | undefined;
-    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
     fromReturnDate?: string | undefined;
     toReturnDate?: string | undefined;
     isSettlement?: boolean | undefined;
@@ -820,6 +820,7 @@ declare const PaymentFiltersSchema: z.ZodObject<{
     limit?: number | undefined;
     offset?: number | undefined;
 }, {
+    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
     originatorName?: string | undefined;
     originatorAccount?: string | undefined;
     originatorBankRoutingCode?: string | undefined;
@@ -839,7 +840,6 @@ declare const PaymentFiltersSchema: z.ZodObject<{
     toValueDate?: string | undefined;
     fromExecuteDate?: string | undefined;
     toExecuteDate?: string | undefined;
-    status?: "DRAFT" | "AML_SCREENING" | "AML_REJECTED" | "EXECUTION_SCHEDULED" | "EXECUTION_PROCESSING" | "EXECUTION_SUCCESS" | "EXECUTION_FAILURE" | "RETURNED" | "CANCELLED" | "COMPLIANCE_FAILURE" | "DELETED" | "UNKNOWN" | undefined;
     fromReturnDate?: string | undefined;
     toReturnDate?: string | undefined;
     isSettlement?: boolean | undefined;
@@ -880,6 +880,7 @@ declare const PaymentShape: {
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -888,9 +889,9 @@ declare const PaymentShape: {
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -899,7 +900,6 @@ declare const PaymentShape: {
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }>;
     originator: z.ZodObject<{
@@ -926,6 +926,7 @@ declare const PaymentShape: {
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -934,9 +935,9 @@ declare const PaymentShape: {
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -945,7 +946,6 @@ declare const PaymentShape: {
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }>;
     executedAt: z.ZodString;
@@ -962,16 +962,16 @@ declare const PaymentShape: {
         currencyCodeInDigit: z.ZodNumber;
         isBaseCurrency: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
         currencyCodeInDigit: number;
         isBaseCurrency: boolean;
     }, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -1011,6 +1011,7 @@ declare const PaymentSchema: z.ZodObject<{
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1019,9 +1020,9 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1030,7 +1031,6 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }>;
     originator: z.ZodObject<{
@@ -1057,6 +1057,7 @@ declare const PaymentSchema: z.ZodObject<{
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1065,9 +1066,9 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1076,7 +1077,6 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }>;
     executedAt: z.ZodString;
@@ -1093,16 +1093,16 @@ declare const PaymentSchema: z.ZodObject<{
         currencyCodeInDigit: z.ZodNumber;
         isBaseCurrency: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
         currencyCodeInDigit: number;
         isBaseCurrency: boolean;
     }, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -1141,6 +1141,7 @@ declare const PaymentSchema: z.ZodObject<{
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1149,9 +1150,9 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1160,7 +1161,6 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }>;
     originator: z.ZodObject<{
@@ -1187,6 +1187,7 @@ declare const PaymentSchema: z.ZodObject<{
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1195,9 +1196,9 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1206,7 +1207,6 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }>;
     executedAt: z.ZodString;
@@ -1223,16 +1223,16 @@ declare const PaymentSchema: z.ZodObject<{
         currencyCodeInDigit: z.ZodNumber;
         isBaseCurrency: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
         currencyCodeInDigit: number;
         isBaseCurrency: boolean;
     }, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -1271,6 +1271,7 @@ declare const PaymentSchema: z.ZodObject<{
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1279,9 +1280,9 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1290,7 +1291,6 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         cardId?: string | undefined;
     }>;
     originator: z.ZodObject<{
@@ -1317,6 +1317,7 @@ declare const PaymentSchema: z.ZodObject<{
         }>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1325,9 +1326,9 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }, {
+        name: string;
         recipientType: string;
         address: {
             countryCode: string;
@@ -1336,7 +1337,6 @@ declare const PaymentSchema: z.ZodObject<{
             stateCode?: string | undefined;
             postalCode?: string | undefined;
         };
-        name: string;
         accountId?: string | undefined;
     }>;
     executedAt: z.ZodString;
@@ -1353,16 +1353,16 @@ declare const PaymentSchema: z.ZodObject<{
         currencyCodeInDigit: z.ZodNumber;
         isBaseCurrency: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
         currencyCodeInDigit: number;
         isBaseCurrency: boolean;
     }, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -1376,339 +1376,177 @@ declare const CreatePaymentInputShape: {
     currency: z.ZodString;
     paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
     paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-    debtor: z.ZodObject<{
-        name: z.ZodString;
-        identifier: z.ZodString;
-        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
-        address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
-            city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
-            postalCode: z.ZodOptional<z.ZodString>;
-        }, "strip", z.ZodTypeAny, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }>>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }>;
-    creditor: z.ZodObject<{
+    recipient: z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>;
     clientId: z.ZodOptional<z.ZodString>;
     correspondent: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>>;
     exchangeRate: z.ZodOptional<z.ZodNumber>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -1719,344 +1557,182 @@ declare const CreatePaymentInputShape: {
     valueDate: z.ZodOptional<z.ZodString>;
     executionDate: z.ZodOptional<z.ZodString>;
 };
-declare const CreatePaymentInputSchema: z.ZodEffects<z.ZodObject<{
+declare const CreatePaymentInputSchema: z.ZodEffects<z.ZodEffects<z.ZodEffects<z.ZodEffects<z.ZodEffects<z.ZodObject<{
     amount: z.ZodNumber;
     currency: z.ZodString;
     paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
     paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-    debtor: z.ZodObject<{
-        name: z.ZodString;
-        identifier: z.ZodString;
-        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
-        address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
-            city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
-            postalCode: z.ZodOptional<z.ZodString>;
-        }, "strip", z.ZodTypeAny, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }>>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }>;
-    creditor: z.ZodObject<{
+    recipient: z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>;
     clientId: z.ZodOptional<z.ZodString>;
     correspondent: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>>;
     exchangeRate: z.ZodOptional<z.ZodNumber>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -2071,339 +1747,177 @@ declare const CreatePaymentInputSchema: z.ZodEffects<z.ZodObject<{
     currency: z.ZodString;
     paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
     paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-    debtor: z.ZodObject<{
-        name: z.ZodString;
-        identifier: z.ZodString;
-        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
-        address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
-            city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
-            postalCode: z.ZodOptional<z.ZodString>;
-        }, "strip", z.ZodTypeAny, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }>>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }>;
-    creditor: z.ZodObject<{
+    recipient: z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>;
     clientId: z.ZodOptional<z.ZodString>;
     correspondent: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>>;
     exchangeRate: z.ZodOptional<z.ZodNumber>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -2418,339 +1932,177 @@ declare const CreatePaymentInputSchema: z.ZodEffects<z.ZodObject<{
     currency: z.ZodString;
     paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
     paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-    debtor: z.ZodObject<{
-        name: z.ZodString;
-        identifier: z.ZodString;
-        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
-        address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
-            city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
-            postalCode: z.ZodOptional<z.ZodString>;
-        }, "strip", z.ZodTypeAny, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }>>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }>;
-    creditor: z.ZodObject<{
+    recipient: z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>;
     clientId: z.ZodOptional<z.ZodString>;
     correspondent: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>>;
     exchangeRate: z.ZodOptional<z.ZodNumber>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -2765,339 +2117,177 @@ declare const CreatePaymentInputSchema: z.ZodEffects<z.ZodObject<{
     currency: z.ZodString;
     paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
     paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-    debtor: z.ZodObject<{
-        name: z.ZodString;
-        identifier: z.ZodString;
-        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
-        address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
-            city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
-            postalCode: z.ZodOptional<z.ZodString>;
-        }, "strip", z.ZodTypeAny, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }>>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }>;
-    creditor: z.ZodObject<{
+    recipient: z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>;
     clientId: z.ZodOptional<z.ZodString>;
     correspondent: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>>;
     exchangeRate: z.ZodOptional<z.ZodNumber>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -3112,339 +2302,1657 @@ declare const CreatePaymentInputSchema: z.ZodEffects<z.ZodObject<{
     currency: z.ZodString;
     paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
     paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
-    debtor: z.ZodObject<{
-        name: z.ZodString;
-        identifier: z.ZodString;
-        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
-        address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
-            city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
-            postalCode: z.ZodOptional<z.ZodString>;
-        }, "strip", z.ZodTypeAny, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }, {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }>>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }, {
-        name: string;
-        identifier: string;
-        address?: {
-            postalCode?: string | undefined;
-            streetAddress?: string | undefined;
-            city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        } | undefined;
-        accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        } | undefined;
+        accountId: string;
     }>;
-    creditor: z.ZodObject<{
+    recipient: z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }>;
     clientId: z.ZodOptional<z.ZodString>;
     correspondent: z.ZodOptional<z.ZodObject<{
         name: z.ZodString;
-        identifier: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
         accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
         address: z.ZodOptional<z.ZodObject<{
-            streetAddress: z.ZodOptional<z.ZodString>;
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
             city: z.ZodOptional<z.ZodString>;
-            state: z.ZodOptional<z.ZodString>;
-            country: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
             postalCode: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
-        }>>;
-        agent: z.ZodOptional<z.ZodObject<{
-            name: z.ZodOptional<z.ZodString>;
-            identifier: z.ZodOptional<z.ZodString>;
-            address: z.ZodOptional<z.ZodObject<{
-                streetAddress: z.ZodOptional<z.ZodString>;
-                city: z.ZodOptional<z.ZodString>;
-                state: z.ZodOptional<z.ZodString>;
-                country: z.ZodOptional<z.ZodString>;
-                postalCode: z.ZodOptional<z.ZodString>;
-            }, "strip", z.ZodTypeAny, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }, {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            }>>;
-        }, "strip", z.ZodTypeAny, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
-        }, {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
         }>>;
     }, "strip", z.ZodTypeAny, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
     }, {
         name: string;
-        identifier: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
         address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
             postalCode?: string | undefined;
-            streetAddress?: string | undefined;
             city?: string | undefined;
-            state?: string | undefined;
-            country?: string | undefined;
         } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
         accountType?: "CHECKING" | "SAVINGS" | undefined;
-        agent?: {
-            address?: {
-                postalCode?: string | undefined;
-                streetAddress?: string | undefined;
-                city?: string | undefined;
-                state?: string | undefined;
-                country?: string | undefined;
-            } | undefined;
-            name?: string | undefined;
-            identifier?: string | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
         } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">>, z.objectOutputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">, z.objectInputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">>, z.objectOutputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">, z.objectInputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">>, z.objectOutputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">, z.objectInputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">>, z.objectOutputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>>;
+    exchangeRate: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString, "many">]>>;
+    paymentRailMetaData: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+    chargeBearer: z.ZodOptional<z.ZodEnum<["OUR", "BEN", "SHA"]>>;
+    purposeCode: z.ZodOptional<z.ZodString>;
+    valueDate: z.ZodOptional<z.ZodString>;
+    executionDate: z.ZodOptional<z.ZodString>;
+}, z.ZodAny, "strip">, z.objectInputType<{
+    amount: z.ZodNumber;
+    currency: z.ZodString;
+    paymentRail: z.ZodEnum<["ACH", "SAMEDAYACH", "WIRE", "SWIFT", "INTERNAL", "FXPAY", "CARD"]>;
+    paymentType: z.ZodEnum<["CREDIT", "DEBIT"]>;
+    originator: z.ZodObject<{
+        accountId: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        accountId: string;
+    }, {
+        accountId: string;
+    }>;
+    recipient: z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }>;
+    clientId: z.ZodOptional<z.ZodString>;
+    correspondent: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        accountId: z.ZodOptional<z.ZodString>;
+        recipientId: z.ZodOptional<z.ZodString>;
+        accountType: z.ZodOptional<z.ZodEnum<["CHECKING", "SAVINGS"]>>;
+        recipientType: z.ZodOptional<z.ZodEnum<["INDIVIDUAL", "BUSINESS"]>>;
+        accountEntity: z.ZodOptional<z.ZodEnum<["PERSONAL", "BUSINESS"]>>;
+        accountNumber: z.ZodOptional<z.ZodString>;
+        bankInformation: z.ZodOptional<z.ZodObject<{
+            routingNumber: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            routingNumber: string;
+        }, {
+            routingNumber: string;
+        }>>;
+        cardId: z.ZodOptional<z.ZodString>;
+        contactNumber: z.ZodOptional<z.ZodString>;
+        address: z.ZodOptional<z.ZodObject<{
+            line1: z.ZodOptional<z.ZodString>;
+            line2: z.ZodOptional<z.ZodString>;
+            city: z.ZodOptional<z.ZodString>;
+            stateCode: z.ZodOptional<z.ZodString>;
+            countryCode: z.ZodOptional<z.ZodString>;
+            postalCode: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }, {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
+    }, {
+        name: string;
+        cardId?: string | undefined;
+        recipientType?: "INDIVIDUAL" | "BUSINESS" | undefined;
+        address?: {
+            line1?: string | undefined;
+            line2?: string | undefined;
+            stateCode?: string | undefined;
+            countryCode?: string | undefined;
+            postalCode?: string | undefined;
+            city?: string | undefined;
+        } | undefined;
+        accountId?: string | undefined;
+        recipientId?: string | undefined;
+        accountType?: "CHECKING" | "SAVINGS" | undefined;
+        accountEntity?: "BUSINESS" | "PERSONAL" | undefined;
+        accountNumber?: string | undefined;
+        bankInformation?: {
+            routingNumber: string;
+        } | undefined;
+        contactNumber?: string | undefined;
     }>>;
     exchangeRate: z.ZodOptional<z.ZodNumber>;
     externalId: z.ZodOptional<z.ZodString>;
@@ -3463,12 +3971,12 @@ declare const UpdatePaymentInputShape: {
         accountType: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }>>;
     creditor: z.ZodOptional<z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
@@ -3486,16 +3994,16 @@ declare const UpdatePaymentInputShape: {
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3517,16 +4025,16 @@ declare const UpdatePaymentInputShape: {
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3548,12 +4056,12 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         accountType: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }>>;
     creditor: z.ZodOptional<z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
@@ -3571,16 +4079,16 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3602,16 +4110,16 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3632,12 +4140,12 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         accountType: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }>>;
     creditor: z.ZodOptional<z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
@@ -3655,16 +4163,16 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3686,16 +4194,16 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3716,12 +4224,12 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         accountType: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
     }>>;
     creditor: z.ZodOptional<z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
@@ -3739,16 +4247,16 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3770,16 +4278,16 @@ declare const UpdatePaymentInputSchema: z.ZodObject<{
         }>>;
     }, "strip", z.ZodTypeAny, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
         } | undefined;
     }, {
         name?: string | undefined;
-        identifier?: string | undefined;
         accountType?: string | undefined;
+        identifier?: string | undefined;
         agent?: {
             name?: string | undefined;
             identifier?: string | undefined;
@@ -3826,6 +4334,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -3834,9 +4343,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -3845,7 +4354,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }>;
         originator: z.ZodObject<{
@@ -3872,6 +4380,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -3880,9 +4389,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -3891,7 +4400,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }>;
         executedAt: z.ZodString;
@@ -3908,16 +4416,16 @@ declare const PaymentResponseSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodNumber;
             isBaseCurrency: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
             currencyCodeInDigit: number;
             isBaseCurrency: boolean;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -3956,6 +4464,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -3964,9 +4473,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -3975,7 +4484,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }>;
         originator: z.ZodObject<{
@@ -4002,6 +4510,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4010,9 +4519,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4021,7 +4530,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }>;
         executedAt: z.ZodString;
@@ -4038,16 +4546,16 @@ declare const PaymentResponseSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodNumber;
             isBaseCurrency: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
             currencyCodeInDigit: number;
             isBaseCurrency: boolean;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4086,6 +4594,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4094,9 +4603,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4105,7 +4614,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }>;
         originator: z.ZodObject<{
@@ -4132,6 +4640,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4140,9 +4649,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4151,7 +4660,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }>;
         executedAt: z.ZodString;
@@ -4168,16 +4676,16 @@ declare const PaymentResponseSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodNumber;
             isBaseCurrency: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
             currencyCodeInDigit: number;
             isBaseCurrency: boolean;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4219,6 +4727,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4227,9 +4736,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4238,7 +4747,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }>;
         originator: z.ZodObject<{
@@ -4265,6 +4773,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4273,9 +4782,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4284,7 +4793,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }>;
         executedAt: z.ZodString;
@@ -4301,16 +4809,16 @@ declare const PaymentResponseSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodNumber;
             isBaseCurrency: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
             currencyCodeInDigit: number;
             isBaseCurrency: boolean;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4352,6 +4860,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4360,9 +4869,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4371,7 +4880,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             cardId?: string | undefined;
         }>;
         originator: z.ZodObject<{
@@ -4398,6 +4906,7 @@ declare const PaymentResponseSchema: z.ZodObject<{
             }>;
             name: z.ZodString;
         }, "strip", z.ZodTypeAny, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4406,9 +4915,9 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }, {
+            name: string;
             recipientType: string;
             address: {
                 countryCode: string;
@@ -4417,7 +4926,6 @@ declare const PaymentResponseSchema: z.ZodObject<{
                 stateCode?: string | undefined;
                 postalCode?: string | undefined;
             };
-            name: string;
             accountId?: string | undefined;
         }>;
         executedAt: z.ZodString;
@@ -4434,16 +4942,16 @@ declare const PaymentResponseSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodNumber;
             isBaseCurrency: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
             currencyCodeInDigit: number;
             isBaseCurrency: boolean;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4457,6 +4965,23 @@ type Payment = z.infer<typeof PaymentSchema>;
 type CreatePaymentInput = z.infer<typeof CreatePaymentInputSchema>;
 type UpdatePaymentInput = z.infer<typeof UpdatePaymentInputSchema>;
 type PaymentResponse = z.infer<typeof PaymentResponseSchema>;
+declare const ProcessOutputSchema: z.ZodObject<{
+    id: z.ZodString;
+    clientId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+    resourceIdentifier: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    id: string;
+    resourceId: number;
+    resourceIdentifier: string;
+}, {
+    clientId: number;
+    id: string;
+    resourceId: number;
+    resourceIdentifier: string;
+}>;
+type ProcessOutput = z.infer<typeof ProcessOutputSchema>;
 
 declare const SavingAccountShape: {
     id: z.ZodNumber;
@@ -4466,12 +4991,12 @@ declare const SavingAccountShape: {
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     clientId: z.ZodNumber;
@@ -4494,8 +5019,8 @@ declare const SavingAccountShape: {
         transferOnHold: z.ZodBoolean;
         matured: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         submittedAndPendingApproval: boolean;
         approved: boolean;
@@ -4508,8 +5033,8 @@ declare const SavingAccountShape: {
         transferOnHold: boolean;
         matured: boolean;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         submittedAndPendingApproval: boolean;
         approved: boolean;
@@ -4534,8 +5059,8 @@ declare const SavingAccountShape: {
         blockCredit: z.ZodBoolean;
         blockDebit: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         none: boolean;
         inactive: boolean;
@@ -4545,8 +5070,8 @@ declare const SavingAccountShape: {
         blockCredit: boolean;
         blockDebit: boolean;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         none: boolean;
         inactive: boolean;
@@ -4607,8 +5132,8 @@ declare const SavingAccountShape: {
         currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
         isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -4617,8 +5142,8 @@ declare const SavingAccountShape: {
         currencyCodeInDigit?: number | undefined;
         isBaseCurrency?: boolean | undefined;
     }, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -4633,12 +5158,12 @@ declare const SavingAccountShape: {
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     interestPostingPeriodType: z.ZodObject<{
@@ -4646,12 +5171,12 @@ declare const SavingAccountShape: {
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     interestCalculationType: z.ZodObject<{
@@ -4659,12 +5184,12 @@ declare const SavingAccountShape: {
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     interestCalculationDaysInYearType: z.ZodObject<{
@@ -4672,12 +5197,12 @@ declare const SavingAccountShape: {
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     lockinPeriodFrequency: z.ZodNumber;
@@ -4686,12 +5211,12 @@ declare const SavingAccountShape: {
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     withdrawalFeeForTransfers: z.ZodBoolean;
@@ -4714,8 +5239,8 @@ declare const SavingAccountShape: {
             currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
             isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4724,8 +5249,8 @@ declare const SavingAccountShape: {
             currencyCodeInDigit?: number | undefined;
             isBaseCurrency?: boolean | undefined;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4744,8 +5269,8 @@ declare const SavingAccountShape: {
         availableBalance: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4764,8 +5289,8 @@ declare const SavingAccountShape: {
         lastInterestCalculationDate: number[];
     }, {
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -4797,15 +5322,15 @@ declare const SavingAccountShape: {
         city: z.ZodString;
         postcode: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        address: string;
         name: string;
+        address: string;
         city: string;
         routingNumber: string;
         swiftCode: string;
         postcode: string;
     }, {
-        address: string;
         name: string;
+        address: string;
         city: string;
         routingNumber: string;
         swiftCode: string;
@@ -4882,12 +5407,12 @@ declare const SavingAccountSchema: z.ZodObject<{
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     clientId: z.ZodNumber;
@@ -4910,8 +5435,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         transferOnHold: z.ZodBoolean;
         matured: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         submittedAndPendingApproval: boolean;
         approved: boolean;
@@ -4924,8 +5449,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         transferOnHold: boolean;
         matured: boolean;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         submittedAndPendingApproval: boolean;
         approved: boolean;
@@ -4950,8 +5475,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         blockCredit: z.ZodBoolean;
         blockDebit: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         none: boolean;
         inactive: boolean;
@@ -4961,8 +5486,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         blockCredit: boolean;
         blockDebit: boolean;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
         none: boolean;
         inactive: boolean;
@@ -5023,8 +5548,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
         isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -5033,8 +5558,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         currencyCodeInDigit?: number | undefined;
         isBaseCurrency?: boolean | undefined;
     }, {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -5049,12 +5574,12 @@ declare const SavingAccountSchema: z.ZodObject<{
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     interestPostingPeriodType: z.ZodObject<{
@@ -5062,12 +5587,12 @@ declare const SavingAccountSchema: z.ZodObject<{
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     interestCalculationType: z.ZodObject<{
@@ -5075,12 +5600,12 @@ declare const SavingAccountSchema: z.ZodObject<{
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     interestCalculationDaysInYearType: z.ZodObject<{
@@ -5088,12 +5613,12 @@ declare const SavingAccountSchema: z.ZodObject<{
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     lockinPeriodFrequency: z.ZodNumber;
@@ -5102,12 +5627,12 @@ declare const SavingAccountSchema: z.ZodObject<{
         code: z.ZodString;
         value: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }, {
-        value: string;
         code: string;
+        value: string;
         id: number;
     }>;
     withdrawalFeeForTransfers: z.ZodBoolean;
@@ -5130,8 +5655,8 @@ declare const SavingAccountSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
             isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5140,8 +5665,8 @@ declare const SavingAccountSchema: z.ZodObject<{
             currencyCodeInDigit?: number | undefined;
             isBaseCurrency?: boolean | undefined;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5160,8 +5685,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         availableBalance: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5180,8 +5705,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         lastInterestCalculationDate: number[];
     }, {
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5213,15 +5738,15 @@ declare const SavingAccountSchema: z.ZodObject<{
         city: z.ZodString;
         postcode: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        address: string;
         name: string;
+        address: string;
         city: string;
         routingNumber: string;
         swiftCode: string;
         postcode: string;
     }, {
-        address: string;
         name: string;
+        address: string;
         city: string;
         routingNumber: string;
         swiftCode: string;
@@ -5290,10 +5815,9 @@ declare const SavingAccountSchema: z.ZodObject<{
     prepaidAccount: z.ZodBoolean;
     prepaidLimitAmount: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
-    clientId: number;
     status: {
-        value: string;
         code: string;
+        value: string;
         id: number;
         submittedAndPendingApproval: boolean;
         approved: boolean;
@@ -5306,10 +5830,11 @@ declare const SavingAccountSchema: z.ZodObject<{
         transferOnHold: boolean;
         matured: boolean;
     };
+    clientId: number;
     id: number;
     currency: {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -5334,8 +5859,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         activatedByLastname?: string | undefined;
     };
     subStatus: {
-        value: string;
         code: string;
+        value: string;
         id: number;
         none: boolean;
         inactive: boolean;
@@ -5347,8 +5872,8 @@ declare const SavingAccountSchema: z.ZodObject<{
     };
     lastActiveTransactionDate: number[];
     depositType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     allowPrepaidCard: boolean;
@@ -5368,37 +5893,37 @@ declare const SavingAccountSchema: z.ZodObject<{
     fieldOfficerId: number;
     nominalAnnualInterestRate: number;
     interestCompoundingPeriodType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     interestPostingPeriodType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     interestCalculationType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     interestCalculationDaysInYearType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     lockinPeriodFrequency: number;
     lockinPeriodFrequencyType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     onHoldFunds: number;
     savingsAmountOnHold: number;
     summary: {
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5421,8 +5946,8 @@ declare const SavingAccountSchema: z.ZodObject<{
     floatingRateId: number;
     isFloatingInterestRateCalculationAllowed: boolean;
     bankDetails: {
-        address: string;
         name: string;
+        address: string;
         city: string;
         routingNumber: string;
         swiftCode: string;
@@ -5455,10 +5980,9 @@ declare const SavingAccountSchema: z.ZodObject<{
     };
     prepaidLimitAmount: number;
 }, {
-    clientId: number;
     status: {
-        value: string;
         code: string;
+        value: string;
         id: number;
         submittedAndPendingApproval: boolean;
         approved: boolean;
@@ -5471,10 +5995,11 @@ declare const SavingAccountSchema: z.ZodObject<{
         transferOnHold: boolean;
         matured: boolean;
     };
+    clientId: number;
     id: number;
     currency: {
-        code: string;
         name: string;
+        code: string;
         decimalPlaces: number;
         displaySymbol: string;
         nameCode: string;
@@ -5499,8 +6024,8 @@ declare const SavingAccountSchema: z.ZodObject<{
         activatedByLastname?: string | undefined;
     };
     subStatus: {
-        value: string;
         code: string;
+        value: string;
         id: number;
         none: boolean;
         inactive: boolean;
@@ -5512,8 +6037,8 @@ declare const SavingAccountSchema: z.ZodObject<{
     };
     lastActiveTransactionDate: number[];
     depositType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     allowPrepaidCard: boolean;
@@ -5533,37 +6058,37 @@ declare const SavingAccountSchema: z.ZodObject<{
     fieldOfficerId: number;
     nominalAnnualInterestRate: number;
     interestCompoundingPeriodType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     interestPostingPeriodType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     interestCalculationType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     interestCalculationDaysInYearType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     lockinPeriodFrequency: number;
     lockinPeriodFrequencyType: {
-        value: string;
         code: string;
+        value: string;
         id: number;
     };
     onHoldFunds: number;
     savingsAmountOnHold: number;
     summary: {
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5586,8 +6111,8 @@ declare const SavingAccountSchema: z.ZodObject<{
     floatingRateId: number;
     isFloatingInterestRateCalculationAllowed: boolean;
     bankDetails: {
-        address: string;
         name: string;
+        address: string;
         city: string;
         routingNumber: string;
         swiftCode: string;
@@ -5642,8 +6167,8 @@ declare const ListAccountsOfClientResponseShape: {
             transferOnHold: z.ZodBoolean;
             matured: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -5656,8 +6181,8 @@ declare const ListAccountsOfClientResponseShape: {
             transferOnHold: boolean;
             matured: boolean;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -5681,8 +6206,8 @@ declare const ListAccountsOfClientResponseShape: {
             currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
             isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5691,8 +6216,8 @@ declare const ListAccountsOfClientResponseShape: {
             currencyCodeInDigit?: number | undefined;
             isBaseCurrency?: boolean | undefined;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5707,12 +6232,12 @@ declare const ListAccountsOfClientResponseShape: {
             code: z.ZodString;
             value: z.ZodString;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         timeline: z.ZodObject<{
@@ -5767,8 +6292,8 @@ declare const ListAccountsOfClientResponseShape: {
             blockCredit: z.ZodBoolean;
             blockDebit: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -5778,8 +6303,8 @@ declare const ListAccountsOfClientResponseShape: {
             blockCredit: boolean;
             blockDebit: boolean;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -5795,12 +6320,12 @@ declare const ListAccountsOfClientResponseShape: {
             code: z.ZodString;
             value: z.ZodString;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         availableBalance: z.ZodNumber;
@@ -5808,8 +6333,8 @@ declare const ListAccountsOfClientResponseShape: {
         primaryAccount: z.ZodRecord<z.ZodString, z.ZodAny>;
     }, "strip", z.ZodTypeAny, {
         status: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -5824,8 +6349,8 @@ declare const ListAccountsOfClientResponseShape: {
         };
         id: number;
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5835,8 +6360,8 @@ declare const ListAccountsOfClientResponseShape: {
             isBaseCurrency?: boolean | undefined;
         };
         accountType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         accountNo: string;
@@ -5859,8 +6384,8 @@ declare const ListAccountsOfClientResponseShape: {
             activatedByLastname?: string | undefined;
         };
         subStatus: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -5871,8 +6396,8 @@ declare const ListAccountsOfClientResponseShape: {
             blockDebit: boolean;
         };
         depositType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         availableBalance: number;
@@ -5881,8 +6406,8 @@ declare const ListAccountsOfClientResponseShape: {
         lastActiveTransactionDate?: number[] | undefined;
     }, {
         status: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -5897,8 +6422,8 @@ declare const ListAccountsOfClientResponseShape: {
         };
         id: number;
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -5908,8 +6433,8 @@ declare const ListAccountsOfClientResponseShape: {
             isBaseCurrency?: boolean | undefined;
         };
         accountType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         accountNo: string;
@@ -5932,8 +6457,8 @@ declare const ListAccountsOfClientResponseShape: {
             activatedByLastname?: string | undefined;
         };
         subStatus: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -5944,8 +6469,8 @@ declare const ListAccountsOfClientResponseShape: {
             blockDebit: boolean;
         };
         depositType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         availableBalance: number;
@@ -5976,8 +6501,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             transferOnHold: z.ZodBoolean;
             matured: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -5990,8 +6515,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             transferOnHold: boolean;
             matured: boolean;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -6015,8 +6540,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
             isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
         }, "strip", z.ZodTypeAny, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -6025,8 +6550,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             currencyCodeInDigit?: number | undefined;
             isBaseCurrency?: boolean | undefined;
         }, {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -6041,12 +6566,12 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             code: z.ZodString;
             value: z.ZodString;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         timeline: z.ZodObject<{
@@ -6101,8 +6626,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             blockCredit: z.ZodBoolean;
             blockDebit: z.ZodBoolean;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -6112,8 +6637,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             blockCredit: boolean;
             blockDebit: boolean;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -6129,12 +6654,12 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             code: z.ZodString;
             value: z.ZodString;
         }, "strip", z.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         availableBalance: z.ZodNumber;
@@ -6142,8 +6667,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
         primaryAccount: z.ZodRecord<z.ZodString, z.ZodAny>;
     }, "strip", z.ZodTypeAny, {
         status: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -6158,8 +6683,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
         };
         id: number;
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -6169,8 +6694,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             isBaseCurrency?: boolean | undefined;
         };
         accountType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         accountNo: string;
@@ -6193,8 +6718,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             activatedByLastname?: string | undefined;
         };
         subStatus: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -6205,8 +6730,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             blockDebit: boolean;
         };
         depositType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         availableBalance: number;
@@ -6215,8 +6740,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
         lastActiveTransactionDate?: number[] | undefined;
     }, {
         status: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -6231,8 +6756,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
         };
         id: number;
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -6242,8 +6767,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             isBaseCurrency?: boolean | undefined;
         };
         accountType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         accountNo: string;
@@ -6266,8 +6791,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             activatedByLastname?: string | undefined;
         };
         subStatus: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -6278,8 +6803,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             blockDebit: boolean;
         };
         depositType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         availableBalance: number;
@@ -6290,8 +6815,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     savingsAccounts: {
         status: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -6306,8 +6831,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
         };
         id: number;
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -6317,8 +6842,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             isBaseCurrency?: boolean | undefined;
         };
         accountType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         accountNo: string;
@@ -6341,8 +6866,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             activatedByLastname?: string | undefined;
         };
         subStatus: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -6353,8 +6878,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             blockDebit: boolean;
         };
         depositType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         availableBalance: number;
@@ -6365,8 +6890,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
 }, {
     savingsAccounts: {
         status: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             submittedAndPendingApproval: boolean;
             approved: boolean;
@@ -6381,8 +6906,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
         };
         id: number;
         currency: {
-            code: string;
             name: string;
+            code: string;
             decimalPlaces: number;
             displaySymbol: string;
             nameCode: string;
@@ -6392,8 +6917,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             isBaseCurrency?: boolean | undefined;
         };
         accountType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         accountNo: string;
@@ -6416,8 +6941,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             activatedByLastname?: string | undefined;
         };
         subStatus: {
-            value: string;
             code: string;
+            value: string;
             id: number;
             none: boolean;
             inactive: boolean;
@@ -6428,8 +6953,8 @@ declare const ListAccountsOfClientResponseSchema: z.ZodObject<{
             blockDebit: boolean;
         };
         depositType: {
-            value: string;
             code: string;
+            value: string;
             id: number;
         };
         availableBalance: number;
@@ -6813,12 +7338,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -6906,12 +7431,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -7003,12 +7528,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -7096,12 +7621,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -7193,12 +7718,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -7286,12 +7811,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -7386,12 +7911,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -7479,12 +8004,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -7576,12 +8101,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -7669,12 +8194,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -7766,12 +8291,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -7859,12 +8384,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -7959,12 +8484,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -8052,12 +8577,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -8149,12 +8674,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -8242,12 +8767,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -8339,12 +8864,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         subStatus: z__default.ZodObject<{
@@ -8432,12 +8957,12 @@ declare const ListClientsResponseSchema: z__default.ZodObject<{
             code: z__default.ZodString;
             value: z__default.ZodString;
         }, "strip", z__default.ZodTypeAny, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }, {
-            value: string;
             code: string;
+            value: string;
             id: number;
         }>;
         clientVerificationStatus: z__default.ZodString;
@@ -8531,4 +9056,4 @@ type UpdateClientIdentifierResponse = z__default.infer<typeof UpdateClientIdenti
 type ListClientsRequest = z__default.infer<typeof ListClientsRequestSchema>;
 type ListClientsResponse = z__default.infer<typeof ListClientsResponseSchema>;
 
-export { type ListClientsResponse as $, UpdateAccountRequestSchema as A, UpdateAccountRequestShape as B, type Config as C, type CreateClientRequest as D, type UpdateClientRequest as E, type ProcessOutput as F, type UpdateClientIdentifierRequest as G, type CreateRecipientRequest as H, type UpdateRecipientRequest as I, type PaymentRail as J, type MarkAsReturnInput as K, ListAccountsOfClientResponseShape as L, type Middleware as M, type GetTransferInput as N, type UpdateTraceNumbersInput as O, type Payment as P, type CreateTransferInput as Q, type Recipient as R, SortOrderSchema as S, type Transfer as T, type UpdatePaymentInput as U, type CreateTransferOutput as V, type RecipientRequest as W, type Recipients as X, type UpdateClientIdentifierResponse as Y, type CreateClientResponse as Z, type ListClientsRequest as _, type Command as a, type ListAccountsOfClientRequest as a0, type GraphQLRequest as a1, type CreatePaymentInput as b, type PaymentResponse as c, type PaymentStatus as d, type PaymentRailType as e, type PaymentType as f, type PaymentFilters as g, PaymentStatusSchema as h, PaymentFilterKeySchema as i, PaymentRailSchema as j, PaymentTypeSchema as k, CreatePaymentInputSchema as l, UpdatePaymentInputSchema as m, PaymentResponseSchema as n, PaymentFiltersSchema as o, PaymentFilterShape as p, PaymentShape as q, CreatePaymentInputShape as r, UpdatePaymentInputShape as s, SavingAccountSchema as t, SavingAccountShape as u, type SavingAccount as v, ListAccountsOfClientResponseSchema as w, ListAccountsRequestShape as x, ListAccountsRequestSchema as y, type UpdateAccountRequest as z };
+export { type ListClientsRequest as $, UpdateAccountRequestSchema as A, UpdateAccountRequestShape as B, type Config as C, type CreateClientRequest as D, type UpdateClientRequest as E, type ProcessOutput$1 as F, type UpdateClientIdentifierRequest as G, type CreateRecipientRequest as H, type UpdateRecipientRequest as I, type PaymentRail as J, type MarkAsReturnInput as K, ListAccountsOfClientResponseShape as L, type Middleware as M, type GetTransferInput as N, type UpdateTraceNumbersInput as O, type Payment as P, type CreateTransferInput as Q, type Recipient as R, SortOrderSchema as S, type Transfer as T, type UpdatePaymentInput as U, type CreateTransferOutput as V, type RecipientRequest as W, type Recipients as X, type ProcessOutput as Y, type UpdateClientIdentifierResponse as Z, type CreateClientResponse as _, type Command as a, type ListClientsResponse as a0, type ListAccountsOfClientRequest as a1, type GraphQLRequest as a2, type CreatePaymentInput as b, type PaymentResponse as c, type PaymentStatus as d, type PaymentRailType as e, type PaymentType as f, type PaymentFilters as g, PaymentStatusSchema as h, PaymentFilterKeySchema as i, PaymentRailSchema as j, PaymentTypeSchema as k, CreatePaymentInputSchema as l, UpdatePaymentInputSchema as m, PaymentResponseSchema as n, PaymentFiltersSchema as o, PaymentFilterShape as p, PaymentShape as q, CreatePaymentInputShape as r, UpdatePaymentInputShape as s, SavingAccountSchema as t, SavingAccountShape as u, type SavingAccount as v, ListAccountsOfClientResponseSchema as w, ListAccountsRequestShape as x, ListAccountsRequestSchema as y, type UpdateAccountRequest as z };
