@@ -62,3 +62,4 @@ export const GraphQL = (request: GraphQLRequest): Command<GraphQLRequest, any> =
 };
 
 export * from './recipient';
+export * from './payment';

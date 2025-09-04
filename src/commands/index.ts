@@ -1,10 +1,11 @@
 export { SendAuthorizationToCore, UpdateCardID } from './rest/card';
 export { GetClient, UpdateClient, UpdateClientIdentifier, CreateClient, GetClients, DeleteClient } from './rest/client';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './rest/transfer';
-export { GetPayment, GetPayments, CreatePayment, UpdatePayment, DeletePayment } from './rest/payment';
+export { GetPayment, GetPayments, UpdatePayment, DeletePayment } from './rest/payment';
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './rest/account';
 export { GraphQL } from './graphql';
 export { CustomGet, CustomCreate, CustomUpdate } from './rest/custom';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './rest/recipient';
 export { UpdateRecipientGQL as UpdateRecipient } from './graphql/recipient';
 export { GetUserDetail } from './rest/user';
+export { CreatePayment } from './graphql/payment';

@@ -1,5 +1,5 @@
 export { createClient } from './client/index';
-export { CreatePayment, GetPayment, UpdatePayment, GetPayments } from './commands/rest/payment';
+export { GetPayment, UpdatePayment, GetPayments } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetClient, UpdateClient, UpdateClientIdentifier, CreateClient, GetClients, DeleteClient } from './commands/rest/client';
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './commands/rest/account';
@@ -8,6 +8,9 @@ export { isCommandError, createCommandError } from './utils/errorHandler';
 export { createLoggingMiddleware } from './middlewares/logging';
 export { createMetricsMiddleware } from './middlewares/metrics';
 export { GetUserDetail } from './commands/rest/user';
+export { CreatePaymentParamsSchema, CreatePaymentParamsShape } from './commands/graphql/payment';
+export type { CreatePaymentParams } from './commands/graphql/payment';
+export { CreatePayment } from './commands/graphql/payment';
 export type {
   Config,
   Command,

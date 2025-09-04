@@ -333,7 +333,7 @@ const AccountHolderSchema = z.object({
 export const CreatePaymentInputShape = {
   // Core payment fields
   amount: z.number().positive(),
-  currency: z.string().min(3).max(3), // ISO 4217 currency codes
+  currency: z.string().min(3).max(3).optional(), // ISO 4217 currency codes
   paymentRail: PaymentRailSchema,
   paymentType: PaymentTypeSchema,
 

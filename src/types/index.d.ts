@@ -24,6 +24,7 @@ import {
 } from './account';
 
 import { UserDetail, UserDetailSchema, UserDetailShape } from './user';
+import { CreatePaymentParamsSchema, CreatePaymentParams, CreatePaymentParamsShape } from '../commands/graphql/payment';
 
 export {
   Config,
@@ -71,5 +72,8 @@ export {
   UpdateAccountRequestShape,
   UserDetail,
   UserDetailSchema,
-  UserDetailShape
+  UserDetailShape,
+  CreatePaymentParamsSchema,
+  CreatePaymentParams,
+  CreatePaymentParamsShape
 };
