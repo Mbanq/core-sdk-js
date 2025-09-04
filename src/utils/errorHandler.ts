@@ -25,12 +25,21 @@ const cleanAxiosError = (error: Error | AxiosError): Error => {
   const cleaned = { ...error } as Record<string, unknown>;
 
   if (cleaned.config && typeof cleaned.config === 'object') {
-    const config = cleaned.config as Record<string, unknown>;
+    const config = cleaned.config as { httpsAgent?: Record<string, unknown> };
     if (config.httpsAgent && typeof config.httpsAgent === 'object') {
-      const httpsAgent = config.httpsAgent as Record<string, unknown>;
-      delete httpsAgent.sockets;
-      delete httpsAgent.freeSockets;
-      delete httpsAgent._sessionCache;
+      try {
+        if (config.httpsAgent.sockets) {
+          delete config.httpsAgent.sockets;
+        }
+        if (config.httpsAgent.freeSockets) {
+          delete config.httpsAgent.freeSockets;
+        }
+        if (config.httpsAgent._sessionCache) {
+          delete config.httpsAgent._sessionCache;
+        }
+      } catch {
+        // Silently handle cleanup errors to prevent crashing on socket management issues
+      }
     }
   }
 

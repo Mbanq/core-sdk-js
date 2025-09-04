@@ -2,29 +2,6 @@ import baseRequest from '../../utils/baseRequest';
 import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 import {
-  validatePaymentFilterKey,
-  validatePaymentStatus,
-  validatePaymentRail,
-  validatePaymentType,
-  validateSortOrder,
-  validateOriginatorName,
-  validateOriginatorAccount,
-  validateOriginatorBankRoutingCode,
-  validateRecipientName,
-  validateRecipientAccount,
-  validateRecipientBankRoutingCode,
-  validateReference,
-  validateTraceNumber,
-  validateExternalId,
-  validateClientId,
-  validateDateFormat,
-  validateLocale,
-  validateOriginatedBy,
-  validateValueDate,
-  validateExecuteDate,
-  validateReturnDate,
-  validateIsSettlement,
-  validateOrderBy,
   validateCreatePaymentInput,
   validateUpdatePaymentInput,
   validatePayment,
@@ -32,111 +9,14 @@ import {
   type CreatePaymentInput,
   type UpdatePaymentInput,
   type PaymentResponse,
-  type PaymentFilters
+  type PaymentFilters,
+  ProcessOutput,
+  validateFilterKey,
+  validateFilterValue
 } from '../../types/payment';
 import { ZodError } from 'zod';
 
-const validateFilterKey = (key: string): void => {
-  try {
-    validatePaymentFilterKey(key);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      throw createCommandError({
-        message: `Invalid filter key: '${key}'. ${error.message}`,
-        code: 'invalid_filter_key'
-      });
-    }
-    throw error;
-  }
-};
-
-const validateFilterValue = (key: string, value: any): void => {
-  try {
-    switch (key) {
-      case 'status':
-        validatePaymentStatus(value);
-        break;
-      case 'paymentRail':
-        validatePaymentRail(value);
-        break;
-      case 'paymentType':
-        validatePaymentType(value);
-        break;
-      case 'sortOrder':
-        validateSortOrder(value);
-        break;
-      case 'originatorName':
-        validateOriginatorName(value);
-        break;
-      case 'originatorAccount':
-        validateOriginatorAccount(value);
-        break;
-      case 'originatorBankRoutingCode':
-        validateOriginatorBankRoutingCode(value);
-        break;
-      case 'recipientName':
-        validateRecipientName(value);
-        break;
-      case 'recipientAccount':
-        validateRecipientAccount(value);
-        break;
-      case 'recipientBankRoutingCode':
-        validateRecipientBankRoutingCode(value);
-        break;
-      case 'reference':
-        validateReference(value);
-        break;
-      case 'traceNumber':
-        validateTraceNumber(value);
-        break;
-      case 'externalId':
-        validateExternalId(value);
-        break;
-      case 'clientId':
-        validateClientId(value);
-        break;
-      case 'dateFormat':
-        validateDateFormat(value);
-        break;
-      case 'locale':
-        validateLocale(value);
-        break;
-      case 'originatedBy':
-        validateOriginatedBy(value);
-        break;
-      case 'fromValueDate':
-      case 'toValueDate':
-        validateValueDate(value);
-        break;
-      case 'fromExecuteDate':
-      case 'toExecuteDate':
-        validateExecuteDate(value);
-        break;
-      case 'fromReturnDate':
-      case 'toReturnDate':
-        validateReturnDate(value);
-        break;
-      case 'isSettlement':
-        validateIsSettlement(value);
-        break;
-      case 'orderBy':
-        validateOrderBy(value);
-        break;
-      default:
-        break;
-    }
-  } catch (error) {
-    if (error instanceof ZodError) {
-      throw createCommandError({
-        message: `Invalid value for '${key}': '${value}'. ${error.message}`,
-        code: `invalid_${key}_value`
-      });
-    }
-    throw error;
-  }
-};
-
-export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: string }): Command<{ payment: CreatePaymentInput, tenantId?: string }, Payment> => {
+export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: string }): Command<{ payment: CreatePaymentInput, tenantId?: string }, ProcessOutput> => {
   return {
     input: params,
     metadata: {
@@ -145,7 +25,6 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
       method: 'POST'
     },
     execute: async (config: Config) => {
-      // Validate input using Zod
       try {
         validateCreatePaymentInput(params.payment);
       } catch (error) {
@@ -164,8 +43,8 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<Payment>('/v1/payments', params.payment);
-        return validatePayment(response.data);
+        const response = await axiosInstance.post<ProcessOutput>('/v1/payments', params.payment);
+        return response.data;
       } catch (error) {
         handleAxiosError(error);
       }
@@ -262,7 +141,7 @@ const createPaymentQuery = (filters: Record<string, any>, limit?: number, offset
     const queryParams = {
       ...defaultParams,
       ...filters,
-      limit: limit || 200,
+      limit: limit || 20,
       offset: offset || 0
     };
 
@@ -389,16 +268,15 @@ export const GetPayments = (params: PaymentFilters, configuration?: { tenantId?:
         return paramsCopy;
       };
 
-      const newParams = {
-        ...defaultParams,
-        ...applyDefaultDateFormat(params as Record<string, any>),
-        limit,
-        offset
-      };
-
       try {
         if (params.limit === 0) {
           do {
+            const newParams = {
+              ...defaultParams,
+              ...applyDefaultDateFormat(params as Record<string, any>),
+              limit,
+              offset
+            };
             const response = await axiosInstance.get<PaymentResponse>(`/v1/payments`, { params: newParams });
             const { totalFilteredRecords: total, pageItems } = response.data;
             allTransfers.push(...pageItems);
@@ -407,6 +285,12 @@ export const GetPayments = (params: PaymentFilters, configuration?: { tenantId?:
           } while (offset < totalFilteredRecords);
           return { totalFilteredRecords, pageItems: allTransfers };
         } else {
+          const newParams = {
+            ...defaultParams,
+            ...applyDefaultDateFormat(params as Record<string, any>),
+            limit,
+            offset
+          };
           const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: newParams });
           return response.data;
         }

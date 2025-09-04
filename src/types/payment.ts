@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
+import { createCommandError } from '../utils/errorHandler';
 
 export const PaymentFilterKeySchema = z.enum([
   'originatorName',
@@ -301,27 +302,32 @@ export const PaymentSchema = z.object(PaymentShape).catchall(z.any()); // Allow 
 
 // Address schema for recipient/originator addresses
 const AddressSchema = z.object({
-  streetAddress: z.string().optional(),
+  line1: z.string().optional(),
+  line2: z.string().optional(),
   city: z.string().optional(),
-  state: z.string().optional(), // Required for Domestic and Internal WIRE
-  country: z.string().optional(), // Required for Domestic and Internal WIRE
+  stateCode: z.string().optional(), // Required for Domestic and Internal WIRE
+  countryCode: z.string().optional(), // Required for Domestic and Internal WIRE
   postalCode: z.string().optional()
 }).optional();
 
-// Agent schema for banks/financial institutions
-const AgentSchema = z.object({
-  name: z.string().optional(),
-  identifier: z.string().optional(), // Routing code, SWIFT code, etc.
-  address: AddressSchema
-}).optional();
+const OriginatorSchema = z.object({
+  accountId: z.string()
+});
 
-// Account holder schema
 const AccountHolderSchema = z.object({
   name: z.string(),
-  identifier: z.string(), // Account number
+  accountId: z.string().optional(),
+  recipientId: z.string().optional(),
   accountType: z.enum(['CHECKING', 'SAVINGS']).optional(),
-  address: AddressSchema,
-  agent: AgentSchema
+  recipientType: z.enum(['INDIVIDUAL', 'BUSINESS']).optional(),
+  accountEntity: z.enum(['PERSONAL', 'BUSINESS']).optional(),
+  accountNumber: z.string().optional(),
+  bankInformation: z.object({
+    routingNumber: z.string()
+  }).optional(),
+  cardId: z.string().optional(),
+  contactNumber: z.string().optional(),
+  address: AddressSchema
 });
 
 export const CreatePaymentInputShape = {
@@ -332,10 +338,10 @@ export const CreatePaymentInputShape = {
   paymentType: PaymentTypeSchema,
 
   // Originator (sender) details
-  debtor: AccountHolderSchema,
+  originator: OriginatorSchema,
 
   // Recipient (receiver) details
-  creditor: AccountHolderSchema,
+  recipient: AccountHolderSchema,
 
   // Optional fields
   clientId: z.string().optional(),
@@ -357,14 +363,55 @@ export const CreatePaymentInputShape = {
 export const CreatePaymentInputSchema = z.object(CreatePaymentInputShape).catchall(z.any()) // Allow additional properties
   .refine((data) => {
     // Custom validation: For WIRE transfers, recipient address is mandatory
-    if ((data.paymentRail === 'WIRE' || data.paymentRail === 'SWIFT') && data.creditor) {
-      return data.creditor.address &&
-             data.creditor.address.state &&
-             data.creditor.address.country;
+    if ((data.paymentRail === 'WIRE' || data.paymentRail === 'SWIFT') && data.recipient) {
+      return data.recipient.name && data.recipient.address &&
+             data.recipient.address.stateCode &&
+             data.recipient.address.countryCode &&
+             data.recipient.accountNumber &&
+             data.recipient.accountType &&
+             data.recipient.bankInformation;
     }
     return true;
   }, {
     message: 'For WIRE transfers, recipient address with state and country is mandatory'
+  }).refine((data) => {
+    if (data.paymentRail === 'INTERNAL') {
+      return data.originator.accountId && data.recipient.accountId;
+    }
+    return true;
+  }, {
+    message: 'For INTERNAL transfers, both originator and recipient accountId are mandatory'
+  }).refine((data) => {
+    if (data.paymentRail === 'ACH' || data.paymentRail === 'SAMEDAYACH') {
+      return data.recipient.name && data.originator.accountId &&
+             data.recipient.accountType &&
+             data.recipient.recipientType &&
+             data.recipient.accountNumber &&
+             data.recipient.bankInformation;
+    }
+    return true;
+  }, {
+    message: 'For ACH/SAMEDAYACH transfers, originator and recipient accountId, recipient accountType, originator recipientType, recipient accountNumber and recipient bankInformation are mandatory'
+  }).refine((data) => {
+    if (data.paymentRail === 'CARD' && data.recipient) {
+      return data.recipient.cardId;
+    }
+    return true;
+  }, {
+    message: 'For CARD payments, recipient cardId is mandatory'
+  }).refine((data) => {
+    if (data.paymentRail === 'FXPAY') {
+      return data.recipient.recipientId &&
+             data.recipient.name &&
+             data.recipient.accountNumber &&
+             data.recipient.accountType &&
+             data.recipient.recipientType &&
+             data.recipient.accountEntity &&
+             data.paymentRailMetaData;
+    }
+    return true;
+  }, {
+    message: 'For FXPAY payments, correspondent name and identifier are mandatory'
   });
 
 export const UpdatePaymentInputShape = {
@@ -439,3 +486,103 @@ export const ProcessOutputSchema = z.object({
 });
 
 export type ProcessOutput = z.infer<typeof ProcessOutputSchema>;
+
+export const validateFilterKey = (key: string): void => {
+  try {
+    validatePaymentFilterKey(key);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw createCommandError({
+        message: `Invalid filter key: '${key}'. ${error.message}`,
+        code: 'invalid_filter_key'
+      });
+    }
+    throw error;
+  }
+};
+
+export const validateFilterValue = (key: string, value: any): void => {
+  try {
+    switch (key) {
+      case 'status':
+        validatePaymentStatus(value);
+        break;
+      case 'paymentRail':
+        validatePaymentRail(value);
+        break;
+      case 'paymentType':
+        validatePaymentType(value);
+        break;
+      case 'sortOrder':
+        validateSortOrder(value);
+        break;
+      case 'originatorName':
+        validateOriginatorName(value);
+        break;
+      case 'originatorAccount':
+        validateOriginatorAccount(value);
+        break;
+      case 'originatorBankRoutingCode':
+        validateOriginatorBankRoutingCode(value);
+        break;
+      case 'recipientName':
+        validateRecipientName(value);
+        break;
+      case 'recipientAccount':
+        validateRecipientAccount(value);
+        break;
+      case 'recipientBankRoutingCode':
+        validateRecipientBankRoutingCode(value);
+        break;
+      case 'reference':
+        validateReference(value);
+        break;
+      case 'traceNumber':
+        validateTraceNumber(value);
+        break;
+      case 'externalId':
+        validateExternalId(value);
+        break;
+      case 'clientId':
+        validateClientId(value);
+        break;
+      case 'dateFormat':
+        validateDateFormat(value);
+        break;
+      case 'locale':
+        validateLocale(value);
+        break;
+      case 'originatedBy':
+        validateOriginatedBy(value);
+        break;
+      case 'fromValueDate':
+      case 'toValueDate':
+        validateValueDate(value);
+        break;
+      case 'fromExecuteDate':
+      case 'toExecuteDate':
+        validateExecuteDate(value);
+        break;
+      case 'fromReturnDate':
+      case 'toReturnDate':
+        validateReturnDate(value);
+        break;
+      case 'isSettlement':
+        validateIsSettlement(value);
+        break;
+      case 'orderBy':
+        validateOrderBy(value);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw createCommandError({
+        message: `Invalid value for '${key}': '${value}'. ${error.message}`,
+        code: `invalid_${key}_value`
+      });
+    }
+    throw error;
+  }
+};
