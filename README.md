@@ -39,44 +39,30 @@ npm install @mbanq/core-sdk-js
 
 ## Quick Start
 
-Choose your preferred API pattern:
-
-### Modern Fluent API
 ```javascript
-import { CoreSDK } from '@mbanq/core-sdk-js';
+import { createClient, CreatePayment, GetTransfers } from '@mbanq/core-sdk-js';
 
-const coreSDK = new CoreSDK({
+const client = createClient({
   secret: 'your-jwt-secret',
-  signee: 'YOUR-SIGNEE', 
+  signee: 'YOUR-SIGNEE',
   baseUrl: 'https://api.cloud.mbanq.com',
   tenantId: 'your-tenant-id'
 });
 
-// Create payment using fluent API
-const payment = await coreSDK.payment.create({
-  amount: 100.00,
-  currency: 'USD',
-  description: 'Payment for invoice #123'
-}).execute();
-```
+// Create payment
+const payment = await client.request(CreatePayment({
+  payment: {
+    amount: 100.00,
+    currency: 'USD',
+    description: 'Payment for invoice #123'
+  }
+}));
 
-### Command Pattern
-```javascript
-import { CoreSDK, GetTransfers } from '@mbanq/core-sdk-js';
-
-const coreSDK = new CoreSDK({
-  secret: 'your-jwt-secret',
-  signee: 'YOUR-SIGNEE', 
-  baseUrl: 'https://api.cloud.mbanq.com',
-  tenantId: 'your-tenant-id'
-});
-
-// Get transfers using command pattern
-const command = GetTransfers({
+// Get transfers
+const transfers = await client.request(GetTransfers({
   transferStatus: 'EXECUTION_SCHEDULED',
   tenantId: 'default'
-});
-const transfers = await coreSDK.request(command);
+}));
 ```
 
 ## Setup

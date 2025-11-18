@@ -1,9 +1,15 @@
 import {
+  CreateTransferInputSchema,
+  CreateTransferOutputSchema,
+  GetTransferInputSchema,
+  MarkAsReturnInputSchema,
+  PaymentRail,
+  ProcessOutputSchema, TransferSchema, TransferResponseSchema,
+  UpdateTraceNumbersInputSchema,
   CreateTransferInput,
   CreateTransferOutput,
   GetTransferInput,
   MarkAsReturnInput,
-  PaymentRail,
   ProcessOutput, Transfer, TransferResponse,
   UpdateTraceNumbersInput
 } from '../../types/transfer';
@@ -22,6 +28,9 @@ export const CreateTransfer = (params: { transfer: CreateTransferInput, tenantId
       method: 'POST'
     },
     execute: async (config: Config) => {
+      // Validate input using Zod schema
+      CreateTransferInputSchema.parse(params.transfer);
+
       if (params.tenantId) {
         config.tenantId = params.tenantId;
       }
