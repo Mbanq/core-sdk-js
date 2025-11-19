@@ -1,4 +1,4 @@
-import { Command, Config } from '../../types/config';
+import { Command, Config } from '../../types';
 import { UserDetail } from '../../types/user';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
