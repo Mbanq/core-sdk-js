@@ -100,32 +100,6 @@ export const UpdateClient = (
   };
 };
 
-export const UpdateClientIdentifier = (
-  params: { tenantId?: string; clientId: number; identifierId: string; updates: UpdateClientIdentifierRequest }
-): Command<{ tenantId?: string; clientId: number; identifierId: string; updates: UpdateClientIdentifierRequest }, UpdateClientIdentifierResponse> => {
-  return {
-    input: params,
-    metadata: {
-      commandName: 'UpdateClientIdentifier',
-      path: `/v1/clients/${params.clientId}/identifiers/${params.identifierId}`,
-      method: 'PUT'
-    },
-    execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
-      const axiosInstance = await baseRequest(config);
-
-      try {
-        const response = await axiosInstance.put<UpdateClientIdentifierResponse>(`/v1/clients/${params.clientId}/identifiers/${params.identifierId}`, { ...params.updates });
-        return response.data;
-      } catch (error) {
-        handleAxiosError(error);
-      }
-    }
-  };
-};
-
 export const CreateClient = (
   params: { tenantId?: string; clientData: CreateClientRequest }
 ): Command<{ tenantId?: string; clientData: CreateClientRequest }, CreateClientResponse> => {

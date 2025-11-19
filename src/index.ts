@@ -1,7 +1,8 @@
 export { createClient } from './client/index';
 export { CreatePayment, GetPayment, UpdatePayment, GetPayments } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
-export { GetClient, UpdateClient, UpdateClientIdentifier, CreateClient, GetClients, DeleteClient } from './commands/rest/client';
+export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient } from './commands/rest/client';
+export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier } from './commands/rest/clientIdentifier';
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './commands/rest/account';
 export { GraphQL } from './commands/graphql/index';
 export { isCommandError, createCommandError } from './utils/errorHandler';

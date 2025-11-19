@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GetClient, UpdateClient, UpdateClientIdentifier, CreateClient, ListClients, GetClients, DeleteClient } from '../../../src/commands/rest/client';
+import { GetClient, UpdateClient, CreateClient, ListClients, GetClients, DeleteClient } from '../../../src/commands/rest/client';
+import { UpdateClientIdentifier } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 describe('Client Commands', () => {
