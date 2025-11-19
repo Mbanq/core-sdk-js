@@ -11,9 +11,6 @@ vi.mock('../../src/commands/rest/client', () => ({
   UpdateClient: vi.fn(() => ({
     execute: vi.fn().mockResolvedValue({ success: true })
   })),
-  UpdateClientIdentifier: vi.fn(() => ({
-    execute: vi.fn().mockResolvedValue({ success: true })
-  })),
   DeleteClient: vi.fn(() => ({
     execute: vi.fn().mockResolvedValue({ success: true })
   })),
@@ -27,6 +24,19 @@ vi.mock('../../src/commands/rest/client', () => ({
         execute: vi.fn().mockResolvedValue({ data: [{ id: 1, name: 'Client 1' }] })
       }))
     }))
+  }))
+}));
+
+// Mock the clientIdentifier commands
+vi.mock('../../src/commands/rest/clientIdentifier', () => ({
+  UpdateClientIdentifier: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  CreateClientIdentifier: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
+  })),
+  GetPermittedDocumentTypes: vi.fn(() => ({
+    execute: vi.fn().mockResolvedValue({ success: true })
   }))
 }));
 
