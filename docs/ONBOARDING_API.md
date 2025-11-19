@@ -6,7 +6,7 @@ The Core SDK provides a comprehensive process for user onboarding. This document
 - [Client Creation](#client-creation)
 - [Configuration](#configuration)
 - [Upload KYC Documents](#upload-kyc-document)
-- [Activate with Verfiy Client](#activate-with-verify-client)
+- [Activate with Verify Client](#activate-with-verify-client)
 - [Error Handling](#error-handling)
 
 ## Client Creation

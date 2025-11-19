@@ -31,18 +31,27 @@ export const createClient = (initialConfig: Config) => {
     }
   };
 
-  const requestHandler = async <TInput, TOutput>(command: Command<TInput, TOutput>): Promise<TOutput> => {
+  const requestHandler = async <TInput, TOutput>(command: Command<TInput, TOutput>): Promise<TOutput | undefined> => {
     try {
       await executeMiddlewares('before', command);
 
       // Set tenant ID from config if not provided in command
       if (command.input && typeof command.input === 'object' && !('tenantId' in command.input)) {
-        (command.input as any).tenantId = currentConfig.tenantId;
+        const commandWithTenant = {
+          ...command,
+          input: {
+            ...command.input,
+            tenantId: currentConfig.tenantId
+          }
+        };
+        const result = await commandWithTenant.execute(currentConfig);
+        await executeMiddlewares('after', commandWithTenant, result);
+        return result;
       }
 
       const result = await command.execute(currentConfig);
       await executeMiddlewares('after', command, result);
-      return result as TOutput;
+      return result;
     } catch (error) {
       await executeMiddlewares('onError', command, error);
       throw error;
