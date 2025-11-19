@@ -2,7 +2,7 @@ export { createClient } from './client/index';
 export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment, ListPayments } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient } from './commands/rest/client';
-export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier } from './commands/rest/clientIdentifier';
+export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument } from './commands/rest/clientIdentifier';
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './commands/rest/account';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './commands/rest/transfer';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './commands/rest/recipient';
