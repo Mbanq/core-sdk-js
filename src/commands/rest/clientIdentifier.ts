@@ -3,7 +3,7 @@ import {
   ClientIdentifierRequest,
   ClientIdentifierResponse,
   validateClientIdentifierRequest
-} from '../../types/clientIdentifier.d';
+} from '../../types/clientIdentifier';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 

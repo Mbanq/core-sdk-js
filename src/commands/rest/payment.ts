@@ -1,11 +1,11 @@
 import baseRequest from '../../utils/baseRequest';
 import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
+import { z } from 'zod';
 import {
-  CreatePaymentInputSchema,
-  UpdatePaymentInputSchema,
-  PaymentResponseSchema,
   PaymentFiltersSchema,
+  validateCreatePaymentInput,
+  validateUpdatePaymentInput,
   type Payment,
   type CreatePaymentInput,
   type UpdatePaymentInput,
@@ -23,8 +23,19 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
       method: 'POST'
     },
     execute: async (config: Config) => {
-      // Validate input using Zod schema
-      CreatePaymentInputSchema.parse(params.payment);
+      // Validate input using validation function
+      try {
+        validateCreatePaymentInput(params.payment);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw createCommandError({
+            message: `Invalid payment data: ${error.errors.map(e => e.message).join(', ')}`,
+            code: 'invalid_payment_input'
+          });
+        }
+        // Re-throw non-Zod errors
+        throw error;
+      }
 
       if (params.tenantId) {
         config.tenantId = params.tenantId;
@@ -76,8 +87,19 @@ export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      // Validate input using Zod schema
-      UpdatePaymentInputSchema.parse(params.payment);
+      // Validate input using validation function
+      try {
+        validateUpdatePaymentInput(params.payment);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw createCommandError({
+            message: `Invalid payment update data: ${error.errors.map(e => e.message).join(', ')}`,
+            code: 'invalid_payment_update_input'
+          });
+        }
+        // Re-throw non-Zod errors
+        throw error;
+      }
 
       if (params.tenantId) {
         config.tenantId = params.tenantId;
@@ -178,20 +200,17 @@ export const ListPayments = (params: PaymentFilters & { tenantId?: string }): Co
   };
 };
 
-export const GetPayments = (params: PaymentFilters & { tenantId?: string }): Command<PaymentFilters & { tenantId?: string }, PaymentResponse> => {
+export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: string } = {}): Command<{params: PaymentFilters, configuration: { tenantId?: string }}, PaymentResponse> => {
   return {
-    input: params,
+    input: { params, configuration },
     metadata: {
       commandName: 'GetPayments',
       path: '/v1/payments',
       method: 'GET'
     },
     execute: async (config: Config) => {
-      // Validate input using Zod schema
-      const validatedParams = PaymentFiltersSchema.parse(params);
-
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
+      if (configuration.tenantId) {
+        config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
 
@@ -200,7 +219,9 @@ export const GetPayments = (params: PaymentFilters & { tenantId?: string }): Com
         locale: 'en',
         originatedBy: 'us',
         orderBy: 'id',
-        sortOrder: 'DESC'
+        sortOrder: 'DESC',
+        limit: 20,
+        offset: 0
       };
 
       // Apply default date format if needed
@@ -223,9 +244,16 @@ export const GetPayments = (params: PaymentFilters & { tenantId?: string }): Com
       };
 
       try {
+        const processedParams = applyDefaultDateFormat(params as Record<string, any>);
+
+        // Build queryParams with defaults and user-provided values
+        // Use default limit=20 if not provided or if limit=0
+        // Use default offset=0 if not provided
         const queryParams = {
           ...defaultParams,
-          ...applyDefaultDateFormat(validatedParams as Record<string, any>)
+          ...processedParams,
+          limit: (processedParams.limit !== undefined && processedParams.limit !== 0) ? processedParams.limit : 20,
+          offset: processedParams.offset !== undefined ? processedParams.offset : 0
         };
 
         const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: queryParams });

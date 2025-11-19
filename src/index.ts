@@ -1,7 +1,7 @@
 export { createClient } from './client/index';
 export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment, ListPayments } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
-export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient } from './commands/rest/client';
+export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActiveClients, GetStatusOfVerifyClient } from './commands/rest/client';
 export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier } from './commands/rest/clientIdentifier';
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './commands/rest/account';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './commands/rest/transfer';
@@ -25,11 +25,7 @@ export type {
   Payment,
   CreatePaymentInput,
   UpdatePaymentInput,
-  PaymentResponse,
-  PaymentStatus,
-  PaymentRailType,
-  PaymentType,
-  PaymentFilters
+  PaymentResponse
 } from './types/payment';
 
 export type {
@@ -51,11 +47,11 @@ export type {
 } from './types/recipient';
 
 export {
-  PaymentStatusSchema as PaymentStatusZod, PaymentFilterKeySchema as PaymentFilterKeyZod,
+  PaymentStatusSchema as PaymentStatusZod,
   PaymentRailSchema as PaymentRailZod, PaymentTypeSchema as PaymentTypeZod,
   SortOrderSchema as SortOrderZod, CreatePaymentInputSchema as CreatePaymentInputZod,
   UpdatePaymentInputSchema as UpdatePaymentInputZod, PaymentResponseSchema as PaymentResponseZod,
-  PaymentFiltersSchema as PaymentFiltersZod, PaymentFilterShape, PaymentShape, CreatePaymentInputShape, UpdatePaymentInputShape
+  PaymentShape, CreatePaymentInputShape, UpdatePaymentInputShape
 } from './types/payment';
 
 export {

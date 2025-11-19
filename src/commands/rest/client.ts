@@ -1,5 +1,6 @@
+import { AxiosResponse } from 'axios';
 import { type Command, type Config, ProcessOutput } from '../../types';
-import { ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, UpdateClientIdentifierRequest, UpdateClientIdentifierResponse, validateClientFilterKey, validateClientFilters } from '../../types/client';
+import { ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, UpdateClientIdentifierRequest, UpdateClientIdentifierResponse, validateClientFilterKey, validateClientFilters, VerifyWithActiveClient, ResponseVerfiy, GetStatusOfVerifyClientResponse } from '../../types/client';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 
@@ -126,104 +127,6 @@ export const CreateClient = (
   };
 };
 
-const createClientQuery = (filters: Record<string, any>, limit?: number, offset?: number, tenantId?: string) => {
-  // Validate parameters
-  if (limit !== undefined && limit !== 0 && limit <= 0) {
-    throw createCommandError({
-      message: `Invalid limit: ${limit}. Limit must be positive or 0 for fetching all records.`,
-      code: 'invalid_limit'
-    });
-  }
-
-  if (offset !== undefined && offset < 0) {
-    throw createCommandError({
-      message: `Invalid offset: ${offset}. Offset must be non-negative.`,
-      code: 'invalid_offset'
-    });
-  }
-
-  const buildCommand = (): Command<any, ListClientsResponse> => {
-    const queryParams = {
-      ...filters,
-      limit: limit || 200,
-      offset: offset || 0
-    };
-
-    return {
-      input: { filters, limit, offset, tenantId },
-      metadata: {
-        commandName: 'ListClients',
-        path: '/v1/clients',
-        method: 'GET'
-      },
-      execute: async (config: Config) => {
-        if (tenantId) {
-          config.tenantId = tenantId;
-        }
-        const axiosInstance = await baseRequest(config);
-
-        try {
-          // If limit is 0, fetch all records using pagination
-          if (limit === 0) {
-            const allClients: Array<ClientData> = [];
-            const pageLimit = 200;
-            let currentOffset = offset || 0;
-            let totalFilteredRecords = 0;
-
-            do {
-              const paginationParams = {
-                ...filters,
-                limit: pageLimit,
-                offset: currentOffset
-              };
-
-              const response = await axiosInstance.get<ListClientsResponse>('/v1/clients', { params: paginationParams });
-              const { totalFilteredRecords: total, pageItems } = response.data;
-
-              allClients.push(...pageItems);
-              totalFilteredRecords = total;
-              currentOffset += pageLimit;
-            } while (currentOffset < totalFilteredRecords);
-
-            return { totalFilteredRecords, pageItems: allClients };
-          } else {
-            // Regular paginated request
-            const response = await axiosInstance.get<ListClientsResponse>('/v1/clients', { params: queryParams });
-            return response.data;
-          }
-        } catch (error) {
-          handleAxiosError(error);
-        }
-      }
-    };
-  };
-
-  const queryMethods = {
-    where: (field: string) => {
-      validateClientFilterKey(field);
-      return {
-        eq: (value: any) => {
-          // Validate using the new Zod-based filters
-          validateClientFilters({ [field]: value });
-          return createClientQuery({ ...filters, [field]: value }, limit, offset, tenantId);
-        }
-      };
-    },
-    limit: (value: number) => createClientQuery(filters, value, offset, tenantId),
-    offset: (value: number) => createClientQuery(filters, limit, value, tenantId),
-    all: () => createClientQuery(filters, 0, offset, tenantId), // Set limit to 0 to fetch all records
-    execute: buildCommand
-  };
-
-  return queryMethods;
-};
-
-export const ListClients = (params?: { tenantId?: string }) => {
-  return {
-    list: () => createClientQuery({}, undefined, undefined, params?.tenantId)
-  };
-};
-
 export const GetClients = (params: ListClientsRequest, configuration: { tenantId?: string }): Command<{params: ListClientsRequest, configuration: { tenantId?: string }}, ListClientsResponse> => {
   return {
     input: { params, configuration },
@@ -270,6 +173,9 @@ export const GetClients = (params: ListClientsRequest, configuration: { tenantId
   };
 };
 
+// ListClients is an alias for GetClients (Command Pattern)
+export const ListClients = GetClients;
+
 export const DeleteClient = (params: { clientId: number, tenantId?: string }): Command<{ clientId: number, tenantId?: string }, ProcessOutput> => {
   return {
     input: params,
@@ -286,6 +192,88 @@ export const DeleteClient = (params: { clientId: number, tenantId?: string }): C
 
       try {
         const response = await axiosInstance.delete(`/v1/clients/${params.clientId}`);
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+export const VerifyWithActiveClients = (params: { tenantId?: string; param: VerifyWithActiveClient }): Command<{ tenantId?: string; param: VerifyWithActiveClient }, ProcessOutput | ResponseVerfiy> => {
+  const path = `/v1/clients/${params.param.clientId}`;
+  return {
+    input: params,
+    metadata: {
+      commandName: 'VerifyWithActiveClients',
+      path,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        let verify: AxiosResponse<ResponseVerfiy> | undefined;
+        if (!params.param.skipVerify) {
+          const requestVerify = {
+            kycVerificationType: params.param.kycVerificationType,
+            note: params.param.note
+          };
+          verify = await axiosInstance.post<ResponseVerfiy>(`/v1/clients/${params.param.clientId}`, requestVerify);
+        }
+
+        if (!params.param.skipActivate && ((verify && verify.data.data.clientKycStatus === 'APPROVED' && params.param.autoActivate) || !verify)) {
+          const requestActivate = {
+            locale: params.param.locale,
+            dateFormat: params.param.dateFormat,
+            activationDate: params.param.activationDate,
+            isActivatedByManualReview: params.param.isActivatedByManualReview,
+            manualReviewActivationComments: params.param.manualReviewActivationComments
+          };
+          const activateClient = await axiosInstance.post<ProcessOutput>(`/v1/clients/${params.param.clientId}`, requestActivate);
+
+          let result: ResponseVerfiy | ProcessOutput = activateClient.data;
+          if (verify) {
+            result = { ...activateClient.data, data: { ...verify.data.data } };
+          }
+          return result;
+        }
+
+        if (!verify) {
+          throw createCommandError({
+            message: 'Verification was skipped but no alternative action was taken',
+            code: 'VERIFICATION_SKIPPED'
+          });
+        }
+
+        return verify.data;
+
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+export const GetStatusOfVerifyClient = (params: { tenantId?: string; clientId: number }): Command<{ tenantId?: string; clientId: number }, GetStatusOfVerifyClientResponse> => {
+  return {
+    input: params,
+    metadata: {
+      commandName: 'GetStatusOfVerifyClient',
+      path: `/v1/clients/${params.clientId}/verificationstatus`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get<GetStatusOfVerifyClientResponse>(`/v1/clients/${params.clientId}/verificationstatus`);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

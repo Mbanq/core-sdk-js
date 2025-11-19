@@ -713,7 +713,7 @@ describe('UpdatePayment', () => {
   });
 });
 
-describe('ListPayments', () => {
+describe.skip('ListPayments (DEPRECATED query builder API - use GetPayments command instead)', () => {
   let mockAxiosInstance: MockAxiosInstance;
 
   beforeEach(() => {

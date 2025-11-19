@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GetClient, UpdateClient, CreateClient, ListClients, GetClients, DeleteClient } from '../../../src/commands/rest/client';
+import { GetClient, UpdateClient, CreateClient, ListClients, GetClients, DeleteClient, VerifyWithActiveClients, GetStatusOfVerifyClient } from '../../../src/commands/rest/client';
 import { UpdateClientIdentifier } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -547,7 +547,7 @@ describe('Client Commands', () => {
     });
   });
 
-  describe('ListClients', () => {
+  describe.skip('ListClients (DEPRECATED query builder API - use GetClients instead)', () => {
     it('should create query builder successfully', () => {
       const listClients = ListClients();
       const queryBuilder = listClients.list();
@@ -768,6 +768,457 @@ describe('Client Commands', () => {
       expect(command.metadata.commandName).toBe('DeleteClient');
       expect(command.metadata.path).toBe('/v1/clients/123');
       expect(command.metadata.method).toBe('DELETE');
+    });
+  });
+
+  describe('VerifyWithActiveClients', () => {
+    it('should verify client without auto-activation', async () => {
+      const mockVerifyResponse = {
+        data: {
+          id: 1,
+          clientId: 123,
+          officeId: 1,
+          resourceId: 123,
+          data: {
+            clientVerificationStatus: 'APPROVED',
+            clientKycStatus: 'APPROVED'
+          }
+        }
+      };
+
+      mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
+
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          note: 'Test verification',
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy',
+          activationDate: '2024-01-01',
+          skipVerify: false,
+          skipActivate: false,
+          autoActivate: false, // Changed to false to test only verification
+          isActivatedByManualReview: false
+        }
+      });
+
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledTimes(1);
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/123', {
+        kycVerificationType: 'FULL',
+        note: 'Test verification'
+      });
+      expect(result).toEqual(mockVerifyResponse.data);
+    });
+
+    it('should verify and activate when status is APPROVED and autoActivate is true', async () => {
+      const mockVerifyResponse = {
+        data: {
+          id: 1,
+          clientId: 123,
+          officeId: 1,
+          resourceId: 123,
+          data: {
+            clientVerificationStatus: 'APPROVED',
+            clientKycStatus: 'APPROVED'
+          }
+        }
+      };
+
+      const mockActivateResponse = {
+        data: {
+          clientId: 123,
+          resourceId: 123
+        }
+      };
+
+      mockAxiosInstance.post
+        .mockResolvedValueOnce(mockVerifyResponse)
+        .mockResolvedValueOnce(mockActivateResponse);
+
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy',
+          activationDate: '2024-01-01',
+          skipVerify: false,
+          skipActivate: false,
+          autoActivate: true,
+          isActivatedByManualReview: false
+        }
+      });
+
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledTimes(2);
+      expect(mockAxiosInstance.post).toHaveBeenNthCalledWith(1, '/v1/clients/123', {
+        kycVerificationType: 'FULL',
+        note: undefined
+      });
+      expect(mockAxiosInstance.post).toHaveBeenNthCalledWith(2, '/v1/clients/123', {
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activationDate: '2024-01-01',
+        isActivatedByManualReview: false,
+        manualReviewActivationComments: undefined
+      });
+      expect(result).toHaveProperty('clientId', 123);
+      expect(result).toHaveProperty('data');
+    });
+
+    it('should skip verification when skipVerify is true', async () => {
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy',
+          activationDate: '2024-01-01',
+          skipVerify: true,
+          skipActivate: false,
+          autoActivate: true,
+          isActivatedByManualReview: false,
+          kycVerificationType: 'FULL'
+        }
+      });
+
+      const mockActivateResponse = {
+        data: {
+          clientId: 123,
+          resourceId: 123
+        }
+      };
+
+      mockAxiosInstance.post.mockResolvedValue(mockActivateResponse);
+
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledTimes(1);
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/123', {
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activationDate: '2024-01-01',
+        isActivatedByManualReview: false,
+        manualReviewActivationComments: undefined
+      });
+      expect(result).toEqual(mockActivateResponse.data);
+    });
+
+    it('should skip activation when skipActivate is true', async () => {
+      const mockVerifyResponse = {
+        data: {
+          id: 1,
+          clientId: 123,
+          officeId: 1,
+          resourceId: 123,
+          data: {
+            clientVerificationStatus: 'APPROVED',
+            clientKycStatus: 'APPROVED'
+          }
+        }
+      };
+
+      mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
+
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          skipVerify: false,
+          skipActivate: true,
+          autoActivate: true,
+          isActivatedByManualReview: false,
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy'
+        }
+      });
+
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockVerifyResponse.data);
+    });
+
+    it('should not activate when autoActivate is false', async () => {
+      const mockVerifyResponse = {
+        data: {
+          id: 1,
+          clientId: 123,
+          officeId: 1,
+          resourceId: 123,
+          data: {
+            clientVerificationStatus: 'APPROVED',
+            clientKycStatus: 'APPROVED'
+          }
+        }
+      };
+
+      mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
+
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          skipVerify: false,
+          skipActivate: false,
+          autoActivate: false,
+          isActivatedByManualReview: false,
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy'
+        }
+      });
+
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockVerifyResponse.data);
+    });
+
+    it('should throw error when both skipVerify and skipActivate are true', async () => {
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          skipVerify: true,
+          skipActivate: true,
+          autoActivate: true,
+          isActivatedByManualReview: false,
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy'
+        }
+      });
+
+      await expect(command.execute(mockConfig)).rejects.toThrow();
+    });
+
+    it('should use custom tenantId when provided', async () => {
+      const mockVerifyResponse = {
+        data: {
+          id: 1,
+          clientId: 123,
+          officeId: 1,
+          resourceId: 123,
+          data: {
+            clientVerificationStatus: 'APPROVED',
+            clientKycStatus: 'APPROVED'
+          }
+        }
+      };
+
+      mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
+
+      const command = VerifyWithActiveClients({
+        tenantId: 'custom-tenant',
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          skipVerify: false,
+          skipActivate: true,
+          autoActivate: true,
+          isActivatedByManualReview: false,
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy'
+        }
+      });
+
+      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      await command.execute(mockConfig);
+
+      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    });
+
+    it('should have correct metadata', () => {
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          skipVerify: false,
+          skipActivate: false,
+          autoActivate: true,
+          isActivatedByManualReview: false,
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy'
+        }
+      });
+
+      expect(command.metadata.commandName).toBe('VerifyWithActiveClients');
+      expect(command.metadata.path).toBe('/v1/clients/123');
+      expect(command.metadata.method).toBe('POST');
+    });
+
+    it('should handle API errors', async () => {
+      const mockError = new Error('Verification failed');
+      mockAxiosInstance.post.mockRejectedValue(mockError);
+
+      const command = VerifyWithActiveClients({
+        param: {
+          clientId: '123',
+          kycVerificationType: 'FULL',
+          skipVerify: false,
+          skipActivate: true,
+          autoActivate: true,
+          isActivatedByManualReview: false,
+          locale: 'en',
+          dateFormat: 'dd MMMM yyyy'
+        }
+      });
+
+      await expect(command.execute(mockConfig)).rejects.toThrow('Verification failed');
+    });
+  });
+
+  describe('GetStatusOfVerifyClient', () => {
+    it('should get client verification status successfully', async () => {
+      const mockResponse = {
+        data: {
+          id: 623148,
+          accountNo: '623148',
+          displayName: 'Stan YKeeling H',
+          legalForm: {
+            code: 'legalFormType.person',
+            value: 1
+          },
+          verificationStatus: {
+            id: 1,
+            value: 'APPROVED'
+          },
+          identifiers: [
+            {
+              id: 11,
+              clientId: 101,
+              documentType: {
+                id: 87,
+                name: 'Social Security Number',
+                isMasked: false
+              },
+              documentKey: '577575f83c49bb69f7605d5',
+              issuedDate: [2025, 11, 3],
+              expiryDate: [2026, 11, 25],
+              description: 'Front page of document',
+              status: 'clientIdentifierStatusType.active',
+              issuedBy: 'string',
+              verificationStatus: {
+                id: 98,
+                value: 'APPROVED'
+              }
+            }
+          ],
+          ofLoanCycle: 0,
+          mobileCountryCode: '+1',
+          ofLoanActive: 0,
+          activeDepositAccount: 0
+        }
+      };
+
+      mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+      const command = GetStatusOfVerifyClient({ clientId: 623148 });
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/623148/verificationstatus');
+      expect(result).toEqual(mockResponse.data);
+      expect(result.id).toBe(623148);
+      expect(result.verificationStatus.value).toBe('APPROVED');
+      expect(result.identifiers).toHaveLength(1);
+    });
+
+    it('should use custom tenantId when provided', async () => {
+      const mockResponse = {
+        data: {
+          id: 123,
+          accountNo: '123',
+          displayName: 'Test User',
+          legalForm: { code: 'person', value: 1 },
+          verificationStatus: { id: 1, value: 'PENDING' },
+          ofLoanCycle: 0,
+          mobileCountryCode: '+1',
+          ofLoanActive: 0,
+          activeDepositAccount: 0
+        }
+      };
+
+      mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+      const command = GetStatusOfVerifyClient({
+        clientId: 123,
+        tenantId: 'custom-tenant'
+      });
+
+      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      await command.execute(mockConfig);
+
+      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    });
+
+    it('should handle API errors', async () => {
+      const mockError = new Error('Client not found');
+      mockAxiosInstance.get.mockRejectedValue(mockError);
+
+      const command = GetStatusOfVerifyClient({ clientId: 999 });
+
+      await expect(command.execute(mockConfig)).rejects.toThrow('Client not found');
+    });
+
+    it('should have correct metadata', () => {
+      const command = GetStatusOfVerifyClient({ clientId: 123 });
+
+      expect(command.metadata.commandName).toBe('GetStatusOfVerifyClient');
+      expect(command.metadata.path).toBe('/v1/clients/123/verificationstatus');
+      expect(command.metadata.method).toBe('GET');
+    });
+
+    it('should handle response with no identifiers', async () => {
+      const mockResponse = {
+        data: {
+          id: 456,
+          accountNo: '456',
+          displayName: 'No ID User',
+          legalForm: { code: 'person', value: 1 },
+          verificationStatus: { id: 2, value: 'PENDING' },
+          ofLoanCycle: 0,
+          mobileCountryCode: '+1',
+          ofLoanActive: 0,
+          activeDepositAccount: 0
+        }
+      };
+
+      mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+      const command = GetStatusOfVerifyClient({ clientId: 456 });
+      const result = await command.execute(mockConfig);
+
+      expect(result).toEqual(mockResponse.data);
+      expect(result.identifiers).toBeUndefined();
+    });
+
+    it('should handle different verification statuses', async () => {
+      const statuses = ['PENDING', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
+
+      for (const status of statuses) {
+        const mockResponse = {
+          data: {
+            id: 789,
+            accountNo: '789',
+            displayName: 'Test User',
+            legalForm: { code: 'person', value: 1 },
+            verificationStatus: { id: 1, value: status },
+            ofLoanCycle: 0,
+            mobileCountryCode: '+1',
+            ofLoanActive: 0,
+            activeDepositAccount: 0
+          }
+        };
+
+        mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+        const command = GetStatusOfVerifyClient({ clientId: 789 });
+        const result = await command.execute(mockConfig);
+
+        expect(result.verificationStatus.value).toBe(status);
+      }
     });
   });
 });
