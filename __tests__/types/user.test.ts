@@ -110,7 +110,7 @@ describe('User Type Validations', () => {
     it('should validate a valid user detail object', () => {
       expect(() => UserDetailSchema.parse(validUserDetail)).not.toThrow();
       const result = UserDetailSchema.parse(validUserDetail);
-      
+
       expect(result.username).toBe('john.doe');
       expect(result.userId).toBe(12345);
       expect(result.accessToken).toBe('mock-access-token');
@@ -181,7 +181,7 @@ describe('User Type Validations', () => {
         ...validUserDetail,
         permissions: [
           'READ_USERS',
-          'WRITE_USERS', 
+          'WRITE_USERS',
           'DELETE_USERS',
           'READ_PAYMENTS',
           'WRITE_PAYMENTS',

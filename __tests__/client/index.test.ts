@@ -1274,12 +1274,12 @@ describe('User API Tests', () => {
   describe('user.getDetail', () => {
     it('should execute user.getDetail command (lines 61-64)', async () => {
       const userDetailCommand = client.user.getDetail();
-      
+
       expect(userDetailCommand).toBeDefined();
       expect(typeof userDetailCommand.execute).toBe('function');
 
       const result = await userDetailCommand.execute();
-      
+
       expect(result).toBeDefined();
       expect(result.username).toBe('testuser');
       expect(result.userId).toBe(123);
@@ -1289,7 +1289,7 @@ describe('User API Tests', () => {
     it('should use default tenantId for user.getDetail', async () => {
       const userDetailCommand = client.user.getDetail();
       const result = await userDetailCommand.execute();
-      
+
       expect(result).toBeDefined();
       expect(result.username).toBe('testuser');
     });
@@ -1297,7 +1297,7 @@ describe('User API Tests', () => {
     it('should use custom tenantId when provided via tenant context', async () => {
       const tenantClient = client.tenant('custom-tenant-id');
       const userDetailCommand = tenantClient.user.getDetail();
-      
+
       expect(userDetailCommand).toBeDefined();
       expect(typeof userDetailCommand.execute).toBe('function');
 
@@ -1322,7 +1322,7 @@ describe('Account Chaining API Tests', () => {
   describe('account chaining functionality', () => {
     it('should test nested where chaining in accounts (lines 223-231)', () => {
       const clientFor = client.client.for('123');
-      
+
       // Test the chaining: where().eq().where()
       const whereQuery = clientFor.accounts.where('accountType');
       expect(whereQuery).toBeDefined();
@@ -1346,7 +1346,7 @@ describe('Account Chaining API Tests', () => {
 
     it('should execute nested chained account queries (lines 229-231)', async () => {
       const clientFor = client.client.for('123');
-      
+
       // Build a complex chain
       const complexQuery = clientFor.accounts
         .where('accountType')
@@ -1363,7 +1363,7 @@ describe('Account Chaining API Tests', () => {
 
     it('should support multiple nested where clauses', () => {
       const clientFor = client.client.for('123');
-      
+
       // Test multiple levels of where chaining
       const multiLevelQuery = clientFor.accounts
         .where('accountType')

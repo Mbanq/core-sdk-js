@@ -238,14 +238,14 @@ describe('GetUserDetail', () => {
 
   it('should handle empty input parameters', () => {
     const command = GetUserDetail({});
-    
+
     expect(command.input).toEqual({});
     expect(command.metadata.commandName).toBe('GetUserDetail');
   });
 
   it('should handle undefined input parameters', () => {
     const command = GetUserDetail(undefined);
-    
+
     expect(command.input).toEqual({});
     expect(command.metadata.commandName).toBe('GetUserDetail');
   });
