@@ -3,7 +3,6 @@ import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 import { z } from 'zod';
 import {
-  PaymentFiltersSchema,
   validateCreatePaymentInput,
   validateUpdatePaymentInput,
   type Payment,
@@ -109,90 +108,6 @@ export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput,
       try {
         const response = await axiosInstance.put<Payment>(`/v1/payments/${params.id}`, params.payment);
         return response.data;
-      } catch (error) {
-        handleAxiosError(error);
-      }
-    }
-  };
-};
-
-export const ListPayments = (params: PaymentFilters & { tenantId?: string }): Command<PaymentFilters & { tenantId?: string }, PaymentResponse> => {
-  return {
-    input: params,
-    metadata: {
-      commandName: 'ListPayments',
-      path: '/v1/payments',
-      method: 'GET'
-    },
-    execute: async (config: Config) => {
-      // Validate input using Zod schema
-      const validatedParams = PaymentFiltersSchema.parse(params);
-
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
-      const axiosInstance = await baseRequest(config);
-
-      // Always include default query parameters
-      const defaultParams = {
-        locale: 'en',
-        originatedBy: 'us',
-        orderBy: 'id',
-        sortOrder: 'DESC'
-      };
-
-      // Apply default date format if needed
-      const applyDefaultDateFormat = (inputParams: Record<string, any>) => {
-        const dateFilterKeys = [
-          'fromValueDate',
-          'toValueDate',
-          'fromExecuteDate',
-          'toExecuteDate',
-          'fromReturnDate',
-          'toReturnDate'
-        ];
-
-        const hasDateFilter = dateFilterKeys.some((k) => inputParams[k] !== undefined);
-        const paramsCopy = { ...inputParams };
-        if (hasDateFilter && paramsCopy.dateFormat === undefined) {
-          paramsCopy.dateFormat = 'yyyy-MM-dd';
-        }
-        return paramsCopy;
-      };
-
-      try {
-        const queryParams = {
-          ...defaultParams,
-          ...applyDefaultDateFormat(validatedParams as Record<string, any>)
-        };
-
-        if (params.limit === 0) {
-          // Fetch all records using pagination
-          const allPayments: Array<Payment> = [];
-          const pageLimit = 200;
-          let currentOffset = params.offset || 0;
-          let totalFilteredRecords = 0;
-
-          do {
-            const paginationParams = {
-              ...queryParams,
-              limit: pageLimit,
-              offset: currentOffset
-            };
-
-            const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: paginationParams });
-            const { totalFilteredRecords: total, pageItems } = response.data;
-
-            allPayments.push(...pageItems);
-            totalFilteredRecords = total;
-            currentOffset += pageLimit;
-          } while (currentOffset < totalFilteredRecords);
-
-          return { totalFilteredRecords, pageItems: allPayments };
-        } else {
-          const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: queryParams });
-          return response.data;
-        }
       } catch (error) {
         handleAxiosError(error);
       }
