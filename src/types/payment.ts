@@ -478,6 +478,88 @@ export const validatePaymentResponse = (response: unknown): PaymentResponse => {
   return PaymentResponseSchema.parse(response);
 };
 
+// Generic validation functions for filter keys and values
+export const validateFilterKey = (key: string): PaymentFilterKey => {
+  try {
+    return PaymentFilterKeySchema.parse(key);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw createCommandError({
+        code: 'INVALID_FILTER_KEY',
+        message: `Invalid filter key: ${key}. Valid keys are: ${VALID_PAYMENT_FILTER_KEYS.join(', ')}`,
+        statusCode: 400
+      });
+    }
+    throw error;
+  }
+};
+
+export const validateFilterValue = (key: string, value: any): any => {
+  try {
+    switch (key) {
+      case 'status':
+        return PaymentStatusSchema.parse(value);
+      case 'paymentRail':
+        return PaymentRailSchema.parse(value);
+      case 'paymentType':
+        return PaymentTypeSchema.parse(value);
+      case 'sortOrder':
+        return SortOrderSchema.parse(value);
+      case 'originatorName':
+        return OriginatorNameSchema.parse(value);
+      case 'originatorAccount':
+        return OriginatorAccountSchema.parse(value);
+      case 'originatorBankRoutingCode':
+        return OriginatorBankRoutingCodeSchema.parse(value);
+      case 'recipientName':
+        return RecipientNameSchema.parse(value);
+      case 'recipientAccount':
+        return RecipientAccountSchema.parse(value);
+      case 'recipientBankRoutingCode':
+        return RecipientBankRoutingCodeSchema.parse(value);
+      case 'reference':
+        return ReferenceSchema.parse(value);
+      case 'traceNumber':
+        return TraceNumberSchema.parse(value);
+      case 'externalId':
+        return ExternalIdSchema.parse(value);
+      case 'clientId':
+        return ClientIdSchema.parse(value);
+      case 'dateFormat':
+        return DateFormatSchema.parse(value);
+      case 'locale':
+        return LocaleSchema.parse(value);
+      case 'originatedBy':
+        return OriginatedBySchema.parse(value);
+      case 'fromValueDate':
+      case 'toValueDate':
+        return ValueDateSchema.parse(value);
+      case 'fromExecuteDate':
+      case 'toExecuteDate':
+        return ExecuteDateSchema.parse(value);
+      case 'fromReturnDate':
+      case 'toReturnDate':
+        return ReturnDateSchema.parse(value);
+      case 'isSettlement':
+        return IsSettlementSchema.parse(value);
+      case 'orderBy':
+        return OrderBySchema.parse(value);
+      default:
+        // For unknown keys, just return the value without validation
+        return value;
+    }
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw createCommandError({
+        code: 'INVALID_FILTER_VALUE',
+        message: `Invalid filter value for key '${key}': ${error.errors[0].message}`,
+        statusCode: 400
+      });
+    }
+    throw error;
+  }
+};
+
 export const ProcessOutputSchema = z.object({
   id: z.string(),
   clientId: z.number(),
@@ -486,103 +568,3 @@ export const ProcessOutputSchema = z.object({
 });
 
 export type ProcessOutput = z.infer<typeof ProcessOutputSchema>;
-
-export const validateFilterKey = (key: string): void => {
-  try {
-    validatePaymentFilterKey(key);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      throw createCommandError({
-        message: `Invalid filter key: '${key}'. ${error.message}`,
-        code: 'invalid_filter_key'
-      });
-    }
-    throw error;
-  }
-};
-
-export const validateFilterValue = (key: string, value: any): void => {
-  try {
-    switch (key) {
-      case 'status':
-        validatePaymentStatus(value);
-        break;
-      case 'paymentRail':
-        validatePaymentRail(value);
-        break;
-      case 'paymentType':
-        validatePaymentType(value);
-        break;
-      case 'sortOrder':
-        validateSortOrder(value);
-        break;
-      case 'originatorName':
-        validateOriginatorName(value);
-        break;
-      case 'originatorAccount':
-        validateOriginatorAccount(value);
-        break;
-      case 'originatorBankRoutingCode':
-        validateOriginatorBankRoutingCode(value);
-        break;
-      case 'recipientName':
-        validateRecipientName(value);
-        break;
-      case 'recipientAccount':
-        validateRecipientAccount(value);
-        break;
-      case 'recipientBankRoutingCode':
-        validateRecipientBankRoutingCode(value);
-        break;
-      case 'reference':
-        validateReference(value);
-        break;
-      case 'traceNumber':
-        validateTraceNumber(value);
-        break;
-      case 'externalId':
-        validateExternalId(value);
-        break;
-      case 'clientId':
-        validateClientId(value);
-        break;
-      case 'dateFormat':
-        validateDateFormat(value);
-        break;
-      case 'locale':
-        validateLocale(value);
-        break;
-      case 'originatedBy':
-        validateOriginatedBy(value);
-        break;
-      case 'fromValueDate':
-      case 'toValueDate':
-        validateValueDate(value);
-        break;
-      case 'fromExecuteDate':
-      case 'toExecuteDate':
-        validateExecuteDate(value);
-        break;
-      case 'fromReturnDate':
-      case 'toReturnDate':
-        validateReturnDate(value);
-        break;
-      case 'isSettlement':
-        validateIsSettlement(value);
-        break;
-      case 'orderBy':
-        validateOrderBy(value);
-        break;
-      default:
-        break;
-    }
-  } catch (error) {
-    if (error instanceof ZodError) {
-      throw createCommandError({
-        message: `Invalid value for '${key}': '${value}'. ${error.message}`,
-        code: `invalid_${key}_value`
-      });
-    }
-    throw error;
-  }
-};
