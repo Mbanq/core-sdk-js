@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GetClient, UpdateClient, CreateClient, ListClients, GetClients, DeleteClient, VerifyWithActiveClients, GetStatusOfVerifyClient } from '../../../src/commands/rest/client';
+import { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from '../../../src/commands/rest/client';
 import { UpdateClientIdentifier } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -547,177 +547,6 @@ describe('Client Commands', () => {
     });
   });
 
-  describe.skip('ListClients (DEPRECATED query builder API - use GetClients instead)', () => {
-    it('should create query builder successfully', () => {
-      const listClients = ListClients();
-      const queryBuilder = listClients.list();
-
-      expect(queryBuilder).toBeDefined();
-      expect(typeof queryBuilder.where).toBe('function');
-      expect(typeof queryBuilder.limit).toBe('function');
-      expect(typeof queryBuilder.offset).toBe('function');
-      expect(typeof queryBuilder.all).toBe('function');
-      expect(typeof queryBuilder.execute).toBe('function');
-    });
-
-    it('should create query builder with custom tenantId', () => {
-      const listClients = ListClients({ tenantId: 'custom-tenant' });
-      const queryBuilder = listClients.list();
-
-      expect(queryBuilder).toBeDefined();
-      // We can test that the tenantId parameter is passed through by checking the builder
-    });
-
-    it('should build query with where clause', () => {
-      const listClients = ListClients();
-      const queryBuilder = listClients.list().where('firstname').eq('John');
-
-      expect(queryBuilder).toBeDefined();
-      expect(typeof queryBuilder.execute).toBe('function');
-    });
-
-    it('should build query with limit', () => {
-      const listClients = ListClients();
-      const queryBuilder = listClients.list().limit(50);
-
-      expect(queryBuilder).toBeDefined();
-      expect(typeof queryBuilder.execute).toBe('function');
-    });
-
-    it('should build query with offset', () => {
-      const listClients = ListClients();
-      const queryBuilder = listClients.list().offset(100);
-
-      expect(queryBuilder).toBeDefined();
-      expect(typeof queryBuilder.execute).toBe('function');
-    });
-
-    it('should build query to fetch all records', () => {
-      const listClients = ListClients();
-      const queryBuilder = listClients.list().all();
-
-      expect(queryBuilder).toBeDefined();
-      expect(typeof queryBuilder.execute).toBe('function');
-    });
-
-    it('should throw error for invalid limit (negative)', () => {
-      const listClients = ListClients();
-
-      expect(() => {
-        listClients.list().limit(-5);
-      }).toThrow('Invalid limit: -5. Limit must be positive or 0 for fetching all records.');
-    });
-
-    it('should throw error for invalid offset (negative)', () => {
-      const listClients = ListClients();
-
-      expect(() => {
-        listClients.list().offset(-1);
-      }).toThrow('Invalid offset: -1. Offset must be non-negative.');
-    });
-
-    it('should allow limit of 0 for fetching all records', () => {
-      const listClients = ListClients();
-      const queryBuilder = listClients.list().limit(0);
-
-      expect(queryBuilder).toBeDefined();
-    });
-
-    it('should execute query with pagination logic when limit is 0', async () => {
-      const mockResponsePage1 = {
-        data: {
-          totalFilteredRecords: 250,
-          pageItems: Array(200).fill(null).map((_, i) => ({ id: i + 1, name: `Client ${i + 1}` }))
-        }
-      };
-      const mockResponsePage2 = {
-        data: {
-          totalFilteredRecords: 250,
-          pageItems: Array(50).fill(null).map((_, i) => ({ id: i + 201, name: `Client ${i + 201}` }))
-        }
-      };
-
-      mockAxiosInstance.get
-        .mockResolvedValueOnce(mockResponsePage1)
-        .mockResolvedValueOnce(mockResponsePage2);
-
-      const listClients = ListClients();
-      const command = listClients.list().limit(0).execute();
-      const result = await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.get).toHaveBeenCalledTimes(2);
-      expect(result).toBeDefined();
-      expect(result!.totalFilteredRecords).toBe(250);
-      expect(result!.pageItems).toHaveLength(250);
-    });
-
-    it('should execute regular paginated query when limit is not 0', async () => {
-      const mockResponse = {
-        data: {
-          totalFilteredRecords: 50,
-          pageItems: [
-            { id: 1, firstname: 'John', lastname: 'Doe' },
-            { id: 2, firstname: 'Jane', lastname: 'Smith' }
-          ]
-        }
-      };
-      mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-      const listClients = ListClients();
-      const command = listClients.list().limit(10).offset(0).execute();
-      const result = await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients', {
-        params: { limit: 10, offset: 0 }
-      });
-      expect(result).toEqual({
-        totalFilteredRecords: 50,
-        pageItems: [
-          { id: 1, firstname: 'John', lastname: 'Doe' },
-          { id: 2, firstname: 'Jane', lastname: 'Smith' }
-        ]
-      });
-    });
-
-    it('should handle errors in query execution', async () => {
-      const mockError = new Error('Server error');
-      mockAxiosInstance.get.mockRejectedValue(mockError);
-
-      const listClients = ListClients();
-      const command = listClients.list().execute();
-
-      await expect(command.execute(mockConfig)).rejects.toThrow('Server error');
-    });
-
-    it('should use custom tenantId in query execution', async () => {
-      const mockResponse = {
-        data: { totalFilteredRecords: 0, pageItems: [] }
-      };
-      mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-      const listClients = ListClients({ tenantId: 'custom-tenant' });
-      const command = listClients.list().execute();
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-      await command.execute(mockConfig);
-
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-    });
-
-    it('should validate filters when using where clause', () => {
-      const listClients = ListClients();
-
-      // This should not throw since firstname is a valid filter key
-      expect(() => {
-        listClients.list().where('firstname').eq('John');
-      }).not.toThrow();
-
-      // This should throw since invalidKey is not a valid filter key
-      expect(() => {
-        listClients.list().where('invalidKey').eq('value');
-      }).toThrow();
-    });
-  });
-
   describe('DeleteClient', () => {
     it('should delete client successfully', async () => {
       const mockResponse = {
@@ -771,7 +600,7 @@ describe('Client Commands', () => {
     });
   });
 
-  describe('VerifyWithActiveClients', () => {
+  describe('VerifyWithActivateClients', () => {
     it('should verify client without auto-activation', async () => {
       const mockVerifyResponse = {
         data: {
@@ -788,7 +617,7 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -838,7 +667,7 @@ describe('Client Commands', () => {
         .mockResolvedValueOnce(mockVerifyResponse)
         .mockResolvedValueOnce(mockActivateResponse);
 
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -871,7 +700,7 @@ describe('Client Commands', () => {
     });
 
     it('should skip verification when skipVerify is true', async () => {
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           locale: 'en',
@@ -923,7 +752,7 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -958,7 +787,7 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -978,7 +807,7 @@ describe('Client Commands', () => {
     });
 
     it('should throw error when both skipVerify and skipActivate are true', async () => {
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -1010,7 +839,7 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         tenantId: 'custom-tenant',
         param: {
           clientId: '123',
@@ -1031,7 +860,7 @@ describe('Client Commands', () => {
     });
 
     it('should have correct metadata', () => {
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -1044,7 +873,7 @@ describe('Client Commands', () => {
         }
       });
 
-      expect(command.metadata.commandName).toBe('VerifyWithActiveClients');
+      expect(command.metadata.commandName).toBe('VerifyWithActivateClients');
       expect(command.metadata.path).toBe('/v1/clients/123');
       expect(command.metadata.method).toBe('POST');
     });
@@ -1053,7 +882,7 @@ describe('Client Commands', () => {
       const mockError = new Error('Verification failed');
       mockAxiosInstance.post.mockRejectedValue(mockError);
 
-      const command = VerifyWithActiveClients({
+      const command = VerifyWithActivateClients({
         param: {
           clientId: '123',
           kycVerificationType: 'FULL',
@@ -1120,9 +949,9 @@ describe('Client Commands', () => {
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/623148/verificationstatus');
       expect(result).toEqual(mockResponse.data);
-      expect(result.id).toBe(623148);
-      expect(result.verificationStatus.value).toBe('APPROVED');
-      expect(result.identifiers).toHaveLength(1);
+      expect(result?.id).toBe(623148);
+      expect(result?.verificationStatus.value).toBe('APPROVED');
+      expect(result?.identifiers).toHaveLength(1);
     });
 
     it('should use custom tenantId when provided', async () => {
@@ -1191,7 +1020,7 @@ describe('Client Commands', () => {
       const result = await command.execute(mockConfig);
 
       expect(result).toEqual(mockResponse.data);
-      expect(result.identifiers).toBeUndefined();
+      expect(result?.identifiers).toBeUndefined();
     });
 
     it('should handle different verification statuses', async () => {
@@ -1217,7 +1046,7 @@ describe('Client Commands', () => {
         const command = GetStatusOfVerifyClient({ clientId: 789 });
         const result = await command.execute(mockConfig);
 
-        expect(result.verificationStatus.value).toBe(status);
+        expect(result?.verificationStatus.value).toBe(status);
       }
     });
   });

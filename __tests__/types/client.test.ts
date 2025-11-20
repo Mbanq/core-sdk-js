@@ -17,7 +17,7 @@ import {
 } from '../../src/types/client';
 
 // Import the schema directly for testing refinement rules
-import { VerifyWithActiveClientSchema } from '../../src/types/client';
+import { VerifyWithActivateClientSchema } from '../../src/types/client';
 
 describe('Client Type Validations', () => {
   describe('validateCreateClientRequest', () => {
@@ -364,7 +364,7 @@ describe('Client Type Validations', () => {
   });
 });
 
-describe('VerifyWithActiveClientSchema', () => {
+describe('VerifyWithActivateClientSchema', () => {
   describe('refinement rules (lines 481-528)', () => {
     it('should validate valid verify with active client request', () => {
       const validRequest = {
@@ -381,7 +381,7 @@ describe('VerifyWithActiveClientSchema', () => {
         autoActivate: true
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(validRequest)).not.toThrow();
+      expect(() => VerifyWithActivateClientSchema.parse(validRequest)).not.toThrow();
     });
 
     it('should validate when skipVerify is true with minimal required fields', () => {
@@ -394,7 +394,7 @@ describe('VerifyWithActiveClientSchema', () => {
         activationDate: '2024-01-01' // Required when skipActivate is false
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(validRequest)).not.toThrow();
+      expect(() => VerifyWithActivateClientSchema.parse(validRequest)).not.toThrow();
     });
 
     it('should validate when skipActivate is true with minimal required fields', () => {
@@ -405,7 +405,7 @@ describe('VerifyWithActiveClientSchema', () => {
         kycVerificationType: 'PARTIAL' // Required when skipVerify is false
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(validRequest)).not.toThrow();
+      expect(() => VerifyWithActivateClientSchema.parse(validRequest)).not.toThrow();
     });
 
     it('should fail validation when both skipVerify and skipActivate are true (line 481)', () => {
@@ -415,7 +415,7 @@ describe('VerifyWithActiveClientSchema', () => {
         skipActivate: true
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(invalidRequest)).toThrow(
+      expect(() => VerifyWithActivateClientSchema.parse(invalidRequest)).toThrow(
         'Cannot skip both verification and activation - at least one action must be performed'
       );
     });
@@ -427,7 +427,7 @@ describe('VerifyWithActiveClientSchema', () => {
         skipActivate: true // This is fine, but we need kycVerificationType since skipVerify is false
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(invalidRequest)).toThrow(
+      expect(() => VerifyWithActivateClientSchema.parse(invalidRequest)).toThrow(
         'kycVerificationType is required when skipVerify is false'
       );
     });
@@ -442,7 +442,7 @@ describe('VerifyWithActiveClientSchema', () => {
         activationDate: '2024-01-01'
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(invalidRequest)).toThrow(
+      expect(() => VerifyWithActivateClientSchema.parse(invalidRequest)).toThrow(
         'locale is required when skipActivate is false'
       );
     });
@@ -457,7 +457,7 @@ describe('VerifyWithActiveClientSchema', () => {
         activationDate: '2024-01-01'
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(invalidRequest)).toThrow(
+      expect(() => VerifyWithActivateClientSchema.parse(invalidRequest)).toThrow(
         'dateFormat is required when skipActivate is false'
       );
     });
@@ -472,7 +472,7 @@ describe('VerifyWithActiveClientSchema', () => {
         // Missing activationDate
       };
 
-      expect(() => VerifyWithActiveClientSchema.parse(invalidRequest)).toThrow(
+      expect(() => VerifyWithActivateClientSchema.parse(invalidRequest)).toThrow(
         'activationDate is required when skipActivate is false'
       );
     });
@@ -492,7 +492,7 @@ describe('VerifyWithActiveClientSchema', () => {
         autoActivate: false
       };
 
-      const result = VerifyWithActiveClientSchema.parse(completeRequest);
+      const result = VerifyWithActivateClientSchema.parse(completeRequest);
       expect(result).toEqual(completeRequest);
     });
 
@@ -504,7 +504,7 @@ describe('VerifyWithActiveClientSchema', () => {
         skipActivate: true
       };
 
-      const result = VerifyWithActiveClientSchema.parse(minimalRequest);
+      const result = VerifyWithActivateClientSchema.parse(minimalRequest);
 
       // Check that explicit values are preserved
       expect(result.clientId).toBe('client-123');

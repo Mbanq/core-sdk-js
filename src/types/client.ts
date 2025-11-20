@@ -465,7 +465,7 @@ export const validateClientFilters = (filters: Record<string, any>): void => {
   }
 };
 
-export const VerifyWithActiveClientSchema = z.object({
+export const VerifyWithActivateClientSchema = z.object({
   clientId: z.string(),
   kycVerificationType: z.enum(['FULL', 'PARTIAL']).default('FULL').optional(),
   note: z.string().optional(),
@@ -533,9 +533,9 @@ export const VerifyWithActiveClientSchema = z.object({
   }
 );
 
-export type VerifyWithActiveClient = z.infer<typeof VerifyWithActiveClientSchema>;
+export type VerifyWithActivateClient = z.infer<typeof VerifyWithActivateClientSchema>;
 
-export const ResponseVerfiySchema = z.object({
+export const ResponseVerifySchema = z.object({
   id: z.number(),
   clientId: z.number(),
   officeId: z.number(),
@@ -546,7 +546,7 @@ export const ResponseVerfiySchema = z.object({
   })
 });
 
-export type ResponseVerfiy = z.infer<typeof ResponseVerfiySchema>;
+export type ResponseVerify = z.infer<typeof ResponseVerifySchema>;
 
 export const DocumentTypeSchema = z.object({
   id: z.number(),

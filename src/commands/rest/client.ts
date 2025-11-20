@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { type Command, type Config, ProcessOutput } from '../../types';
-import { ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, UpdateClientIdentifierRequest, UpdateClientIdentifierResponse, validateClientFilterKey, validateClientFilters, VerifyWithActiveClient, ResponseVerfiy, GetStatusOfVerifyClientResponse } from '../../types/client';
+import { ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, VerifyWithActivateClient, ResponseVerify, GetStatusOfVerifyClientResponse } from '../../types/client';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 
@@ -173,9 +173,6 @@ export const GetClients = (params: ListClientsRequest, configuration: { tenantId
   };
 };
 
-// ListClients is an alias for GetClients (Command Pattern)
-export const ListClients = GetClients;
-
 export const DeleteClient = (params: { clientId: number, tenantId?: string }): Command<{ clientId: number, tenantId?: string }, ProcessOutput> => {
   return {
     input: params,
@@ -200,12 +197,12 @@ export const DeleteClient = (params: { clientId: number, tenantId?: string }): C
   };
 };
 
-export const VerifyWithActiveClients = (params: { tenantId?: string; param: VerifyWithActiveClient }): Command<{ tenantId?: string; param: VerifyWithActiveClient }, ProcessOutput | ResponseVerfiy> => {
+export const VerifyWithActivateClients = (params: { tenantId?: string; param: VerifyWithActivateClient }): Command<{ tenantId?: string; param: VerifyWithActivateClient }, ProcessOutput | ResponseVerify> => {
   const path = `/v1/clients/${params.param.clientId}`;
   return {
     input: params,
     metadata: {
-      commandName: 'VerifyWithActiveClients',
+      commandName: 'VerifyWithActivateClients',
       path,
       method: 'POST'
     },
@@ -216,13 +213,13 @@ export const VerifyWithActiveClients = (params: { tenantId?: string; param: Veri
       const axiosInstance = await baseRequest(config);
 
       try {
-        let verify: AxiosResponse<ResponseVerfiy> | undefined;
+        let verify: AxiosResponse<ResponseVerify> | undefined;
         if (!params.param.skipVerify) {
           const requestVerify = {
             kycVerificationType: params.param.kycVerificationType,
             note: params.param.note
           };
-          verify = await axiosInstance.post<ResponseVerfiy>(`/v1/clients/${params.param.clientId}`, requestVerify);
+          verify = await axiosInstance.post<ResponseVerify>(`/v1/clients/${params.param.clientId}`, requestVerify);
         }
 
         if (!params.param.skipActivate && ((verify && verify.data.data.clientKycStatus === 'APPROVED' && params.param.autoActivate) || !verify)) {
@@ -235,7 +232,7 @@ export const VerifyWithActiveClients = (params: { tenantId?: string; param: Veri
           };
           const activateClient = await axiosInstance.post<ProcessOutput>(`/v1/clients/${params.param.clientId}`, requestActivate);
 
-          let result: ResponseVerfiy | ProcessOutput = activateClient.data;
+          let result: ResponseVerify | ProcessOutput = activateClient.data;
           if (verify) {
             result = { ...activateClient.data, data: { ...verify.data.data } };
           }
