@@ -38,3 +38,23 @@ export const validateClientIdentifierRequest = (input: unknown): ClientIdentifie
 export const validateClientIdentifierResponse = (response: unknown): ClientIdentifierResponse => {
   return ClientIdentifierResponseSchema.parse(response);
 };
+
+export const DocumentUploadRequestSchema = z.object({
+  name: z.string(),
+  file: z.union([z.instanceof(Buffer), z.instanceof(Blob), z.instanceof(File)]),
+  type: z.string().optional(),
+  description: z.string().optional()
+});
+
+export const DocumentUploadResponseSchema = z.object({
+  id: z.string(),
+  resourceIdentifier: z.string(),
+  uuid: z.string()
+})
+
+export type DocumentUploadRequest = z.infer<typeof DocumentUploadRequestSchema>;
+export type DocumentUploadResponse = z.infer<typeof ClientIdentifierResponseSchema>;
+
+export const validateDocumentUploadRequest = (input: unknown): DocumentUploadRequest => {
+  return DocumentUploadRequestSchema.parse(input);
+};

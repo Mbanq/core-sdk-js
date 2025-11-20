@@ -1,6 +1,6 @@
 export { SendAuthorizationToCore, UpdateCardID } from './rest/card';
+export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument } from './rest/clientIdentifier';
 export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from './rest/client';
-export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier } from './rest/clientIdentifier';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './rest/transfer';
 export { GetPayment, GetPayments, CreatePayment, UpdatePayment, DeletePayment } from './rest/payment';
 export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './rest/account';
