@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/mbanq/core-sdk-js/compare/v0.5.3...v0.6.0) (2025-11-20)
+
+
+### Features
+
+* MC-29953-upload-client-identifier-document ([#27](https://github.com/mbanq/core-sdk-js/issues/27)) ([53d0750](https://github.com/mbanq/core-sdk-js/commit/53d0750a4046da44c201231ce6b5f0099d5f78b5))
+
 ## [0.5.3](https://github.com/mbanq/core-sdk-js/compare/v0.5.2...v0.5.3) (2025-11-20)
 
 
