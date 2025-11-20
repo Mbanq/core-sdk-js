@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ZodError } from 'zod';
+import { ApiError } from '../../src/types';
 import {
   validatePaymentFilterKey,
   validatePaymentStatus,
@@ -796,6 +797,15 @@ describe('Filter Validation Functions', () => {
 
     it('should throw CommandError for invalid filter keys', () => {
       expect(() => validateFilterKey('invalidKey')).toThrow();
+      try {
+        validateFilterKey('invalidKey');
+        expect.fail('Expected CommandError to be thrown');
+      } catch (error) {
+        expect(error).toHaveProperty('name', 'CommandError');
+        expect(error).toHaveProperty('code', 'INVALID_FILTER_KEY');
+        expect(error).toHaveProperty('statusCode', 400);
+        expect((error as ApiError).message).toContain('Invalid filter key: invalidKey');
+      }
     });
 
   });
@@ -817,13 +827,58 @@ describe('Filter Validation Functions', () => {
       expect(() => validateFilterValue('isSettlement', true)).not.toThrow();
     });
 
+    it('should validate date-related filter values', () => {
+      expect(() => validateFilterValue('dateFormat', 'YYYY-MM-DD')).not.toThrow();
+      expect(() => validateFilterValue('locale', 'en-US')).not.toThrow();
+      expect(() => validateFilterValue('originatedBy', 'john.doe')).not.toThrow();
+      expect(() => validateFilterValue('fromValueDate', '2023-01-01')).not.toThrow();
+      expect(() => validateFilterValue('toValueDate', '2023-12-31')).not.toThrow();
+      expect(() => validateFilterValue('fromExecuteDate', '2023-01-01T00:00:00Z')).not.toThrow();
+      expect(() => validateFilterValue('toExecuteDate', '2023-12-31T23:59:59Z')).not.toThrow();
+      expect(() => validateFilterValue('fromReturnDate', '2023-01-01')).not.toThrow();
+      expect(() => validateFilterValue('toReturnDate', '2023-12-31')).not.toThrow();
+      expect(() => validateFilterValue('orderBy', 'createdAt')).not.toThrow();
+    });
+
+    it('should validate additional filter value types', () => {
+      expect(() => validateFilterValue('sortOrder', 'ASC')).not.toThrow();
+      expect(() => validateFilterValue('sortOrder', 'DESC')).not.toThrow();
+      expect(() => validateFilterValue('paymentType', 'CREDIT')).not.toThrow();
+      expect(() => validateFilterValue('paymentType', 'DEBIT')).not.toThrow();
+      expect(() => validateFilterValue('originatorAccount', '123456789')).not.toThrow();
+      expect(() => validateFilterValue('originatorBankRoutingCode', '021000021')).not.toThrow();
+      expect(() => validateFilterValue('recipientName', 'Jane Doe')).not.toThrow();
+      expect(() => validateFilterValue('recipientAccount', '987654321')).not.toThrow();
+      expect(() => validateFilterValue('recipientBankRoutingCode', '121000248')).not.toThrow();
+      expect(() => validateFilterValue('reference', 'REF123')).not.toThrow();
+      expect(() => validateFilterValue('traceNumber', 'TRACE456')).not.toThrow();
+      expect(() => validateFilterValue('externalId', 'EXT789')).not.toThrow();
+    });
+
     it('should handle unknown filter keys without throwing (default case)', () => {
       expect(() => validateFilterValue('unknownKey', 'anyValue')).not.toThrow();
     });
 
     it('should throw CommandError for invalid filter values', () => {
       expect(() => validateFilterValue('status', 'INVALID_STATUS')).toThrow();
+      try {
+        validateFilterValue('status', 'INVALID_STATUS');
+        expect.fail('Expected CommandError to be thrown');
+      } catch (error) {
+        expect(error).toHaveProperty('name', 'CommandError');
+        expect(error).toHaveProperty('code', 'INVALID_FILTER_VALUE');
+        expect(error).toHaveProperty('statusCode', 400);
+      }
+
       expect(() => validateFilterValue('paymentRail', 'INVALID_RAIL')).toThrow();
+      try {
+        validateFilterValue('paymentRail', 'INVALID_RAIL');
+        expect.fail('Expected CommandError to be thrown');
+      } catch (error) {
+        expect(error).toHaveProperty('name', 'CommandError');
+        expect(error).toHaveProperty('code', 'INVALID_FILTER_VALUE');
+        expect(error).toHaveProperty('statusCode', 400);
+      }
     });
 
   });

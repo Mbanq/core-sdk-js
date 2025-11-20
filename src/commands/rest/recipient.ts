@@ -2,7 +2,7 @@ import { ProcessOutput } from '../../types';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
-import { Recipient, RecipientRequest, Recipients, CreateRecipientRequest, validateFilterKey, validateFilterValue } from '../../types/recipient';
+import { Recipient, RecipientRequest, Recipients, CreateRecipientRequest } from '../../types/recipient';
 
 export const GetRecipient = (params: { clientId: number, id: number, tenantId?: string }): Command<{ clientId: number, id: number; tenantId?: string }, Recipient> => {
   return {
@@ -81,67 +81,6 @@ export const DeleteRecipient = (params: { clientId: number, recipientId: number,
         handleAxiosError(error);
       }
     }
-  };
-};
-
-const listRecipientQuery = (clientId: number, filters: Record<string, any>, limit?: number, offset?: number, tenantId?: string) => {
-  const buildCommand = (): Command<any, Recipients> => {
-
-    const defaultParams = {
-      name: ''
-    };
-
-    const queryParams = {
-      ...defaultParams,
-      ...filters,
-      limit: limit || 20,
-      offset: offset || 0
-    };
-
-    return {
-      input: { tenantId },
-      metadata: {
-        commandName: 'ListRecipients',
-        path: `/v1/clients/${clientId}/recipients`,
-        method: 'GET'
-      },
-      execute: async (config: Config) => {
-        if (tenantId) {
-          config.tenantId = tenantId;
-        }
-        const axiosInstance = await baseRequest(config);
-
-        try {
-          const response = await axiosInstance.get<Recipients>(`/v1/clients/${clientId}/recipients`, { params: queryParams });
-          return response.data;
-        } catch (error) {
-          handleAxiosError(error);
-        }
-      }
-    };
-  };
-
-  const queryMethods = {
-    where: (field: string) => {
-      validateFilterKey(field);
-      return {
-        eq: (value: any) => {
-          validateFilterValue(field, value);
-          return listRecipientQuery(clientId, { ...filters, [field]: value }, limit, offset, tenantId);
-        }
-      };
-    },
-    limit: (value: number) => listRecipientQuery(clientId, filters, value, offset, tenantId),
-    offset: (value: number) => listRecipientQuery(clientId, filters, limit, value, tenantId),
-    execute: buildCommand
-  };
-
-  return queryMethods;
-};
-
-export const ListRecipient = (params?: { clientId: number, tenantId?: string }) => {
-  return {
-    list: () => listRecipientQuery(params?.clientId || 0, {}, undefined, undefined, params?.tenantId)
   };
 };
 

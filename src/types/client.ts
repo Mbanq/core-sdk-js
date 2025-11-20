@@ -464,3 +464,137 @@ export const validateClientFilters = (filters: Record<string, any>): void => {
     throw error;
   }
 };
+
+export const VerifyWithActivateClientSchema = z.object({
+  clientId: z.string(),
+  kycVerificationType: z.enum(['FULL', 'PARTIAL']).default('FULL').optional(),
+  note: z.string().optional(),
+  locale: z.string().default('en').optional(),
+  dateFormat: z.string().default('dd MMMM yyyy').optional(),
+  activationDate: z.string().optional(),
+  isActivatedByManualReview: z.boolean().default(false).optional(),
+  manualReviewActivationComments: z.string().optional(),
+  skipVerify: z.boolean().default(false),
+  skipActivate: z.boolean().default(false),
+  autoActivate: z.boolean().default(true)
+}).refine(
+  (data) => !(data.skipVerify && data.skipActivate),
+  {
+    message: 'Cannot skip both verification and activation - at least one action must be performed',
+    path: ['skipVerify', 'skipActivate']
+  }
+).refine(
+  (data) => {
+    // When skipVerify is false, kycVerificationType should be present
+    if (!data.skipVerify && !data.kycVerificationType) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: 'kycVerificationType is required when skipVerify is false',
+    path: ['kycVerificationType']
+  }
+).refine(
+  (data) => {
+    // When skipActivate is false, locale should be present
+    if (!data.skipActivate && !data.locale) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: 'locale is required when skipActivate is false',
+    path: ['locale']
+  }
+).refine(
+  (data) => {
+    // When skipActivate is false, dateFormat should be present
+    if (!data.skipActivate && !data.dateFormat) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: 'dateFormat is required when skipActivate is false',
+    path: ['dateFormat']
+  }
+).refine(
+  (data) => {
+    // When skipActivate is false, activationDate should be present
+    if (!data.skipActivate && !data.activationDate) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: 'activationDate is required when skipActivate is false',
+    path: ['activationDate']
+  }
+);
+
+export type VerifyWithActivateClient = z.infer<typeof VerifyWithActivateClientSchema>;
+
+export const ResponseVerifySchema = z.object({
+  id: z.number(),
+  clientId: z.number(),
+  officeId: z.number(),
+  resourceId: z.number(),
+  data: z.object({
+    clientVerificationStatus: z.enum(['PENDING', 'IN_PROGRESS', 'APPROVED', 'REJECTED']),
+    clientKycStatus: z.string()
+  })
+});
+
+export type ResponseVerify = z.infer<typeof ResponseVerifySchema>;
+
+export const DocumentTypeSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  isMasked: z.boolean()
+});
+
+export const IdentifierVerificationStatusSchema = z.object({
+  id: z.number(),
+  value: z.string()
+});
+
+export const ClientIdentifierSchema = z.object({
+  id: z.number(),
+  clientId: z.number(),
+  documentType: DocumentTypeSchema,
+  documentKey: z.string(),
+  issuedDate: z.array(z.number()).optional(),
+  expiryDate: z.array(z.number()).optional(),
+  description: z.string().optional(),
+  status: z.string(),
+  issuedBy: z.string().optional(),
+  verificationStatus: IdentifierVerificationStatusSchema.optional()
+});
+
+export const ClientVerificationStatusSchema = z.object({
+  id: z.number(),
+  value: z.string()
+});
+
+export const GetStatusOfVerifyClientResponseSchema = z.object({
+  id: z.number(),
+  accountNo: z.union([z.string(), z.number()]),
+  displayName: z.string(),
+  legalForm: z.object({
+    code: z.string(),
+    value: z.number()
+  }),
+  verificationStatus: ClientVerificationStatusSchema,
+  identifiers: z.array(ClientIdentifierSchema).optional(),
+  ofLoanCycle: z.number(),
+  mobileCountryCode: z.string(),
+  ofLoanActive: z.number(),
+  activeDepositAccount: z.number()
+}).catchall(z.any());
+
+export type DocumentType = z.infer<typeof DocumentTypeSchema>;
+export type IdentifierVerificationStatus = z.infer<typeof IdentifierVerificationStatusSchema>;
+export type ClientIdentifier = z.infer<typeof ClientIdentifierSchema>;
+export type ClientVerificationStatus = z.infer<typeof ClientVerificationStatusSchema>;
+export type GetStatusOfVerifyClientResponse = z.infer<typeof GetStatusOfVerifyClientResponseSchema>;
