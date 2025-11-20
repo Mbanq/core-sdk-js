@@ -1,3 +1,12 @@
+## [0.5.3](https://github.com/mbanq/core-sdk-js/compare/v0.5.2...v0.5.3) (2025-11-20)
+
+
+### Bug Fixes
+
+* Implement core sdk for activate with verify client ([#28](https://github.com/mbanq/core-sdk-js/issues/28)) ([500153b](https://github.com/mbanq/core-sdk-js/commit/500153b552d9c3cb808b94c4a1ffb2d691b75990))
+* MC-29952-create-client-identitifier ([835e8e1](https://github.com/mbanq/core-sdk-js/commit/835e8e1e89acf7da4d4f526ea7209e9c8f2037ed))
+* remove Fluent pattern and clean up code ([#25](https://github.com/mbanq/core-sdk-js/issues/25)) ([756b212](https://github.com/mbanq/core-sdk-js/commit/756b212ec332ea230acc7a95d7130d3bec4df029))
+
 ## [0.5.2](https://github.com/mbanq/core-sdk-js/compare/v0.5.1...v0.5.2) (2025-09-04)
 
 

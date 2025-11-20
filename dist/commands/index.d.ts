@@ -1,5 +1,6 @@
-export { f as CreateClient, C as CreatePayment, k as DeleteAccount, D as DeleteClient, q as DeletePayment, h as GetAccount, i as GetAccountsOfClient, c as GetClient, g as GetClients, G as GetPayment, a as GetPayments, m as GetUserDetail, l as GraphQL, L as ListAccountsOfClient, S as SendAuthorizationToCore, j as UpdateAccount, b as UpdateCardID, d as UpdateClient, e as UpdateClientIdentifier, U as UpdatePayment } from '../user-B5Xv2ZQp.js';
-import { I as UpdateRecipientRequest, a as Command, R as Recipient, J as PaymentRail, F as ProcessOutput, K as MarkAsReturnInput, T as Transfer, N as GetTransferInput, O as UpdateTraceNumbersInput, Q as CreateTransferInput, V as CreateTransferOutput, H as CreateRecipientRequest, W as RecipientRequest, X as Recipients } from '../client-Cx8h8Q3_.js';
+import { aT as UpdateRecipientRequest, X as Recipient, R as ProcessOutput } from '../user-Bi5spwoF.js';
+export { e as CreateClient, j as CreateClientIdentifier, C as CreatePayment, y as CreateRecipient, v as CreateTransfer, o as DeleteAccount, g as DeleteClient, D as DeletePayment, z as DeleteRecipient, l as GetAccount, m as GetAccountsOfClient, c as GetClient, f as GetClients, G as GetPayment, a as GetPayments, i as GetPermittedDocumentTypes, x as GetRecipient, A as GetRecipients, h as GetStatusOfVerifyClient, w as GetTransfer, t as GetTransfers, E as GetUserDetail, B as GraphQL, L as ListAccountsOfClient, s as LogFailTransfer, q as MarkAsFail, r as MarkAsProcessing, p as MarkAsReturned, M as MarkAsSuccess, S as SendAuthorizationToCore, n as UpdateAccount, b as UpdateCardID, d as UpdateClient, k as UpdateClientIdentifier, U as UpdatePayment, u as UpdateTraceNumber, V as VerifyWithActivateClients } from '../user-Bi5spwoF.js';
+import { a as Command } from '../config.d-io5V_aK4.js';
 import 'zod';
 import 'graphql';
 import 'axios';
@@ -39,106 +40,8 @@ declare const UpdateRecipientGQL: (params: {
     updateRecipient: Recipient;
 }>;
 
-declare const CreateTransfer: (params: {
-    transfer: CreateTransferInput;
-    tenantId: string;
-}) => Command<{
-    transfer: CreateTransferInput;
-    tenantId: string;
-}, CreateTransferOutput>;
-declare const GetTransfer: (params: {
-    id: number;
-    tenantId: string;
-}) => Command<{
-    id: number;
-    tenantId: string;
-}, any>;
-declare const GetTransfers: (params: GetTransferInput) => Command<GetTransferInput, Array<Transfer>>;
-declare const MarkAsSuccess: (params: {
-    externalId: string;
-    paymentType?: PaymentRail;
-    tenantId?: string;
-}) => Command<{
-    externalId: string;
-    paymentType?: PaymentRail;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const MarkAsProcessing: (params: {
-    externalId: string;
-    fileUrl: string;
-    paymentType: PaymentRail;
-    traceNumbers: {
-        outgoingTransfer: string;
-    };
-    tenantId?: string;
-}) => Command<{
-    externalId: string;
-    fileUrl: string;
-    paymentType: PaymentRail;
-    traceNumbers: {
-        outgoingTransfer: string;
-    };
-    tenantId?: string;
-}, ProcessOutput>;
-declare const MarkAsReturned: (params: MarkAsReturnInput) => Command<MarkAsReturnInput, ProcessOutput>;
-declare const LogFailTransfer: (params: {
-    payload: Transfer;
-    tenantId?: string;
-}) => Command<{
-    payload: Transfer;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const MarkAsFail: (params: {
-    externalId: string;
-    errorMessage: string;
-    paymentType: PaymentRail;
-    tenantId?: string;
-}) => Command<{
-    externalId: string;
-    errorMessage: string;
-    paymentType: PaymentRail;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const UpdateTraceNumber: (params: UpdateTraceNumbersInput) => Command<UpdateTraceNumbersInput, ProcessOutput>;
-
 declare const CustomUpdate: (params: CustomUpdateInput) => Command<CustomUpdateInput, ProcessOutput>;
 declare const CustomCreate: (params: CustomCreateInput) => Command<CustomCreateInput, ProcessOutput>;
 declare const CustomGet: (params: CustomGetInput) => Command<CustomGetInput, any>;
 
-declare const GetRecipient: (params: {
-    clientId: number;
-    id: number;
-    tenantId?: string;
-}) => Command<{
-    clientId: number;
-    id: number;
-    tenantId?: string;
-}, Recipient>;
-declare const CreateRecipient: (params: {
-    clientId: number;
-    recipient: CreateRecipientRequest;
-    tenantId?: string;
-}) => Command<{
-    clientId: number;
-    recipient: CreateRecipientRequest;
-    tenantId?: string;
-}, Recipient>;
-declare const DeleteRecipient: (params: {
-    clientId: number;
-    recipientId: number;
-    tenantId?: string;
-}) => Command<{
-    clientId: number;
-    recipientId: number;
-    tenantId?: string;
-}, ProcessOutput>;
-declare const GetRecipients: (clientId: number, params: RecipientRequest, configuration: {
-    tenantId?: string;
-}) => Command<{
-    params: RecipientRequest;
-    configuration: {
-        tenantId?: string;
-    };
-}, Recipients>;
-
-export { CreateRecipient, CreateTransfer, CustomCreate, CustomGet, CustomUpdate, DeleteRecipient, GetRecipient, GetRecipients, GetTransfer, GetTransfers, LogFailTransfer, MarkAsFail, MarkAsProcessing, MarkAsReturned, MarkAsSuccess, UpdateRecipientGQL as UpdateRecipient, UpdateTraceNumber };
+export { CustomCreate, CustomGet, CustomUpdate, UpdateRecipientGQL as UpdateRecipient };
