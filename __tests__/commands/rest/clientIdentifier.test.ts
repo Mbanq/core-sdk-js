@@ -477,4 +477,213 @@ describe('ClientIdentifier Commands', () => {
             expect(command.metadata.method).toBe('PUT');
         });
     });
+
+    describe('UploadClientIdentifierDocument', () => {
+        it('should upload document with File object successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc123',
+                    resourceIdentifier: 'resource-456',
+                    uuid: 'uuid-789'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockFile = new File(['test content'], 'passport.pdf', { type: 'application/pdf' });
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Passport Document',
+                    file: mockFile,
+                    type: 'PASSPORT',
+                    description: 'Valid passport copy'
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+                '/v1/client_identifiers/id123/documents',
+                expect.any(FormData),
+                expect.objectContaining({
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+            );
+            expect(result).toEqual({
+                id: 'doc123',
+                resourceIdentifier: 'resource-456',
+                uuid: 'uuid-789'
+            });
+        });
+
+        it('should upload document with Blob object successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc456',
+                    resourceIdentifier: 'resource-789',
+                    uuid: 'uuid-abc'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'License Document',
+                    file: mockBlob,
+                    description: 'Driver license copy'
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalled();
+            expect(result).toEqual({
+                id: 'doc456',
+                resourceIdentifier: 'resource-789',
+                uuid: 'uuid-abc'
+            });
+        });
+
+        it('should upload document with Buffer object successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc789',
+                    resourceIdentifier: 'resource-abc',
+                    uuid: 'uuid-def'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockBuffer = Buffer.from('test content');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'ID Card',
+                    file: mockBuffer
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalled();
+            expect(result).toEqual({
+                id: 'doc789',
+                resourceIdentifier: 'resource-abc',
+                uuid: 'uuid-def'
+            });
+        });
+
+        it('should upload document without optional fields', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc999',
+                    resourceIdentifier: 'resource-999',
+                    uuid: 'uuid-999'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Simple Document',
+                    file: mockFile
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalled();
+            expect(result).toEqual({
+                id: 'doc999',
+                resourceIdentifier: 'resource-999',
+                uuid: 'uuid-999'
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc111',
+                    resourceIdentifier: 'resource-111',
+                    uuid: 'uuid-111'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Document',
+                    file: mockFile
+                },
+                tenantId: 'custom-tenant'
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle upload errors properly', async () => {
+            const mockError = new Error('Upload failed');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Document',
+                    file: mockFile
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Upload failed');
+        });
+
+        it('should have correct metadata', async () => {
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Document',
+                    file: mockFile
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+
+            expect(command.metadata.commandName).toBe('UploadClientIdentifierDocument');
+            expect(command.metadata.path).toBe('/v1/client_identifiers/id123/documents');
+            expect(command.metadata.method).toBe('POST');
+        });
+    });
 });

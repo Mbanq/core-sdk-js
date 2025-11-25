@@ -3,7 +3,10 @@ import {
   ClientIdentifierRequest,
   ClientIdentifierResponse,
   ListClientDocumentResponse,
-  validateClientIdentifierRequest
+  validateClientIdentifierRequest,
+  validateDocumentUploadRequest,
+  DocumentUploadRequest,
+  DocumentUploadResponse
 } from '../../types/clientIdentifier';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -112,6 +115,79 @@ export const UpdateClientIdentifier = (
 
       try {
         const response = await axiosInstance.put<ClientIdentifierResponse>(path, { ...params.updates });
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+export const UploadClientIdentifierDocument = (
+  params: {
+    tenantId?: string;
+    clientId: number;
+    identifierId: string;
+    data: DocumentUploadRequest
+  }
+): Command<{
+  tenantId?: string;
+  clientId: number;
+  identifierId: string;
+  data: DocumentUploadRequest
+}, DocumentUploadResponse> => {
+  validateDocumentUploadRequest(params.data);
+
+  const path = `/v1/client_identifiers/${params.identifierId}/documents`;
+  return {
+    input: params,
+    metadata: {
+      commandName: 'UploadClientIdentifierDocument',
+      path,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+
+      const axiosInstance = await baseRequest(config);
+      const { name, file, type, description } = params.data
+      const formData = new FormData();
+
+      formData.append('name', name);
+
+      if (description) {
+        formData.append('description', description);
+      }
+
+      if (type) {
+        formData.append('type', type);
+      }
+
+      let fileBlob: Blob;
+      let fileName: string;
+
+      if (file instanceof File) {
+        fileBlob = file;
+        fileName = file.name;
+      } else if (file instanceof Blob) {
+        fileBlob = file;
+        fileName = name;
+      } else {
+        fileBlob = new Blob([file], {
+          type: 'application/octet-stream'
+        });
+        fileName = name;
+      }
+
+      formData.append('file', fileBlob, fileName);
+
+      try {
+        const response = await axiosInstance.post<DocumentUploadResponse>(path, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
