@@ -25,11 +25,40 @@ export const ClientIdentifierResponseShape = {
   isSkipNotification: z.boolean()
 };
 
+export const ClientIdentifierItemShape = {
+  id: z.number(),
+  clientId: z.number(),
+  documentType: z.object({
+    id: z.number(),
+    name: z.string()
+  }),
+  documentKey: z.string(),
+  status: z.string(),
+  description: z.string().optional(),
+  issuedBy: z.string().optional(),
+  expiryDate: z.string().optional(),
+  nationality: z.object({
+    id: z.number(),
+    name: z.string()
+  }).optional(),
+  issuedDate: z.string().optional()
+};
+
+export const ListClientDocumentResponseShape = {
+  pageItems: z.array(z.object(ClientIdentifierItemShape).catchall(z.any()))
+};
+
 export const ClientIdentifierResponseSchema = z.object(ClientIdentifierResponseShape).catchall(z.any());
+
+export const ClientIdentifierItemSchema = z.object(ClientIdentifierItemShape).catchall(z.any());
+
+export const ListClientDocumentResponseSchema = z.object(ListClientDocumentResponseShape).catchall(z.any());
 
 
 export type ClientIdentifierRequest = z.infer<typeof ClientIdentifierRequestSchema>;
 export type ClientIdentifierResponse = z.infer<typeof ClientIdentifierResponseSchema>;
+export type ClientIdentifierItem = z.infer<typeof ClientIdentifierItemSchema>;
+export type ListClientDocumentResponse = z.infer<typeof ListClientDocumentResponseSchema>;
 
 export const validateClientIdentifierRequest = (input: unknown): ClientIdentifierRequest => {
   return ClientIdentifierRequestSchema.parse(input);
