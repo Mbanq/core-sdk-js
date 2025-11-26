@@ -598,3 +598,27 @@ export type IdentifierVerificationStatus = z.infer<typeof IdentifierVerification
 export type ClientIdentifier = z.infer<typeof ClientIdentifierSchema>;
 export type ClientVerificationStatus = z.infer<typeof ClientVerificationStatusSchema>;
 export type GetStatusOfVerifyClientResponse = z.infer<typeof GetStatusOfVerifyClientResponseSchema>;
+
+export const CloseClientRequestSchema = z.object({
+  closureReasonId: z.string(),
+  locale: z.string().optional(),
+  closerDate: z.string(),
+  dateFormat: z.string()
+}).refine(input => {
+  // When closerDate is present, dateFormat should be present
+  if (input.closerDate == undefined && input.dateFormat === undefined) return false;
+  return true;
+});
+
+export const CloseClientResponseSchema = z.object({
+  id: z.number(),
+  clientId: z.number(),
+  resourceId: z.number()
+});
+
+export type CloseClientRequestType = z.infer<typeof CloseClientRequestSchema>;
+export type CloseClientResponseType = z.infer<typeof CloseClientResponseSchema>;
+
+export const validateCloseClientRequest = (input: unknown): CloseClientRequestType => {
+  return CloseClientRequestSchema.parse(input);
+};

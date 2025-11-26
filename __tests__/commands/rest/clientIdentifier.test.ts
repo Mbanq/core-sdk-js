@@ -538,7 +538,7 @@ describe('Client Identifier Commands', () => {
         identifierId: '456',
         data: invalidUploadData
       };
-      
+
       expect(() => UploadClientIdentifierDocument(params)).toThrow();
     });
 
@@ -614,7 +614,7 @@ describe('Client Identifier Commands', () => {
 
       const formDataCall = mockAxiosInstance.post.mock.calls[0];
       const formData = formDataCall[1] as FormData;
-      
+
       expect(formData.get('name')).toBe('test.pdf');
       expect(formData.get('type')).toBe('PASSPORT_COPY');
       expect(formData.get('description')).toBe('Client passport copy');
@@ -652,7 +652,7 @@ describe('Client Identifier Commands', () => {
 
       const formDataCall = mockAxiosInstance.post.mock.calls[0];
       const formData = formDataCall[1] as FormData;
-      
+
       expect(formData.get('name')).toBe('minimal.jpg');
       expect(formData.get('type')).toBeNull();
       expect(formData.get('description')).toBeNull();
@@ -663,7 +663,7 @@ describe('Client Identifier Commands', () => {
       const mockResponse = { data: { id: 777 } };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
       const fileObject = new File(['file content'], 'document.docx');
-      
+
       const uploadData = {
         name: 'document.docx',
         file: fileObject
@@ -681,7 +681,7 @@ describe('Client Identifier Commands', () => {
       const formDataCall = mockAxiosInstance.post.mock.calls[0];
       const formData = formDataCall[1] as FormData;
       const uploadedFile = formData.get('file') as File;
-      
+
       expect(uploadedFile.name).toBe('document.docx');
     });
   });

@@ -7,4 +7,3 @@ export default (
 ): moment.Moment => {
   return moment(date.getTime()).tz(timezone).utc(!isUtc);
 };
-

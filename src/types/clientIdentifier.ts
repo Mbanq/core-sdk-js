@@ -27,7 +27,6 @@ export const ClientIdentifierResponseShape = {
 
 export const ClientIdentifierResponseSchema = z.object(ClientIdentifierResponseShape).catchall(z.any());
 
-
 export type ClientIdentifierRequest = z.infer<typeof ClientIdentifierRequestSchema>;
 export type ClientIdentifierResponse = z.infer<typeof ClientIdentifierResponseSchema>;
 
@@ -50,7 +49,7 @@ export const DocumentUploadResponseSchema = z.object({
   id: z.string(),
   resourceIdentifier: z.string(),
   uuid: z.string()
-})
+});
 
 export type DocumentUploadRequest = z.infer<typeof DocumentUploadRequestSchema>;
 export type DocumentUploadResponse = z.infer<typeof ClientIdentifierResponseSchema>;

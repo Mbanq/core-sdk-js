@@ -62,5 +62,5 @@ describe('Date Utils', () => {
 
       expect(result.format('YYYY-MM-DD HH:mm:ss')).toBe('2023-06-15 15:30:45');
     });
-});
+  });
 });
