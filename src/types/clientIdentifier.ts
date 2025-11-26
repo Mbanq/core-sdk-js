@@ -30,29 +30,27 @@ export const ClientIdentifierItemShape = {
   clientId: z.number(),
   documentType: z.object({
     id: z.number(),
-    name: z.string()
+    name: z.string(),
+    isMasked: z.boolean().optional()
   }),
-  documentKey: z.string(),
+  documentKey: z.union([z.string(), z.number()]),
   status: z.string(),
   description: z.string().optional(),
   issuedBy: z.string().optional(),
-  expiryDate: z.string().optional(),
+  expiryDate: z.union([z.string(), z.array(z.number())]).optional(),
   nationality: z.object({
     id: z.number(),
     name: z.string()
   }).optional(),
-  issuedDate: z.string().optional()
-};
-
-export const ListClientDocumentResponseShape = {
-  pageItems: z.array(z.object(ClientIdentifierItemShape).catchall(z.any()))
+  issuedDate: z.string().optional(),
+  documentStatus: z.string().optional()
 };
 
 export const ClientIdentifierResponseSchema = z.object(ClientIdentifierResponseShape).catchall(z.any());
 
 export const ClientIdentifierItemSchema = z.object(ClientIdentifierItemShape).catchall(z.any());
 
-export const ListClientDocumentResponseSchema = z.object(ListClientDocumentResponseShape).catchall(z.any());
+export const ListClientDocumentResponseSchema = z.array(ClientIdentifierItemSchema);
 
 
 export type ClientIdentifierRequest = z.infer<typeof ClientIdentifierRequestSchema>;
