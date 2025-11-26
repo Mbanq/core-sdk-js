@@ -38,6 +38,10 @@ export const ClientIdentifierItemShape = {
   description: z.string().optional(),
   issuedBy: z.string().optional(),
   expiryDate: z.union([z.string(), z.array(z.number())]).optional(),
+  nationality: z.object({
+    id: z.number(),
+    name: z.string()
+  }).optional(),
   issuedDate: z.string().optional(),
   documentStatus: z.string().optional()
 };
