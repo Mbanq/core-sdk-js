@@ -3,7 +3,8 @@ import {
     ListClientDocument,
     CreateClientIdentifier,
     UpdateClientIdentifier,
-    GetPermittedDocumentTypes
+    GetPermittedDocumentTypes,
+    DeleteClientDocument
 } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -684,6 +685,124 @@ describe('ClientIdentifier Commands', () => {
             expect(command.metadata.commandName).toBe('UploadClientIdentifierDocument');
             expect(command.metadata.path).toBe('/v1/client_identifiers/id123/documents');
             expect(command.metadata.method).toBe('POST');
+        });
+    });
+
+    describe('DeleteClientDocument', () => {
+        it('should delete client document successfully', async () => {
+            const mockResponse = {
+                data: {
+                    officeId: 1,
+                    clientId: 15,
+                    resourceId: 22411
+                }
+            };
+            mockAxiosInstance.delete.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/15/identifiers/15');
+            expect(result).toEqual({
+                officeId: 1,
+                clientId: 15,
+                resourceId: 22411
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    officeId: 1,
+                    clientId: 15,
+                    resourceId: 22411
+                }
+            };
+            mockAxiosInstance.delete.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15,
+                tenantId: 'custom-tenant'
+            };
+
+            const command = DeleteClientDocument(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Delete failed');
+            mockAxiosInstance.delete.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Delete failed');
+        });
+
+        it('should handle 404 error when document not found', async () => {
+            const mockError = new Error('Document not found');
+            mockAxiosInstance.delete.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 999
+            };
+
+            const command = DeleteClientDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Document not found');
+        });
+
+        it('should have correct metadata', () => {
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            expect(command.metadata.commandName).toBe('DeleteClientDocument');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers/15');
+            expect(command.metadata.method).toBe('DELETE');
+        });
+
+        it('should handle different identifier types', async () => {
+            const mockResponse = {
+                data: {
+                    officeId: 1,
+                    clientId: 100,
+                    resourceId: 5000
+                }
+            };
+            mockAxiosInstance.delete.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 100,
+                identifierId: 5000
+            };
+
+            const command = DeleteClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/100/identifiers/5000');
+            expect(result).toEqual({
+                officeId: 1,
+                clientId: 100,
+                resourceId: 5000
+            });
         });
     });
 });
