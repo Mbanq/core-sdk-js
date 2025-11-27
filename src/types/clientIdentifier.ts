@@ -77,7 +77,7 @@ export const DocumentUploadResponseSchema = z.object({
   id: z.string(),
   resourceIdentifier: z.string(),
   uuid: z.string()
-})
+});
 
 export type DocumentUploadRequest = z.infer<typeof DocumentUploadRequestSchema>;
 export type DocumentUploadResponse = z.infer<typeof ClientIdentifierResponseSchema>;
@@ -93,6 +93,7 @@ export const DeleteClientDocumentResponseSchema = z.object({
 });
 
 export type DeleteClientDocumentResponse = z.infer<typeof DeleteClientDocumentResponseSchema>;
+
 
 export const ApproveRejectClientDocumentResponseSchema = z.object({
   clientId: z.number(),

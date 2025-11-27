@@ -1,6 +1,9 @@
 import { AxiosResponse } from 'axios';
 import { type Command, type Config, ProcessOutput } from '../../types';
-import { ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, VerifyWithActivateClient, ResponseVerify, GetStatusOfVerifyClientResponse } from '../../types/client';
+import {
+  ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, VerifyWithActivateClient, ResponseVerify, GetStatusOfVerifyClientResponse, CloseClientRequest, CloseClientResponse,
+  validateCloseClientRequest
+} from '../../types/client';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 
@@ -127,7 +130,7 @@ export const CreateClient = (
   };
 };
 
-export const GetClients = (params: ListClientsRequest, configuration: { tenantId?: string }): Command<{params: ListClientsRequest, configuration: { tenantId?: string }}, ListClientsResponse> => {
+export const GetClients = (params: ListClientsRequest, configuration: { tenantId?: string }): Command<{ params: ListClientsRequest, configuration: { tenantId?: string } }, ListClientsResponse> => {
   return {
     input: { params, configuration },
     metadata: {
@@ -271,6 +274,32 @@ export const GetStatusOfVerifyClient = (params: { tenantId?: string; clientId: n
 
       try {
         const response = await axiosInstance.get<GetStatusOfVerifyClientResponse>(`/v1/clients/${params.clientId}/verificationstatus`);
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+export const CloseClient = (params: { tenantId?: string; clientId: number; data: CloseClientRequest }): Command<{ tenantId?: string; clientId: number; data: CloseClientRequest }, CloseClientResponse> => {
+  validateCloseClientRequest(params.data);
+  const path = `/v1/clients/${params.clientId}?command=close`;
+  return {
+    input: params,
+    metadata: {
+      commandName: 'CloseClient',
+      path,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<CloseClientResponse>(path, params.data);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

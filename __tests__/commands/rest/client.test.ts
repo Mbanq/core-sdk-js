@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from '../../../src/commands/rest/client';
+import { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient, CloseClient } from '../../../src/commands/rest/client';
 import { UpdateClientIdentifier } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -1048,6 +1048,69 @@ describe('Client Commands', () => {
 
         expect(result?.verificationStatus.value).toBe(status);
       }
+    });
+  });
+
+  describe('CloseClient', () => {
+    it('should close client successfully with default tenant', async () => {
+      const clientId = 202;
+      const data = {
+        closureReasonId: '23',
+        locale: 'en_US',
+        closerDate: '2024-12-31',
+        dateFormat: 'yyyy-MM-dd'
+      };
+      const response = {
+        clientId: 202,
+        resourceid: 23,
+        id: 1
+      };
+      mockAxiosInstance.post.mockResolvedValue({ data: response });
+
+      const command = CloseClient({ clientId, data });
+      const result = await command.execute(mockConfig);
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+        `/v1/clients/${clientId}?command=close`,
+        data
+      );
+      expect(result).toEqual(response);
+      expect(command.metadata.commandName).toBe('CloseClient');
+      expect(command.metadata.path).toBe('/v1/clients/202?command=close');
+      expect(command.metadata.method).toBe('POST');
+    });
+
+    it('should failed due to validation', async () => {
+      const invalidData = {
+        closureReasonId: 'closure_reason_002',
+        locale: 'en_US',
+        dateFormat: 'yyyy-MM-dd'
+      };
+
+      expect(() => {
+        CloseClient({
+          clientId: 202,
+          data: invalidData as any
+        });
+      }).toThrow();
+    });
+
+    it('should handle error response', async () => {
+      const mockError = new Error('Request failed');
+      mockAxiosInstance.post.mockRejectedValue(mockError);
+
+      const command = CloseClient({
+        clientId: 789,
+        tenantId: 'default',
+        data: {
+          closureReasonId: 'closure_reason_003',
+          locale: 'en_US',
+          closerDate: '2024-06-30',
+          dateFormat: 'yyyy-MM-dd'
+        }
+      });
+
+      await expect(command.execute(mockConfig)).rejects.toThrow('Request failed');
     });
   });
 });

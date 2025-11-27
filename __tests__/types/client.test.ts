@@ -1,5 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
-import { z } from 'zod';
+import { describe, it, expect } from 'vitest';
 import {
   validateCreateClientRequest,
   validateUpdateClientRequest,
@@ -13,11 +12,12 @@ import {
   validateClientOrderBy,
   validateClientSortOrder,
   validateClientStatus,
-  validateClientFilters
+  validateClientFilters,
+  validateCloseClientRequest
 } from '../../src/types/client';
 
 // Import the schema directly for testing refinement rules
-import { VerifyWithActivateClientSchema } from '../../src/types/client';
+import { VerifyWithActivateClientSchema, CloseClientRequestSchema } from '../../src/types/client';
 
 describe('Client Type Validations', () => {
   describe('validateCreateClientRequest', () => {
@@ -521,6 +521,54 @@ describe('VerifyWithActivateClientSchema', () => {
       expect(result.dateFormat).toBeUndefined();
       expect(result.isActivatedByManualReview).toBeUndefined();
       expect(result.manualReviewActivationComments).toBeUndefined();
+    });
+  });
+});
+
+describe('CloseClientRequestSchema', () => {
+  describe('validateCloseClientRequest', () => {
+    it('should validate valid close client request with all fields', () => {
+      const validRequest = {
+        closureReasonId: 'closure_reason_001',
+        locale: 'en_US',
+        closerDate: '2024-12-31',
+        dateFormat: 'yyyy-MM-dd'
+      };
+
+      const result = validateCloseClientRequest(validRequest);
+      expect(result).toEqual(validRequest);
+    });
+
+    it('should validate valid close client request with required fields only', () => {
+      const minimalRequest = {
+        closureReasonId: 'closure_reason_002',
+        closerDate: '2024-01-15',
+        dateFormat: 'yyyy-MM-dd'
+      };
+
+      const result = validateCloseClientRequest(minimalRequest);
+      expect(result).toEqual(minimalRequest);
+      expect(result.closureReasonId).toBe('closure_reason_002');
+      expect(result.closerDate).toBe('2024-01-15');
+      expect(result.dateFormat).toBe('yyyy-MM-dd');
+    });
+
+    it('should throw error when closureReasonId is missing', () => {
+      const invalidRequest = {
+        closerDate: '2024-12-31',
+        dateFormat: 'yyyy-MM-dd'
+      };
+
+      expect(() => validateCloseClientRequest(invalidRequest)).toThrow();
+    });
+
+    it('should throw error when dateFormat is missing', () => {
+      const invalidRequest = {
+        closureReasonId: 'closure_reason_001',
+        closerDate: '2024-01-15'
+      };
+
+      expect(() => validateCloseClientRequest(invalidRequest)).toThrow();
     });
   });
 });

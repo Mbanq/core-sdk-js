@@ -5,6 +5,7 @@ import {
     UpdateClientIdentifier,
     GetPermittedDocumentTypes,
     DeleteClientDocument,
+    UploadClientIdentifierDocument,
     ApproveRejectClientDocument
 } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';

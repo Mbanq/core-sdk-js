@@ -1,3 +1,15 @@
+# [0.8.0](https://github.com/mbanq/core-sdk-js/compare/v0.7.0...v0.8.0) (2025-11-27)
+
+
+### Bug Fixes
+
+* enhance error handling tests to cover diverse message inputs and various Axios response formats, and ensure all errors are converted to CommandError. ([16311f0](https://github.com/mbanq/core-sdk-js/commit/16311f0cfa6ab150e75204bf3dd4d8edaa9452e1))
+
+
+### Features
+
+* MC-30237 Implement function Delete Client Document Record ([#30](https://github.com/mbanq/core-sdk-js/issues/30)) ([0a3892e](https://github.com/mbanq/core-sdk-js/commit/0a3892eda54854a5ad49edb7e0258db6e5db6319))
+
 # [0.7.0](https://github.com/mbanq/core-sdk-js/compare/v0.6.0...v0.7.0) (2025-11-27)
 
 
