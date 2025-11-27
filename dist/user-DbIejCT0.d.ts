@@ -7690,6 +7690,20 @@ declare const DocumentUploadRequestSchema: z$1.ZodObject<{
 }>;
 type DocumentUploadRequest = z$1.infer<typeof DocumentUploadRequestSchema>;
 type DocumentUploadResponse = z$1.infer<typeof ClientIdentifierResponseSchema>;
+declare const DeleteClientDocumentResponseSchema: z$1.ZodObject<{
+    officeId: z$1.ZodNumber;
+    clientId: z$1.ZodNumber;
+    resourceId: z$1.ZodNumber;
+}, "strip", z$1.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+}, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+}>;
+type DeleteClientDocumentResponse = z$1.infer<typeof DeleteClientDocumentResponseSchema>;
 
 declare const GetPermittedDocumentTypes: (params: {
     tenantId?: string;
@@ -7740,6 +7754,15 @@ declare const UploadClientIdentifierDocument: (params: {
     identifierId: string;
     data: DocumentUploadRequest;
 }, DocumentUploadResponse>;
+declare const DeleteClientDocument: (params: {
+    tenantId?: string;
+    clientId: number;
+    identifierId: number;
+}) => Command<{
+    tenantId?: string;
+    clientId: number;
+    identifierId: number;
+}, DeleteClientDocumentResponse>;
 
 declare const CreateClientRequestSchema: z$1.ZodObject<{
     firstname: z$1.ZodString;
@@ -11104,4 +11127,4 @@ declare const GetUserDetail: (params?: {
     tenantId?: string;
 }, UserDetail>;
 
-export { type RecipientRequest as $, CreateRecipient as A, DeleteRecipient as B, CreatePayment as C, DeletePayment as D, GetRecipients as E, GraphQL as F, GetPayment as G, GetUserDetail as H, type CreatePaymentInput as I, type UpdatePaymentInput as J, type PaymentResponse as K, ListClientDocument as L, MarkAsSuccess as M, type GetTransferInput as N, type CreateTransferInput as O, type Payment as P, type TransferResponse as Q, type MarkAsReturnInput as R, SendAuthorizationToCore as S, type Transfer as T, UpdatePayment as U, VerifyWithActivateClients as V, type UpdateTraceNumbersInput as W, type ProcessOutput$1 as X, type PaymentRail as Y, type Recipient as Z, type CreateRecipientRequest as _, GetPayments as a, type RecipientFilterKey as a0, PaymentStatusSchema as a1, PaymentRailSchema as a2, PaymentTypeSchema as a3, SortOrderSchema as a4, CreatePaymentInputSchema as a5, UpdatePaymentInputSchema as a6, PaymentResponseSchema as a7, PaymentShape as a8, CreatePaymentInputShape as a9, CreateTransferInputSchema as aA, GetTransferInputSchema as aB, MarkAsReturnInputSchema as aC, UpdateTraceNumbersInputSchema as aD, ProcessOutputSchema$1 as aE, TransferResponseSchema as aF, CreateTransferOutputSchema as aG, PaymentRailSchema$1 as aH, PaymentTypeSchema$1 as aI, AccountTypeSchema as aJ, TransferShape as aK, CreateTransferInputShape as aL, GetTransferInputShape as aM, MarkAsReturnInputShape as aN, UpdateTraceNumbersInputShape as aO, ProcessOutputShape as aP, TransferResponseShape as aQ, CreateTransferOutputShape as aR, ClientSchema as aS, AgentSchema as aT, PartySchema as aU, type UpdateRecipientRequest as aV, UpdatePaymentInputShape as aa, SavingAccountSchema as ab, SavingAccountShape as ac, type SavingAccount as ad, ListAccountsOfClientResponseShape as ae, ListAccountsOfClientResponseSchema as af, ListAccountsRequestShape as ag, ListAccountsRequestSchema as ah, type UpdateAccountRequest as ai, UpdateAccountRequestSchema as aj, UpdateAccountRequestShape as ak, type UserDetail as al, UserDetailSchema as am, UserDetailShape as an, RecipientSchema as ao, CreateRecipientRequestSchema as ap, RecipientRequestSchema as aq, RecipientFilterKeySchema as ar, RecipientShape as as, CreateRecipientRequestShape as at, RecipientRequestShape as au, BankInformationSchema as av, AccountDetailsDataSchema as aw, AddressSchema as ax, RecipientsSchema as ay, TransferSchema as az, UpdateCardID as b, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, GetClient as g, UpdateClient as h, CreateClient as i, GetClients as j, DeleteClient as k, GetStatusOfVerifyClient as l, GetAccount as m, GetAccountsOfClient as n, ListAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, MarkAsReturned as r, MarkAsFail as s, MarkAsProcessing as t, LogFailTransfer as u, GetTransfers as v, UpdateTraceNumber as w, CreateTransfer as x, GetTransfer as y, GetRecipient as z };
+export { type CreateRecipientRequest as $, GetRecipient as A, CreateRecipient as B, CreatePayment as C, DeletePayment as D, DeleteRecipient as E, GetRecipients as F, GetPayment as G, GraphQL as H, GetUserDetail as I, type CreatePaymentInput as J, type UpdatePaymentInput as K, ListClientDocument as L, MarkAsSuccess as M, type PaymentResponse as N, type GetTransferInput as O, type Payment as P, type CreateTransferInput as Q, type TransferResponse as R, SendAuthorizationToCore as S, type Transfer as T, UpdatePayment as U, VerifyWithActivateClients as V, type MarkAsReturnInput as W, type UpdateTraceNumbersInput as X, type ProcessOutput$1 as Y, type PaymentRail as Z, type Recipient as _, GetPayments as a, type RecipientRequest as a0, type RecipientFilterKey as a1, PaymentStatusSchema as a2, PaymentRailSchema as a3, PaymentTypeSchema as a4, SortOrderSchema as a5, CreatePaymentInputSchema as a6, UpdatePaymentInputSchema as a7, PaymentResponseSchema as a8, PaymentShape as a9, TransferSchema as aA, CreateTransferInputSchema as aB, GetTransferInputSchema as aC, MarkAsReturnInputSchema as aD, UpdateTraceNumbersInputSchema as aE, ProcessOutputSchema$1 as aF, TransferResponseSchema as aG, CreateTransferOutputSchema as aH, PaymentRailSchema$1 as aI, PaymentTypeSchema$1 as aJ, AccountTypeSchema as aK, TransferShape as aL, CreateTransferInputShape as aM, GetTransferInputShape as aN, MarkAsReturnInputShape as aO, UpdateTraceNumbersInputShape as aP, ProcessOutputShape as aQ, TransferResponseShape as aR, CreateTransferOutputShape as aS, ClientSchema as aT, AgentSchema as aU, PartySchema as aV, type UpdateRecipientRequest as aW, CreatePaymentInputShape as aa, UpdatePaymentInputShape as ab, SavingAccountSchema as ac, SavingAccountShape as ad, type SavingAccount as ae, ListAccountsOfClientResponseShape as af, ListAccountsOfClientResponseSchema as ag, ListAccountsRequestShape as ah, ListAccountsRequestSchema as ai, type UpdateAccountRequest as aj, UpdateAccountRequestSchema as ak, UpdateAccountRequestShape as al, type UserDetail as am, UserDetailSchema as an, UserDetailShape as ao, RecipientSchema as ap, CreateRecipientRequestSchema as aq, RecipientRequestSchema as ar, RecipientFilterKeySchema as as, RecipientShape as at, CreateRecipientRequestShape as au, RecipientRequestShape as av, BankInformationSchema as aw, AccountDetailsDataSchema as ax, AddressSchema as ay, RecipientsSchema as az, UpdateCardID as b, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };
