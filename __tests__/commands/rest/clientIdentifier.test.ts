@@ -4,7 +4,8 @@ import {
     CreateClientIdentifier,
     UpdateClientIdentifier,
     GetPermittedDocumentTypes,
-    DeleteClientDocument
+    DeleteClientDocument,
+    ApproveRejectClientDocument
 } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -938,6 +939,159 @@ describe('ClientIdentifier Commands', () => {
                 clientId: 100,
                 resourceId: 5000
             });
+        });
+    });
+
+    describe('ApproveRejectClientDocument', () => {
+        it('should approve client document successfully', async () => {
+            const mockResponse = {
+                data: {
+                    clientId: 15,
+                    resourceId: 1
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'approve' as const
+            };
+
+            const command = ApproveRejectClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers/10?command=approve');
+            expect(result).toEqual({
+                clientId: 15,
+                resourceId: 1
+            });
+        });
+
+        it('should reject client document successfully', async () => {
+            const mockResponse = {
+                data: {
+                    clientId: 15,
+                    resourceId: 1
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'reject' as const
+            };
+
+            const command = ApproveRejectClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers/10?command=reject');
+            expect(result).toEqual({
+                clientId: 15,
+                resourceId: 1
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    clientId: 15,
+                    resourceId: 1
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'approve' as const,
+                tenantId: 'custom-tenant'
+            };
+
+            const command = ApproveRejectClientDocument(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Approval failed');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'approve' as const
+            };
+
+            const command = ApproveRejectClientDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Approval failed');
+        });
+
+        it('should handle Axios error with response data', async () => {
+            const mockAxiosError = {
+                isAxiosError: true,
+                response: {
+                    status: 400,
+                    data: {
+                        message: 'Cannot approve client document'
+                    },
+                    headers: {
+                        'x-request-id': 'req-456'
+                    }
+                },
+                message: 'Request failed'
+            };
+            mockAxiosInstance.post.mockRejectedValue(mockAxiosError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'approve' as const
+            };
+
+            const command = ApproveRejectClientDocument(params);
+
+            try {
+                await command.execute(mockConfig);
+                expect.fail('Should have thrown an error');
+            } catch (error: any) {
+                expect(error.message).toBe('Cannot approve client document');
+                expect(error.statusCode).toBe(400);
+                expect(error.name).toBe('CommandError');
+                expect(error.requestId).toBe('req-456');
+            }
+        });
+
+        it('should have correct metadata for approve command', () => {
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'approve' as const
+            };
+
+            const command = ApproveRejectClientDocument(params);
+
+            expect(command.metadata.commandName).toBe('ApproveRejectClientDocument');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers/10?command=approve');
+            expect(command.metadata.method).toBe('POST');
+        });
+
+        it('should have correct metadata for reject command', () => {
+            const params = {
+                clientId: 15,
+                identifierId: 10,
+                command: 'reject' as const
+            };
+
+            const command = ApproveRejectClientDocument(params);
+
+            expect(command.metadata.commandName).toBe('ApproveRejectClientDocument');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers/10?command=reject');
+            expect(command.metadata.method).toBe('POST');
         });
     });
 });
