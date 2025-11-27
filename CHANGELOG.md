@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/mbanq/core-sdk-js/compare/v0.6.0...v0.7.0) (2025-11-27)
+
+
+### Features
+
+* list client document commands, types, and tests, and update RE… ([#29](https://github.com/mbanq/core-sdk-js/issues/29)) ([a870ee3](https://github.com/mbanq/core-sdk-js/commit/a870ee30b54ca76b2e680a83f56e593cb3f44c80))
+
 # [0.6.0](https://github.com/mbanq/core-sdk-js/compare/v0.5.3...v0.6.0) (2025-11-20)
 
 
