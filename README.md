@@ -564,6 +564,35 @@ const rejectResult = await client.request(rejectCommand);
 - `unmaskValue` - Set to `true` to return full document reference (unmasked)
 - `fields` - Comma-separated list of fields to include in response
 
+### User Operations
+
+Manage user access and permissions.
+
+```javascript
+import { EnableSelfServiceAccess } from '@mbanq/core-sdk-js';
+
+// Enable self-service access for a user
+const enableAccessCommand = EnableSelfServiceAccess({
+  username: 'testUserName',
+  firstname: 'testFirstName',
+  lastname: 'testLastName',
+  officeId: 1,
+  roles: [1],
+  isSelfServiceUser: true,
+  sendPasswordToEmail: false,
+  email: 'test@gmail.com',
+  password: 'user1234',
+  repeatPassword: 'user1234',
+  enabled: true,
+  clients: [1]
+});
+
+const result = await client.request(enableAccessCommand);
+```
+
+**Available Commands:** `EnableSelfServiceAccess`, `GetUserDetail`
+
+
 
 ### Account Operations
 

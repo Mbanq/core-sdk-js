@@ -8,4 +8,4 @@ export { GraphQL } from './graphql';
 export { CustomGet, CustomCreate, CustomUpdate } from './rest/custom';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './rest/recipient';
 export { UpdateRecipientGQL as UpdateRecipient } from './graphql/recipient';
-export { GetUserDetail } from './rest/user';
+export { GetUserDetail, EnableSelfServiceAccess } from './rest/user';

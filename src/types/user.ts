@@ -26,3 +26,56 @@ export const UserDetailShape = {
 export const UserDetailSchema = z.object(UserDetailShape);
 
 export type UserDetail = z.infer<typeof UserDetailSchema>;
+
+export const EnableSelfServiceAccessRequestSchema = z.object({
+  username: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
+  officeId: z.number(),
+  roles: z.array(z.number()),
+  isSelfServiceUser: z.literal(true),
+  sendPasswordToEmail: z.boolean().optional(),
+  email: z.string().email().optional(),
+  password: z.string().optional(),
+  repeatPassword: z.string().optional(),
+  enabled: z.boolean().optional(),
+  clients: z.array(z.number()).optional()
+});
+
+export type EnableSelfServiceAccessRequest = z.infer<
+  typeof EnableSelfServiceAccessRequestSchema
+>;
+
+export const EnableSelfServiceAccessResponseSchema = z.object({
+  id: z.string(),
+  officeId: z.number(),
+  clientId: z.number(),
+  resourceId: z.number(),
+  data: z.object({
+    client: z.object({
+      officeName: z.string(),
+      displayName: z.string(),
+      accountNo: z.number(),
+      id: z.number(),
+      status: z.string()
+    }),
+    maker: z.object({
+      firstName: z.string(),
+      lastName: z.string(),
+      id: z.number(),
+      email: z.string(),
+      username: z.string()
+    }),
+    createdUser: z.object({
+      firstName: z.string(),
+      lastName: z.string(),
+      id: z.number(),
+      email: z.string(),
+      username: z.string()
+    })
+  })
+});
+
+export type EnableSelfServiceAccessResponse = z.infer<
+  typeof EnableSelfServiceAccessResponseSchema
+>;
