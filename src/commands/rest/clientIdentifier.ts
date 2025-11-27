@@ -2,6 +2,7 @@ import { type Command, type Config } from '../../types';
 import {
   ClientIdentifierRequest,
   ClientIdentifierResponse,
+  ListClientDocumentResponse,
   validateClientIdentifierRequest,
   validateDocumentUploadRequest,
   DocumentUploadRequest,
@@ -23,6 +24,44 @@ export const GetPermittedDocumentTypes = (params: { tenantId?: string; clientId:
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.get<ClientIdentifierResponse>(path);
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  }
+}
+
+export const ListClientDocument = (params: {
+  tenantId?: string;
+  clientId: number;
+  unmaskValue?: boolean;
+  fields?: string;
+}): Command<{ tenantId?: string; clientId: number; unmaskValue?: boolean; fields?: string }, ListClientDocumentResponse> => {
+  const queryParams = new URLSearchParams();
+  if (params.unmaskValue !== undefined) {
+    queryParams.append('unmaskValue', params.unmaskValue.toString());
+  }
+  if (params.fields) {
+    queryParams.append('fields', params.fields);
+  }
+  const queryString = queryParams.toString();
+  const path = `/v1/clients/${params.clientId}/identifiers${queryString ? `?${queryString}` : ''}`;
+
+  return {
+    input: params,
+    metadata: {
+      commandName: 'ListClientDocument',
+      path,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+      try {
+        const response = await axiosInstance.get<ListClientDocumentResponse>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -140,7 +179,7 @@ export const UploadClientIdentifierDocument = (
         });
         fileName = name;
       }
-      
+
       formData.append('file', fileBlob, fileName);
 
       try {
