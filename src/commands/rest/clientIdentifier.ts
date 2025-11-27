@@ -30,8 +30,8 @@ export const GetPermittedDocumentTypes = (params: { tenantId?: string; clientId:
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 export const ListClientDocument = (params: {
   tenantId?: string;
@@ -93,14 +93,14 @@ export const CreateClientIdentifier = (params:
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 export const UpdateClientIdentifier = (
   params: { tenantId?: string; clientId: number; identifierId: string; updates: ClientIdentifierRequest }
 ): Command<{ tenantId?: string; clientId: number; identifierId: string; updates: ClientIdentifierRequest }, ClientIdentifierResponse> => {
   validateClientIdentifierRequest(params.updates);
-  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}`
+  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}`;
   return {
     input: params,
     metadata: {
@@ -152,7 +152,7 @@ export const UploadClientIdentifierDocument = (
       }
 
       const axiosInstance = await baseRequest(config);
-      const { name, file, type, description } = params.data
+      const { name, file, type, description } = params.data;
       const formData = new FormData();
 
       formData.append('name', name);

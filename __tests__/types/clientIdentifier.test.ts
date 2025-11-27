@@ -11,7 +11,7 @@ describe('types/clientIdentifier', () => {
       const validRequest = {
         documentTypeId: '636',
         documentKey: '123456789',
-        status: 'ACTIVE',
+        status: 'ACTIVE'
       };
 
       const result = validateClientIdentifierRequest(validRequest);
@@ -40,7 +40,7 @@ describe('types/clientIdentifier', () => {
       const invalidRequest = {
         documentTypeId: 636,
         documentKey: '123456789',
-        status: 'ACTIVE',
+        status: 'ACTIVE'
       };
 
       expect(() => validateClientIdentifierRequest(invalidRequest)).toThrow();
@@ -49,7 +49,7 @@ describe('types/clientIdentifier', () => {
     it('should throw error for missing required documentKey', () => {
       const invalidRequest = {
         documentTypeId: '636',
-        status: 'ACTIVE',
+        status: 'ACTIVE'
       };
 
       expect(() => validateClientIdentifierRequest(invalidRequest)).toThrow();
@@ -58,7 +58,7 @@ describe('types/clientIdentifier', () => {
     it('should throw error for missing required status', () => {
       const invalidRequest = {
         documentTypeId: '636',
-        documentKey: '123456789',
+        documentKey: '123456789'
       };
 
       expect(() => validateClientIdentifierRequest(invalidRequest)).toThrow();

@@ -77,7 +77,7 @@ export const DocumentUploadResponseSchema = z.object({
   id: z.string(),
   resourceIdentifier: z.string(),
   uuid: z.string()
-})
+});
 
 export type DocumentUploadRequest = z.infer<typeof DocumentUploadRequestSchema>;
 export type DocumentUploadResponse = z.infer<typeof ClientIdentifierResponseSchema>;
