@@ -753,9 +753,77 @@ describe('ClientIdentifier Commands', () => {
             await expect(command.execute(mockConfig)).rejects.toThrow('Delete failed');
         });
 
+        it('should handle Axios error with response data', async () => {
+            const mockAxiosError = {
+                isAxiosError: true,
+                response: {
+                    status: 400,
+                    data: {
+                        message: 'Cannot delete client document'
+                    },
+                    headers: {
+                        'x-request-id': 'req-123'
+                    }
+                },
+                message: 'Request failed'
+            };
+            mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            try {
+                await command.execute(mockConfig);
+                expect.fail('Should have thrown an error');
+            } catch (error: any) {
+                expect(error.message).toBe('Cannot delete client document');
+                expect(error.statusCode).toBe(400);
+                expect(error.name).toBe('CommandError');
+                expect(error.requestId).toBe('req-123');
+            }
+        });
+
+        it('should handle network error (no response)', async () => {
+            const mockAxiosError = {
+                isAxiosError: true,
+                request: {},
+                message: 'Network Error'
+            };
+            mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            try {
+                await command.execute(mockConfig);
+                expect.fail('Should have thrown an error');
+            } catch (error: any) {
+                expect(error.message).toBe('Network error: No response received from server');
+                expect(error.code).toBe('NETWORK_ERROR');
+                expect(error.name).toBe('CommandError');
+            }
+        });
+
         it('should handle 404 error when document not found', async () => {
-            const mockError = new Error('Document not found');
-            mockAxiosInstance.delete.mockRejectedValue(mockError);
+            const mockAxiosError = {
+                isAxiosError: true,
+                response: {
+                    status: 404,
+                    data: {
+                        message: 'Document not found'
+                    }
+                },
+                message: 'Request failed with status code 404'
+            };
+            mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
 
             const params = {
                 clientId: 15,
@@ -764,7 +832,74 @@ describe('ClientIdentifier Commands', () => {
 
             const command = DeleteClientDocument(params);
 
-            await expect(command.execute(mockConfig)).rejects.toThrow('Document not found');
+            try {
+                await command.execute(mockConfig);
+                expect.fail('Should have thrown an error');
+            } catch (error: any) {
+                expect(error.message).toBe('Document not found');
+                expect(error.statusCode).toBe(404);
+                expect(error.name).toBe('CommandError');
+            }
+        });
+
+        it('should handle Axios error with status code but no message', async () => {
+            const mockAxiosError = {
+                isAxiosError: true,
+                response: {
+                    status: 500,
+                    data: {}
+                },
+                message: 'Internal Server Error'
+            };
+            mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            try {
+                await command.execute(mockConfig);
+                expect.fail('Should have thrown an error');
+            } catch (error: any) {
+                expect(error.message).toBe('Request failed with status code 500');
+                expect(error.statusCode).toBe(500);
+                expect(error.name).toBe('CommandError');
+            }
+        });
+
+        it('should handle error with error code extraction', async () => {
+            const mockAxiosError = {
+                isAxiosError: true,
+                response: {
+                    status: 403,
+                    data: {
+                        message: 'Access denied',
+                        errorCode: 'FORBIDDEN'
+                    }
+                },
+                message: 'Request failed'
+            };
+            mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            try {
+                await command.execute(mockConfig);
+                expect.fail('Should have thrown an error');
+            } catch (error: any) {
+                expect(error.message).toBe('Access denied');
+                expect(error.statusCode).toBe(403);
+                expect(error.code).toBe('FORBIDDEN');
+                expect(error.name).toBe('CommandError');
+            }
         });
 
         it('should have correct metadata', () => {
