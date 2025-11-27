@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { type Command, type Config, ProcessOutput } from '../../types';
 import {
-  ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, VerifyWithActivateClient, ResponseVerify, GetStatusOfVerifyClientResponse, CloseClientRequestType, CloseClientResponseType,
+  ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, VerifyWithActivateClient, ResponseVerify, GetStatusOfVerifyClientResponse, CloseClientRequest, CloseClientResponse,
   validateCloseClientRequest
 } from '../../types/client';
 import baseRequest from '../../utils/baseRequest';
@@ -282,7 +282,7 @@ export const GetStatusOfVerifyClient = (params: { tenantId?: string; clientId: n
   };
 };
 
-export const CloseClient = (params: { tenantId?: string; clientId: number; data: CloseClientRequestType }): Command<{ tenantId?: string; clientId: number; data: CloseClientRequestType }, CloseClientResponseType> => {
+export const CloseClient = (params: { tenantId?: string; clientId: number; data: CloseClientRequest }): Command<{ tenantId?: string; clientId: number; data: CloseClientRequest }, CloseClientResponse> => {
   validateCloseClientRequest(params.data);
   const path = `/v1/clients/${params.clientId}?command=close`;
   return {
@@ -299,7 +299,7 @@ export const CloseClient = (params: { tenantId?: string; clientId: number; data:
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<CloseClientResponseType>(path, params.data);
+        const response = await axiosInstance.post<CloseClientResponse>(path, params.data);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

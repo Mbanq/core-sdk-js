@@ -616,9 +616,9 @@ export const CloseClientResponseSchema = z.object({
   resourceId: z.number()
 });
 
-export type CloseClientRequestType = z.infer<typeof CloseClientRequestSchema>;
-export type CloseClientResponseType = z.infer<typeof CloseClientResponseSchema>;
+export type CloseClientRequest = z.infer<typeof CloseClientRequestSchema>;
+export type CloseClientResponse = z.infer<typeof CloseClientResponseSchema>;
 
-export const validateCloseClientRequest = (input: unknown): CloseClientRequestType => {
+export const validateCloseClientRequest = (input: unknown): CloseClientRequest => {
   return CloseClientRequestSchema.parse(input);
 };
