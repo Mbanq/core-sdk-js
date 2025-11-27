@@ -1,688 +1,809 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-  GetPermittedDocumentTypes,
-  CreateClientIdentifier,
-  UpdateClientIdentifier,
-  UploadClientIdentifierDocument
+    ListClientDocument,
+    CreateClientIdentifier,
+    UpdateClientIdentifier,
+    GetPermittedDocumentTypes,
+    DeleteClientDocument,
+    UploadClientIdentifierDocument
 } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
-describe('Client Identifier Commands', () => {
-  let mockAxiosInstance: any;
+describe('ClientIdentifier Commands', () => {
+    let mockAxiosInstance: any;
 
-  beforeEach(() => {
-    vi.stubEnv('SECRET', 'your_secret');
-    vi.stubEnv('SIGNEE', 'your_signee');
-    vi.stubEnv('TENANT_ID', 'your_tenant_id');
-    vi.stubEnv('BASE_URL', 'https://your.api.url');
+    beforeEach(() => {
+        vi.stubEnv('SECRET', 'your_secret');
+        vi.stubEnv('SIGNEE', 'your_signee');
+        vi.stubEnv('TENANT_ID', 'your_tenant_id');
+        vi.stubEnv('BASE_URL', 'https://your.api.url');
 
-    mockAxiosInstance = {
-      get: vi.fn(),
-      post: vi.fn(),
-      put: vi.fn()
+        mockAxiosInstance = {
+            get: vi.fn(),
+            post: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn()
+        };
+
+        vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance);
+    });
+
+    afterEach(() => {
+        vi.clearAllMocks();
+        vi.unstubAllEnvs();
+    });
+
+    const mockConfig = {
+        secret: 'your_secret',
+        signee: 'your_signee',
+        tenantId: 'your_tenant_id',
+        baseUrl: 'https://your.api.url'
     };
 
-    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance);
-  });
+    describe('ListClientDocument', () => {
+        it('should list client identifiers successfully', async () => {
+            const mockResponse = {
+                data: {
+                    pageItems: [
+                        {
+                            id: 1,
+                            clientId: 15,
+                            documentType: { id: 1, name: 'Passport' },
+                            documentKey: 'ABC123456',
+                            status: 'ACTIVE',
+                            description: 'Valid passport',
+                            issuedBy: 'Government',
+                            expiryDate: '2030-12-31',
+                            nationality: { id: 1, name: 'USA' },
+                            issuedDate: '2020-01-01'
+                        },
+                        {
+                            id: 2,
+                            clientId: 15,
+                            documentType: { id: 2, name: 'Driver License' },
+                            documentKey: 'DL987654',
+                            status: 'ACTIVE'
+                        }
+                    ]
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-  afterEach(() => {
-    vi.clearAllMocks();
-    vi.unstubAllEnvs();
-  });
+            const params = { clientId: 15 };
+            const command = ListClientDocument(params);
+            const result = await command.execute(mockConfig);
 
-  const mockConfig = {
-    secret: 'your_secret',
-    signee: 'your_signee',
-    tenantId: 'your_tenant_id',
-    baseUrl: 'https://your.api.url'
-  };
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/15/identifiers');
+            expect(result).toEqual({
+                pageItems: [
+                    {
+                        id: 1,
+                        clientId: 15,
+                        documentType: { id: 1, name: 'Passport' },
+                        documentKey: 'ABC123456',
+                        status: 'ACTIVE',
+                        description: 'Valid passport',
+                        issuedBy: 'Government',
+                        expiryDate: '2030-12-31',
+                        nationality: { id: 1, name: 'USA' },
+                        issuedDate: '2020-01-01'
+                    },
+                    {
+                        id: 2,
+                        clientId: 15,
+                        documentType: { id: 2, name: 'Driver License' },
+                        documentKey: 'DL987654',
+                        status: 'ACTIVE'
+                    }
+                ]
+            });
+        });
 
-  describe('GetPermittedDocumentTypes', () => {
-    it('should get permitted document types successfully', async () => {
-      const mockResponse = {
-        data: {
-          documentTypes: [
-            { id: 'PASSPORT', name: 'Passport' },
-            { id: 'DRIVING_LICENSE', name: 'Driving License' },
-            { id: 'NATIONAL_ID', name: 'National ID' }
-          ]
-        }
-      };
-      mockAxiosInstance.get.mockResolvedValue(mockResponse);
+        it('should list client identifiers with unmaskValue=true', async () => {
+            const mockResponse = {
+                data: {
+                    pageItems: [
+                        {
+                            id: 1,
+                            clientId: 15,
+                            documentType: { id: 1, name: 'Passport' },
+                            documentKey: 'ABC123456789',
+                            status: 'ACTIVE'
+                        }
+                    ]
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 123 };
-      const command = GetPermittedDocumentTypes(params);
-      const result = await command.execute(mockConfig);
+            const params = { clientId: 15, unmaskValue: true };
+            const command = ListClientDocument(params);
+            const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledTimes(1);
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/123/identifiers/template');
-      expect(result).toEqual(mockResponse.data);
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/15/identifiers?unmaskValue=true');
+            expect(result).toEqual({
+                pageItems: [
+                    {
+                        id: 1,
+                        clientId: 15,
+                        documentType: { id: 1, name: 'Passport' },
+                        documentKey: 'ABC123456789',
+                        status: 'ACTIVE'
+                    }
+                ]
+            });
+        });
+
+        it('should list client identifiers with specific fields', async () => {
+            const mockResponse = {
+                data: {
+                    pageItems: [
+                        {
+                            id: 1,
+                            documentKey: 'ABC123456',
+                            documentType: { id: 1, name: 'Passport' },
+                            status: 'ACTIVE'
+                        }
+                    ]
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                fields: 'documentKey,documentType,status'
+            };
+            const command = ListClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/15/identifiers?fields=documentKey%2CdocumentType%2Cstatus');
+            expect(result).toEqual({
+                pageItems: [
+                    {
+                        id: 1,
+                        documentKey: 'ABC123456',
+                        documentType: { id: 1, name: 'Passport' },
+                        status: 'ACTIVE'
+                    }
+                ]
+            });
+        });
+
+        it('should list client identifiers with both unmaskValue and fields', async () => {
+            const mockResponse = {
+                data: {
+                    pageItems: [
+                        {
+                            id: 1,
+                            documentKey: 'ABC123456789',
+                            status: 'ACTIVE'
+                        }
+                    ]
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                unmaskValue: true,
+                fields: 'documentKey,status'
+            };
+            const command = ListClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/15/identifiers?unmaskValue=true&fields=documentKey%2Cstatus');
+            expect(result).toEqual({
+                pageItems: [
+                    {
+                        id: 1,
+                        documentKey: 'ABC123456789',
+                        status: 'ACTIVE'
+                    }
+                ]
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: { pageItems: [] }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                tenantId: 'custom-tenant'
+            };
+
+            const command = ListClientDocument(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Failed to fetch identifiers');
+            mockAxiosInstance.get.mockRejectedValue(mockError);
+
+            const params = { clientId: 15 };
+            const command = ListClientDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Failed to fetch identifiers');
+        });
+
+        it('should have correct metadata', () => {
+            const params = { clientId: 15 };
+            const command = ListClientDocument(params);
+
+            expect(command.metadata.commandName).toBe('ListClientDocument');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers');
+            expect(command.metadata.method).toBe('GET');
+        });
+
+        it('should have correct metadata with query parameters', () => {
+            const params = { clientId: 15, unmaskValue: true };
+            const command = ListClientDocument(params);
+
+            expect(command.metadata.commandName).toBe('ListClientDocument');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers?unmaskValue=true');
+            expect(command.metadata.method).toBe('GET');
+        });
     });
 
-    it('should get permitted document types with tenantId', async () => {
-      const mockResponse = {
-        data: { documentTypes: [] }
-      };
-      mockAxiosInstance.get.mockResolvedValue(mockResponse);
+    describe('GetPermittedDocumentTypes', () => {
+        it('should get permitted document types successfully', async () => {
+            const mockResponse = {
+                data: {
+                    allowedDocumentTypes: [
+                        { id: 1, name: 'Passport', position: 1 },
+                        { id: 2, name: 'Driver License', position: 2 }
+                    ]
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 123, tenantId: 'custom-tenant' };
-      const command = GetPermittedDocumentTypes(params);
-      await command.execute(mockConfig);
+            const params = { clientId: 15 };
+            const command = GetPermittedDocumentTypes(params);
+            const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/123/identifiers/template');
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/15/identifiers/template');
+            expect(result).toEqual({
+                allowedDocumentTypes: [
+                    { id: 1, name: 'Passport', position: 1 },
+                    { id: 2, name: 'Driver License', position: 2 }
+                ]
+            });
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Failed to fetch document types');
+            mockAxiosInstance.get.mockRejectedValue(mockError);
+
+            const params = { clientId: 15 };
+            const command = GetPermittedDocumentTypes(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Failed to fetch document types');
+        });
+
+        it('should have correct metadata', () => {
+            const params = { clientId: 15 };
+            const command = GetPermittedDocumentTypes(params);
+
+            expect(command.metadata.commandName).toBe('GetPermittedDocumentTypes');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers/template');
+            expect(command.metadata.method).toBe('GET');
+        });
     });
 
-    it('should handle errors properly', async () => {
-      const mockError = new Error('Client not found');
-      mockAxiosInstance.get.mockRejectedValue(mockError);
+    describe('CreateClientIdentifier', () => {
+        it('should create client identifier successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 1,
+                    officeId: 1,
+                    clientId: 15,
+                    resourceId: 1,
+                    changes: {},
+                    isScheduledTransfer: false,
+                    isSkipNotification: false
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 999 };
-      const command = GetPermittedDocumentTypes(params);
+            const params = {
+                clientId: 15,
+                input: {
+                    documentTypeId: '1',
+                    documentKey: 'ABC123456',
+                    status: 'ACTIVE',
+                    description: 'Valid passport',
+                    issuedBy: 'Government',
+                    locale: 'en_US',
+                    dateFormat: 'yyyy-MM-dd',
+                    expiryDate: '2030-12-31',
+                    nationality: 1,
+                    issuedDate: '2020-01-01'
+                }
+            };
 
-      await expect(command.execute(mockConfig)).rejects.toThrow('Client not found');
+            const command = CreateClientIdentifier(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers', params.input);
+            expect(result).toEqual({
+                id: 1,
+                officeId: 1,
+                clientId: 15,
+                resourceId: 1,
+                changes: {},
+                isScheduledTransfer: false,
+                isSkipNotification: false
+            });
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Validation failed');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                input: {
+                    documentTypeId: '1',
+                    documentKey: 'ABC123',
+                    status: 'ACTIVE'
+                }
+            };
+
+            const command = CreateClientIdentifier(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Validation failed');
+        });
+
+        it('should have correct metadata', () => {
+            const params = {
+                clientId: 15,
+                input: {
+                    documentTypeId: '1',
+                    documentKey: 'ABC123',
+                    status: 'ACTIVE'
+                }
+            };
+
+            const command = CreateClientIdentifier(params);
+
+            expect(command.metadata.commandName).toBe('CreateClientIdentifier');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers');
+            expect(command.metadata.method).toBe('POST');
+        });
     });
 
-    it('should have correct metadata', () => {
-      const params = { clientId: 123 };
-      const command = GetPermittedDocumentTypes(params);
+    describe('UpdateClientIdentifier', () => {
+        it('should update client identifier successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 1,
+                    officeId: 1,
+                    clientId: 15,
+                    resourceId: 1,
+                    changes: { documentKey: 'XYZ789456' },
+                    isScheduledTransfer: false,
+                    isSkipNotification: false
+                }
+            };
+            mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
-      expect(command.metadata.commandName).toBe('GetPermittedDocumentTypes');
-      expect(command.metadata.path).toBe('/v1/clients/123/identifiers/template');
-      expect(command.metadata.method).toBe('GET');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                updates: {
+                    documentTypeId: '1',
+                    documentKey: 'XYZ789456',
+                    status: 'ACTIVE',
+                    description: 'Updated passport'
+                }
+            };
+
+            const command = UpdateClientIdentifier(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+                '/v1/clients/15/identifiers/id123',
+                params.updates
+            );
+            expect(result).toEqual({
+                id: 1,
+                officeId: 1,
+                clientId: 15,
+                resourceId: 1,
+                changes: { documentKey: 'XYZ789456' },
+                isScheduledTransfer: false,
+                isSkipNotification: false
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = { data: { success: true } };
+            mockAxiosInstance.put.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                updates: {
+                    documentTypeId: '1',
+                    documentKey: 'ABC123',
+                    status: 'ACTIVE'
+                },
+                tenantId: 'custom-tenant'
+            };
+
+            const command = UpdateClientIdentifier(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Update failed');
+            mockAxiosInstance.put.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                updates: {
+                    documentTypeId: '1',
+                    documentKey: 'ABC123',
+                    status: 'ACTIVE'
+                }
+            };
+
+            const command = UpdateClientIdentifier(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Update failed');
+        });
+
+        it('should have correct metadata', () => {
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                updates: {
+                    documentTypeId: '1',
+                    documentKey: 'ABC123',
+                    status: 'ACTIVE'
+                }
+            };
+
+            const command = UpdateClientIdentifier(params);
+
+            expect(command.metadata.commandName).toBe('UpdateClientIdentifier');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers/id123');
+            expect(command.metadata.method).toBe('PUT');
+        });
     });
 
-    it('should handle validation errors in baseRequest', async () => {
-      const mockError = new Error('Network error');
-      mockAxiosInstance.get.mockRejectedValue(mockError);
+    describe('UploadClientIdentifierDocument', () => {
+        it('should upload document with File object successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc123',
+                    resourceIdentifier: 'resource-456',
+                    uuid: 'uuid-789'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 123 };
-      const command = GetPermittedDocumentTypes(params);
+            const mockFile = new File(['test content'], 'passport.pdf', { type: 'application/pdf' });
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Passport Document',
+                    file: mockFile,
+                    type: 'PASSPORT',
+                    description: 'Valid passport copy'
+                }
+            };
 
-      await expect(command.execute(mockConfig)).rejects.toThrow('Network error');
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+                '/v1/client_identifiers/id123/documents',
+                expect.any(FormData),
+                expect.objectContaining({
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+            );
+            expect(result).toEqual({
+                id: 'doc123',
+                resourceIdentifier: 'resource-456',
+                uuid: 'uuid-789'
+            });
+        });
+
+        it('should upload document with Blob object successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc456',
+                    resourceIdentifier: 'resource-789',
+                    uuid: 'uuid-abc'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'License Document',
+                    file: mockBlob,
+                    description: 'Driver license copy'
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalled();
+            expect(result).toEqual({
+                id: 'doc456',
+                resourceIdentifier: 'resource-789',
+                uuid: 'uuid-abc'
+            });
+        });
+
+        it('should upload document with Buffer object successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc789',
+                    resourceIdentifier: 'resource-abc',
+                    uuid: 'uuid-def'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockBuffer = Buffer.from('test content');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'ID Card',
+                    file: mockBuffer
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalled();
+            expect(result).toEqual({
+                id: 'doc789',
+                resourceIdentifier: 'resource-abc',
+                uuid: 'uuid-def'
+            });
+        });
+
+        it('should upload document without optional fields', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc999',
+                    resourceIdentifier: 'resource-999',
+                    uuid: 'uuid-999'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Simple Document',
+                    file: mockFile
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalled();
+            expect(result).toEqual({
+                id: 'doc999',
+                resourceIdentifier: 'resource-999',
+                uuid: 'uuid-999'
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    id: 'doc111',
+                    resourceIdentifier: 'resource-111',
+                    uuid: 'uuid-111'
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Document',
+                    file: mockFile
+                },
+                tenantId: 'custom-tenant'
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle upload errors properly', async () => {
+            const mockError = new Error('Upload failed');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Document',
+                    file: mockFile
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Upload failed');
+        });
+
+        it('should have correct metadata', async () => {
+            const mockFile = new File(['content'], 'doc.pdf');
+            const params = {
+                clientId: 15,
+                identifierId: 'id123',
+                data: {
+                    name: 'Document',
+                    file: mockFile
+                }
+            };
+
+            const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
+            const command = UploadClientIdentifierDocument(params);
+
+            expect(command.metadata.commandName).toBe('UploadClientIdentifierDocument');
+            expect(command.metadata.path).toBe('/v1/client_identifiers/id123/documents');
+            expect(command.metadata.method).toBe('POST');
+        });
     });
 
-    it('should pass input parameters through command', () => {
-      const params = { clientId: 456, tenantId: 'test-tenant' };
-      const command = GetPermittedDocumentTypes(params);
+    describe('DeleteClientDocument', () => {
+        it('should delete client document successfully', async () => {
+            const mockResponse = {
+                data: {
+                    officeId: 1,
+                    clientId: 15,
+                    resourceId: 22411
+                }
+            };
+            mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      expect(command.input).toEqual(params);
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/15/identifiers/15');
+            expect(result).toEqual({
+                officeId: 1,
+                clientId: 15,
+                resourceId: 22411
+            });
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    officeId: 1,
+                    clientId: 15,
+                    resourceId: 22411
+                }
+            };
+            mockAxiosInstance.delete.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15,
+                tenantId: 'custom-tenant'
+            };
+
+            const command = DeleteClientDocument(params);
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle errors properly', async () => {
+            const mockError = new Error('Delete failed');
+            mockAxiosInstance.delete.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Delete failed');
+        });
+
+        it('should handle 404 error when document not found', async () => {
+            const mockError = new Error('Document not found');
+            mockAxiosInstance.delete.mockRejectedValue(mockError);
+
+            const params = {
+                clientId: 15,
+                identifierId: 999
+            };
+
+            const command = DeleteClientDocument(params);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Document not found');
+        });
+
+        it('should have correct metadata', () => {
+            const params = {
+                clientId: 15,
+                identifierId: 15
+            };
+
+            const command = DeleteClientDocument(params);
+
+            expect(command.metadata.commandName).toBe('DeleteClientDocument');
+            expect(command.metadata.path).toBe('/v1/clients/15/identifiers/15');
+            expect(command.metadata.method).toBe('DELETE');
+        });
+
+        it('should handle different identifier types', async () => {
+            const mockResponse = {
+                data: {
+                    officeId: 1,
+                    clientId: 100,
+                    resourceId: 5000
+                }
+            };
+            mockAxiosInstance.delete.mockResolvedValue(mockResponse);
+
+            const params = {
+                clientId: 100,
+                identifierId: 5000
+            };
+
+            const command = DeleteClientDocument(params);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/100/identifiers/5000');
+            expect(result).toEqual({
+                officeId: 1,
+                clientId: 100,
+                resourceId: 5000
+            });
+        });
     });
-  });
-
-  describe('CreateClientIdentifier', () => {
-    it('should create client identifier successfully', async () => {
-      const mockResponse = {
-        data: {
-          id: 456,
-          clientId: 123,
-          documentTypeId: 'PASSPORT',
-          documentKey: 'ABC123456',
-          status: 'ACTIVE'
-        }
-      };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const identifierData = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE',
-        description: 'Valid passport',
-        issuedBy: 'US Department of State',
-        locale: 'en_US',
-        expiryDate: '2025-12-31',
-        nationality: 1,
-        issuedDate: '2020-01-01'
-      };
-
-      const params = { clientId: 123, input: identifierData };
-      const command = CreateClientIdentifier(params);
-      const result = await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/clients/123/identifiers',
-        identifierData
-      );
-      expect(result).toEqual(mockResponse.data);
-    });
-
-    it('should create client identifier with minimal required fields', async () => {
-      const mockResponse = {
-        data: { id: 456, clientId: 123 }
-      };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const identifierData = {
-        documentTypeId: 'NATIONAL_ID',
-        documentKey: 'ID123456',
-        status: 'PENDING'
-      };
-
-      const params = { clientId: 123, input: identifierData };
-      const command = CreateClientIdentifier(params);
-      const result = await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/clients/123/identifiers',
-        identifierData
-      );
-      expect(result).toEqual(mockResponse.data);
-    });
-
-    it('should create client identifier with tenantId', async () => {
-      const mockResponse = { data: { id: 456 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const identifierData = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = { clientId: 123, tenatId: 'custom-tenant', input: identifierData };
-      const command = CreateClientIdentifier(params);
-      await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/clients/123/identifiers',
-        identifierData
-      );
-    });
-
-    it('should pass input parameters through command', () => {
-      const identifierData = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = { clientId: 789, input: identifierData };
-      const command = CreateClientIdentifier(params);
-
-      expect(command.input).toEqual(params);
-    });
-
-    it('should handle errors properly', async () => {
-      const mockError = new Error('Creation failed');
-      mockAxiosInstance.post.mockRejectedValue(mockError);
-
-      const identifierData = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = { clientId: 123, input: identifierData };
-      const command = CreateClientIdentifier(params);
-
-      await expect(command.execute(mockConfig)).rejects.toThrow('Creation failed');
-    });
-
-    it('should have correct metadata', () => {
-      const identifierData = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = { clientId: 123, input: identifierData };
-      const command = CreateClientIdentifier(params);
-
-      expect(command.metadata.commandName).toBe('CreateClientIdentifier');
-      expect(command.metadata.path).toBe('/v1/clients/123/identifiers');
-      expect(command.metadata.method).toBe('POST');
-    });
-  });
-
-  describe('UpdateClientIdentifier', () => {
-    it('should update client identifier successfully', async () => {
-      const mockResponse = {
-        data: {
-          id: 456,
-          clientId: 123,
-          documentTypeId: 'PASSPORT',
-          documentKey: 'ABC123456',
-          status: 'VERIFIED',
-          description: 'Updated passport description'
-        }
-      };
-      mockAxiosInstance.put.mockResolvedValue(mockResponse);
-
-      const updates = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'VERIFIED',
-        description: 'Updated passport description',
-        expiryDate: '2026-12-31'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        updates
-      };
-      const command = UpdateClientIdentifier(params);
-      const result = await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-        '/v1/clients/123/identifiers/456',
-        updates
-      );
-      expect(result).toEqual(mockResponse.data);
-    });
-
-    it('should update client identifier with tenantId', async () => {
-      const mockResponse = { data: { id: 456 } };
-      mockAxiosInstance.put.mockResolvedValue(mockResponse);
-
-      const updates = {
-        documentTypeId: 'DRIVING_LICENSE',
-        documentKey: 'DL789012',
-        status: 'ACTIVE'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        updates,
-        tenantId: 'custom-tenant'
-      };
-
-      const command = UpdateClientIdentifier(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-      await command.execute(mockConfig);
-
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-      expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-        '/v1/clients/123/identifiers/456',
-        updates
-      );
-    });
-
-    it('should handle errors properly', async () => {
-      const mockError = new Error('Update failed');
-      mockAxiosInstance.put.mockRejectedValue(mockError);
-
-      const updates = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        updates
-      };
-      const command = UpdateClientIdentifier(params);
-
-      await expect(command.execute(mockConfig)).rejects.toThrow('Update failed');
-    });
-
-    it('should have correct metadata', () => {
-      const updates = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        updates
-      };
-      const command = UpdateClientIdentifier(params);
-
-      expect(command.metadata.commandName).toBe('UpdateClientIdentifier');
-      expect(command.metadata.path).toBe('/v1/clients/123/identifiers/456');
-      expect(command.metadata.method).toBe('PUT');
-    });
-
-    it('should pass input parameters through command', () => {
-      const updates = {
-        documentTypeId: 'DRIVING_LICENSE',
-        documentKey: 'DL789012',
-        status: 'ACTIVE'
-      };
-
-      const params = {
-        clientId: 999,
-        identifierId: '888',
-        updates,
-        tenantId: 'test-tenant'
-      };
-      const command = UpdateClientIdentifier(params);
-
-      expect(command.input).toEqual(params);
-    });
-
-    it('should handle update without tenantId', async () => {
-      const mockResponse = { data: { id: 456 } };
-      mockAxiosInstance.put.mockResolvedValue(mockResponse);
-
-      const updates = {
-        documentTypeId: 'PASSPORT',
-        documentKey: 'ABC123456',
-        status: 'ACTIVE'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        updates
-      };
-
-      const command = UpdateClientIdentifier(params);
-      await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-        '/v1/clients/123/identifiers/456',
-        updates
-      );
-    });
-  });
-
-  describe('UploadClientIdentifierDocument', () => {
-    it('should upload document file successfully', async () => {
-      const mockResponse = {
-        data: {
-          id: 789,
-          documentId: '456',
-          fileName: 'passport.jpg',
-          uploadStatus: 'SUCCESS'
-        }
-      };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const file = new File(['test content'], 'passport.jpg', { type: 'image/jpeg' });
-      const uploadData = {
-        name: 'passport.jpg',
-        file,
-        type: 'PASSPORT_SCAN',
-        description: 'Front side of passport'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      const result = await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/client_identifiers/456/documents',
-        expect.any(FormData),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-      expect(result).toEqual(mockResponse.data);
-    });
-
-    it('should upload document with Buffer file', async () => {
-      const mockResponse = { data: { id: 789 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const file = Buffer.from('test content');
-      const uploadData = {
-        name: 'document.pdf',
-        file,
-        type: 'PDF_DOCUMENT'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/client_identifiers/456/documents',
-        expect.any(FormData),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-    });
-
-    it('should upload document with Blob file', async () => {
-      const mockResponse = { data: { id: 789 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const file = new Blob(['test content'], { type: 'application/pdf' });
-      const uploadData = {
-        name: 'document.pdf',
-        file
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/client_identifiers/456/documents',
-        expect.any(FormData),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-    });
-
-    it('should upload document with tenantId', async () => {
-      const mockResponse = { data: { id: 789 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const file = new File(['test'], 'test.jpg');
-      const uploadData = {
-        name: 'test.jpg',
-        file
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData,
-        tenantId: 'custom-tenant'
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-      await command.execute(mockConfig);
-
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-    });
-
-    it('should handle errors properly', async () => {
-      const mockError = new Error('Upload failed');
-      mockAxiosInstance.post.mockRejectedValue(mockError);
-
-      const file = new File(['test'], 'test.jpg');
-      const uploadData = {
-        name: 'test.jpg',
-        file
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-      const command = UploadClientIdentifierDocument(params);
-
-      await expect(command.execute(mockConfig)).rejects.toThrow('Upload failed');
-    });
-
-    it('should validate upload data before making request', () => {
-      const invalidUploadData = {
-        name: 123,
-        file: new File(['test'], 'test.jpg')
-      } as any;
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: invalidUploadData
-      };
-
-      expect(() => UploadClientIdentifierDocument(params)).toThrow();
-    });
-
-    it('should have correct metadata', () => {
-      const file = new File(['test'], 'test.jpg');
-      const uploadData = {
-        name: 'test.jpg',
-        file
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-      const command = UploadClientIdentifierDocument(params);
-
-      expect(command.metadata.commandName).toBe('UploadClientIdentifierDocument');
-      expect(command.metadata.path).toBe('/v1/client_identifiers/456/documents');
-      expect(command.metadata.method).toBe('POST');
-    });
-
-    it('should pass input parameters through command', () => {
-      const file = new File(['test content'], 'document.pdf');
-      const uploadData = {
-        name: 'document.pdf',
-        file,
-        type: 'IDENTITY_DOCUMENT',
-        description: 'Client ID document'
-      };
-
-      const params = {
-        clientId: 555,
-        identifierId: '777',
-        data: uploadData,
-        tenantId: 'test-tenant'
-      };
-      const command = UploadClientIdentifierDocument(params);
-
-      expect(command.input).toEqual(params);
-    });
-
-    it('should handle FormData creation correctly', async () => {
-      const mockResponse = { data: { id: 999 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
-      const uploadData = {
-        name: 'test.pdf',
-        file,
-        type: 'PASSPORT_COPY',
-        description: 'Client passport copy'
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/client_identifiers/456/documents',
-        expect.any(FormData),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-
-      const formDataCall = mockAxiosInstance.post.mock.calls[0];
-      const formData = formDataCall[1] as FormData;
-
-      expect(formData.get('name')).toBe('test.pdf');
-      expect(formData.get('type')).toBe('PASSPORT_COPY');
-      expect(formData.get('description')).toBe('Client passport copy');
-      expect(formData.get('file')).toBeInstanceOf(File);
-    });
-
-    it('should handle upload without optional fields', async () => {
-      const mockResponse = { data: { id: 888 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-      const file = new File(['minimal content'], 'minimal.jpg');
-      const uploadData = {
-        name: 'minimal.jpg',
-        file
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      await command.execute(mockConfig);
-
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/v1/client_identifiers/456/documents',
-        expect.any(FormData),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-
-      const formDataCall = mockAxiosInstance.post.mock.calls[0];
-      const formData = formDataCall[1] as FormData;
-
-      expect(formData.get('name')).toBe('minimal.jpg');
-      expect(formData.get('type')).toBeNull();
-      expect(formData.get('description')).toBeNull();
-      expect(formData.get('file')).toBeInstanceOf(File);
-    });
-
-    it('should handle different file types correctly', async () => {
-      const mockResponse = { data: { id: 777 } };
-      mockAxiosInstance.post.mockResolvedValue(mockResponse);
-      const fileObject = new File(['file content'], 'document.docx');
-
-      const uploadData = {
-        name: 'document.docx',
-        file: fileObject
-      };
-
-      const params = {
-        clientId: 123,
-        identifierId: '456',
-        data: uploadData
-      };
-
-      const command = UploadClientIdentifierDocument(params);
-      await command.execute(mockConfig);
-
-      const formDataCall = mockAxiosInstance.post.mock.calls[0];
-      const formData = formDataCall[1] as FormData;
-      const uploadedFile = formData.get('file') as File;
-
-      expect(uploadedFile.name).toBe('document.docx');
-    });
-  });
 });

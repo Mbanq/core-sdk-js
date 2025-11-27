@@ -2,10 +2,12 @@ import { type Command, type Config } from '../../types';
 import {
   ClientIdentifierRequest,
   ClientIdentifierResponse,
+  ListClientDocumentResponse,
   validateClientIdentifierRequest,
   validateDocumentUploadRequest,
   DocumentUploadRequest,
-  DocumentUploadResponse
+  DocumentUploadResponse,
+  DeleteClientDocumentResponse
 } from '../../types/clientIdentifier';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -30,6 +32,44 @@ export const GetPermittedDocumentTypes = (params: { tenantId?: string; clientId:
     }
   };
 };
+
+export const ListClientDocument = (params: {
+  tenantId?: string;
+  clientId: number;
+  unmaskValue?: boolean;
+  fields?: string;
+}): Command<{ tenantId?: string; clientId: number; unmaskValue?: boolean; fields?: string }, ListClientDocumentResponse> => {
+  const queryParams = new URLSearchParams();
+  if (params.unmaskValue !== undefined) {
+    queryParams.append('unmaskValue', params.unmaskValue.toString());
+  }
+  if (params.fields) {
+    queryParams.append('fields', params.fields);
+  }
+  const queryString = queryParams.toString();
+  const path = `/v1/clients/${params.clientId}/identifiers${queryString ? `?${queryString}` : ''}`;
+
+  return {
+    input: params,
+    metadata: {
+      commandName: 'ListClientDocument',
+      path,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+      try {
+        const response = await axiosInstance.get<ListClientDocumentResponse>(path);
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  }
+}
 
 export const CreateClientIdentifier = (params:
   { tenatId?: string; clientId: number; input: ClientIdentifierRequest }
@@ -149,6 +189,42 @@ export const UploadClientIdentifierDocument = (
             'Content-Type': 'multipart/form-data'
           }
         });
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+export const DeleteClientDocument = (
+  params: {
+    tenantId?: string;
+    clientId: number;
+    identifierId: number;
+  }
+): Command<{
+  tenantId?: string;
+  clientId: number;
+  identifierId: number;
+}, DeleteClientDocumentResponse> => {
+  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}`;
+  return {
+    input: params,
+    metadata: {
+      commandName: 'DeleteClientDocument',
+      path,
+      method: 'DELETE'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.delete<DeleteClientDocumentResponse>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

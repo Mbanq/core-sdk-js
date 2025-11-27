@@ -1,6 +1,6 @@
 {
   "name": "@mbanq/core-sdk-js",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A comprehensive JavaScript SDK for interacting with the Mbanq payment API. Features type-safe payment operations, multi-tenant support, and Zod validation.",
   "main": "dist/index.js",
   "publishConfig": {
@@ -10,19 +10,19 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./command": {
+      "types": "./dist/commands/index.d.ts",
       "import": "./dist/commands/index.mjs",
-      "require": "./dist/commands/index.js",
-      "types": "./dist/commands/index.d.ts"
+      "require": "./dist/commands/index.js"
     },
     "./client": {
+      "types": "./dist/client/index.d.ts",
       "import": "./dist/client/index.mjs",
-      "require": "./dist/client/index.js",
-      "types": "./dist/client/index.d.ts"
+      "require": "./dist/client/index.js"
     },
     "./types": {
       "types": "./dist/index.d.ts"

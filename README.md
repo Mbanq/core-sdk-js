@@ -21,6 +21,7 @@
   - [Custom Middleware](#custom-middleware)
 - [API Reference](#api-reference)
   - [Client Operations](#client-operations)
+  - [Client Identifier Operations](#client-identifier-operations)
   - [Account Operations](#account-operations)
   - [Payment Operations](#payment-operations)
   - [Multi-Tenant Support](#multi-tenant-support)
@@ -462,6 +463,88 @@ const updatedClient = await apiClient.client.update(123, {
   emailAddress: 'john.updated@example.com'
 }).execute();
 ```
+
+### Client Identifier Operations
+
+Manage client identity documents (KYC documents) such as passports, driver licenses, and other identification documents. The SDK provides full CRUD operations for client identifiers with support for document masking and field filtering.
+
+```javascript
+import { 
+  ListClientDocument, 
+  CreateClientIdentifier, 
+  UpdateClientIdentifier,
+  GetPermittedDocumentTypes,
+  DeleteClientDocument
+} from '@mbanq/core-sdk-js';
+
+// List all client identifiers (documents)
+const listCommand = ListClientDocument({ clientId: 15 });
+const identifiers = await client.request(listCommand);
+
+// List with unmasked document values
+const unmaskedCommand = ListClientDocument({ 
+  clientId: 15, 
+  unmaskValue: true 
+});
+const unmaskedIdentifiers = await client.request(unmaskedCommand);
+
+// List with specific fields only
+const fieldsCommand = ListClientDocument({ 
+  clientId: 15,
+  fields: 'documentKey,documentType,status'
+});
+const filteredIdentifiers = await client.request(fieldsCommand);
+
+// Get permitted document types for a client
+const typesCommand = GetPermittedDocumentTypes({ clientId: 15 });
+const documentTypes = await client.request(typesCommand);
+
+// Create a new client identifier
+const createCommand = CreateClientIdentifier({
+  clientId: 15,
+  input: {
+    documentTypeId: '1',
+    documentKey: 'ABC123456',
+    status: 'ACTIVE',
+    description: 'Valid passport',
+    issuedBy: 'Government',
+    locale: 'en_US',
+    dateFormat: 'yyyy-MM-dd',
+    expiryDate: '2030-12-31',
+    nationality: 1,
+    issuedDate: '2020-01-01'
+  }
+});
+const newIdentifier = await client.request(createCommand);
+
+// Update an existing client identifier
+const updateCommand = UpdateClientIdentifier({
+  clientId: 15,
+  identifierId: 'id123',
+  updates: {
+    documentTypeId: '1',
+    documentKey: 'XYZ789456',
+    status: 'ACTIVE',
+    description: 'Updated passport'
+  }
+});
+const updatedIdentifier = await client.request(updateCommand);
+
+// Delete a client identifier
+const deleteCommand = DeleteClientDocument({
+  clientId: 15,
+  identifierId: 15
+});
+const deleteResult = await client.request(deleteCommand);
+// Returns: { officeId: 1, clientId: 15, resourceId: 22411 }
+```
+
+**Available Commands:** `ListClientDocument`, `GetPermittedDocumentTypes`, `CreateClientIdentifier`, `UpdateClientIdentifier`, `DeleteClientDocument`
+
+**Query Parameters:**
+- `unmaskValue` - Set to `true` to return full document reference (unmasked)
+- `fields` - Comma-separated list of fields to include in response
+
 
 ### Account Operations
 

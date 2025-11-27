@@ -25,10 +25,38 @@ export const ClientIdentifierResponseShape = {
   isSkipNotification: z.boolean()
 };
 
+export const ClientIdentifierItemShape = {
+  id: z.number(),
+  clientId: z.number(),
+  documentType: z.object({
+    id: z.number(),
+    name: z.string(),
+    isMasked: z.boolean().optional()
+  }),
+  documentKey: z.union([z.string(), z.number()]),
+  status: z.string(),
+  description: z.string().optional(),
+  issuedBy: z.string().optional(),
+  expiryDate: z.union([z.string(), z.array(z.number())]).optional(),
+  nationality: z.object({
+    id: z.number(),
+    name: z.string()
+  }).optional(),
+  issuedDate: z.string().optional(),
+  documentStatus: z.string().optional()
+};
+
 export const ClientIdentifierResponseSchema = z.object(ClientIdentifierResponseShape).catchall(z.any());
+
+export const ClientIdentifierItemSchema = z.object(ClientIdentifierItemShape).catchall(z.any());
+
+export const ListClientDocumentResponseSchema = z.array(ClientIdentifierItemSchema);
+
 
 export type ClientIdentifierRequest = z.infer<typeof ClientIdentifierRequestSchema>;
 export type ClientIdentifierResponse = z.infer<typeof ClientIdentifierResponseSchema>;
+export type ClientIdentifierItem = z.infer<typeof ClientIdentifierItemSchema>;
+export type ListClientDocumentResponse = z.infer<typeof ListClientDocumentResponseSchema>;
 
 export const validateClientIdentifierRequest = (input: unknown): ClientIdentifierRequest => {
   return ClientIdentifierRequestSchema.parse(input);
@@ -57,3 +85,11 @@ export type DocumentUploadResponse = z.infer<typeof ClientIdentifierResponseSche
 export const validateDocumentUploadRequest = (input: unknown): DocumentUploadRequest => {
   return DocumentUploadRequestSchema.parse(input);
 };
+
+export const DeleteClientDocumentResponseSchema = z.object({
+  officeId: z.number(),
+  clientId: z.number(),
+  resourceId: z.number()
+});
+
+export type DeleteClientDocumentResponse = z.infer<typeof DeleteClientDocumentResponseSchema>;
