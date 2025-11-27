@@ -85,3 +85,11 @@ export type DocumentUploadResponse = z.infer<typeof ClientIdentifierResponseSche
 export const validateDocumentUploadRequest = (input: unknown): DocumentUploadRequest => {
   return DocumentUploadRequestSchema.parse(input);
 };
+
+export const DeleteClientDocumentResponseSchema = z.object({
+  officeId: z.number(),
+  clientId: z.number(),
+  resourceId: z.number()
+});
+
+export type DeleteClientDocumentResponse = z.infer<typeof DeleteClientDocumentResponseSchema>;

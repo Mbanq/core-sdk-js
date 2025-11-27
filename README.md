@@ -473,7 +473,8 @@ import {
   ListClientDocument, 
   CreateClientIdentifier, 
   UpdateClientIdentifier,
-  GetPermittedDocumentTypes 
+  GetPermittedDocumentTypes,
+  DeleteClientDocument
 } from '@mbanq/core-sdk-js';
 
 // List all client identifiers (documents)
@@ -528,9 +529,17 @@ const updateCommand = UpdateClientIdentifier({
   }
 });
 const updatedIdentifier = await client.request(updateCommand);
+
+// Delete a client identifier
+const deleteCommand = DeleteClientDocument({
+  clientId: 15,
+  identifierId: 15
+});
+const deleteResult = await client.request(deleteCommand);
+// Returns: { officeId: 1, clientId: 15, resourceId: 22411 }
 ```
 
-**Available Commands:** `ListClientDocument`, `GetPermittedDocumentTypes`, `CreateClientIdentifier`, `UpdateClientIdentifier`
+**Available Commands:** `ListClientDocument`, `GetPermittedDocumentTypes`, `CreateClientIdentifier`, `UpdateClientIdentifier`, `DeleteClientDocument`
 
 **Query Parameters:**
 - `unmaskValue` - Set to `true` to return full document reference (unmasked)
