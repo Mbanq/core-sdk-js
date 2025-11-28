@@ -87,7 +87,6 @@ export const UpdateSelfServiceUserRequestSchema = z.object({
   lastname: z.string(),
   officeId: z.number(),
   roles: z.array(z.number()),
-  isSelfServiceUser: z.literal(true),
   sendPasswordToEmail: z.boolean().optional(),
   email: z.string().email().optional(),
   password: z.string().optional(),

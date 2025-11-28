@@ -81,7 +81,7 @@ export const UpdateSelfServiceUser = (
       try {
         const response = await axiosInstance.put<UpdateSelfServiceUserResponse>(
           `/v1/users/${userId}`,
-          updateData
+          { ...updateData, isSelfServiceUser: true }
         );
         return response.data;
       } catch (error) {
