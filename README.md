@@ -569,7 +569,7 @@ const rejectResult = await client.request(rejectCommand);
 Manage user access and permissions.
 
 ```javascript
-import { EnableSelfServiceAccess, UpdateSelfServiceUser } from '@mbanq/core-sdk-js';
+import { EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from '@mbanq/core-sdk-js';
 
 // Enable self-service access for a user
 const enableAccessCommand = EnableSelfServiceAccess({
@@ -607,9 +607,14 @@ const updateUserCommand = UpdateSelfServiceUser({
 });
 
 const updateResult = await client.request(updateUserCommand);
+
+// Delete self-service user
+const deleteUserCommand = DeleteSelfServiceUser(123, { tenantId: 'default' });
+const deleteResult = await client.request(deleteUserCommand);
+// Returns: { officeId: 1, clientId: 1, resourceId: 123 }
 ```
 
-**Available Commands:** `EnableSelfServiceAccess`, `UpdateSelfServiceUser`, `GetUserDetail`
+**Available Commands:** `EnableSelfServiceAccess`, `UpdateSelfServiceUser`, `DeleteSelfServiceUser`, `GetUserDetail`
 
 
 
