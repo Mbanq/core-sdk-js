@@ -7,7 +7,8 @@ import {
   validateDocumentUploadRequest,
   DocumentUploadRequest,
   DocumentUploadResponse,
-  DeleteClientDocumentResponse
+  DeleteClientDocumentResponse,
+  ApproveRejectClientDocumentResponse
 } from '../../types/clientIdentifier';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -232,3 +233,42 @@ export const DeleteClientDocument = (
     }
   };
 };
+
+export const ApproveRejectClientDocument = (
+  params: {
+    tenantId?: string;
+    clientId: number;
+    identifierId: number;
+    command: 'approve' | 'reject';
+  }
+): Command<{
+  tenantId?: string;
+  clientId: number;
+  identifierId: number;
+  command: 'approve' | 'reject';
+}, ApproveRejectClientDocumentResponse> => {
+  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}?command=${params.command}`;
+  return {
+    input: params,
+    metadata: {
+      commandName: 'ApproveRejectClientDocument',
+      path,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (params.tenantId) {
+        config.tenantId = params.tenantId;
+      }
+
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<ApproveRejectClientDocumentResponse>(path);
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+

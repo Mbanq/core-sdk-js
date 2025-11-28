@@ -93,3 +93,11 @@ export const DeleteClientDocumentResponseSchema = z.object({
 });
 
 export type DeleteClientDocumentResponse = z.infer<typeof DeleteClientDocumentResponseSchema>;
+
+
+export const ApproveRejectClientDocumentResponseSchema = z.object({
+  clientId: z.number(),
+  resourceId: z.number()
+});
+
+export type ApproveRejectClientDocumentResponse = z.infer<typeof ApproveRejectClientDocumentResponseSchema>;
