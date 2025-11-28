@@ -1,5 +1,5 @@
-import { EnableSelfServiceAccess } from '../../../src/commands/rest/user';
-import { EnableSelfServiceAccessRequest } from '../../../src/types/user';
+import { EnableSelfServiceAccess, UpdateSelfServiceUser } from '../../../src/commands/rest/user';
+import { EnableSelfServiceAccessRequest, UpdateSelfServiceUserRequest } from '../../../src/types/user';
 import baseRequest from '../../../src/utils/baseRequest';
 import { vi, describe, it, expect } from 'vitest';
 
@@ -104,5 +104,117 @@ describe('EnableSelfServiceAccess', () => {
       ...mockConfig,
       tenantId: 'newTenantId'
     });
+  });
+});
+
+describe('UpdateSelfServiceUser', () => {
+  const mockConfig = {
+    auth: {
+      clientId: 'clientId',
+      clientSecret: 'clientSecret'
+    },
+    encryption: {
+      key: 'key',
+      iv: 'iv'
+    },
+    tenantId: 'tenantId',
+    baseUrl: 'https://api.mbanq.com'
+  };
+
+  const mockRequestData: UpdateSelfServiceUserRequest = {
+    userId: 123,
+    username: 'updatedUserName',
+    firstname: 'updatedFirstName',
+    lastname: 'updatedLastName',
+    officeId: 1,
+    roles: [1, 2],
+    isSelfServiceUser: true,
+    sendPasswordToEmail: true,
+    email: 'updated@gmail.com',
+    password: 'newPass1234',
+    repeatPassword: 'newPass1234',
+    enabled: true,
+    clients: [1, 2]
+  };
+
+  const mockResponse = {
+    officeId: 1,
+    clientId: 1,
+    resourceId: 123,
+    changes: {
+      username: 'updatedUserName',
+      email: 'updated@gmail.com',
+      enabled: true
+    }
+  };
+
+  it('should update self-service user successfully', async () => {
+    const mockAxios = {
+      put: vi.fn().mockResolvedValue({ data: mockResponse })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = UpdateSelfServiceUser(mockRequestData);
+    const result = await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockAxios.put).toHaveBeenCalledWith('/v1/users/123', {
+      username: 'updatedUserName',
+      firstname: 'updatedFirstName',
+      lastname: 'updatedLastName',
+      officeId: 1,
+      roles: [1, 2],
+      isSelfServiceUser: true,
+      sendPasswordToEmail: true,
+      email: 'updated@gmail.com',
+      password: 'newPass1234',
+      repeatPassword: 'newPass1234',
+      enabled: true,
+      clients: [1, 2]
+    });
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle errors correctly', async () => {
+    const mockError = new Error('API Error');
+    const mockAxios = {
+      put: vi.fn().mockRejectedValue(mockError)
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = UpdateSelfServiceUser(mockRequestData);
+
+    // We expect the command to throw because handleAxiosError throws
+    await expect(command.execute(mockConfig)).rejects.toThrow();
+  });
+
+  it('should override tenantId if provided in params', async () => {
+    const mockAxios = {
+      put: vi.fn().mockResolvedValue({ data: mockResponse })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = UpdateSelfServiceUser(mockRequestData, { tenantId: 'newTenantId' });
+    await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith({
+      ...mockConfig,
+      tenantId: 'newTenantId'
+    });
+  });
+
+  it('should exclude userId from request body', async () => {
+    const mockAxios = {
+      put: vi.fn().mockResolvedValue({ data: mockResponse })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = UpdateSelfServiceUser(mockRequestData);
+    await command.execute(mockConfig);
+
+    // Verify that userId is not in the request body
+    const requestBody = mockAxios.put.mock.calls[0][1];
+    expect(requestBody).not.toHaveProperty('userId');
+    expect(requestBody).toHaveProperty('username');
   });
 });

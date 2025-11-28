@@ -79,3 +79,34 @@ export const EnableSelfServiceAccessResponseSchema = z.object({
 export type EnableSelfServiceAccessResponse = z.infer<
   typeof EnableSelfServiceAccessResponseSchema
 >;
+
+export const UpdateSelfServiceUserRequestSchema = z.object({
+  userId: z.number(),
+  username: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
+  officeId: z.number(),
+  roles: z.array(z.number()),
+  isSelfServiceUser: z.literal(true),
+  sendPasswordToEmail: z.boolean().optional(),
+  email: z.string().email().optional(),
+  password: z.string().optional(),
+  repeatPassword: z.string().optional(),
+  enabled: z.boolean().optional(),
+  clients: z.array(z.number()).optional()
+});
+
+export type UpdateSelfServiceUserRequest = z.infer<
+  typeof UpdateSelfServiceUserRequestSchema
+>;
+
+export const UpdateSelfServiceUserResponseSchema = z.object({
+  officeId: z.number(),
+  clientId: z.number(),
+  resourceId: z.number(),
+  changes: z.record(z.unknown()).optional()
+});
+
+export type UpdateSelfServiceUserResponse = z.infer<
+  typeof UpdateSelfServiceUserResponseSchema
+>;
