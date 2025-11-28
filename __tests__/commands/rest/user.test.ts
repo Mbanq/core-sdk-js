@@ -1,4 +1,4 @@
-import { EnableSelfServiceAccess, UpdateSelfServiceUser } from '../../../src/commands/rest/user';
+import { EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from '../../../src/commands/rest/user';
 import { EnableSelfServiceAccessRequest, UpdateSelfServiceUserRequest } from '../../../src/types/user';
 import baseRequest from '../../../src/utils/baseRequest';
 import { vi, describe, it, expect } from 'vitest';
@@ -128,7 +128,6 @@ describe('UpdateSelfServiceUser', () => {
     lastname: 'updatedLastName',
     officeId: 1,
     roles: [1, 2],
-    isSelfServiceUser: true,
     sendPasswordToEmail: true,
     email: 'updated@gmail.com',
     password: 'newPass1234',
@@ -218,3 +217,79 @@ describe('UpdateSelfServiceUser', () => {
     expect(requestBody).toHaveProperty('username');
   });
 });
+
+describe('DeleteSelfServiceUser', () => {
+  const mockConfig = {
+    auth: {
+      clientId: 'clientId',
+      clientSecret: 'clientSecret'
+    },
+    encryption: {
+      key: 'key',
+      iv: 'iv'
+    },
+    tenantId: 'tenantId',
+    baseUrl: 'https://api.mbanq.com'
+  };
+
+  const mockResponse = {
+    officeId: 1,
+    clientId: 1,
+    resourceId: 123
+  };
+
+  it('should delete self-service user successfully', async () => {
+    const mockAxios = {
+      delete: vi.fn().mockResolvedValue({ data: mockResponse })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = DeleteSelfServiceUser(123, { tenantId: 'tenantId' });
+    const result = await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockAxios.delete).toHaveBeenCalledWith('/v1/users/123');
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle errors correctly', async () => {
+    const mockError = new Error('API Error');
+    const mockAxios = {
+      delete: vi.fn().mockRejectedValue(mockError)
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = DeleteSelfServiceUser(123, { tenantId: 'tenantId' });
+
+    // We expect the command to throw because handleAxiosError throws
+    await expect(command.execute(mockConfig)).rejects.toThrow();
+  });
+
+  it('should override tenantId if provided in params', async () => {
+    const mockAxios = {
+      delete: vi.fn().mockResolvedValue({ data: mockResponse })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = DeleteSelfServiceUser(123, { tenantId: 'newTenantId' });
+    await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith({
+      ...mockConfig,
+      tenantId: 'newTenantId'
+    });
+  });
+
+  it('should use correct userId in the DELETE endpoint', async () => {
+    const mockAxios = {
+      delete: vi.fn().mockResolvedValue({ data: mockResponse })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = DeleteSelfServiceUser(456, { tenantId: 'tenantId' });
+    await command.execute(mockConfig);
+
+    expect(mockAxios.delete).toHaveBeenCalledWith('/v1/users/456');
+  });
+});
+

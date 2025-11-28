@@ -27,20 +27,21 @@ export const UserDetailSchema = z.object(UserDetailShape);
 
 export type UserDetail = z.infer<typeof UserDetailSchema>;
 
-export const EnableSelfServiceAccessRequestSchema = z.object({
+const SelfServiceUserRequestShape = {
   username: z.string(),
   firstname: z.string(),
   lastname: z.string(),
   officeId: z.number(),
   roles: z.array(z.number()),
-  isSelfServiceUser: z.literal(true),
   sendPasswordToEmail: z.boolean().optional(),
   email: z.string().email().optional(),
   password: z.string().optional(),
   repeatPassword: z.string().optional(),
   enabled: z.boolean().optional(),
   clients: z.array(z.number()).optional()
-});
+};
+
+export const EnableSelfServiceAccessRequestSchema = z.object(SelfServiceUserRequestShape);
 
 export type EnableSelfServiceAccessRequest = z.infer<
   typeof EnableSelfServiceAccessRequestSchema
@@ -82,30 +83,31 @@ export type EnableSelfServiceAccessResponse = z.infer<
 
 export const UpdateSelfServiceUserRequestSchema = z.object({
   userId: z.number(),
-  username: z.string(),
-  firstname: z.string(),
-  lastname: z.string(),
-  officeId: z.number(),
-  roles: z.array(z.number()),
-  sendPasswordToEmail: z.boolean().optional(),
-  email: z.string().email().optional(),
-  password: z.string().optional(),
-  repeatPassword: z.string().optional(),
-  enabled: z.boolean().optional(),
-  clients: z.array(z.number()).optional()
+  ...SelfServiceUserRequestShape
 });
 
 export type UpdateSelfServiceUserRequest = z.infer<
   typeof UpdateSelfServiceUserRequestSchema
 >;
 
-export const UpdateSelfServiceUserResponseSchema = z.object({
+const ResponseShape = {
   officeId: z.number(),
   clientId: z.number(),
-  resourceId: z.number(),
+  resourceId: z.number()
+};
+
+export const UpdateSelfServiceUserResponseSchema = z.object({
+  ...ResponseShape,
   changes: z.record(z.unknown()).optional()
 });
 
 export type UpdateSelfServiceUserResponse = z.infer<
   typeof UpdateSelfServiceUserResponseSchema
 >;
+
+export const DeleteSelfServiceUserResponseSchema = z.object({
+  ...ResponseShape,
+});
+
+export type DeleteSelfServiceUserResponse = z.infer<typeof DeleteSelfServiceUserResponseSchema>;
+
