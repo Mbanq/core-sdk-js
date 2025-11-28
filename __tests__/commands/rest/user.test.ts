@@ -1,9 +1,103 @@
-import { EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from '../../../src/commands/rest/user';
+import { EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser, GetUserDetail } from '../../../src/commands/rest/user';
 import { EnableSelfServiceAccessRequest, UpdateSelfServiceUserRequest } from '../../../src/types/user';
 import baseRequest from '../../../src/utils/baseRequest';
 import { vi, describe, it, expect } from 'vitest';
 
 vi.mock('../../../src/utils/baseRequest');
+
+describe('GetUserDetail', () => {
+  const mockConfig = {
+    auth: {
+      clientId: 'clientId',
+      clientSecret: 'clientSecret'
+    },
+    encryption: {
+      key: 'key',
+      iv: 'iv'
+    },
+    tenantId: 'tenantId',
+    baseUrl: 'https://api.mbanq.com'
+  };
+
+  const mockUserDetail = {
+    username: 'testUser',
+    userId: 123,
+    accessToken: 'test-token',
+    authenticated: true,
+    officeId: 1,
+    officeName: 'Head Office',
+    roles: [
+      {
+        id: 1,
+        name: 'Admin',
+        description: 'Administrator role',
+        disabled: false,
+        isSelfService: false,
+        position: 1
+      }
+    ],
+    permissions: ['READ_CLIENT', 'CREATE_CLIENT'],
+    shouldRenewPassword: false,
+    isTwoFactorAuthenticationRequired: false,
+    isSelfServiceUser: false
+  };
+
+  it('should get user detail successfully', async () => {
+    const mockAxios = {
+      get: vi.fn().mockResolvedValue({ data: mockUserDetail })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = GetUserDetail();
+    const result = await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockAxios.get).toHaveBeenCalledWith('/v1/userdetails');
+    expect(result).toEqual(mockUserDetail);
+  });
+
+  it('should get user detail with params', async () => {
+    const mockAxios = {
+      get: vi.fn().mockResolvedValue({ data: mockUserDetail })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = GetUserDetail({ tenantId: 'customTenant' });
+    const result = await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockAxios.get).toHaveBeenCalledWith('/v1/userdetails');
+    expect(result).toEqual(mockUserDetail);
+  });
+
+  it('should handle errors correctly', async () => {
+    const mockError = new Error('API Error');
+    const mockAxios = {
+      get: vi.fn().mockRejectedValue(mockError)
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = GetUserDetail();
+
+    // We expect the command to throw because handleAxiosError throws
+    await expect(command.execute(mockConfig)).rejects.toThrow();
+  });
+
+  it('should override tenantId if provided in params', async () => {
+    const mockAxios = {
+      get: vi.fn().mockResolvedValue({ data: mockUserDetail })
+    };
+    (baseRequest as any).mockResolvedValue(mockAxios);
+
+    const command = GetUserDetail({ tenantId: 'newTenantId' });
+    await command.execute(mockConfig);
+
+    expect(baseRequest).toHaveBeenCalledWith({
+      ...mockConfig,
+      tenantId: 'newTenantId'
+    });
+  });
+});
 
 describe('EnableSelfServiceAccess', () => {
   const mockConfig = {
