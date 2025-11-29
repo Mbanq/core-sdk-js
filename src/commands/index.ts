@@ -8,5 +8,5 @@ export { GraphQL } from './graphql';
 export { CustomGet, CustomCreate, CustomUpdate } from './rest/custom';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './rest/recipient';
 export { UpdateRecipientGQL as UpdateRecipient } from './graphql/recipient';
-export { GetUserDetail, EnableSelfServiceAccess } from './rest/user';
+export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './rest/user';
 export { ListCardProduct, CreateCardProduct, UpdateCardProduct, GetCardProduct } from './rest/cardProduct';  

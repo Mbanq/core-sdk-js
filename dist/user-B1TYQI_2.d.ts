@@ -1,4 +1,4 @@
-import { a as Command, G as GraphQLRequest } from './config.d-io5V_aK4.mjs';
+import { a as Command, G as GraphQLRequest } from './config.d-io5V_aK4.js';
 import z$1, { z } from 'zod';
 import * as buffer from 'buffer';
 
@@ -7445,6 +7445,282 @@ declare const UserDetailSchema: z.ZodObject<{
     isSelfServiceUser: boolean;
 }>;
 type UserDetail = z.infer<typeof UserDetailSchema>;
+declare const EnableSelfServiceAccessRequestSchema: z.ZodObject<{
+    username: z.ZodString;
+    firstname: z.ZodString;
+    lastname: z.ZodString;
+    officeId: z.ZodNumber;
+    roles: z.ZodArray<z.ZodNumber, "many">;
+    sendPasswordToEmail: z.ZodOptional<z.ZodBoolean>;
+    email: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodString>;
+    repeatPassword: z.ZodOptional<z.ZodString>;
+    enabled: z.ZodOptional<z.ZodBoolean>;
+    clients: z.ZodOptional<z.ZodArray<z.ZodNumber, "many">>;
+}, "strip", z.ZodTypeAny, {
+    username: string;
+    officeId: number;
+    roles: number[];
+    firstname: string;
+    lastname: string;
+    sendPasswordToEmail?: boolean | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    repeatPassword?: string | undefined;
+    enabled?: boolean | undefined;
+    clients?: number[] | undefined;
+}, {
+    username: string;
+    officeId: number;
+    roles: number[];
+    firstname: string;
+    lastname: string;
+    sendPasswordToEmail?: boolean | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    repeatPassword?: string | undefined;
+    enabled?: boolean | undefined;
+    clients?: number[] | undefined;
+}>;
+type EnableSelfServiceAccessRequest = z.infer<typeof EnableSelfServiceAccessRequestSchema>;
+declare const EnableSelfServiceAccessResponseSchema: z.ZodObject<{
+    id: z.ZodString;
+    officeId: z.ZodNumber;
+    clientId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+    data: z.ZodObject<{
+        client: z.ZodObject<{
+            officeName: z.ZodString;
+            displayName: z.ZodString;
+            accountNo: z.ZodNumber;
+            id: z.ZodNumber;
+            status: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            status: string;
+            id: number;
+            accountNo: number;
+            displayName: string;
+            officeName: string;
+        }, {
+            status: string;
+            id: number;
+            accountNo: number;
+            displayName: string;
+            officeName: string;
+        }>;
+        maker: z.ZodObject<{
+            firstName: z.ZodString;
+            lastName: z.ZodString;
+            id: z.ZodNumber;
+            email: z.ZodString;
+            username: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        }, {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        }>;
+        createdUser: z.ZodObject<{
+            firstName: z.ZodString;
+            lastName: z.ZodString;
+            id: z.ZodNumber;
+            email: z.ZodString;
+            username: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        }, {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        client: {
+            status: string;
+            id: number;
+            accountNo: number;
+            displayName: string;
+            officeName: string;
+        };
+        maker: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+        createdUser: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+    }, {
+        client: {
+            status: string;
+            id: number;
+            accountNo: number;
+            displayName: string;
+            officeName: string;
+        };
+        maker: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+        createdUser: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    clientId: number;
+    resourceId: number;
+    data: {
+        client: {
+            status: string;
+            id: number;
+            accountNo: number;
+            displayName: string;
+            officeName: string;
+        };
+        maker: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+        createdUser: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+    };
+    officeId: number;
+}, {
+    id: string;
+    clientId: number;
+    resourceId: number;
+    data: {
+        client: {
+            status: string;
+            id: number;
+            accountNo: number;
+            displayName: string;
+            officeName: string;
+        };
+        maker: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+        createdUser: {
+            id: number;
+            username: string;
+            email: string;
+            firstName: string;
+            lastName: string;
+        };
+    };
+    officeId: number;
+}>;
+type EnableSelfServiceAccessResponse = z.infer<typeof EnableSelfServiceAccessResponseSchema>;
+declare const UpdateSelfServiceUserRequestSchema: z.ZodObject<{
+    username: z.ZodString;
+    firstname: z.ZodString;
+    lastname: z.ZodString;
+    officeId: z.ZodNumber;
+    roles: z.ZodArray<z.ZodNumber, "many">;
+    sendPasswordToEmail: z.ZodOptional<z.ZodBoolean>;
+    email: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodString>;
+    repeatPassword: z.ZodOptional<z.ZodString>;
+    enabled: z.ZodOptional<z.ZodBoolean>;
+    clients: z.ZodOptional<z.ZodArray<z.ZodNumber, "many">>;
+    userId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    username: string;
+    userId: number;
+    officeId: number;
+    roles: number[];
+    firstname: string;
+    lastname: string;
+    sendPasswordToEmail?: boolean | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    repeatPassword?: string | undefined;
+    enabled?: boolean | undefined;
+    clients?: number[] | undefined;
+}, {
+    username: string;
+    userId: number;
+    officeId: number;
+    roles: number[];
+    firstname: string;
+    lastname: string;
+    sendPasswordToEmail?: boolean | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    repeatPassword?: string | undefined;
+    enabled?: boolean | undefined;
+    clients?: number[] | undefined;
+}>;
+type UpdateSelfServiceUserRequest = z.infer<typeof UpdateSelfServiceUserRequestSchema>;
+declare const UpdateSelfServiceUserResponseSchema: z.ZodObject<{
+    changes: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+    officeId: z.ZodNumber;
+    clientId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    changes?: Record<string, unknown> | undefined;
+}, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    changes?: Record<string, unknown> | undefined;
+}>;
+type UpdateSelfServiceUserResponse = z.infer<typeof UpdateSelfServiceUserResponseSchema>;
+declare const DeleteSelfServiceUserResponseSchema: z.ZodObject<{
+    officeId: z.ZodNumber;
+    clientId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+}, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+}>;
+type DeleteSelfServiceUserResponse = z.infer<typeof DeleteSelfServiceUserResponseSchema>;
 
 declare const CreatePayment: (params: {
     payment: CreatePaymentInput;
@@ -10549,10 +10825,10 @@ declare const RecipientSchema: z.ZodObject<{
         postalCode: string;
         city: string;
     };
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     businessName: string;
     phoneNumber: string;
     isOwnAccount: boolean;
@@ -10576,10 +10852,10 @@ declare const RecipientSchema: z.ZodObject<{
         postalCode: string;
         city: string;
     };
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     businessName: string;
     phoneNumber: string;
     isOwnAccount: boolean;
@@ -10663,10 +10939,10 @@ declare const RecipientsSchema: z.ZodArray<z.ZodObject<{
         postalCode: string;
         city: string;
     };
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     businessName: string;
     phoneNumber: string;
     isOwnAccount: boolean;
@@ -10690,10 +10966,10 @@ declare const RecipientsSchema: z.ZodArray<z.ZodObject<{
         postalCode: string;
         city: string;
     };
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     businessName: string;
     phoneNumber: string;
     isOwnAccount: boolean;
@@ -10841,10 +11117,10 @@ declare const CreateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
     recipientType: string;
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     phoneNumber: string;
     accountDetailsData: {
         accountNumber: string;
@@ -10866,10 +11142,10 @@ declare const CreateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
 }, {
     paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
     recipientType: string;
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     phoneNumber: string;
     accountDetailsData: {
         accountNumber: string;
@@ -10891,10 +11167,10 @@ declare const CreateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
 }>, {
     paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
     recipientType: string;
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     phoneNumber: string;
     accountDetailsData: {
         accountNumber: string;
@@ -10916,10 +11192,10 @@ declare const CreateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
 }, {
     paymentRail: "ACH" | "SAMEDAYACH" | "WIRE" | "SWIFT" | "INTERNAL" | "FXPAY" | "CARD";
     recipientType: string;
-    emailAddress: string;
-    nickName: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
+    nickName: string;
     phoneNumber: string;
     accountDetailsData: {
         accountNumber: string;
@@ -11009,10 +11285,10 @@ declare const UpdateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
         postalCode: string;
         city: string;
     } | undefined;
-    emailAddress?: string | undefined;
-    nickName?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
     businessName?: string | undefined;
     phoneNumber?: string | undefined;
     isOwnAccount?: boolean | undefined;
@@ -11034,10 +11310,10 @@ declare const UpdateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
         postalCode: string;
         city: string;
     } | undefined;
-    emailAddress?: string | undefined;
-    nickName?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
     businessName?: string | undefined;
     phoneNumber?: string | undefined;
     isOwnAccount?: boolean | undefined;
@@ -11059,10 +11335,10 @@ declare const UpdateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
         postalCode: string;
         city: string;
     } | undefined;
-    emailAddress?: string | undefined;
-    nickName?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
     businessName?: string | undefined;
     phoneNumber?: string | undefined;
     isOwnAccount?: boolean | undefined;
@@ -11084,10 +11360,10 @@ declare const UpdateRecipientRequestSchema: z.ZodEffects<z.ZodObject<{
         postalCode: string;
         city: string;
     } | undefined;
-    emailAddress?: string | undefined;
-    nickName?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    emailAddress?: string | undefined;
+    nickName?: string | undefined;
     businessName?: string | undefined;
     phoneNumber?: string | undefined;
     isOwnAccount?: boolean | undefined;
@@ -11148,5 +11424,20 @@ declare const GetUserDetail: (params?: {
 }) => Command<{
     tenantId?: string;
 }, UserDetail>;
+declare const EnableSelfServiceAccess: (requestData: EnableSelfServiceAccessRequest, params?: {
+    tenantId?: string;
+}) => Command<{
+    tenantId?: string;
+}, EnableSelfServiceAccessResponse>;
+declare const UpdateSelfServiceUser: (requestData: UpdateSelfServiceUserRequest, params?: {
+    tenantId?: string;
+}) => Command<{
+    tenantId?: string;
+}, UpdateSelfServiceUserResponse>;
+declare const DeleteSelfServiceUser: (userId: number, params: {
+    tenantId?: string;
+}) => Command<{
+    tenantId?: string;
+}, DeleteSelfServiceUserResponse>;
 
-export { type Recipient as $, ApproveRejectClientDocument as A, GetRecipient as B, CreatePayment as C, DeletePayment as D, CreateRecipient as E, DeleteRecipient as F, GetPayment as G, GetRecipients as H, GraphQL as I, GetUserDetail as J, type CreatePaymentInput as K, ListClientDocument as L, MarkAsSuccess as M, type UpdatePaymentInput as N, type PaymentResponse as O, type Payment as P, type GetTransferInput as Q, type CreateTransferInput as R, SendAuthorizationToCore as S, type Transfer as T, UpdatePayment as U, VerifyWithActivateClients as V, type TransferResponse as W, type MarkAsReturnInput as X, type UpdateTraceNumbersInput as Y, type ProcessOutput$1 as Z, type PaymentRail as _, GetPayments as a, type CreateRecipientRequest as a0, type RecipientRequest as a1, type RecipientFilterKey as a2, PaymentStatusSchema as a3, PaymentRailSchema as a4, PaymentTypeSchema as a5, SortOrderSchema as a6, CreatePaymentInputSchema as a7, UpdatePaymentInputSchema as a8, PaymentResponseSchema as a9, RecipientsSchema as aA, TransferSchema as aB, CreateTransferInputSchema as aC, GetTransferInputSchema as aD, MarkAsReturnInputSchema as aE, UpdateTraceNumbersInputSchema as aF, ProcessOutputSchema$1 as aG, TransferResponseSchema as aH, CreateTransferOutputSchema as aI, PaymentRailSchema$1 as aJ, PaymentTypeSchema$1 as aK, AccountTypeSchema as aL, TransferShape as aM, CreateTransferInputShape as aN, GetTransferInputShape as aO, MarkAsReturnInputShape as aP, UpdateTraceNumbersInputShape as aQ, ProcessOutputShape as aR, TransferResponseShape as aS, CreateTransferOutputShape as aT, ClientSchema as aU, AgentSchema as aV, PartySchema as aW, type UpdateRecipientRequest as aX, PaymentShape as aa, CreatePaymentInputShape as ab, UpdatePaymentInputShape as ac, SavingAccountSchema as ad, SavingAccountShape as ae, type SavingAccount as af, ListAccountsOfClientResponseShape as ag, ListAccountsOfClientResponseSchema as ah, ListAccountsRequestShape as ai, ListAccountsRequestSchema as aj, type UpdateAccountRequest as ak, UpdateAccountRequestSchema as al, UpdateAccountRequestShape as am, type UserDetail as an, UserDetailSchema as ao, UserDetailShape as ap, RecipientSchema as aq, CreateRecipientRequestSchema as ar, RecipientRequestSchema as as, RecipientFilterKeySchema as at, RecipientShape as au, CreateRecipientRequestShape as av, RecipientRequestShape as aw, BankInformationSchema as ax, AccountDetailsDataSchema as ay, AddressSchema as az, UpdateCardID as b, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };
+export { type UpdateTraceNumbersInput as $, ApproveRejectClientDocument as A, GetRecipient as B, CreatePayment as C, DeletePayment as D, CreateRecipient as E, DeleteRecipient as F, GetPayment as G, GetRecipients as H, GraphQL as I, GetUserDetail as J, EnableSelfServiceAccess as K, ListClientDocument as L, MarkAsSuccess as M, UpdateSelfServiceUser as N, DeleteSelfServiceUser as O, type Payment as P, type CreatePaymentInput as Q, type UpdatePaymentInput as R, SendAuthorizationToCore as S, type PaymentResponse as T, UpdatePayment as U, VerifyWithActivateClients as V, type Transfer as W, type GetTransferInput as X, type CreateTransferInput as Y, type TransferResponse as Z, type MarkAsReturnInput as _, GetPayments as a, type ProcessOutput$1 as a0, type PaymentRail as a1, type Recipient as a2, type CreateRecipientRequest as a3, type RecipientRequest as a4, type RecipientFilterKey as a5, PaymentStatusSchema as a6, PaymentRailSchema as a7, PaymentTypeSchema as a8, SortOrderSchema as a9, BankInformationSchema as aA, AccountDetailsDataSchema as aB, AddressSchema as aC, RecipientsSchema as aD, TransferSchema as aE, CreateTransferInputSchema as aF, GetTransferInputSchema as aG, MarkAsReturnInputSchema as aH, UpdateTraceNumbersInputSchema as aI, ProcessOutputSchema$1 as aJ, TransferResponseSchema as aK, CreateTransferOutputSchema as aL, PaymentRailSchema$1 as aM, PaymentTypeSchema$1 as aN, AccountTypeSchema as aO, TransferShape as aP, CreateTransferInputShape as aQ, GetTransferInputShape as aR, MarkAsReturnInputShape as aS, UpdateTraceNumbersInputShape as aT, ProcessOutputShape as aU, TransferResponseShape as aV, CreateTransferOutputShape as aW, ClientSchema as aX, AgentSchema as aY, PartySchema as aZ, type UpdateRecipientRequest as a_, CreatePaymentInputSchema as aa, UpdatePaymentInputSchema as ab, PaymentResponseSchema as ac, PaymentShape as ad, CreatePaymentInputShape as ae, UpdatePaymentInputShape as af, SavingAccountSchema as ag, SavingAccountShape as ah, type SavingAccount as ai, ListAccountsOfClientResponseShape as aj, ListAccountsOfClientResponseSchema as ak, ListAccountsRequestShape as al, ListAccountsRequestSchema as am, type UpdateAccountRequest as an, UpdateAccountRequestSchema as ao, UpdateAccountRequestShape as ap, type UserDetail as aq, UserDetailSchema as ar, UserDetailShape as as, RecipientSchema as at, CreateRecipientRequestSchema as au, RecipientRequestSchema as av, RecipientFilterKeySchema as aw, RecipientShape as ax, CreateRecipientRequestShape as ay, RecipientRequestShape as az, UpdateCardID as b, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };

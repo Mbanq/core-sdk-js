@@ -10,7 +10,7 @@ export { GraphQL } from './commands/graphql/index';
 export { isCommandError, createCommandError } from './utils/errorHandler';
 export { createLoggingMiddleware } from './middlewares/logging';
 export { createMetricsMiddleware } from './middlewares/metrics';
-export { GetUserDetail, EnableSelfServiceAccess } from './commands/rest/user';
+export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './commands/rest/user';
 export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct } from './commands/rest/cardProduct';
 
 export type {
