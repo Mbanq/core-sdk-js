@@ -4,8 +4,10 @@
 
 # Core SDK JS
 
+[![NPM](https://nodei.co/npm/@mbanq/core-sdk-js.png)](https://npmjs.org/package/@mbanq/core-sdk-js)
+
 ![npm version](https://img.shields.io/npm/v/@mbanq/core-sdk-js.svg)
-[![Download](https://img.shields.io/npm/dm/@mbanq/core-sdk-js)](https://www.npmjs.com/package/@mbanq/core-sdk-js)
+[![downloads](https://img.shields.io/npm/dt/@mbanq/core-sdk-js.svg)](https://npmjs.org/package/@mbanq/core-sdk-js)
 ![license](https://img.shields.io/github/license/Mbanq/core-sdk-js)
 
 ## Table of Contents
