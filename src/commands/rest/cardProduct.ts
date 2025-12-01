@@ -9,25 +9,25 @@ import {
   CreateCardProductResponse,
 } from '../../types/cardProduct';
 
-export const ListCardProduct = (params: { tenantId: string; limit?: number, offset?: number }): Command<{ tenantId: string; limit?: number, offset?: number }, CardProducts> => {
+export const ListCardProduct = (params: { limit?: number, offset?: number }, configuration?: { tenantId?: string }): Command<{ params: { limit?: number, offset?: number }, configuration?: { tenantId?: string } }, CardProducts> => {
   const path = `/v1/cardproducts`;
   const queryParams = new URLSearchParams();
-  if (params.offset) {
+  if (params?.offset) {
     queryParams.append('offset', params.offset.toString());
   }
-  queryParams.append('limit', params.offset ? params.offset.toString() : '0');
+  queryParams.append('limit', params?.offset ? params.offset.toString() : '0');
   const queryString = queryParams.toString();
   const urlPath = queryString ? `${path}?${queryString}` : path;
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'ListCardProduct',
       path: urlPath,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
       try {
@@ -40,18 +40,18 @@ export const ListCardProduct = (params: { tenantId: string; limit?: number, offs
   };
 };
 
-export const GetCardProduct = (params: { tenantId: string; cardProductId: number }): Command<{ tenantId: string; cardProductId: number }, CardProductDetail> => {
-  const path = `/v1/cardproducts/${params.cardProductId}`;
+export const GetCardProduct = (cardProductId: number, configuration?: { tenantId: string; }): Command<{ cardProductId: number, configuration?: { tenantId: string; } }, CardProductDetail> => {
+  const path = `/v1/cardproducts/${cardProductId}`;
   return {
-    input: params,
+    input: { cardProductId },
     metadata: {
       commandName: 'GetCardProduct',
       path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
       try {
@@ -64,24 +64,22 @@ export const GetCardProduct = (params: { tenantId: string; cardProductId: number
   };
 };
 
-export const CreateCardProduct = (params: {
-  tenantId: string, params: CardProductRequest
-}): Command<{ tenantId: string, params: CardProductRequest }, CreateCardProductResponse> => {
+export const CreateCardProduct = (params: CardProductRequest, configuration?: { tenantId?: string }): Command<{ params: CardProductRequest, configuration?: { tenantId?: string } }, CreateCardProductResponse> => {
   const path = '/v1/cardproducts';
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'CreateCardProduct',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
       try {
-        const response = await axiosInstance.post<CreateCardProductResponse>(path, params.params);
+        const response = await axiosInstance.post<CreateCardProductResponse>(path, params);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -90,24 +88,33 @@ export const CreateCardProduct = (params: {
   };
 };
 
-export const UpdateCardProduct = (params: {
-  tenantId: string, cardProductId: number, params: CardProductUpdateRequest
-}): Command<{tenantId: string, cardProductId: number, params: CardProductUpdateRequest}, CreateCardProductResponse> => {
-  const path = `/v1/cardproducts/${params.cardProductId}`;
+export const UpdateCardProduct = (
+  cardProductId: number,
+  params: CardProductUpdateRequest,
+  configuration?: {
+    tenantId: string
+  }): Command<{
+    cardProductId: number,
+    params: CardProductUpdateRequest,
+    configuration?: {
+      tenantId: string
+    }
+  }, CreateCardProductResponse> => {
+  const path = `/v1/cardproducts/${cardProductId}`;
   return {
-    input: params,
+    input: { cardProductId, params },
     metadata: {
       commandName: 'UpdateCardProduct',
       path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
       try {
-        const response = await axiosInstance.put<CreateCardProductResponse>(path, params.params);
+        const response = await axiosInstance.put<CreateCardProductResponse>(path, params);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
