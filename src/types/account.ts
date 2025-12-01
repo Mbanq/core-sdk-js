@@ -274,3 +274,54 @@ export type ListAccountsOfClientResponse = z.infer<typeof ListAccountsOfClientRe
 export type ListAccountsOfClientRequest = z.infer<typeof ListAccountsRequestSchema>;
 export type SavingAccount = z.infer<typeof SavingAccountSchema>;
 export type UpdateAccountRequest = z.infer<typeof UpdateAccountRequestSchema>;
+
+export const CreateAndActivateAccountRequestShape = {
+  clientId: z.number(),
+  productId: z.number(),
+  locale: z.string(),
+  dateFormat: z.string(),
+  submittedOnDate: z.string(),
+  monthDayFormat: z.string(),
+  nominalAnnualInterestRate: z.number().optional(),
+  minRequiredOpeningBalance: z.string().optional(),
+  lockinPeriodFrequency: z.number().optional(),
+  withdrawalFeeForTransfers: z.boolean().optional(),
+  allowOverdraft: z.boolean().optional(),
+  overdraftLimit: z.number().optional(),
+  nominalAnnualInterestRateOverdraft: z.number().optional(),
+  minOverdraftForInterestCalculation: z.number().optional(),
+  enforceMinRequiredBalance: z.boolean().optional(),
+  minRequiredBalance: z.number().optional(),
+  withHoldTax: z.boolean().optional(),
+  interestCompoundingPeriodType: z.number().optional(),
+  interestPostingPeriodType: z.number().optional(),
+  interestCalculationType: z.number().optional(),
+  interestCalculationDaysInYearType: z.number().optional(),
+  externalId: z.string().optional(),
+  lockinPeriodFrequencyType: z.number().optional(),
+  nickname: z.string().optional(),
+  charges: z.array(z.object({
+    chargeId: z.number(),
+    amount: z.number().optional()
+  })).optional()
+};
+
+export const CreateAndActivateAccountRequestSchema = z.object(CreateAndActivateAccountRequestShape);
+
+export const CreateAndActivateAccountResponseShape = {
+  officeId: z.number(),
+  clientId: z.number(),
+  savingsId: z.number(),
+  resourceId: z.number(),
+  changes: z.object({
+    status: z.string(),
+    locale: z.string(),
+    dateFormat: z.string(),
+    activatedOnDate: z.string()
+  })
+};
+
+export const CreateAndActivateAccountResponseSchema = z.object(CreateAndActivateAccountResponseShape);
+
+export type CreateAndActivateAccountRequest = z.infer<typeof CreateAndActivateAccountRequestSchema>;
+export type CreateAndActivateAccountResponse = z.infer<typeof CreateAndActivateAccountResponseSchema>;
