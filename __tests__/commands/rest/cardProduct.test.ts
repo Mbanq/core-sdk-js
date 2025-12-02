@@ -40,7 +40,8 @@ describe('CardProduct Commands', () => {
 
   describe('ListCardProduct', () => {
     it('should get card product list successfully with default limit', async () => {
-      const command = ListCardProduct();
+      const configuration = { tenantId: 'your_tenant_id' };
+      const command = ListCardProduct(undefined, configuration);
 
       const mockResponse = {
         data: {
@@ -72,7 +73,7 @@ describe('CardProduct Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
       const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts');
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts?limit=0&offset=0');
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -130,8 +131,8 @@ describe('CardProduct Commands', () => {
 
   describe('GetCardProduct', () => {
     it('should get card product successfully', async () => {
-      const params = { cardProductId: 123 };
-      const command = GetCardProduct(params.cardProductId);
+      const configuration = { tenantId: 'your_tenant_id' };
+      const command = GetCardProduct(123, configuration);
 
       const mockResponse = {
         data: {
@@ -184,7 +185,7 @@ describe('CardProduct Commands', () => {
     });
 
     it('should handle API errors', async () => {
-      const command = GetCardProduct(123, configuration);
+      const command = GetCardProduct(123);
       const mockError = new Error('Not found');
 
       mockAxiosInstance.get.mockRejectedValue(mockError);
@@ -221,7 +222,7 @@ describe('CardProduct Commands', () => {
       const result = await command.execute(mockConfig);
 
       expect(result).toEqual(mockResponse.data);
-      expect(command.input.params).toEqual(params);
+      expect(command.input).toEqual({ params });
       expect(command.metadata.commandName).toBe('CreateCardProduct');
       expect(command.metadata.method).toBe('POST');
       expect(command.metadata.path).toBe('/v1/cardproducts');
@@ -254,13 +255,11 @@ describe('CardProduct Commands', () => {
   describe('UpdateCardProduct', () => {
     it('should make PUT request to correct endpoint', async () => {
       const params = {
-        cardProductId: 789,
-        params: {
-          name: 'Updated Card Product',
-          active: false
-        }
+        name: 'Updated Card Product',
+        active: false
       };
-      const command = UpdateCardProduct(params.cardProductId, params.params);
+      const configuration = { tenantId: mockConfig.tenantId };
+      const command = UpdateCardProduct(789, params, configuration);
 
       const mockResponse = {
         data: {
@@ -273,10 +272,9 @@ describe('CardProduct Commands', () => {
 
       const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/cardproducts/789', params.params);
+      expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/cardproducts/789', params);
       expect(result).toEqual(mockResponse.data);
-      expect(command.input.cardProductId).toEqual(params.cardProductId);
-      expect(command.input.params).toEqual(params.params);
+      expect(command.input).toEqual({ cardProductId: 789, params, configuration });
       expect(command.metadata.commandName).toBe('UpdateCardProduct');
       expect(command.metadata.method).toBe('PUT');
       expect(command.metadata.path).toBe('/v1/cardproducts/789');
@@ -284,13 +282,10 @@ describe('CardProduct Commands', () => {
 
     it('should handle API errors', async () => {
       const params = {
-        cardProductId: 789,
-        params: {
-          name: 'Updated Card Product',
-          active: false
-        }
+        name: 'Updated Card Product',
+        active: false
       };
-      const command = UpdateCardProduct(params.cardProductId, params.params, configuration);
+      const command = UpdateCardProduct(789, params);
 
       const mockError = new Error('Update failed');
       mockAxiosInstance.put.mockRejectedValue(mockError);

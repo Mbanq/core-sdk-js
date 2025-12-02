@@ -12,16 +12,12 @@ import {
 export const ListCardProduct = (params: { limit?: number, offset?: number } = {}, configuration?: { tenantId?: string }): Command<{ params: { limit?: number, offset?: number }, configuration?: { tenantId?: string } }, CardProducts> => {
   const path = `/v1/cardproducts`;
   const queryParams = new URLSearchParams();
-  if (params?.limit !== undefined) {
-    queryParams.append('limit', params.limit.toString() || '0');
-  }
-  if (params?.offset !== undefined) {
-    queryParams.append('offset', params.offset.toString() || '0');
-  }
+  queryParams.append('limit', params?.limit?.toString() || '0');
+  queryParams.append('offset', params?.offset?.toString() || '0');
   const queryString = queryParams.toString();
-  const urlPath = queryString ? `${path}?${queryString}` : path;
+  const urlPath = `${path}?${queryString}`;
   return {
-    input: { params },
+    input: { params, configuration },
     metadata: {
       commandName: 'ListCardProduct',
       path: urlPath,
@@ -45,7 +41,7 @@ export const ListCardProduct = (params: { limit?: number, offset?: number } = {}
 export const GetCardProduct = (cardProductId: number, configuration?: { tenantId: string; }): Command<{ cardProductId: number, configuration?: { tenantId: string; } }, CardProductDetail> => {
   const path = `/v1/cardproducts/${cardProductId}`;
   return {
-    input: { cardProductId },
+    input: { cardProductId, configuration },
     metadata: {
       commandName: 'GetCardProduct',
       path,
@@ -69,7 +65,7 @@ export const GetCardProduct = (cardProductId: number, configuration?: { tenantId
 export const CreateCardProduct = (params: CardProductRequest, configuration?: { tenantId?: string }): Command<{ params: CardProductRequest, configuration?: { tenantId?: string } }, CreateCardProductResponse> => {
   const path = '/v1/cardproducts';
   return {
-    input: { params },
+    input: { params, configuration },
     metadata: {
       commandName: 'CreateCardProduct',
       path,
@@ -104,7 +100,7 @@ export const UpdateCardProduct = (
   }, CreateCardProductResponse> => {
   const path = `/v1/cardproducts/${cardProductId}`;
   return {
-    input: { cardProductId, params },
+    input: { cardProductId, params, configuration },
     metadata: {
       commandName: 'UpdateCardProduct',
       path,
