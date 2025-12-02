@@ -787,7 +787,7 @@ describe('CreateAndActivateAccount', () => {
 
     const command = CreateAndActivateAccount(params);
 
-    expect(command.input).toEqual(params);
+    expect(command.input).toEqual({ params, configuration: undefined });
     expect(command.metadata).toEqual({
       commandName: 'CreateAndActivateAccount',
       path: '/v1/savingsaccounts',
