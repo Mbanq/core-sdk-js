@@ -170,9 +170,9 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
 export const CreateAndActivateAccount = (
   params: CreateAndActivateAccountRequest,
   configuration?: { tenantId?: string }
-): Command<CreateAndActivateAccountRequest, CreateAndActivateAccountResponse> => {
+): Command<{ params: CreateAndActivateAccountRequest, configuration?: { tenantId?: string } }, CreateAndActivateAccountResponse> => {
   return {
-    input: params,
+    input: { params, configuration },
     metadata: {
       commandName: 'CreateAndActivateAccount',
       path: '/v1/savingsaccounts',
