@@ -294,9 +294,9 @@ export type CreateAndActivateAccountRequest = z.infer<typeof CreateAndActivateAc
 export type CreateAndActivateAccountResponse = z.infer<typeof CreateAndActivateAccountResponseSchema>;
 
 export const CloseAccountRequestShape = {
-  closedOnDate: z.string(),
-  dateFormat: z.string(),
-  locale: z.string(),
+  closedOnDate: z.string().optional(),
+  dateFormat: z.string().optional(),
+  locale: z.string().optional(),
   withdrawBalance: z.boolean().optional(),
   postInterestValidationOnClosure: z.boolean().optional(),
   ignoreNegativeBalance: z.boolean().optional(),
