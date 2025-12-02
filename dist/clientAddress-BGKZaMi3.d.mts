@@ -11875,4 +11875,207 @@ declare const UpdateCardProduct: (cardProductId: number, params: CardProductUpda
     };
 }, CreateCardProductResponse>;
 
-export { type GetTransferInput as $, ApproveRejectClientDocument as A, GetRecipient as B, CreatePayment as C, DeletePayment as D, CreateRecipient as E, DeleteRecipient as F, GetPayment as G, GetRecipients as H, GraphQL as I, GetUserDetail as J, EnableSelfServiceAccess as K, ListClientDocument as L, MarkAsSuccess as M, UpdateSelfServiceUser as N, DeleteSelfServiceUser as O, ListCardProduct as P, GetCardProduct as Q, CreateCardProduct as R, SendAuthorizationToCore as S, UpdateCardProduct as T, UpdatePayment as U, VerifyWithActivateClients as V, type Payment as W, type CreatePaymentInput as X, type UpdatePaymentInput as Y, type PaymentResponse as Z, type Transfer as _, GetPayments as a, ClientSchema as a$, type CreateTransferInput as a0, type TransferResponse as a1, type MarkAsReturnInput as a2, type UpdateTraceNumbersInput as a3, type ProcessOutput$1 as a4, type PaymentRail as a5, type Recipient as a6, type CreateRecipientRequest as a7, type RecipientRequest as a8, type RecipientFilterKey as a9, RecipientFilterKeySchema as aA, RecipientShape as aB, CreateRecipientRequestShape as aC, RecipientRequestShape as aD, BankInformationSchema as aE, AccountDetailsDataSchema as aF, AddressSchema as aG, RecipientsSchema as aH, TransferSchema as aI, CreateTransferInputSchema as aJ, GetTransferInputSchema as aK, MarkAsReturnInputSchema as aL, UpdateTraceNumbersInputSchema as aM, ProcessOutputSchema$1 as aN, TransferResponseSchema as aO, CreateTransferOutputSchema as aP, PaymentRailSchema$1 as aQ, PaymentTypeSchema$1 as aR, AccountTypeSchema as aS, TransferShape as aT, CreateTransferInputShape as aU, GetTransferInputShape as aV, MarkAsReturnInputShape as aW, UpdateTraceNumbersInputShape as aX, ProcessOutputShape as aY, TransferResponseShape as aZ, CreateTransferOutputShape as a_, PaymentStatusSchema as aa, PaymentRailSchema as ab, PaymentTypeSchema as ac, SortOrderSchema as ad, CreatePaymentInputSchema as ae, UpdatePaymentInputSchema as af, PaymentResponseSchema as ag, PaymentShape as ah, CreatePaymentInputShape as ai, UpdatePaymentInputShape as aj, SavingAccountSchema as ak, SavingAccountShape as al, type SavingAccount as am, ListAccountsOfClientResponseShape as an, ListAccountsOfClientResponseSchema as ao, ListAccountsRequestShape as ap, ListAccountsRequestSchema as aq, type UpdateAccountRequest as ar, UpdateAccountRequestSchema as as, UpdateAccountRequestShape as at, type UserDetail as au, UserDetailSchema as av, UserDetailShape as aw, RecipientSchema as ax, CreateRecipientRequestSchema as ay, RecipientRequestSchema as az, UpdateCardID as b, AgentSchema as b0, PartySchema as b1, type UpdateRecipientRequest as b2, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };
+declare const ClientAddressShape: z$1.ZodArray<z$1.ZodObject<{
+    clientId: z$1.ZodNumber;
+    addressType: z$1.ZodString;
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+    isActive: z$1.ZodBoolean;
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodString;
+    addressLine3: z$1.ZodString;
+    mobileNo: z$1.ZodNumber;
+    townVillage: z$1.ZodString;
+    countyDistrict: z$1.ZodString;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryName: z$1.ZodString;
+    stateName: z$1.ZodString;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodNumber;
+    createdBy: z$1.ZodString;
+    updatedBy: z$1.ZodString;
+    minifiedAddress: z$1.ZodArray<z$1.ZodString, "many">;
+}, "strip", z$1.ZodTypeAny, {
+    clientId: number;
+    postalCode: number;
+    city: string;
+    mobileNo: number;
+    addressType: string;
+    addressId: number;
+    addressTypeId: number;
+    isActive: boolean;
+    addressLine1: string;
+    addressLine2: string;
+    addressLine3: string;
+    townVillage: string;
+    countyDistrict: string;
+    stateProvinceId: number;
+    countryName: string;
+    stateName: string;
+    countryId: number;
+    createdBy: string;
+    updatedBy: string;
+    minifiedAddress: string[];
+}, {
+    clientId: number;
+    postalCode: number;
+    city: string;
+    mobileNo: number;
+    addressType: string;
+    addressId: number;
+    addressTypeId: number;
+    isActive: boolean;
+    addressLine1: string;
+    addressLine2: string;
+    addressLine3: string;
+    townVillage: string;
+    countyDistrict: string;
+    stateProvinceId: number;
+    countryName: string;
+    stateName: string;
+    countryId: number;
+    createdBy: string;
+    updatedBy: string;
+    minifiedAddress: string[];
+}>, "many">;
+type GetClientAddressResponse = z$1.infer<typeof ClientAddressShape>;
+declare const CreateClientAddressResponseSchema: z$1.ZodObject<{
+    clientId: z$1.ZodNumber;
+    resourceId: z$1.ZodNumber;
+}, "strip", z$1.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+}, {
+    clientId: number;
+    resourceId: number;
+}>;
+type CreateClientAddressResponse = z$1.infer<typeof CreateClientAddressResponseSchema>;
+declare const UpdateClientAddressResponseSchema: z$1.ZodObject<{
+    id: z$1.ZodNumber;
+    clientId: z$1.ZodNumber;
+    resourceId: z$1.ZodNumber;
+}, "strip", z$1.ZodTypeAny, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+}, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+}>;
+type UpdateClientAddressResponse = z$1.infer<typeof UpdateClientAddressResponseSchema>;
+declare const CreateClientAddressSchema: z$1.ZodObject<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    isActive: z$1.ZodBoolean;
+}, "strip", z$1.ZodAny, z$1.objectOutputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    isActive: z$1.ZodBoolean;
+}, z$1.ZodAny, "strip">, z$1.objectInputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    isActive: z$1.ZodBoolean;
+}, z$1.ZodAny, "strip">>;
+type CreateClientAddressRequest = z$1.infer<typeof CreateClientAddressSchema>;
+declare const UpdateClientAddressSchema: z$1.ZodObject<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+}, "strip", z$1.ZodAny, z$1.objectOutputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+}, z$1.ZodAny, "strip">, z$1.objectInputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+}, z$1.ZodAny, "strip">>;
+type UpdateClientAddressRequest = z$1.infer<typeof UpdateClientAddressSchema>;
+
+declare const GetClientAddress: (clientId: number, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetClientAddressResponse>;
+declare const CreateClientAddress: (clientId: number, type: number, params: CreateClientAddressRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    type: number;
+    params: CreateClientAddressRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CreateClientAddressResponse>;
+declare const UpdateClientAddress: (clientId: number, type: number, params: UpdateClientAddressRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    type: number;
+    params: UpdateClientAddressRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, UpdateClientAddressResponse>;
+declare const SetClientAddressStatus: (clientId: number, type: number, params: {
+    addressId: number;
+    isActive: boolean;
+}, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    type: number;
+    params: {
+        addressId: number;
+        isActive: boolean;
+    };
+    configuration?: {
+        tenantId?: string;
+    };
+}, UpdateClientAddressResponse>;
+
+export { type CreatePaymentInput as $, ApproveRejectClientDocument as A, GetRecipient as B, CreatePayment as C, DeletePayment as D, CreateRecipient as E, DeleteRecipient as F, GetPayment as G, GetRecipients as H, GraphQL as I, GetUserDetail as J, EnableSelfServiceAccess as K, ListClientDocument as L, MarkAsSuccess as M, UpdateSelfServiceUser as N, DeleteSelfServiceUser as O, ListCardProduct as P, GetCardProduct as Q, CreateCardProduct as R, SendAuthorizationToCore as S, UpdateCardProduct as T, UpdatePayment as U, VerifyWithActivateClients as V, GetClientAddress as W, CreateClientAddress as X, UpdateClientAddress as Y, SetClientAddressStatus as Z, type Payment as _, GetPayments as a, UpdateTraceNumbersInputShape as a$, type UpdatePaymentInput as a0, type PaymentResponse as a1, type Transfer as a2, type GetTransferInput as a3, type CreateTransferInput as a4, type TransferResponse as a5, type MarkAsReturnInput as a6, type UpdateTraceNumbersInput as a7, type ProcessOutput$1 as a8, type PaymentRail as a9, UserDetailShape as aA, RecipientSchema as aB, CreateRecipientRequestSchema as aC, RecipientRequestSchema as aD, RecipientFilterKeySchema as aE, RecipientShape as aF, CreateRecipientRequestShape as aG, RecipientRequestShape as aH, BankInformationSchema as aI, AccountDetailsDataSchema as aJ, AddressSchema as aK, RecipientsSchema as aL, TransferSchema as aM, CreateTransferInputSchema as aN, GetTransferInputSchema as aO, MarkAsReturnInputSchema as aP, UpdateTraceNumbersInputSchema as aQ, ProcessOutputSchema$1 as aR, TransferResponseSchema as aS, CreateTransferOutputSchema as aT, PaymentRailSchema$1 as aU, PaymentTypeSchema$1 as aV, AccountTypeSchema as aW, TransferShape as aX, CreateTransferInputShape as aY, GetTransferInputShape as aZ, MarkAsReturnInputShape as a_, type Recipient as aa, type CreateRecipientRequest as ab, type RecipientRequest as ac, type RecipientFilterKey as ad, PaymentStatusSchema as ae, PaymentRailSchema as af, PaymentTypeSchema as ag, SortOrderSchema as ah, CreatePaymentInputSchema as ai, UpdatePaymentInputSchema as aj, PaymentResponseSchema as ak, PaymentShape as al, CreatePaymentInputShape as am, UpdatePaymentInputShape as an, SavingAccountSchema as ao, SavingAccountShape as ap, type SavingAccount as aq, ListAccountsOfClientResponseShape as ar, ListAccountsOfClientResponseSchema as as, ListAccountsRequestShape as at, ListAccountsRequestSchema as au, type UpdateAccountRequest as av, UpdateAccountRequestSchema as aw, UpdateAccountRequestShape as ax, type UserDetail as ay, UserDetailSchema as az, UpdateCardID as b, ProcessOutputShape as b0, TransferResponseShape as b1, CreateTransferOutputShape as b2, ClientSchema as b3, AgentSchema as b4, PartySchema as b5, type UpdateRecipientRequest as b6, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };
