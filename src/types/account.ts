@@ -322,3 +322,41 @@ export const CloseAccountResponseSchema = z.object(CloseAccountResponseShape);
 
 export type CloseAccountRequest = z.infer<typeof CloseAccountRequestSchema>;
 export type CloseAccountResponse = z.infer<typeof CloseAccountResponseSchema>;
+
+export const BlockAccountRequestShape = {
+  blockReasonCodeId: z.number()
+};
+
+export const BlockAccountRequestSchema = z.object(BlockAccountRequestShape);
+
+export const BlockAccountResponseShape = {
+  id: z.number(),
+  clientId: z.number(),
+  officeId: z.number(),
+  savingsId: z.number(),
+  resourceId: z.number(),
+  changes: z.object({
+    subStatus: z.object({
+      id: z.number(),
+      code: z.string(),
+      value: z.string(),
+      none: z.boolean(),
+      inactive: z.boolean(),
+      dormant: z.boolean(),
+      escheat: z.boolean(),
+      block: z.boolean(),
+      blockCredit: z.boolean(),
+      blockDebit: z.boolean()
+    }),
+    blockReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const BlockAccountResponseSchema = z.object(BlockAccountResponseShape);
+
+export type BlockAccountRequest = z.infer<typeof BlockAccountRequestSchema>;
+export type BlockAccountResponse = z.infer<typeof BlockAccountResponseSchema>;

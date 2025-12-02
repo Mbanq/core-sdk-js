@@ -6,7 +6,9 @@ import {
   CreateAndActivateAccountRequest,
   CreateAndActivateAccountResponse,
   CloseAccountRequest,
-  CloseAccountResponse
+  CloseAccountResponse,
+  BlockAccountRequest,
+  BlockAccountResponse
 } from '../../types/account';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -302,3 +304,56 @@ export const CloseAccount = (
   };
 };
 
+
+/**
+ * Blocks a savings account.
+ * 
+ * @param accountId - The ID of the savings account to block
+ * @param requestData - The block parameters (see BlockAccountRequest)
+ * @param requestData.blockReasonCodeId - The ID representing the reason for blocking the account
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the block confirmation
+ * 
+ * @example
+ * ```typescript
+ * const blockCmd = BlockAccount(
+ *   123,
+ *   { blockReasonCodeId: 5100 },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await blockCmd.execute(config);
+ * console.log(result.changes.subStatus.value); // "Block"
+ * ```
+ */
+export const BlockAccount = (
+  accountId: number,
+  requestData: BlockAccountRequest,
+  configuration?: { tenantId?: string }
+): Command<{ tenantId?: string }, BlockAccountResponse> => {
+  return {
+    input: configuration || {},
+    metadata: {
+      commandName: 'BlockAccount',
+      path: `/v1/savingsaccounts/${accountId}?command=block`,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<BlockAccountResponse>(
+          `/v1/savingsaccounts/${accountId}?command=block`,
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};

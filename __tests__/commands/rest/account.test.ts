@@ -5,7 +5,8 @@ import {
   DeleteAccount,
   GetAccountsOfClient,
   CreateAndActivateAccount,
-  CloseAccount
+  CloseAccount,
+  BlockAccount
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -996,3 +997,128 @@ describe('CloseAccount', () => {
   });
 });
 
+
+describe('BlockAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a BlockAccount command with correct metadata', () => {
+    const requestData = { blockReasonCodeId: 5100 };
+    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.metadata).toEqual({
+      commandName: 'BlockAccount',
+      path: '/v1/savingsaccounts/123?command=block',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = { blockReasonCodeId: 5100 };
+
+    const mockResponse = {
+      id: 11999,
+      clientId: 111,
+      officeId: 1,
+      savingsId: 4865,
+      resourceId: 111,
+      changes: {
+        subStatus: {
+          id: 400,
+          code: 'SavingsAccountSubStatusEnum.block',
+          value: 'Block',
+          none: false,
+          inactive: false,
+          dormant: false,
+          escheat: false,
+          block: true,
+          blockCredit: false,
+          blockDebit: false
+        },
+        blockReason: {
+          id: 3002,
+          name: 'Suspicious Transactions',
+          codeName: 'ACCOUNT_BLOCK_REASON'
+        }
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/123?command=block',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during block', async () => {
+    const mockError: MockAxiosError = new Error('Block failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot block account',
+        developerMessage: 'Account is already blocked'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = BlockAccount(123, { blockReasonCodeId: 5100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = BlockAccount(123, { blockReasonCodeId: 5100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
