@@ -30,9 +30,9 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * console.log(account.accountNo, account.accountBalance);
  * ```
  */
-export const GetAccount = (accountId: number, configuration?: { tenantId?: string }): Command<{ tenantId?: string }, SavingAccount> => {
+export const GetAccount = (accountId: number, configuration?: { tenantId?: string }): Command<{ accountId: number, configuration?: { tenantId?: string } }, SavingAccount> => {
   return {
-    input: configuration || {},
+    input: { accountId, configuration },
     metadata: {
       commandName: 'GetAccount',
       path: `/v1/savingaccounts/${accountId}`,
@@ -85,9 +85,9 @@ export const UpdateAccount = (
   accountId: number,
   requestData: UpdateAccountRequest,
   configuration?: { tenantId?: string }
-): Command<{ tenantId?: string }, any> => {
+): Command<{ accountId: number, requestData: UpdateAccountRequest, configuration?: { tenantId?: string } }, any> => {
   return {
-    input: configuration || {},
+    input: { accountId, requestData, configuration },
     metadata: {
       commandName: 'UpdateAccount',
       path: `/v1/savingsaccounts/${accountId}`,
@@ -124,9 +124,9 @@ export const UpdateAccount = (
  * const result = await deleteCmd.execute(config);
  * ```
  */
-export const DeleteAccount = (accountId: number, configuration?: { tenantId?: string }): Command<{ tenantId?: string }, ProcessOutput> => {
+export const DeleteAccount = (accountId: number, configuration?: { tenantId?: string }): Command<{ accountId: number, configuration?: { tenantId?: string } }, ProcessOutput> => {
   return {
-    input: configuration || {},
+    input: { accountId, configuration },
     metadata: {
       commandName: 'DeleteAccount',
       path: `/v1/savingsaccounts/${accountId}`,
@@ -149,9 +149,9 @@ export const DeleteAccount = (accountId: number, configuration?: { tenantId?: st
 };
 
 
-export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string }): Command<{ params: ListAccountsOfClientRequest, configuration: { tenantId?: string } }, ListAccountsOfClientRequest> => {
+export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string }): Command<{ clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string } }, ListAccountsOfClientRequest> => {
   return {
-    input: { params, configuration },
+    input: { clientId, params, configuration },
     metadata: {
       commandName: 'ListAccountsOfClient',
       path: `/v1/clients/${clientId}/accounts`,
