@@ -275,9 +275,9 @@ export const CloseAccount = (
   savingsAccountId: number,
   requestData: CloseAccountRequest,
   params?: { tenantId?: string }
-): Command<{ tenantId?: string }, CloseAccountResponse> => {
+): Command<{ savingsAccountId: number, requestData: CloseAccountRequest, params?: { tenantId?: string } }, CloseAccountResponse> => {
   return {
-    input: params || {},
+    input: { savingsAccountId, requestData, params },
     metadata: {
       commandName: 'CloseAccount',
       path: `/v1/savingaccounts/${savingsAccountId}?command=close`,
