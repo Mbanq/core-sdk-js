@@ -3,7 +3,7 @@ export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } 
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument, ListClientDocument, DeleteClientDocument, ApproveRejectClientDocument } from './commands/rest/clientIdentifier';
 export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from './commands/rest/client';
-export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount } from './commands/rest/account';
+export { GetAccount, GetAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount, CloseAccount } from './commands/rest/account';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './commands/rest/transfer';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './commands/rest/recipient';
 export { GraphQL } from './commands/graphql/index';
