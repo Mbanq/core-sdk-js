@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/mbanq/core-sdk-js/compare/v0.11.0...v0.12.0) (2025-12-02)
+
+
+### Features
+
+* client addresses ([158164d](https://github.com/mbanq/core-sdk-js/commit/158164df423907678c8f3f66bbac75d1483e9d41))
+
 # [0.11.0](https://github.com/mbanq/core-sdk-js/compare/v0.10.0...v0.11.0) (2025-12-02)
 
 
