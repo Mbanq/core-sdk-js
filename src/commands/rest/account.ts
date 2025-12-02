@@ -35,7 +35,7 @@ export const GetAccount = (accountId: number, configuration?: { tenantId?: strin
     input: { accountId, configuration },
     metadata: {
       commandName: 'GetAccount',
-      path: `/v1/savingaccounts/${accountId}`,
+      path: `/v1/savingsaccounts/${accountId}`,
       method: 'GET'
     },
     execute: async (config: Config) => {
@@ -282,7 +282,7 @@ export const CloseAccount = (
     input: { savingsAccountId, requestData, configuration },
     metadata: {
       commandName: 'CloseAccount',
-      path: `/v1/savingaccounts/${savingsAccountId}?command=close`,
+      path: `/v1/savingsaccounts/${savingsAccountId}?command=close`,
       method: 'POST'
     },
     execute: async (config: Config) => {
@@ -293,7 +293,7 @@ export const CloseAccount = (
 
       try {
         const response = await axiosInstance.post<CloseAccountResponse>(
-          `/v1/savingaccounts/${savingsAccountId}?command=close`,
+          `/v1/savingsaccounts/${savingsAccountId}?command=close`,
           requestData
         );
         return response.data;

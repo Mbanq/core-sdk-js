@@ -58,7 +58,7 @@ describe('GetAccount', () => {
     expect(command.input).toEqual({ accountId: 123, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'GetAccount',
-      path: '/v1/savingaccounts/123',
+      path: '/v1/savingsaccounts/123',
       method: 'GET'
     });
   });
@@ -898,7 +898,7 @@ describe('CloseAccount', () => {
     expect(command.input).toEqual({ savingsAccountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'CloseAccount',
-      path: '/v1/savingaccounts/5100?command=close',
+      path: '/v1/savingsaccounts/5100?command=close',
       method: 'POST'
     });
   });
@@ -940,7 +940,7 @@ describe('CloseAccount', () => {
     const result = await command.execute(config);
 
     expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-      '/v1/savingaccounts/5100?command=close',
+      '/v1/savingsaccounts/5100?command=close',
       requestData
     );
     expect(result).toEqual(mockResponse);
