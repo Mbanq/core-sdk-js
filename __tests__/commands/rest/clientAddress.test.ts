@@ -209,8 +209,8 @@ describe('ClientAddress Commands', () => {
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
       const configuration = { tenantId: 'custom-tenant-id' };
       const deactivateParams = { addressId: 456, isActive: true };
-      const params = { clientId: 123, type: 1, params: { addressId: 456, isActive: true }, configuration };
-      const command = SetClientAddressStatus(params.clientId, params.type, params.params);
+      const params = { clientId: 123, type: 1, params: { addressId: 456, isActive: true } };
+      const command = SetClientAddressStatus(params.clientId, params.type, params.params, configuration);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.put).toHaveBeenCalledTimes(1);

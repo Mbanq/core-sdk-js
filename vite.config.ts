@@ -21,9 +21,11 @@ export default defineConfig(({ mode }) => {
           branches: 95,
           statements: 95
         },
-        exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '**/__tests__/**', '**/*.config.ts', '*.config.js']
+        exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '**/__tests__/**', '**/*.config.ts', '*.config.js', '**/src/types/**']
       },
-      exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '*.config.ts', '*.config.js'],
+      exclude: [
+        '**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', '*.config.ts', '*.config.js'
+      ],
       globals: true
     }
   };

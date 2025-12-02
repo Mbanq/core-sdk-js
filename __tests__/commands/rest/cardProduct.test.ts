@@ -73,7 +73,7 @@ describe('CardProduct Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
       const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts');
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts?limit=0&offset=0');
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -185,8 +185,7 @@ describe('CardProduct Commands', () => {
     });
 
     it('should handle API errors', async () => {
-      const configuration = { tenantId: mockConfig.tenantId };
-      const command = GetCardProduct(123, configuration);
+      const command = GetCardProduct(123);
       const mockError = new Error('Not found');
 
       mockAxiosInstance.get.mockRejectedValue(mockError);
@@ -259,7 +258,8 @@ describe('CardProduct Commands', () => {
         name: 'Updated Card Product',
         active: false
       };
-      const command = UpdateCardProduct(789, params);
+      const configuration = { tenantId: mockConfig.tenantId };
+      const command = UpdateCardProduct(789, params, configuration);
 
       const mockResponse = {
         data: {
@@ -274,7 +274,7 @@ describe('CardProduct Commands', () => {
 
       expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/cardproducts/789', params);
       expect(result).toEqual(mockResponse.data);
-      expect(command.input).toEqual({ cardProductId: 789, params, configuration: undefined });
+      expect(command.input).toEqual({ cardProductId: 789, params, configuration });
       expect(command.metadata.commandName).toBe('UpdateCardProduct');
       expect(command.metadata.method).toBe('PUT');
       expect(command.metadata.path).toBe('/v1/cardproducts/789');
