@@ -331,9 +331,9 @@ export const BlockAccount = (
   accountId: number,
   requestData: BlockAccountRequest,
   configuration?: { tenantId?: string }
-): Command<{ tenantId?: string }, BlockAccountResponse> => {
+): Command<{ accountId: number, requestData: BlockAccountRequest, configuration?: { tenantId?: string } }, BlockAccountResponse> => {
   return {
-    input: configuration || {},
+    input: { accountId, requestData, configuration },
     metadata: {
       commandName: 'BlockAccount',
       path: `/v1/savingsaccounts/${accountId}?command=block`,
