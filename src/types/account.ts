@@ -267,7 +267,9 @@ export const CreateAndActivateAccountRequestShape = {
   nickname: z.string().optional(),
   charges: z.array(z.object({
     chargeId: z.number(),
-    amount: z.number().optional()
+    amount: z.number().optional(),
+    dueDate: z.string().optional(),
+    feeInterval: z.number().optional()
   })).optional()
 };
 

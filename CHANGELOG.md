@@ -1,3 +1,25 @@
+# [0.11.0](https://github.com/mbanq/core-sdk-js/compare/v0.10.0...v0.11.0) (2025-12-02)
+
+
+### Features
+
+* card product ([2696d01](https://github.com/mbanq/core-sdk-js/commit/2696d01c469cfa726ecff50cdbf29dc7f5a6c308))
+* MC-30232-MC-30231-MC-30234-MC-30230-create-update-get-card-product ([#36](https://github.com/mbanq/core-sdk-js/issues/36)) ([8ca0bfa](https://github.com/mbanq/core-sdk-js/commit/8ca0bfa9c54e5a8a937569c81c7c472869ae20bd))
+
+# [0.10.0](https://github.com/mbanq/core-sdk-js/compare/v0.9.0...v0.10.0) (2025-11-28)
+
+
+### Bug Fixes
+
+* add tests for the GetUserDetail command. ([02584fd](https://github.com/mbanq/core-sdk-js/commit/02584fd759dac7abb1dfc4ed2cc68840534b1a9c))
+
+
+### Features
+
+* MC-30239 implement function enable self service access access ([#33](https://github.com/mbanq/core-sdk-js/issues/33)) ([42c8c54](https://github.com/mbanq/core-sdk-js/commit/42c8c54bb8dd9919d3f1f9e8a585b4f0b672c12b))
+* MC-30240 implement function update self service user ([#34](https://github.com/mbanq/core-sdk-js/issues/34)) ([e270613](https://github.com/mbanq/core-sdk-js/commit/e2706138d780172aaf779fdfafc1e303d4764212))
+* MC-30241 implement function delete self service user ([#35](https://github.com/mbanq/core-sdk-js/issues/35)) ([ac27df6](https://github.com/mbanq/core-sdk-js/commit/ac27df63f318a21585f41c314c26b84610758ab0))
+
 # [0.9.0](https://github.com/mbanq/core-sdk-js/compare/v0.8.0...v0.9.0) (2025-11-28)
 
 

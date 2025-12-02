@@ -209,9 +209,9 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
 export const CreateAndActivateAccount = (
   params: CreateAndActivateAccountRequest,
   configuration?: { tenantId?: string }
-): Command<CreateAndActivateAccountRequest, CreateAndActivateAccountResponse> => {
+): Command<{ params: CreateAndActivateAccountRequest, configuration?: { tenantId?: string } }, CreateAndActivateAccountResponse> => {
   return {
-    input: params,
+    input: { params, configuration },
     metadata: {
       commandName: 'CreateAndActivateAccount',
       path: '/v1/savingsaccounts',
@@ -276,18 +276,18 @@ export const CreateAndActivateAccount = (
 export const CloseAccount = (
   savingsAccountId: number,
   requestData: CloseAccountRequest,
-  params?: { tenantId?: string }
-): Command<{ tenantId?: string }, CloseAccountResponse> => {
+  configuration?: { tenantId?: string }
+): Command<{ savingsAccountId: number, requestData: CloseAccountRequest, configuration?: { tenantId?: string } }, CloseAccountResponse> => {
   return {
-    input: params || {},
+    input: { savingsAccountId, requestData, configuration },
     metadata: {
       commandName: 'CloseAccount',
       path: `/v1/savingaccounts/${savingsAccountId}?command=close`,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params?.tenantId) {
-        config.tenantId = params.tenantId;
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
       }
       const axiosInstance = await baseRequest(config);
 
