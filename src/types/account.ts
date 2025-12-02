@@ -316,7 +316,11 @@ export const CloseAccountResponseShape = {
     locale: z.string(),
     dateFormat: z.string(),
     closedOnDate: z.string(),
-    closeReason: z.string()
+    closeReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
   })
 };
 
