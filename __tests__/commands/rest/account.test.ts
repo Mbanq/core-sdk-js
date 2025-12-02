@@ -55,7 +55,7 @@ describe('GetAccount', () => {
   it('should create a GetAccount command with correct metadata', () => {
     const command = GetAccount(123, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 123, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'GetAccount',
       path: '/v1/savingaccounts/123',
@@ -197,7 +197,7 @@ describe('UpdateAccount', () => {
 
     const command = UpdateAccount(456, updateData, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 456, requestData: updateData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'UpdateAccount',
       path: '/v1/savingsaccounts/456',
@@ -371,7 +371,7 @@ describe('DeleteAccount', () => {
   it('should create a DeleteAccount command with correct metadata', () => {
     const command = DeleteAccount(456, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 456, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'DeleteAccount',
       path: '/v1/savingsaccounts/456',
@@ -467,7 +467,7 @@ describe('GetAccountsOfClient', () => {
     const configuration = { tenantId: 'test-tenant' };
     const command = GetAccountsOfClient(clientId, params, configuration);
 
-    expect(command.input).toEqual({ params, configuration });
+    expect(command.input).toEqual({ clientId, params, configuration });
     expect(command.metadata).toEqual({
       commandName: 'ListAccountsOfClient',
       path: '/v1/clients/123/accounts',
@@ -586,7 +586,7 @@ describe('CreateAndActivateAccount', () => {
 
     const command = CreateAndActivateAccount(params);
 
-    expect(command.input).toEqual(params);
+    expect(command.input).toEqual({ params, configuration: undefined });
     expect(command.metadata).toEqual({
       commandName: 'CreateAndActivateAccount',
       path: '/v1/savingsaccounts',
@@ -895,7 +895,7 @@ describe('CloseAccount', () => {
     };
     const command = CloseAccount(5100, requestData, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ savingsAccountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'CloseAccount',
       path: '/v1/savingaccounts/5100?command=close',
@@ -1026,7 +1026,7 @@ describe('BlockAccount', () => {
     const requestData = { blockReasonCodeId: 5100 };
     const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'BlockAccount',
       path: '/v1/savingsaccounts/123?command=block',
