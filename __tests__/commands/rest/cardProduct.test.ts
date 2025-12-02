@@ -15,6 +15,7 @@ describe('CardProduct Commands', () => {
     tenantId: 'your_tenant_id',
     baseUrl: 'https://test.api.url'
   };
+  const configuration: { tenantId: string } = { tenantId: 'your_tenant_id' };
 
   beforeEach(() => {
     vi.stubEnv('SECRET', 'test_secret');
@@ -40,7 +41,7 @@ describe('CardProduct Commands', () => {
   describe('ListCardProduct', () => {
     it('should get card product list successfully with default limit', async () => {
       const configuration = { tenantId: 'your_tenant_id' };
-      const command = ListCardProduct({}, configuration);
+      const command = ListCardProduct(undefined, configuration);
 
       const mockResponse = {
         data: {
@@ -72,13 +73,13 @@ describe('CardProduct Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
       const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts?limit=0');
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts');
       expect(result).toEqual(mockResponse.data);
     });
 
     it('should get card product list successfully with set limit and offset', async () => {
       const params = { limit: 10, offset: 20 };
-      const command = ListCardProduct({ ...params });
+      const command = ListCardProduct(params, configuration);
 
       const mockResponse = {
         data: {
@@ -110,10 +111,10 @@ describe('CardProduct Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
       const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts?offset=20&limit=20');
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/cardproducts?limit=10&offset=20');
       expect(result).toEqual(mockResponse.data);
       expect(command.metadata.commandName).toBe('ListCardProduct');
-      expect(command.metadata.path).toBe('/v1/cardproducts?offset=20&limit=10');
+      expect(command.metadata.path).toBe('/v1/cardproducts?limit=10&offset=20');
       expect(command.metadata.method).toBe('GET');
     });
 
@@ -243,7 +244,7 @@ describe('CardProduct Commands', () => {
         cardProcessorConfigId: 50000,
         network: 'VISA'
       };
-      const command = CreateCardProduct(params);
+      const command = CreateCardProduct(params, configuration);
 
       const mockError = new Error('Validation error');
 

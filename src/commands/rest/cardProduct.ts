@@ -9,13 +9,15 @@ import {
   CreateCardProductResponse,
 } from '../../types/cardProduct';
 
-export const ListCardProduct = (params: { limit?: number, offset?: number }, configuration?: { tenantId?: string }): Command<{ params: { limit?: number, offset?: number }, configuration?: { tenantId?: string } }, CardProducts> => {
+export const ListCardProduct = (params: { limit?: number, offset?: number } = {}, configuration?: { tenantId?: string }): Command<{ params: { limit?: number, offset?: number }, configuration?: { tenantId?: string } }, CardProducts> => {
   const path = `/v1/cardproducts`;
   const queryParams = new URLSearchParams();
-  if (params?.offset) {
-    queryParams.append('offset', params.offset.toString());
+  if (params?.limit !== undefined) {
+    queryParams.append('limit', params.limit.toString() || '0');
   }
-  queryParams.append('limit', params?.offset ? params.offset.toString() : '0');
+  if (params?.offset !== undefined) {
+    queryParams.append('offset', params.offset.toString() || '0');
+  }
   const queryString = queryParams.toString();
   const urlPath = queryString ? `${path}?${queryString}` : path;
   return {
