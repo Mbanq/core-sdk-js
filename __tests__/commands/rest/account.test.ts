@@ -5,7 +5,8 @@ import {
   DeleteAccount,
   GetAccountsOfClient,
   CreateAndActivateAccount,
-  CloseAccount
+  CloseAccount,
+  BlockAccount
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -54,10 +55,10 @@ describe('GetAccount', () => {
   it('should create a GetAccount command with correct metadata', () => {
     const command = GetAccount(123, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 123, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'GetAccount',
-      path: '/v1/savingaccounts/123',
+      path: '/v1/savingsaccounts/123',
       method: 'GET'
     });
   });
@@ -100,7 +101,7 @@ describe('GetAccount', () => {
 
     const result = await command.execute(config);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingaccounts/123');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingsaccounts/123');
     expect(result).toEqual(mockAccountData);
     expect(config.tenantId).toBe('test-tenant');
   });
@@ -196,7 +197,7 @@ describe('UpdateAccount', () => {
 
     const command = UpdateAccount(456, updateData, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 456, requestData: updateData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'UpdateAccount',
       path: '/v1/savingsaccounts/456',
@@ -370,7 +371,7 @@ describe('DeleteAccount', () => {
   it('should create a DeleteAccount command with correct metadata', () => {
     const command = DeleteAccount(456, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ accountId: 456, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'DeleteAccount',
       path: '/v1/savingsaccounts/456',
@@ -466,7 +467,7 @@ describe('GetAccountsOfClient', () => {
     const configuration = { tenantId: 'test-tenant' };
     const command = GetAccountsOfClient(clientId, params, configuration);
 
-    expect(command.input).toEqual({ params, configuration });
+    expect(command.input).toEqual({ clientId, params, configuration });
     expect(command.metadata).toEqual({
       commandName: 'ListAccountsOfClient',
       path: '/v1/clients/123/accounts',
@@ -894,10 +895,10 @@ describe('CloseAccount', () => {
     };
     const command = CloseAccount(5100, requestData, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual({ tenantId: 'test-tenant' });
+    expect(command.input).toEqual({ savingsAccountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'CloseAccount',
-      path: '/v1/savingaccounts/5100?command=close',
+      path: '/v1/savingsaccounts/5100?command=close',
       method: 'POST'
     });
   });
@@ -939,7 +940,7 @@ describe('CloseAccount', () => {
     const result = await command.execute(config);
 
     expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-      '/v1/savingaccounts/5100?command=close',
+      '/v1/savingsaccounts/5100?command=close',
       requestData
     );
     expect(result).toEqual(mockResponse);
@@ -995,4 +996,132 @@ describe('CloseAccount', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
+
+
+describe('BlockAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a BlockAccount command with correct metadata', () => {
+    const requestData = { blockReasonCodeId: 5100 };
+    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'BlockAccount',
+      path: '/v1/savingsaccounts/123?command=block',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = { blockReasonCodeId: 5100 };
+
+    const mockResponse = {
+      id: 11999,
+      clientId: 111,
+      officeId: 1,
+      savingsId: 4865,
+      resourceId: 111,
+      changes: {
+        subStatus: {
+          id: 400,
+          code: 'SavingsAccountSubStatusEnum.block',
+          value: 'Block',
+          none: false,
+          inactive: false,
+          dormant: false,
+          escheat: false,
+          block: true,
+          blockCredit: false,
+          blockDebit: false
+        },
+        blockReason: {
+          id: 3002,
+          name: 'Suspicious Transactions',
+          codeName: 'ACCOUNT_BLOCK_REASON'
+        }
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/123?command=block',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during block', async () => {
+    const mockError: MockAxiosError = new Error('Block failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot block account',
+        developerMessage: 'Account is already blocked'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = BlockAccount(123, { blockReasonCodeId: 5100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = BlockAccount(123, { blockReasonCodeId: 5100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+
 
