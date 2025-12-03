@@ -8,7 +8,9 @@ import {
   CloseAccountRequest,
   CloseAccountResponse,
   BlockAccountRequest,
-  BlockAccountResponse
+  BlockAccountResponse,
+  HoldAmountRequest,
+  HoldAmountResponse
 } from '../../types/account';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -425,3 +427,58 @@ export const BlockAccount = (
     }
   };
 };
+
+/**
+ * Places a hold on a specific amount in a client's account.
+ * 
+ * @param accountId - The ID of the savings account
+ * @param requestData - The hold amount parameters (see HoldAmountRequest)
+ * @param requestData.transactionAmount - The amount to be held
+ * @param requestData.holdAmountReasonCodeId - The ID representing the reason for holding the amount
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the hold amount confirmation
+ * 
+ * @example
+ * ```typescript
+ * const holdCmd = HoldAmount(
+ *   123,
+ *   { transactionAmount: 45, holdAmountReasonCodeId: 6100 },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await holdCmd.execute(config);
+ * console.log(result.changes.savingsAmountOnHold); // 45
+ * ```
+ */
+export const HoldAmount = (
+  accountId: number,
+  requestData: HoldAmountRequest,
+  configuration?: { tenantId?: string }
+): Command<{ accountId: number, requestData: HoldAmountRequest, configuration?: { tenantId?: string } }, HoldAmountResponse> => {
+  return {
+    input: { accountId, requestData, configuration },
+    metadata: {
+      commandName: 'HoldAmount',
+      path: `/v1/savingsaccounts/${accountId}?command=hold`,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<HoldAmountResponse>(
+          `/v1/savingsaccounts/${accountId}?command=hold`,
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+

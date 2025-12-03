@@ -7,7 +7,8 @@ import {
   CreateAndActivateAccount,
   CloseAccount,
   ScheduleAccountClosure,
-  BlockAccount
+  BlockAccount,
+  HoldAmount
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -1261,3 +1262,115 @@ describe('ScheduleAccountClosure', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
+
+describe('HoldAmount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a HoldAmount command with correct metadata', () => {
+    const requestData = { transactionAmount: 45, holdAmountReasonCodeId: 6100 };
+    const command = HoldAmount(123, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'HoldAmount',
+      path: '/v1/savingsaccounts/123?command=hold',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = { transactionAmount: 45, holdAmountReasonCodeId: 6100 };
+
+    const mockResponse = {
+      id: '1',
+      resourceId: 1,
+      changes: {
+        savingsAmountOnHold: 45,
+        blockAmountReason: {
+          id: 6582,
+          name: 'Dispute Hold',
+          codeName: 'AMOUNT_BLOCK_REASON'
+        }
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = HoldAmount(123, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/123?command=hold',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during hold amount', async () => {
+    const mockError: MockAxiosError = new Error('Hold failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot hold amount',
+        developerMessage: 'Insufficient funds'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = HoldAmount(123, { transactionAmount: 45, holdAmountReasonCodeId: 6100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = HoldAmount(123, { transactionAmount: 45, holdAmountReasonCodeId: 6100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+

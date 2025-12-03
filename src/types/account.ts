@@ -366,3 +366,28 @@ export const BlockAccountResponseSchema = z.object(BlockAccountResponseShape);
 
 export type BlockAccountRequest = z.infer<typeof BlockAccountRequestSchema>;
 export type BlockAccountResponse = z.infer<typeof BlockAccountResponseSchema>;
+
+export const HoldAmountRequestShape = {
+  transactionAmount: z.number(),
+  holdAmountReasonCodeId: z.number()
+};
+
+export const HoldAmountRequestSchema = z.object(HoldAmountRequestShape);
+
+export const HoldAmountResponseShape = {
+  id: z.string(),
+  resourceId: z.number(),
+  changes: z.object({
+    savingsAmountOnHold: z.number(),
+    blockAmountReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const HoldAmountResponseSchema = z.object(HoldAmountResponseShape);
+
+export type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
+export type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
