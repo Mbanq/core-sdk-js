@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createCommandError } from '../utils/errorHandler';
+
 
 const statusSchema = z.object({
   id: z.number(),
@@ -201,47 +201,12 @@ export const ListAccountsOfClientResponseShape = {
 
 export const ListAccountsOfClientResponseSchema = z.object(ListAccountsOfClientResponseShape);
 
-export const ListAccountFilterKeySchema = z.enum([
-  'showReservedAccount'
-]);
-
 export const ListAccountsRequestShape = {
   tenantId: z.string().optional(),
   showReservedAccount: z.boolean().optional().default(false)
 };
 
 export const ListAccountsRequestSchema = z.object(ListAccountsRequestShape);
-
-export type ListAccountFilterKey = z.infer<typeof ListAccountFilterKeySchema>;
-export const validateListAccountFilterKey = (key: string): ListAccountFilterKey => {
-  return ListAccountFilterKeySchema.parse(key);
-};
-export const validateListAccountFilters = (filters: Record<string, any>): void => {
-  try {
-    for (const [key, value] of Object.entries(filters)) {
-      // Validate filter key
-      validateListAccountFilterKey(key);
-
-      // Skip validation for undefined/null values
-      if (value === undefined || value === null) continue;
-
-      // Use Zod validation for specific fields
-      switch (key) {
-        case 'showReservedAccount':
-          z.boolean().parse(value);
-          break;
-      }
-    }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createCommandError({
-        message: `Validation error: ${error.errors.map(e => e.message).join(', ')}`,
-        code: 'validation_error'
-      });
-    }
-    throw error;
-  }
-};
 
 export const UpdateAccountRequestShape = {
   clientId: z.number(),
@@ -327,3 +292,39 @@ export const CreateAndActivateAccountResponseSchema = z.object(CreateAndActivate
 
 export type CreateAndActivateAccountRequest = z.infer<typeof CreateAndActivateAccountRequestSchema>;
 export type CreateAndActivateAccountResponse = z.infer<typeof CreateAndActivateAccountResponseSchema>;
+
+export const CloseAccountRequestShape = {
+  closedOnDate: z.string().optional(),
+  dateFormat: z.string().optional(),
+  locale: z.string().optional(),
+  withdrawBalance: z.boolean().optional(),
+  postInterestValidationOnClosure: z.boolean().optional(),
+  ignoreNegativeBalance: z.boolean().optional(),
+  paymentTypeId: z.number().optional(),
+  closeReasonCodeId: z.number()
+};
+
+export const CloseAccountRequestSchema = z.object(CloseAccountRequestShape);
+
+export const CloseAccountResponseShape = {
+  officeId: z.number(),
+  clientId: z.number(),
+  savingsId: z.number(),
+  resourceId: z.number(),
+  changes: z.object({
+    status: z.string(),
+    locale: z.string(),
+    dateFormat: z.string(),
+    closedOnDate: z.string(),
+    closeReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const CloseAccountResponseSchema = z.object(CloseAccountResponseShape);
+
+export type CloseAccountRequest = z.infer<typeof CloseAccountRequestSchema>;
+export type CloseAccountResponse = z.infer<typeof CloseAccountResponseSchema>;
