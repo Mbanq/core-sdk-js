@@ -1,3 +1,11 @@
+# [0.14.0](https://github.com/mbanq/core-sdk-js/compare/v0.13.0...v0.14.0) (2025-12-03)
+
+
+### Features
+
+* Add `CreateAndActivateAccount` command, types, tests, and documentation for account creation and activation ([#38](https://github.com/mbanq/core-sdk-js/issues/38)) ([090f8fa](https://github.com/mbanq/core-sdk-js/commit/090f8fa08a4d3dd775c79d43add6f1c67dae7e93))
+* Add `CreateAndActivateAccount` command, types, tests, and documentation for account creation and activation ([#42](https://github.com/mbanq/core-sdk-js/issues/42)) ([e19736e](https://github.com/mbanq/core-sdk-js/commit/e19736e939ae3693193816601c0673dfedcf9acc))
+
 # [0.13.0](https://github.com/mbanq/core-sdk-js/compare/v0.12.0...v0.13.0) (2025-12-03)
 
 
