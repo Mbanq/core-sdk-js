@@ -4,7 +4,8 @@ import {
   UpdateAccount,
   DeleteAccount,
   ListAccountsOfClient,
-  GetAccountsOfClient
+  GetAccountsOfClient,
+  CreateAndActivateAccount
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -749,3 +750,316 @@ describe('GetAccountsOfClient', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
+
+describe('CreateAndActivateAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a CreateAndActivateAccount command with correct metadata', () => {
+    const params = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    };
+
+    const command = CreateAndActivateAccount(params);
+
+    expect(command.input).toEqual({ params, configuration: undefined });
+    expect(command.metadata).toEqual({
+      commandName: 'CreateAndActivateAccount',
+      path: '/v1/savingsaccounts',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request with correct query parameters and return response data', async () => {
+    const requestData = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy',
+      nominalAnnualInterestRate: 22.49,
+      minRequiredOpeningBalance: '1000',
+      lockinPeriodFrequency: 0,
+      withdrawalFeeForTransfers: true,
+      allowOverdraft: true,
+      overdraftLimit: 2,
+      nominalAnnualInterestRateOverdraft: 22.49,
+      minOverdraftForInterestCalculation: 2,
+      enforceMinRequiredBalance: false,
+      minRequiredBalance: 0,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 1,
+      interestPostingPeriodType: 4,
+      interestCalculationType: 1,
+      interestCalculationDaysInYearType: 365,
+      externalId: '63748',
+      lockinPeriodFrequencyType: 0,
+      nickname: '12323',
+      charges: []
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts?command=submit,approve,activate',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle minimal required fields', async () => {
+    const requestData = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(requestData);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts?command=submit,approve,activate',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle axios errors during account creation', async () => {
+    const mockError: MockAxiosError = new Error('Creation failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Invalid account data',
+        developerMessage: 'Validation failed for account creation'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = CreateAndActivateAccount({
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should override tenantId if provided in configuration', async () => {
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(
+      {
+        clientId: 12,
+        productId: 1,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        submittedOnDate: '22 June 2023',
+        monthDayFormat: 'dd MMMM yyyy'
+      },
+      { tenantId: 'custom-tenant' }
+    );
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('custom-tenant');
+  });
+
+  it('should not override tenantId if not provided in configuration', async () => {
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount({
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+
+  it('should include all optional fields in the request', async () => {
+    const requestData = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy',
+      nominalAnnualInterestRate: 22.49,
+      minRequiredOpeningBalance: '1000',
+      lockinPeriodFrequency: 0,
+      withdrawalFeeForTransfers: true,
+      allowOverdraft: true,
+      overdraftLimit: 2,
+      nominalAnnualInterestRateOverdraft: 22.49,
+      minOverdraftForInterestCalculation: 2,
+      enforceMinRequiredBalance: false,
+      minRequiredBalance: 0,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 1,
+      interestPostingPeriodType: 4,
+      interestCalculationType: 1,
+      interestCalculationDaysInYearType: 365,
+      externalId: '63748',
+      lockinPeriodFrequencyType: 0,
+      nickname: '12323',
+      charges: [
+        { chargeId: 1, amount: 100 },
+        { chargeId: 2, amount: 50 }
+      ]
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(requestData);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts?command=submit,approve,activate',
+      requestData
+    );
+  });
+});
+

@@ -1,5 +1,13 @@
 import { ProcessOutput } from '../../types';
-import { ListAccountsOfClientRequest, validateListAccountFilterKey, validateListAccountFilters, SavingAccount, UpdateAccountRequest } from '../../types/account';
+import {
+  ListAccountsOfClientRequest,
+  validateListAccountFilterKey,
+  validateListAccountFilters,
+  SavingAccount,
+  UpdateAccountRequest,
+  CreateAndActivateAccountRequest,
+  CreateAndActivateAccountResponse
+} from '../../types/account';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -135,7 +143,7 @@ export const ListAccountsOfClient = (params?: { clientId: number, tenantId?: str
   };
 };
 
-export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string }): Command<{params: ListAccountsOfClientRequest, configuration: { tenantId?: string }}, ListAccountsOfClientRequest> => {
+export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string }): Command<{ params: ListAccountsOfClientRequest, configuration: { tenantId?: string } }, ListAccountsOfClientRequest> => {
   return {
     input: { params, configuration },
     metadata: {
@@ -158,3 +166,34 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
     }
   };
 };
+
+export const CreateAndActivateAccount = (
+  params: CreateAndActivateAccountRequest,
+  configuration?: { tenantId?: string }
+): Command<{ params: CreateAndActivateAccountRequest, configuration?: { tenantId?: string } }, CreateAndActivateAccountResponse> => {
+  return {
+    input: { params, configuration },
+    metadata: {
+      commandName: 'CreateAndActivateAccount',
+      path: '/v1/savingsaccounts',
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<CreateAndActivateAccountResponse>(
+          '/v1/savingsaccounts?command=submit,approve,activate',
+          params
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
