@@ -8,7 +8,8 @@ import {
   CloseAccount,
   ScheduleAccountClosure,
   BlockAccount,
-  HoldAmount
+  HoldAmount,
+  GenerateAccountStatement
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -1373,4 +1374,152 @@ describe('HoldAmount', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
+
+describe('GenerateAccountStatement', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a GenerateAccountStatement command with correct metadata', () => {
+    const requestData = {
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    };
+    const command = GenerateAccountStatement(requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'GenerateAccountStatement',
+      path: '/v1/generatestatements',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = {
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    };
+
+    const mockResponse = {
+      jobId: 315,
+      status: 'ACCEPTED'
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = GenerateAccountStatement(requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/generatestatements',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during statement generation', async () => {
+    const mockError: MockAxiosError = new Error('Generation failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot generate statement',
+        developerMessage: 'Invalid parameters'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = GenerateAccountStatement({
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = GenerateAccountStatement({
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
 

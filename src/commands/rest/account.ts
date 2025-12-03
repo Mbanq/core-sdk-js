@@ -10,7 +10,9 @@ import {
   BlockAccountRequest,
   BlockAccountResponse,
   HoldAmountRequest,
-  HoldAmountResponse
+  HoldAmountResponse,
+  GenerateAccountStatementRequest,
+  GenerateAccountStatementResponse
 } from '../../types/account';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -481,4 +483,71 @@ export const HoldAmount = (
     }
   };
 };
+
+/**
+ * Generates an account statement.
+ * 
+ * @param requestData - The statement generation parameters (see GenerateAccountStatementRequest)
+ * @param requestData.reportName - The name of the report
+ * @param requestData.parentEntityType - The parent entity type (e.g., "savings")
+ * @param requestData.parentEntityId - The parent entity ID
+ * @param requestData.reportType - The report type (e.g., "PDF")
+ * @param requestData.docType - The document type (e.g., "statement")
+ * @param requestData.params - Additional parameters (start_date, end_date, saving_no)
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the statement generation job details
+ * 
+ * @example
+ * ```typescript
+ * const generateCmd = GenerateAccountStatement(
+ *   {
+ *     reportName: "Report current and saving account(Pentaho)",
+ *     parentEntityType: "savings",
+ *     parentEntityId: 1,
+ *     reportType: "PDF",
+ *     docType: "statement",
+ *     params: {
+ *       start_date: "01 January 2023",
+ *       end_date: "02 January 2023",
+ *       saving_no: "1"
+ *     }
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await generateCmd.execute(config);
+ * console.log(result.jobId); // 315
+ * ```
+ */
+export const GenerateAccountStatement = (
+  requestData: GenerateAccountStatementRequest,
+  configuration?: { tenantId?: string }
+): Command<{ requestData: GenerateAccountStatementRequest, configuration?: { tenantId?: string } }, GenerateAccountStatementResponse> => {
+  return {
+    input: { requestData, configuration },
+    metadata: {
+      commandName: 'GenerateAccountStatement',
+      path: '/v1/generatestatements',
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<GenerateAccountStatementResponse>(
+          '/v1/generatestatements',
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
 
