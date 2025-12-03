@@ -101,7 +101,7 @@ describe('GetAccount', () => {
 
     const result = await command.execute(config);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingaccounts/123');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingsaccounts/123');
     expect(result).toEqual(mockAccountData);
     expect(config.tenantId).toBe('test-tenant');
   });
@@ -1122,3 +1122,6 @@ describe('BlockAccount', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
+
+
+

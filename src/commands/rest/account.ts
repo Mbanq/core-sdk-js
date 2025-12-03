@@ -45,7 +45,7 @@ export const GetAccount = (accountId: number, configuration?: { tenantId?: strin
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<SavingAccount>(`/v1/savingaccounts/${accountId}`);
+        const response = await axiosInstance.get<SavingAccount>(`/v1/savingsaccounts/${accountId}`);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

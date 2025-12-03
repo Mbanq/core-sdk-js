@@ -7337,6 +7337,156 @@ declare const UpdateAccountRequestSchema: z.ZodObject<{
 type ListAccountsOfClientRequest = z.infer<typeof ListAccountsRequestSchema>;
 type SavingAccount = z.infer<typeof SavingAccountSchema>;
 type UpdateAccountRequest = z.infer<typeof UpdateAccountRequestSchema>;
+declare const CreateAndActivateAccountRequestSchema: z.ZodObject<{
+    clientId: z.ZodNumber;
+    productId: z.ZodNumber;
+    locale: z.ZodString;
+    dateFormat: z.ZodString;
+    submittedOnDate: z.ZodString;
+    monthDayFormat: z.ZodString;
+    nominalAnnualInterestRate: z.ZodOptional<z.ZodNumber>;
+    minRequiredOpeningBalance: z.ZodOptional<z.ZodString>;
+    lockinPeriodFrequency: z.ZodOptional<z.ZodNumber>;
+    withdrawalFeeForTransfers: z.ZodOptional<z.ZodBoolean>;
+    allowOverdraft: z.ZodOptional<z.ZodBoolean>;
+    overdraftLimit: z.ZodOptional<z.ZodNumber>;
+    nominalAnnualInterestRateOverdraft: z.ZodOptional<z.ZodNumber>;
+    minOverdraftForInterestCalculation: z.ZodOptional<z.ZodNumber>;
+    enforceMinRequiredBalance: z.ZodOptional<z.ZodBoolean>;
+    minRequiredBalance: z.ZodOptional<z.ZodNumber>;
+    withHoldTax: z.ZodOptional<z.ZodBoolean>;
+    interestCompoundingPeriodType: z.ZodOptional<z.ZodNumber>;
+    interestPostingPeriodType: z.ZodOptional<z.ZodNumber>;
+    interestCalculationType: z.ZodOptional<z.ZodNumber>;
+    interestCalculationDaysInYearType: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    lockinPeriodFrequencyType: z.ZodOptional<z.ZodNumber>;
+    nickname: z.ZodOptional<z.ZodString>;
+    charges: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        chargeId: z.ZodNumber;
+        amount: z.ZodOptional<z.ZodNumber>;
+        dueDate: z.ZodOptional<z.ZodString>;
+        feeInterval: z.ZodOptional<z.ZodNumber>;
+    }, "strip", z.ZodTypeAny, {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }, {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }>, "many">>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    dateFormat: string;
+    locale: string;
+    submittedOnDate: string;
+    productId: number;
+    monthDayFormat: string;
+    externalId?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    nominalAnnualInterestRate?: number | undefined;
+    interestCompoundingPeriodType?: number | undefined;
+    interestPostingPeriodType?: number | undefined;
+    interestCalculationType?: number | undefined;
+    interestCalculationDaysInYearType?: number | undefined;
+    lockinPeriodFrequency?: number | undefined;
+    lockinPeriodFrequencyType?: number | undefined;
+    overdraftLimit?: number | undefined;
+    minRequiredBalance?: number | undefined;
+    minOverdraftForInterestCalculation?: number | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }[] | undefined;
+    nominalAnnualInterestRateOverdraft?: number | undefined;
+    nickname?: string | undefined;
+}, {
+    clientId: number;
+    dateFormat: string;
+    locale: string;
+    submittedOnDate: string;
+    productId: number;
+    monthDayFormat: string;
+    externalId?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    nominalAnnualInterestRate?: number | undefined;
+    interestCompoundingPeriodType?: number | undefined;
+    interestPostingPeriodType?: number | undefined;
+    interestCalculationType?: number | undefined;
+    interestCalculationDaysInYearType?: number | undefined;
+    lockinPeriodFrequency?: number | undefined;
+    lockinPeriodFrequencyType?: number | undefined;
+    overdraftLimit?: number | undefined;
+    minRequiredBalance?: number | undefined;
+    minOverdraftForInterestCalculation?: number | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }[] | undefined;
+    nominalAnnualInterestRateOverdraft?: number | undefined;
+    nickname?: string | undefined;
+}>;
+declare const CreateAndActivateAccountResponseSchema: z.ZodObject<{
+    officeId: z.ZodNumber;
+    clientId: z.ZodNumber;
+    savingsId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+    changes: z.ZodObject<{
+        status: z.ZodString;
+        locale: z.ZodString;
+        dateFormat: z.ZodString;
+        activatedOnDate: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    }, {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    };
+}, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    };
+}>;
+type CreateAndActivateAccountRequest = z.infer<typeof CreateAndActivateAccountRequestSchema>;
+type CreateAndActivateAccountResponse = z.infer<typeof CreateAndActivateAccountResponseSchema>;
 
 declare const UserDetailShape: {
     username: z.ZodString;
@@ -7406,11 +7556,11 @@ declare const UserDetailSchema: z.ZodObject<{
     isTwoFactorAuthenticationRequired: z.ZodBoolean;
     isSelfServiceUser: z.ZodBoolean;
 }, "strip", z.ZodTypeAny, {
+    officeId: number;
     username: string;
     userId: number;
     accessToken: string;
     authenticated: boolean;
-    officeId: number;
     officeName: string;
     roles: {
         name: string;
@@ -7425,11 +7575,11 @@ declare const UserDetailSchema: z.ZodObject<{
     isTwoFactorAuthenticationRequired: boolean;
     isSelfServiceUser: boolean;
 }, {
+    officeId: number;
     username: string;
     userId: number;
     accessToken: string;
     authenticated: boolean;
-    officeId: number;
     officeName: string;
     roles: {
         name: string;
@@ -7458,8 +7608,8 @@ declare const EnableSelfServiceAccessRequestSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
     clients: z.ZodOptional<z.ZodArray<z.ZodNumber, "many">>;
 }, "strip", z.ZodTypeAny, {
-    username: string;
     officeId: number;
+    username: string;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7470,8 +7620,8 @@ declare const EnableSelfServiceAccessRequestSchema: z.ZodObject<{
     enabled?: boolean | undefined;
     clients?: number[] | undefined;
 }, {
-    username: string;
     officeId: number;
+    username: string;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7663,9 +7813,9 @@ declare const UpdateSelfServiceUserRequestSchema: z.ZodObject<{
     clients: z.ZodOptional<z.ZodArray<z.ZodNumber, "many">>;
     userId: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    officeId: number;
     username: string;
     userId: number;
-    officeId: number;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7676,9 +7826,9 @@ declare const UpdateSelfServiceUserRequestSchema: z.ZodObject<{
     enabled?: boolean | undefined;
     clients?: number[] | undefined;
 }, {
+    officeId: number;
     username: string;
     userId: number;
-    officeId: number;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -10573,6 +10723,14 @@ declare const GetAccountsOfClient: (clientId: number, params: ListAccountsOfClie
         tenantId?: string;
     };
 }, ListAccountsOfClientRequest>;
+declare const CreateAndActivateAccount: (params: CreateAndActivateAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    params: CreateAndActivateAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CreateAndActivateAccountResponse>;
 
 declare const CreateTransfer: (params: {
     transfer: CreateTransferInput;
@@ -12078,4 +12236,4 @@ declare const SetClientAddressStatus: (clientId: number, type: number, params: {
     };
 }, UpdateClientAddressResponse>;
 
-export { type CreatePaymentInput as $, ApproveRejectClientDocument as A, GetRecipient as B, CreatePayment as C, DeletePayment as D, CreateRecipient as E, DeleteRecipient as F, GetPayment as G, GetRecipients as H, GraphQL as I, GetUserDetail as J, EnableSelfServiceAccess as K, ListClientDocument as L, MarkAsSuccess as M, UpdateSelfServiceUser as N, DeleteSelfServiceUser as O, ListCardProduct as P, GetCardProduct as Q, CreateCardProduct as R, SendAuthorizationToCore as S, UpdateCardProduct as T, UpdatePayment as U, VerifyWithActivateClients as V, GetClientAddress as W, CreateClientAddress as X, UpdateClientAddress as Y, SetClientAddressStatus as Z, type Payment as _, GetPayments as a, UpdateTraceNumbersInputShape as a$, type UpdatePaymentInput as a0, type PaymentResponse as a1, type Transfer as a2, type GetTransferInput as a3, type CreateTransferInput as a4, type TransferResponse as a5, type MarkAsReturnInput as a6, type UpdateTraceNumbersInput as a7, type ProcessOutput$1 as a8, type PaymentRail as a9, UserDetailShape as aA, RecipientSchema as aB, CreateRecipientRequestSchema as aC, RecipientRequestSchema as aD, RecipientFilterKeySchema as aE, RecipientShape as aF, CreateRecipientRequestShape as aG, RecipientRequestShape as aH, BankInformationSchema as aI, AccountDetailsDataSchema as aJ, AddressSchema as aK, RecipientsSchema as aL, TransferSchema as aM, CreateTransferInputSchema as aN, GetTransferInputSchema as aO, MarkAsReturnInputSchema as aP, UpdateTraceNumbersInputSchema as aQ, ProcessOutputSchema$1 as aR, TransferResponseSchema as aS, CreateTransferOutputSchema as aT, PaymentRailSchema$1 as aU, PaymentTypeSchema$1 as aV, AccountTypeSchema as aW, TransferShape as aX, CreateTransferInputShape as aY, GetTransferInputShape as aZ, MarkAsReturnInputShape as a_, type Recipient as aa, type CreateRecipientRequest as ab, type RecipientRequest as ac, type RecipientFilterKey as ad, PaymentStatusSchema as ae, PaymentRailSchema as af, PaymentTypeSchema as ag, SortOrderSchema as ah, CreatePaymentInputSchema as ai, UpdatePaymentInputSchema as aj, PaymentResponseSchema as ak, PaymentShape as al, CreatePaymentInputShape as am, UpdatePaymentInputShape as an, SavingAccountSchema as ao, SavingAccountShape as ap, type SavingAccount as aq, ListAccountsOfClientResponseShape as ar, ListAccountsOfClientResponseSchema as as, ListAccountsRequestShape as at, ListAccountsRequestSchema as au, type UpdateAccountRequest as av, UpdateAccountRequestSchema as aw, UpdateAccountRequestShape as ax, type UserDetail as ay, UserDetailSchema as az, UpdateCardID as b, ProcessOutputShape as b0, TransferResponseShape as b1, CreateTransferOutputShape as b2, ClientSchema as b3, AgentSchema as b4, PartySchema as b5, type UpdateRecipientRequest as b6, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };
+export { type Payment as $, ApproveRejectClientDocument as A, GetTransfer as B, CreatePayment as C, DeletePayment as D, GetRecipient as E, CreateRecipient as F, GetPayment as G, DeleteRecipient as H, GetRecipients as I, GraphQL as J, GetUserDetail as K, ListClientDocument as L, MarkAsSuccess as M, EnableSelfServiceAccess as N, UpdateSelfServiceUser as O, DeleteSelfServiceUser as P, ListCardProduct as Q, GetCardProduct as R, SendAuthorizationToCore as S, CreateCardProduct as T, UpdatePayment as U, VerifyWithActivateClients as V, UpdateCardProduct as W, GetClientAddress as X, CreateClientAddress as Y, UpdateClientAddress as Z, SetClientAddressStatus as _, GetPayments as a, MarkAsReturnInputShape as a$, type CreatePaymentInput as a0, type UpdatePaymentInput as a1, type PaymentResponse as a2, type Transfer as a3, type GetTransferInput as a4, type CreateTransferInput as a5, type TransferResponse as a6, type MarkAsReturnInput as a7, type UpdateTraceNumbersInput as a8, type ProcessOutput$1 as a9, UserDetailSchema as aA, UserDetailShape as aB, RecipientSchema as aC, CreateRecipientRequestSchema as aD, RecipientRequestSchema as aE, RecipientFilterKeySchema as aF, RecipientShape as aG, CreateRecipientRequestShape as aH, RecipientRequestShape as aI, BankInformationSchema as aJ, AccountDetailsDataSchema as aK, AddressSchema as aL, RecipientsSchema as aM, TransferSchema as aN, CreateTransferInputSchema as aO, GetTransferInputSchema as aP, MarkAsReturnInputSchema as aQ, UpdateTraceNumbersInputSchema as aR, ProcessOutputSchema$1 as aS, TransferResponseSchema as aT, CreateTransferOutputSchema as aU, PaymentRailSchema$1 as aV, PaymentTypeSchema$1 as aW, AccountTypeSchema as aX, TransferShape as aY, CreateTransferInputShape as aZ, GetTransferInputShape as a_, type PaymentRail as aa, type Recipient as ab, type CreateRecipientRequest as ac, type RecipientRequest as ad, type RecipientFilterKey as ae, PaymentStatusSchema as af, PaymentRailSchema as ag, PaymentTypeSchema as ah, SortOrderSchema as ai, CreatePaymentInputSchema as aj, UpdatePaymentInputSchema as ak, PaymentResponseSchema as al, PaymentShape as am, CreatePaymentInputShape as an, UpdatePaymentInputShape as ao, SavingAccountSchema as ap, SavingAccountShape as aq, type SavingAccount as ar, ListAccountsOfClientResponseShape as as, ListAccountsOfClientResponseSchema as at, ListAccountsRequestShape as au, ListAccountsRequestSchema as av, type UpdateAccountRequest as aw, UpdateAccountRequestSchema as ax, UpdateAccountRequestShape as ay, type UserDetail as az, UpdateCardID as b, UpdateTraceNumbersInputShape as b0, ProcessOutputShape as b1, TransferResponseShape as b2, CreateTransferOutputShape as b3, ClientSchema as b4, AgentSchema as b5, PartySchema as b6, type UpdateRecipientRequest as b7, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, CreateAndActivateAccount as s, MarkAsReturned as t, MarkAsFail as u, MarkAsProcessing as v, LogFailTransfer as w, GetTransfers as x, UpdateTraceNumber as y, CreateTransfer as z };
