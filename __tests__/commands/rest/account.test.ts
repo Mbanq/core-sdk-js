@@ -6,6 +6,7 @@ import {
   GetAccountsOfClient,
   CreateAndActivateAccount,
   CloseAccount,
+  ScheduleAccountClosure,
   BlockAccount
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
@@ -1125,3 +1126,138 @@ describe('BlockAccount', () => {
 
 
 
+
+describe('ScheduleAccountClosure', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a ScheduleAccountClosure command with correct metadata', () => {
+    const requestData = {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    };
+    const command = ScheduleAccountClosure(5100, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ accountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'ScheduleAccountClosure',
+      path: '/v1/savingsaccounts/5100?command=SCHEDULECLOSE',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100,
+      withdrawBalance: false,
+      postInterestValidationOnClosure: true,
+      ignoreNegativeBalance: false
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 123,
+      savingsId: 5100,
+      resourceId: 5100,
+      changes: {
+        status: 'CLOSED',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        closedOnDate: '01 April 2025',
+        closeReason: 'ACCOUNT_CLOSE_REASON'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = ScheduleAccountClosure(5100, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/5100?command=SCHEDULECLOSE',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during schedule closure', async () => {
+    const mockError: MockAxiosError = new Error('Schedule closure failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot schedule closure',
+        developerMessage: 'Account has non-zero balance'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = ScheduleAccountClosure(5100, {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = ScheduleAccountClosure(5100, {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});

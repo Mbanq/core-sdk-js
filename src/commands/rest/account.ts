@@ -305,6 +305,74 @@ export const CloseAccount = (
 };
 
 
+
+/**
+ * Schedules the closure of a savings account.
+ * 
+ * @param accountId - The ID of the savings account to schedule for closure
+ * @param requestData - The closure parameters (see CloseAccountRequest)
+ * @param requestData.closedOnDate - The date the account is scheduled to be closed
+ * @param requestData.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param requestData.locale - The locale for date formatting (e.g., "en")
+ * @param requestData.closeReasonCodeId - The ID representing the reason for account closure
+ * @param requestData.withdrawBalance - Optional: Whether to withdraw remaining balance during closure
+ * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
+ * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
+ * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the schedule closure confirmation
+ * 
+ * @example
+ * ```typescript
+ * const scheduleCloseCmd = ScheduleAccountClosure(
+ *   5100,
+ *   {
+ *     closedOnDate: "01 April 2025",
+ *     dateFormat: "dd MMMM yyyy",
+ *     locale: "en",
+ *     withdrawBalance: false,
+ *     postInterestValidationOnClosure: true,
+ *     ignoreNegativeBalance: false,
+ *     closeReasonCodeId: 5100
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await scheduleCloseCmd.execute(config);
+ * ```
+ */
+export const ScheduleAccountClosure = (
+  accountId: number,
+  requestData: CloseAccountRequest,
+  configuration?: { tenantId?: string }
+): Command<{ accountId: number, requestData: CloseAccountRequest, configuration?: { tenantId?: string } }, CloseAccountResponse> => {
+  return {
+    input: { accountId, requestData, configuration },
+    metadata: {
+      commandName: 'ScheduleAccountClosure',
+      path: `/v1/savingsaccounts/${accountId}?command=SCHEDULECLOSE`,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<CloseAccountResponse>(
+          `/v1/savingsaccounts/${accountId}?command=SCHEDULECLOSE`,
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
 /**
  * Blocks a savings account.
  * 
