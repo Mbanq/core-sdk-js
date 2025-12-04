@@ -172,3 +172,4 @@ export const GetAllAccountProductsResponseSchema = z.array(AccountProductItemSch
 
 export type AccountProductItem = z.infer<typeof AccountProductItemSchema>;
 export type GetAllAccountProductsResponse = z.infer<typeof GetAllAccountProductsResponseSchema>;
+export type GetAccountProductByIdResponse = AccountProductItem;

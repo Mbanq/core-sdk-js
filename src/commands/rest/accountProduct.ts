@@ -6,7 +6,8 @@ import {
     CreateAccountProductResponse,
     UpdateAccountProductRequest,
     UpdateAccountProductResponse,
-    GetAllAccountProductsResponse
+    GetAllAccountProductsResponse,
+    GetAccountProductByIdResponse
 } from '../../types/accountProduct';
 
 /**
@@ -212,6 +213,51 @@ export const GetAllAccountProducts = (
             try {
                 const response = await axiosInstance.get<GetAllAccountProductsResponse>(
                     '/v1/savingsproducts'
+                );
+                return response.data;
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+    };
+};
+
+/**
+ * Retrieves a single savings account product by its ID.
+ * 
+ * @param productId - The ID of the savings product to retrieve
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the account product details
+ * 
+ * @example
+ * ```typescript
+ * const getCmd = GetAccountProductById(101, { tenantId: "z01j3e71zd6zkq908yvf5861a8" });
+ * const result = await getCmd.execute(config);
+ * console.log(result.name);
+ * ```
+ */
+export const GetAccountProductById = (
+    productId: number,
+    configuration?: { tenantId?: string }
+): Command<{ productId: number, configuration?: { tenantId?: string } }, GetAccountProductByIdResponse> => {
+    return {
+        input: { productId, configuration },
+        metadata: {
+            commandName: 'GetAccountProductById',
+            path: `/v1/savingsproducts/${productId}`,
+            method: 'GET'
+        },
+        execute: async (config: Config) => {
+            if (configuration?.tenantId) {
+                config.tenantId = configuration.tenantId;
+            }
+            const axiosInstance = await baseRequest(config);
+
+            try {
+                const response = await axiosInstance.get<GetAccountProductByIdResponse>(
+                    `/v1/savingsproducts/${productId}`
                 );
                 return response.data;
             } catch (error) {
