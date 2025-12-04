@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { validateConfig } from '../../src/utils/validation';
-import { validateListAccountFilters, validateListAccountFilterKey } from '../../src/types/account';
 
 describe('Validation Utils', () => {
   describe('validateConfig', () => {
@@ -137,58 +136,6 @@ describe('Validation Utils', () => {
       expect(errors).toEqual([]);
     });
   });
-
-  describe('Account Validation', () => {
-    describe('validateListAccountFilterKey', () => {
-      it('should accept valid filter keys', () => {
-        expect(() => validateListAccountFilterKey('showReservedAccount')).not.toThrow();
-        expect(validateListAccountFilterKey('showReservedAccount')).toBe('showReservedAccount');
-      });
-
-      it('should throw for invalid filter keys', () => {
-        expect(() => validateListAccountFilterKey('invalidKey')).toThrow();
-      });
-    });
-
-    describe('validateListAccountFilters', () => {
-      it('should validate filters with valid showReservedAccount boolean', () => {
-        expect(() => validateListAccountFilters({ showReservedAccount: true })).not.toThrow();
-        expect(() => validateListAccountFilters({ showReservedAccount: false })).not.toThrow();
-      });
-
-      it('should skip validation for undefined and null values', () => {
-        expect(() => validateListAccountFilters({ showReservedAccount: undefined })).not.toThrow();
-        expect(() => validateListAccountFilters({ showReservedAccount: null })).not.toThrow();
-      });
-
-      it('should throw validation error for invalid showReservedAccount type', () => {
-        expect(() => validateListAccountFilters({ showReservedAccount: 'invalid' })).toThrow('Validation error');
-      });
-
-      it('should throw validation error for invalid filter key', () => {
-        expect(() => validateListAccountFilters({ invalidField: true })).toThrow();
-      });
-
-      it('should handle multiple filters and throw for invalid values', () => {
-        expect(() => validateListAccountFilters({
-          showReservedAccount: 'not_boolean'
-        })).toThrow('Validation error');
-      });
-
-      it('should handle ZodError and wrap it with command error', () => {
-        try {
-          validateListAccountFilters({ showReservedAccount: 123 });
-        } catch (error: any) {
-          expect(error.message).toContain('Validation error');
-          expect(error.code).toBe('validation_error');
-        }
-      });
-
-      it('should preserve non-ZodError errors', () => {
-        // This test ensures that non-Zod errors are re-thrown as-is
-        // The validateListAccountFilterKey throws a ZodError when invalid
-        expect(() => validateListAccountFilters({ invalidKey: true })).toThrow();
-      });
-    });
-  });
 });
+
+

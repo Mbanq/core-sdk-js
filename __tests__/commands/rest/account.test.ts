@@ -3,8 +3,14 @@ import {
   GetAccount,
   UpdateAccount,
   DeleteAccount,
-  ListAccountsOfClient,
-  GetAccountsOfClient
+  GetAccountsOfClient,
+  CreateAndActivateAccount,
+  CloseAccount,
+  ScheduleAccountClosure,
+  BlockAccount,
+  HoldAmount,
+  GenerateAccountStatement,
+  DownloadAccountStatement
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -51,13 +57,12 @@ describe('GetAccount', () => {
   });
 
   it('should create a GetAccount command with correct metadata', () => {
-    const params = { id: 123, tenantId: 'test-tenant' };
-    const command = GetAccount(params);
+    const command = GetAccount(123, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual(params);
+    expect(command.input).toEqual({ accountId: 123, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'GetAccount',
-      path: '/v1/savingaccounts/123',
+      path: '/v1/savingsaccounts/123',
       method: 'GET'
     });
   });
@@ -92,7 +97,7 @@ describe('GetAccount', () => {
 
     mockAxiosInstance.get.mockResolvedValue({ data: mockAccountData });
 
-    const command = GetAccount({ id: 123, tenantId: 'test-tenant' });
+    const command = GetAccount(123, { tenantId: 'test-tenant' });
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'
@@ -100,7 +105,7 @@ describe('GetAccount', () => {
 
     const result = await command.execute(config);
 
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingaccounts/123');
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingsaccounts/123');
     expect(result).toEqual(mockAccountData);
     expect(config.tenantId).toBe('test-tenant');
   });
@@ -118,7 +123,7 @@ describe('GetAccount', () => {
 
     mockAxiosInstance.get.mockRejectedValue(mockError);
 
-    const command = GetAccount({ id: 123 });
+    const command = GetAccount(123);
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'
@@ -131,7 +136,7 @@ describe('GetAccount', () => {
     const mockAccountData = { id: 123, accountNo: '000000123' };
     mockAxiosInstance.get.mockResolvedValue({ data: mockAccountData });
 
-    const command = GetAccount({ id: 123 });
+    const command = GetAccount(123);
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'
@@ -168,43 +173,38 @@ describe('UpdateAccount', () => {
   });
 
   it('should create an UpdateAccount command with correct metadata', () => {
-    const params = {
+    const updateData = {
       clientId: 123,
-      accountId: 'acc_456',
-      updates: {
-        clientId: 123,
-        productId: 48,
-        submittedOnDate: '26 August 2025',
-        nominalAnnualInterestRate: '1',
-        minRequiredOpeningBalance: '0',
-        lockinPeriodFrequency: '1',
-        withdrawalFeeForTransfers: true,
-        allowOverdraft: false,
-        overdraftLimit: 0,
-        minOverdraftForInterestCalculation: 0,
-        enforceMinRequiredBalance: true,
-        minRequiredBalance: 0,
-        withHoldTax: false,
-        interestCompoundingPeriodType: 4,
-        interestPostingPeriodType: 5,
-        interestCalculationType: 1,
-        interestCalculationDaysInYearType: 365,
-        fieldOfficerId: 1,
-        lockinPeriodFrequencyType: 2,
-        locale: 'en',
-        dateFormat: 'dd MMMM yyyy',
-        monthDayFormat: 'dd MMM',
-        charges: []
-      },
-      tenantId: 'test-tenant'
+      productId: 48,
+      submittedOnDate: '26 August 2025',
+      nominalAnnualInterestRate: '1',
+      minRequiredOpeningBalance: '0',
+      lockinPeriodFrequency: '1',
+      withdrawalFeeForTransfers: true,
+      allowOverdraft: false,
+      overdraftLimit: 0,
+      minOverdraftForInterestCalculation: 0,
+      enforceMinRequiredBalance: true,
+      minRequiredBalance: 0,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 4,
+      interestPostingPeriodType: 5,
+      interestCalculationType: 1,
+      interestCalculationDaysInYearType: 365,
+      fieldOfficerId: 1,
+      lockinPeriodFrequencyType: 2,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      monthDayFormat: 'dd MMM',
+      charges: []
     };
 
-    const command = UpdateAccount(params);
+    const command = UpdateAccount(456, updateData, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual(params);
+    expect(command.input).toEqual({ accountId: 456, requestData: updateData, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'UpdateAccount',
-      path: '/v1/savingsaccounts/acc_456',
+      path: '/v1/savingsaccounts/456',
       method: 'PUT'
     });
   });
@@ -236,15 +236,10 @@ describe('UpdateAccount', () => {
       charges: []
     };
 
-    const mockResponse = { success: true, accountId: 'acc_456' };
+    const mockResponse = { success: true, accountId: 456 };
     mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
 
-    const command = UpdateAccount({
-      clientId: 123,
-      accountId: 'acc_456',
-      updates: updateData,
-      tenantId: 'test-tenant'
-    });
+    const command = UpdateAccount(456, updateData, { tenantId: 'test-tenant' });
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -254,8 +249,8 @@ describe('UpdateAccount', () => {
     const result = await command.execute(config);
 
     expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-      '/v1/savingsaccounts/acc_456',
-      { ...updateData, clientId: 123 }
+      '/v1/savingsaccounts/456',
+      updateData
     );
     expect(result).toEqual(mockResponse);
     expect(config.tenantId).toBe('test-tenant');
@@ -274,34 +269,30 @@ describe('UpdateAccount', () => {
 
     mockAxiosInstance.put.mockRejectedValue(mockError);
 
-    const command = UpdateAccount({
+    const command = UpdateAccount(456, {
       clientId: 123,
-      accountId: 'acc_456',
-      updates: {
-        clientId: 123,
-        productId: 48,
-        submittedOnDate: '26 August 2025',
-        nominalAnnualInterestRate: '1',
-        minRequiredOpeningBalance: '0',
-        lockinPeriodFrequency: '1',
-        withdrawalFeeForTransfers: true,
-        allowOverdraft: false,
-        overdraftLimit: 0,
-        minOverdraftForInterestCalculation: 0,
-        enforceMinRequiredBalance: true,
-        minRequiredBalance: 0,
-        withHoldTax: false,
-        interestCompoundingPeriodType: 4,
-        interestPostingPeriodType: 5,
-        interestCalculationType: 1,
-        interestCalculationDaysInYearType: 365,
-        fieldOfficerId: 1,
-        lockinPeriodFrequencyType: 2,
-        locale: 'en',
-        dateFormat: 'dd MMMM yyyy',
-        monthDayFormat: 'dd MMM',
-        charges: []
-      }
+      productId: 48,
+      submittedOnDate: '26 August 2025',
+      nominalAnnualInterestRate: '1',
+      minRequiredOpeningBalance: '0',
+      lockinPeriodFrequency: '1',
+      withdrawalFeeForTransfers: true,
+      allowOverdraft: false,
+      overdraftLimit: 0,
+      minOverdraftForInterestCalculation: 0,
+      enforceMinRequiredBalance: true,
+      minRequiredBalance: 0,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 4,
+      interestPostingPeriodType: 5,
+      interestCalculationType: 1,
+      interestCalculationDaysInYearType: 365,
+      fieldOfficerId: 1,
+      lockinPeriodFrequencyType: 2,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      monthDayFormat: 'dd MMM',
+      charges: []
     });
 
     const config = {
@@ -312,7 +303,7 @@ describe('UpdateAccount', () => {
     await expect(command.execute(config)).rejects.toThrow();
   });
 
-  it('should include clientId in the request body', async () => {
+  it('should send requestData as-is without modifying it', async () => {
     const updateData = {
       clientId: 123,
       productId: 48,
@@ -341,11 +332,7 @@ describe('UpdateAccount', () => {
 
     mockAxiosInstance.put.mockResolvedValue({ data: { success: true } });
 
-    const command = UpdateAccount({
-      clientId: 456, // Different from updateData.clientId
-      accountId: 'acc_789',
-      updates: updateData
-    });
+    const command = UpdateAccount(789, updateData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -355,181 +342,9 @@ describe('UpdateAccount', () => {
     await command.execute(config);
 
     expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-      '/v1/savingsaccounts/acc_789',
-      { ...updateData, clientId: 456 } // Should use clientId from params, not from updates
+      '/v1/savingsaccounts/789',
+      updateData // Should send requestData as-is
     );
-  });
-});
-
-describe('ListAccountsOfClient', () => {
-  let mockAxiosInstance: MockAxiosInstance;
-
-  beforeEach(() => {
-    vi.stubEnv('SECRET', 'your_secret');
-    vi.stubEnv('SIGNEE', 'your_signee');
-    vi.stubEnv('TENANT_ID', 'your_tenant_id');
-    vi.stubEnv('BASE_URL', 'https://your.api.url');
-
-    mockAxiosInstance = {
-      get: vi.fn(),
-      post: vi.fn(),
-      put: vi.fn(),
-      delete: vi.fn()
-    };
-
-    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    vi.unstubAllEnvs();
-  });
-
-  it('should create a list query with correct default parameters', () => {
-    const listQuery = ListAccountsOfClient({ clientId: 123, tenantId: 'test-tenant' });
-    const queryBuilder = listQuery.list();
-
-    expect(queryBuilder).toBeDefined();
-    expect(typeof queryBuilder.execute).toBe('function');
-    expect(typeof queryBuilder.where).toBe('function');
-  });
-
-  it('should execute list request and return accounts data', async () => {
-    const mockAccountsData = {
-      savingsAccounts: [
-        {
-          id: 123,
-          accountNo: '000000123',
-          productId: 1,
-          productName: 'Savings Account',
-          shortProductName: 'SAV',
-          status: {
-            id: 300,
-            code: 'savingsAccountStatusType.active',
-            value: 'Active',
-            submittedAndPendingApproval: false,
-            approved: false,
-            rejected: false,
-            withdrawnByApplicant: false,
-            active: true,
-            closed: false,
-            prematureClosed: false,
-            transferInProgress: false,
-            transferOnHold: false,
-            matured: false
-          },
-          accountBalance: 1000,
-          availableBalance: 1000,
-          allowPrepaidCard: false,
-          primaryAccount: {}
-        }
-      ]
-    };
-
-    mockAxiosInstance.get.mockResolvedValue({ data: mockAccountsData });
-
-    const listQuery = ListAccountsOfClient({ clientId: 123, tenantId: 'test-tenant' });
-    const queryBuilder = listQuery.list();
-    const command = queryBuilder.execute();
-
-    const config = {
-      baseUrl: 'https://api.example.com',
-      tenantId: 'default-tenant'
-    };
-
-    const result = await command.execute(config);
-
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/123/accounts', { params: {} });
-    expect(result).toEqual(mockAccountsData);
-  });
-
-  it('should support filtering with where().eq() chain', async () => {
-    const mockAccountsData = {
-      savingsAccounts: [
-        {
-          id: 123,
-          accountNo: '000000123',
-          showReserved: true
-        }
-      ]
-    };
-
-    mockAxiosInstance.get.mockResolvedValue({ data: mockAccountsData });
-
-    const listQuery = ListAccountsOfClient({ clientId: 123 });
-    const queryBuilder = listQuery.list();
-    const filteredBuilder = queryBuilder.where('showReservedAccount').eq(true);
-    const command = filteredBuilder.execute();
-
-    const config = {
-      baseUrl: 'https://api.example.com',
-      tenantId: 'default-tenant'
-    };
-
-    const result = await command.execute(config);
-
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/123/accounts', {
-      params: { showReservedAccount: true }
-    });
-    expect(result).toEqual(mockAccountsData);
-  });
-
-  it('should handle validation errors for invalid filter keys', () => {
-    const listQuery = ListAccountsOfClient({ clientId: 123 });
-    const queryBuilder = listQuery.list();
-
-    expect(() => {
-      queryBuilder.where('invalidField');
-    }).toThrow();
-  });
-
-  it('should handle multiple where().eq() chains', async () => {
-    const mockAccountsData = { savingsAccounts: [] };
-    mockAxiosInstance.get.mockResolvedValue({ data: mockAccountsData });
-
-    const listQuery = ListAccountsOfClient({ clientId: 123 });
-    const queryBuilder = listQuery.list();
-    const filteredBuilder = queryBuilder
-      .where('showReservedAccount').eq(true)
-      .where('showReservedAccount').eq(false); // This would override the previous filter
-
-    const command = filteredBuilder.execute();
-
-    const config = {
-      baseUrl: 'https://api.example.com',
-      tenantId: 'default-tenant'
-    };
-
-    await command.execute(config);
-
-    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/123/accounts', {
-      params: { showReservedAccount: false }
-    });
-  });
-
-  it('should handle axios errors during list request', async () => {
-    const mockError: MockAxiosError = new Error('Request failed');
-    mockError.response = {
-      status: 404,
-      data: {
-        message: 'Client not found',
-        developerMessage: 'Client with ID 123 does not exist'
-      }
-    };
-    mockError.isAxiosError = true;
-
-    mockAxiosInstance.get.mockRejectedValue(mockError);
-
-    const listQuery = ListAccountsOfClient({ clientId: 123 });
-    const queryBuilder = listQuery.list();
-    const command = queryBuilder.execute();
-
-    const config = {
-      baseUrl: 'https://api.example.com',
-      tenantId: 'default-tenant'
-    };
-
-    await expect(command.execute(config)).rejects.toThrow();
   });
 });
 
@@ -558,13 +373,12 @@ describe('DeleteAccount', () => {
   });
 
   it('should create a DeleteAccount command with correct metadata', () => {
-    const params = { clientId: 123, accountId: 'acc_456', tenantId: 'test-tenant' };
-    const command = DeleteAccount(params);
+    const command = DeleteAccount(456, { tenantId: 'test-tenant' });
 
-    expect(command.input).toEqual(params);
+    expect(command.input).toEqual({ accountId: 456, configuration: { tenantId: 'test-tenant' } });
     expect(command.metadata).toEqual({
       commandName: 'DeleteAccount',
-      path: '/v1/savingsaccounts/acc_456',
+      path: '/v1/savingsaccounts/456',
       method: 'DELETE'
     });
   });
@@ -573,11 +387,7 @@ describe('DeleteAccount', () => {
     const mockResponse = { success: true };
     mockAxiosInstance.delete.mockResolvedValue({ data: mockResponse });
 
-    const command = DeleteAccount({
-      clientId: 123,
-      accountId: 'acc_456',
-      tenantId: 'test-tenant'
-    });
+    const command = DeleteAccount(456, { tenantId: 'test-tenant' });
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -586,7 +396,7 @@ describe('DeleteAccount', () => {
 
     const result = await command.execute(config);
 
-    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/savingsaccounts/acc_456');
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/savingsaccounts/456');
     expect(result).toEqual(mockResponse);
     expect(config.tenantId).toBe('test-tenant');
   });
@@ -604,10 +414,7 @@ describe('DeleteAccount', () => {
 
     mockAxiosInstance.delete.mockRejectedValue(mockError);
 
-    const command = DeleteAccount({
-      clientId: 123,
-      accountId: 'acc_456'
-    });
+    const command = DeleteAccount(456);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -621,10 +428,7 @@ describe('DeleteAccount', () => {
     const mockResponse = { success: true };
     mockAxiosInstance.delete.mockResolvedValue({ data: mockResponse });
 
-    const command = DeleteAccount({
-      clientId: 123,
-      accountId: 'acc_456'
-    });
+    const command = DeleteAccount(456);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -667,7 +471,7 @@ describe('GetAccountsOfClient', () => {
     const configuration = { tenantId: 'test-tenant' };
     const command = GetAccountsOfClient(clientId, params, configuration);
 
-    expect(command.input).toEqual({ params, configuration });
+    expect(command.input).toEqual({ clientId, params, configuration });
     expect(command.metadata).toEqual({
       commandName: 'ListAccountsOfClient',
       path: '/v1/clients/123/accounts',
@@ -749,3 +553,1190 @@ describe('GetAccountsOfClient', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
+
+describe('CreateAndActivateAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a CreateAndActivateAccount command with correct metadata', () => {
+    const params = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    };
+
+    const command = CreateAndActivateAccount(params);
+
+    expect(command.input).toEqual({ params, configuration: undefined });
+    expect(command.metadata).toEqual({
+      commandName: 'CreateAndActivateAccount',
+      path: '/v1/savingsaccounts',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request with correct query parameters and return response data', async () => {
+    const requestData = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy',
+      nominalAnnualInterestRate: 22.49,
+      minRequiredOpeningBalance: '1000',
+      lockinPeriodFrequency: 0,
+      withdrawalFeeForTransfers: true,
+      allowOverdraft: true,
+      overdraftLimit: 2,
+      nominalAnnualInterestRateOverdraft: 22.49,
+      minOverdraftForInterestCalculation: 2,
+      enforceMinRequiredBalance: false,
+      minRequiredBalance: 0,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 1,
+      interestPostingPeriodType: 4,
+      interestCalculationType: 1,
+      interestCalculationDaysInYearType: 365,
+      externalId: '63748',
+      lockinPeriodFrequencyType: 0,
+      nickname: '12323',
+      charges: []
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts?command=submit,approve,activate',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle minimal required fields', async () => {
+    const requestData = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(requestData);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts?command=submit,approve,activate',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle axios errors during account creation', async () => {
+    const mockError: MockAxiosError = new Error('Creation failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Invalid account data',
+        developerMessage: 'Validation failed for account creation'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = CreateAndActivateAccount({
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should override tenantId if provided in configuration', async () => {
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(
+      {
+        clientId: 12,
+        productId: 1,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        submittedOnDate: '22 June 2023',
+        monthDayFormat: 'dd MMMM yyyy'
+      },
+      { tenantId: 'custom-tenant' }
+    );
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('custom-tenant');
+  });
+
+  it('should not override tenantId if not provided in configuration', async () => {
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount({
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy'
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+
+  it('should include all optional fields in the request', async () => {
+    const requestData = {
+      clientId: 12,
+      productId: 1,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '22 June 2023',
+      monthDayFormat: 'dd MMMM yyyy',
+      nominalAnnualInterestRate: 22.49,
+      minRequiredOpeningBalance: '1000',
+      lockinPeriodFrequency: 0,
+      withdrawalFeeForTransfers: true,
+      allowOverdraft: true,
+      overdraftLimit: 2,
+      nominalAnnualInterestRateOverdraft: 22.49,
+      minOverdraftForInterestCalculation: 2,
+      enforceMinRequiredBalance: false,
+      minRequiredBalance: 0,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 1,
+      interestPostingPeriodType: 4,
+      interestCalculationType: 1,
+      interestCalculationDaysInYearType: 365,
+      externalId: '63748',
+      lockinPeriodFrequencyType: 0,
+      nickname: '12323',
+      charges: [
+        { chargeId: 1, amount: 100 },
+        { chargeId: 2, amount: 50 }
+      ]
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 12,
+      savingsId: 15,
+      resourceId: 15,
+      changes: {
+        status: 'ACTIVE',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activatedOnDate: '22 June 2023'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CreateAndActivateAccount(requestData);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts?command=submit,approve,activate',
+      requestData
+    );
+  });
+});
+
+describe('CloseAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a CloseAccount command with correct metadata', () => {
+    const requestData = {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    };
+    const command = CloseAccount(5100, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ savingsAccountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'CloseAccount',
+      path: '/v1/savingsaccounts/5100?command=close',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100,
+      withdrawBalance: false,
+      postInterestValidationOnClosure: true,
+      ignoreNegativeBalance: false
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 123,
+      savingsId: 5100,
+      resourceId: 5100,
+      changes: {
+        status: 'CLOSED',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        closedOnDate: '01 April 2025',
+        closeReason: 'ACCOUNT_CLOSE_REASON'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CloseAccount(5100, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/5100?command=close',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during close', async () => {
+    const mockError: MockAxiosError = new Error('Close failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot close account',
+        developerMessage: 'Account has non-zero balance'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = CloseAccount(5100, {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = CloseAccount(5100, {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+
+describe('BlockAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a BlockAccount command with correct metadata', () => {
+    const requestData = { blockReasonCodeId: 5100 };
+    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'BlockAccount',
+      path: '/v1/savingsaccounts/123?command=block',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = { blockReasonCodeId: 5100 };
+
+    const mockResponse = {
+      id: 11999,
+      clientId: 111,
+      officeId: 1,
+      savingsId: 4865,
+      resourceId: 111,
+      changes: {
+        subStatus: {
+          id: 400,
+          code: 'SavingsAccountSubStatusEnum.block',
+          value: 'Block',
+          none: false,
+          inactive: false,
+          dormant: false,
+          escheat: false,
+          block: true,
+          blockCredit: false,
+          blockDebit: false
+        },
+        blockReason: {
+          id: 3002,
+          name: 'Suspicious Transactions',
+          codeName: 'ACCOUNT_BLOCK_REASON'
+        }
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/123?command=block',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during block', async () => {
+    const mockError: MockAxiosError = new Error('Block failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot block account',
+        developerMessage: 'Account is already blocked'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = BlockAccount(123, { blockReasonCodeId: 5100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = BlockAccount(123, { blockReasonCodeId: 5100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+
+
+
+describe('ScheduleAccountClosure', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a ScheduleAccountClosure command with correct metadata', () => {
+    const requestData = {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    };
+    const command = ScheduleAccountClosure(5100, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ accountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'ScheduleAccountClosure',
+      path: '/v1/savingsaccounts/5100?command=SCHEDULECLOSE',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100,
+      withdrawBalance: false,
+      postInterestValidationOnClosure: true,
+      ignoreNegativeBalance: false
+    };
+
+    const mockResponse = {
+      officeId: 1,
+      clientId: 123,
+      savingsId: 5100,
+      resourceId: 5100,
+      changes: {
+        status: 'CLOSED',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        closedOnDate: '01 April 2025',
+        closeReason: 'ACCOUNT_CLOSE_REASON'
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = ScheduleAccountClosure(5100, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/5100?command=SCHEDULECLOSE',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during schedule closure', async () => {
+    const mockError: MockAxiosError = new Error('Schedule closure failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot schedule closure',
+        developerMessage: 'Account has non-zero balance'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = ScheduleAccountClosure(5100, {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = ScheduleAccountClosure(5100, {
+      closedOnDate: '01 April 2025',
+      dateFormat: 'dd MMMM yyyy',
+      locale: 'en',
+      closeReasonCodeId: 5100
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+describe('HoldAmount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a HoldAmount command with correct metadata', () => {
+    const requestData = { transactionAmount: 45, holdAmountReasonCodeId: 6100 };
+    const command = HoldAmount(123, requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'HoldAmount',
+      path: '/v1/savingsaccounts/123?command=hold',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = { transactionAmount: 45, holdAmountReasonCodeId: 6100 };
+
+    const mockResponse = {
+      id: '1',
+      resourceId: 1,
+      changes: {
+        savingsAmountOnHold: 45,
+        blockAmountReason: {
+          id: 6582,
+          name: 'Dispute Hold',
+          codeName: 'AMOUNT_BLOCK_REASON'
+        }
+      }
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = HoldAmount(123, requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/123?command=hold',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during hold amount', async () => {
+    const mockError: MockAxiosError = new Error('Hold failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot hold amount',
+        developerMessage: 'Insufficient funds'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = HoldAmount(123, { transactionAmount: 45, holdAmountReasonCodeId: 6100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = HoldAmount(123, { transactionAmount: 45, holdAmountReasonCodeId: 6100 });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+describe('GenerateAccountStatement', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a GenerateAccountStatement command with correct metadata', () => {
+    const requestData = {
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    };
+    const command = GenerateAccountStatement(requestData, { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({ requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.metadata).toEqual({
+      commandName: 'GenerateAccountStatement',
+      path: '/v1/generatestatements',
+      method: 'POST'
+    });
+  });
+
+  it('should execute POST request and return response data', async () => {
+    const requestData = {
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    };
+
+    const mockResponse = {
+      jobId: 315,
+      status: 'ACCEPTED'
+    };
+
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = GenerateAccountStatement(requestData, { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith(
+      '/v1/generatestatements',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should handle axios errors during statement generation', async () => {
+    const mockError: MockAxiosError = new Error('Generation failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot generate statement',
+        developerMessage: 'Invalid parameters'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    const command = GenerateAccountStatement({
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = { success: true };
+    mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
+
+    const command = GenerateAccountStatement({
+      reportName: 'Report current and saving account(Pentaho)',
+      parentEntityType: 'savings',
+      parentEntityId: 1,
+      reportType: 'PDF' as const,
+      docType: 'statement',
+      params: {
+        start_date: '01 January 2023',
+        end_date: '02 January 2023',
+        saving_no: '1'
+      }
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+
+describe('DownloadAccountStatement', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a DownloadAccountStatement command with correct metadata', () => {
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d', { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({
+      savingsAccountId: 12,
+      documentId: '45ac4379-7185-471b-a103-916d25dc648d',
+      configuration: { tenantId: 'test-tenant' }
+    });
+    expect(command.metadata).toEqual({
+      commandName: 'DownloadAccountStatement',
+      path: '/v1/savings/12/documents/45ac4379-7185-471b-a103-916d25dc648d/attachment',
+      method: 'GET'
+    });
+  });
+
+  it('should execute GET request with responseType blob and return file data with metadata', async () => {
+    const mockBlob = new Blob(['test file content'], { type: 'application/pdf' });
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="statement.pdf"',
+        'content-type': 'application/pdf'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d', { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savings/12/documents/45ac4379-7185-471b-a103-916d25dc648d/attachment',
+      { responseType: 'blob' }
+    );
+    expect(result).toEqual({
+      data: mockBlob,
+      fileName: 'statement.pdf',
+      contentType: 'application/pdf'
+    });
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should extract filename from Content-Disposition header without quotes', async () => {
+    const mockBlob = new Blob(['test content']);
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename=account_statement_2023.pdf',
+        'content-type': 'application/pdf'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.fileName).toBe('account_statement_2023.pdf');
+    expect(result?.contentType).toBe('application/pdf');
+  });
+
+  it('should handle missing Content-Disposition header gracefully', async () => {
+    const mockBlob = new Blob(['test content']);
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-type': 'application/pdf'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.data).toBe(mockBlob);
+    expect(result?.fileName).toBeUndefined();
+    expect(result?.contentType).toBe('application/pdf');
+  });
+
+  it('should handle missing Content-Type header gracefully', async () => {
+    const mockBlob = new Blob(['test content']);
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="document.pdf"'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.data).toBe(mockBlob);
+    expect(result?.fileName).toBe('document.pdf');
+    expect(result?.contentType).toBeUndefined();
+  });
+
+  it('should handle axios errors during download', async () => {
+    const mockError: MockAxiosError = new Error('Download failed');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Document not found',
+        developerMessage: 'Document with ID 45ac4379-7185-471b-a103-916d25dc648d does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockBlob = new Blob(['test content']);
+    mockAxiosInstance.get.mockResolvedValue({
+      data: mockBlob,
+      headers: {}
+    });
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+
+  it('should handle different file types correctly', async () => {
+    const mockBlob = new Blob(['csv,data,here'], { type: 'text/csv' });
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="statement.csv"',
+        'content-type': 'text/csv'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(99, 'abc-123-def-456');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.data).toBe(mockBlob);
+    expect(result?.fileName).toBe('statement.csv');
+    expect(result?.contentType).toBe('text/csv');
+  });
+});
+

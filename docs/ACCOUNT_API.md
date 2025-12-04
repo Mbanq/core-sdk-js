@@ -14,6 +14,7 @@ The Core SDK provides comprehensive account management capabilities with support
 ## Overview
 
 The Account API allows you to:
+- Create and activate new accounts in a single operation
 - List accounts for a specific client
 - Retrieve individual account details
 - Update account settings and properties
@@ -188,6 +189,124 @@ const result = await client.client.for('client-123').accounts.delete('acc_789').
 console.log('Account deleted:', result);
 ```
 
+### 5. Create and Activate Account
+
+Create a new savings account and activate it in a single operation. This combines the submit, approve, and activate steps into one API call.
+
+```typescript
+import { CreateAndActivateAccount } from 'core-sdk-js';
+
+// Minimal required fields
+const newAccount = await CreateAndActivateAccount({
+  clientId: 12,
+  productId: 1,
+  locale: 'en',
+  dateFormat: 'dd MMMM yyyy',
+  submittedOnDate: '22 June 2023',
+  monthDayFormat: 'dd MMMM yyyy'
+}).execute(config);
+
+console.log('Account created:', newAccount);
+```
+
+**With Optional Fields:**
+
+```typescript
+const newAccount = await CreateAndActivateAccount({
+  // Required fields
+  clientId: 12,
+  productId: 1,
+  locale: 'en',
+  dateFormat: 'dd MMMM yyyy',
+  submittedOnDate: '22 June 2023',
+  monthDayFormat: 'dd MMMM yyyy',
+  
+  // Optional fields
+  nominalAnnualInterestRate: 22.49,
+  minRequiredOpeningBalance: '1000',
+  lockinPeriodFrequency: 0,
+  withdrawalFeeForTransfers: true,
+  allowOverdraft: true,
+  overdraftLimit: 2,
+  nominalAnnualInterestRateOverdraft: 22.49,
+  minOverdraftForInterestCalculation: 2,
+  enforceMinRequiredBalance: false,
+  minRequiredBalance: 0,
+  withHoldTax: false,
+  interestCompoundingPeriodType: 1,
+  interestPostingPeriodType: 4,
+  interestCalculationType: 1,
+  interestCalculationDaysInYearType: 365,
+  externalId: '63748',
+  lockinPeriodFrequencyType: 0,
+  nickname: '12323',
+  charges: [
+    { chargeId: 1, amount: 100 },
+    { chargeId: 2, amount: 50 }
+  ]
+}, { tenantId: 'custom-tenant' }).execute(config);
+```
+
+**Required Fields:**
+- `clientId`: The client ID for whom the account is being created
+- `productId`: The savings product ID to use
+- `locale`: Locale setting (e.g., 'en')
+- `dateFormat`: Date format pattern (e.g., 'dd MMMM yyyy')
+- `submittedOnDate`: Account submission date
+- `monthDayFormat`: Month-day format pattern (e.g., 'dd MMMM yyyy')
+
+**Optional Fields:**
+- `nominalAnnualInterestRate`: Annual interest rate (number)
+- `minRequiredOpeningBalance`: Minimum opening balance (string)
+- `lockinPeriodFrequency`: Lock-in period frequency (number)
+- `withdrawalFeeForTransfers`: Enable withdrawal fees (boolean)
+- `allowOverdraft`: Allow overdraft (boolean)
+- `overdraftLimit`: Maximum overdraft amount (number)
+- `nominalAnnualInterestRateOverdraft`: Overdraft interest rate (number)
+- `minOverdraftForInterestCalculation`: Minimum overdraft for interest (number)
+- `enforceMinRequiredBalance`: Enforce minimum balance (boolean)
+- `minRequiredBalance`: Minimum account balance (number)
+- `withHoldTax`: Tax withholding (boolean)
+- `interestCompoundingPeriodType`: Interest compounding period type (number)
+- `interestPostingPeriodType`: Interest posting period type (number)
+- `interestCalculationType`: Interest calculation type (number)
+- `interestCalculationDaysInYearType`: Days in year for calculation (number)
+- `externalId`: External identifier (string)
+- `lockinPeriodFrequencyType`: Lock-in period frequency type (number)
+- `nickname`: Account nickname (string)
+- `charges`: Array of charges with `chargeId` and optional `amount`
+
+**Response Structure:**
+```typescript
+{
+  officeId: 1,
+  clientId: 12,
+  savingsId: 15,
+  resourceId: 15,
+  changes: {
+    status: 'ACTIVE',
+    locale: 'en',
+    dateFormat: 'dd MMMM yyyy',
+    activatedOnDate: '22 June 2023'
+  }
+}
+```
+
+**With Custom Tenant:**
+```typescript
+const newAccount = await CreateAndActivateAccount(
+  {
+    clientId: 12,
+    productId: 1,
+    locale: 'en',
+    dateFormat: 'dd MMMM yyyy',
+    submittedOnDate: '22 June 2023',
+    monthDayFormat: 'dd MMMM yyyy'
+  },
+  { tenantId: 'custom-tenant-id' }
+).execute(config);
+```
+
 ## Query Building
 
 ### Available Filters
@@ -309,6 +428,61 @@ interface UpdateAccountRequest {
   dateFormat?: string;
   monthDayFormat?: string;
   charges?: any[];
+}
+```
+
+### Create and Activate Account Request Schema
+
+```typescript
+interface CreateAndActivateAccountRequest {
+  // Required fields
+  clientId: number;
+  productId: number;
+  locale: string;
+  dateFormat: string;
+  submittedOnDate: string;
+  monthDayFormat: string;
+  
+  // Optional fields
+  nominalAnnualInterestRate?: number;
+  minRequiredOpeningBalance?: string;
+  lockinPeriodFrequency?: number;
+  withdrawalFeeForTransfers?: boolean;
+  allowOverdraft?: boolean;
+  overdraftLimit?: number;
+  nominalAnnualInterestRateOverdraft?: number;
+  minOverdraftForInterestCalculation?: number;
+  enforceMinRequiredBalance?: boolean;
+  minRequiredBalance?: number;
+  withHoldTax?: boolean;
+  interestCompoundingPeriodType?: number;
+  interestPostingPeriodType?: number;
+  interestCalculationType?: number;
+  interestCalculationDaysInYearType?: number;
+  externalId?: string;
+  lockinPeriodFrequencyType?: number;
+  nickname?: string;
+  charges?: Array<{
+    chargeId: number;
+    amount?: number;
+  }>;
+}
+```
+
+### Create and Activate Account Response Schema
+
+```typescript
+interface CreateAndActivateAccountResponse {
+  officeId: number;
+  clientId: number;
+  savingsId: number;
+  resourceId: number;
+  changes: {
+    status: string;
+    locale: string;
+    dateFormat: string;
+    activatedOnDate: string;
+  };
 }
 ```
 
@@ -499,6 +673,83 @@ async function sendLowBalanceNotifications(accounts: SavingAccount[]) {
 }
 ```
 
+### Creating New Accounts
+
+```typescript
+import { CreateAndActivateAccount } from 'core-sdk-js';
+
+async function createNewSavingsAccount(clientId: number, productId: number) {
+  try {
+    console.log('🆕 Creating and activating new savings account...');
+    
+    const newAccount = await CreateAndActivateAccount({
+      clientId: clientId,
+      productId: productId,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      submittedOnDate: '01 December 2023',
+      monthDayFormat: 'dd MMMM yyyy',
+      
+      // Optional: Set account features
+      nominalAnnualInterestRate: 2.5,
+      minRequiredOpeningBalance: '100',
+      allowOverdraft: true,
+      overdraftLimit: 500,
+      enforceMinRequiredBalance: true,
+      minRequiredBalance: 50,
+      withHoldTax: false,
+      
+      // Interest calculation settings
+      interestCompoundingPeriodType: 1,  // Daily
+      interestPostingPeriodType: 4,      // Monthly
+      interestCalculationType: 1,         // Daily Balance
+      interestCalculationDaysInYearType: 365,
+      
+      // Optional: Add account nickname and external ID
+      nickname: 'Primary Savings',
+      externalId: 'EXT-' + Date.now(),
+      
+      // Optional: Add charges
+      charges: [
+        { chargeId: 1, amount: 10 }  // Account maintenance fee
+      ]
+    }).execute(config);
+    
+    console.log('✅ Account created successfully!');
+    console.log('Account ID:', newAccount.savingsId);
+    console.log('Resource ID:', newAccount.resourceId);
+    console.log('Status:', newAccount.changes.status);
+    console.log('Activated on:', newAccount.changes.activatedOnDate);
+    
+    return newAccount;
+    
+  } catch (error) {
+    if (isCommandError(error)) {
+      console.error('❌ Failed to create account:', error.message);
+      
+      // Handle specific error cases
+      switch (error.status) {
+        case 400:
+          console.error('Invalid account parameters');
+          break;
+        case 404:
+          console.error('Client or product not found');
+          break;
+        case 403:
+          console.error('Insufficient permissions to create account');
+          break;
+        default:
+          console.error('Unexpected error:', error.message);
+      }
+    }
+    throw error;
+  }
+}
+
+// Usage
+createNewSavingsAccount(12, 1);
+```
+
 ## Best Practices
 
 1. **Use specific account IDs**: When getting individual accounts, use `get(id)` for direct API calls
@@ -517,6 +768,8 @@ The SDK includes Zod schema validation for all account operations:
 import { 
   SavingAccountSchema,
   UpdateAccountRequestSchema,
+  CreateAndActivateAccountRequestSchema,
+  CreateAndActivateAccountResponseSchema,
   ListAccountsOfClientResponseSchema 
 } from 'core-sdk-js';
 
@@ -530,5 +783,17 @@ if (!isValidAccount.success) {
 const isValidUpdate = UpdateAccountRequestSchema.safeParse(updateData);
 if (!isValidUpdate.success) {
   console.error('Invalid update data:', isValidUpdate.error);
+}
+
+// Validate create and activate request
+const isValidCreate = CreateAndActivateAccountRequestSchema.safeParse(createData);
+if (!isValidCreate.success) {
+  console.error('Invalid create request:', isValidCreate.error);
+}
+
+// Validate create and activate response
+const isValidResponse = CreateAndActivateAccountResponseSchema.safeParse(responseData);
+if (!isValidResponse.success) {
+  console.error('Invalid response data:', isValidResponse.error);
 }
 ```

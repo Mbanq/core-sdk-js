@@ -3,11 +3,12 @@ export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifi
 export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from './rest/client';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './rest/transfer';
 export { GetPayment, GetPayments, CreatePayment, UpdatePayment, DeletePayment } from './rest/payment';
-export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './rest/account';
+export { GetAccount, GetAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount, CloseAccount, BlockAccount, ScheduleAccountClosure, HoldAmount, GenerateAccountStatement, DownloadAccountStatement } from './rest/account';
 export { GraphQL } from './graphql';
 export { CustomGet, CustomCreate, CustomUpdate } from './rest/custom';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './rest/recipient';
 export { UpdateRecipientGQL as UpdateRecipient } from './graphql/recipient';
 export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './rest/user';
 export { ListCardProduct, CreateCardProduct, UpdateCardProduct, GetCardProduct } from './rest/cardProduct';
-export { SwitchClientClassification, GetClientClassification, CancelSwitchClientClassification } from './rest/clientClassification'
+export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './rest/clientAddress';  
+export { SwitchClientClassification, GetClientClassification, CancelSwitchClientClassification } from './rest/clientClassification';

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createCommandError } from '../utils/errorHandler';
+
 
 const statusSchema = z.object({
   id: z.number(),
@@ -201,47 +201,12 @@ export const ListAccountsOfClientResponseShape = {
 
 export const ListAccountsOfClientResponseSchema = z.object(ListAccountsOfClientResponseShape);
 
-export const ListAccountFilterKeySchema = z.enum([
-  'showReservedAccount'
-]);
-
 export const ListAccountsRequestShape = {
   tenantId: z.string().optional(),
   showReservedAccount: z.boolean().optional().default(false)
 };
 
 export const ListAccountsRequestSchema = z.object(ListAccountsRequestShape);
-
-export type ListAccountFilterKey = z.infer<typeof ListAccountFilterKeySchema>;
-export const validateListAccountFilterKey = (key: string): ListAccountFilterKey => {
-  return ListAccountFilterKeySchema.parse(key);
-};
-export const validateListAccountFilters = (filters: Record<string, any>): void => {
-  try {
-    for (const [key, value] of Object.entries(filters)) {
-      // Validate filter key
-      validateListAccountFilterKey(key);
-
-      // Skip validation for undefined/null values
-      if (value === undefined || value === null) continue;
-
-      // Use Zod validation for specific fields
-      switch (key) {
-        case 'showReservedAccount':
-          z.boolean().parse(value);
-          break;
-      }
-    }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createCommandError({
-        message: `Validation error: ${error.errors.map(e => e.message).join(', ')}`,
-        code: 'validation_error'
-      });
-    }
-    throw error;
-  }
-};
 
 export const UpdateAccountRequestShape = {
   clientId: z.number(),
@@ -274,3 +239,198 @@ export type ListAccountsOfClientResponse = z.infer<typeof ListAccountsOfClientRe
 export type ListAccountsOfClientRequest = z.infer<typeof ListAccountsRequestSchema>;
 export type SavingAccount = z.infer<typeof SavingAccountSchema>;
 export type UpdateAccountRequest = z.infer<typeof UpdateAccountRequestSchema>;
+
+export const CreateAndActivateAccountRequestShape = {
+  clientId: z.number(),
+  productId: z.number(),
+  locale: z.string(),
+  dateFormat: z.string(),
+  submittedOnDate: z.string(),
+  monthDayFormat: z.string(),
+  nominalAnnualInterestRate: z.number().optional(),
+  minRequiredOpeningBalance: z.string().optional(),
+  lockinPeriodFrequency: z.number().optional(),
+  withdrawalFeeForTransfers: z.boolean().optional(),
+  allowOverdraft: z.boolean().optional(),
+  overdraftLimit: z.number().optional(),
+  nominalAnnualInterestRateOverdraft: z.number().optional(),
+  minOverdraftForInterestCalculation: z.number().optional(),
+  enforceMinRequiredBalance: z.boolean().optional(),
+  minRequiredBalance: z.number().optional(),
+  withHoldTax: z.boolean().optional(),
+  interestCompoundingPeriodType: z.number().optional(),
+  interestPostingPeriodType: z.number().optional(),
+  interestCalculationType: z.number().optional(),
+  interestCalculationDaysInYearType: z.number().optional(),
+  externalId: z.string().optional(),
+  lockinPeriodFrequencyType: z.number().optional(),
+  nickname: z.string().optional(),
+  charges: z.array(z.object({
+    chargeId: z.number(),
+    amount: z.number().optional(),
+    dueDate: z.string().optional(),
+    feeInterval: z.number().optional()
+  })).optional()
+};
+
+export const CreateAndActivateAccountRequestSchema = z.object(CreateAndActivateAccountRequestShape);
+
+export const CreateAndActivateAccountResponseShape = {
+  officeId: z.number(),
+  clientId: z.number(),
+  savingsId: z.number(),
+  resourceId: z.number(),
+  changes: z.object({
+    status: z.string(),
+    locale: z.string(),
+    dateFormat: z.string(),
+    activatedOnDate: z.string()
+  })
+};
+
+export const CreateAndActivateAccountResponseSchema = z.object(CreateAndActivateAccountResponseShape);
+
+export type CreateAndActivateAccountRequest = z.infer<typeof CreateAndActivateAccountRequestSchema>;
+export type CreateAndActivateAccountResponse = z.infer<typeof CreateAndActivateAccountResponseSchema>;
+
+export const CloseAccountRequestShape = {
+  closedOnDate: z.string().optional(),
+  dateFormat: z.string().optional(),
+  locale: z.string().optional(),
+  withdrawBalance: z.boolean().optional(),
+  postInterestValidationOnClosure: z.boolean().optional(),
+  ignoreNegativeBalance: z.boolean().optional(),
+  paymentTypeId: z.number().optional(),
+  closeReasonCodeId: z.number()
+};
+
+export const CloseAccountRequestSchema = z.object(CloseAccountRequestShape);
+
+export const CloseAccountResponseShape = {
+  officeId: z.number(),
+  clientId: z.number(),
+  savingsId: z.number(),
+  resourceId: z.number(),
+  changes: z.object({
+    status: z.string(),
+    locale: z.string(),
+    dateFormat: z.string(),
+    closedOnDate: z.string(),
+    closeReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const CloseAccountResponseSchema = z.object(CloseAccountResponseShape);
+
+export type CloseAccountRequest = z.infer<typeof CloseAccountRequestSchema>;
+export type CloseAccountResponse = z.infer<typeof CloseAccountResponseSchema>;
+
+export const BlockAccountRequestShape = {
+  blockReasonCodeId: z.number()
+};
+
+export const BlockAccountRequestSchema = z.object(BlockAccountRequestShape);
+
+export const BlockAccountResponseShape = {
+  id: z.number(),
+  clientId: z.number(),
+  officeId: z.number(),
+  savingsId: z.number(),
+  resourceId: z.number(),
+  changes: z.object({
+    subStatus: z.object({
+      id: z.number(),
+      code: z.string(),
+      value: z.string(),
+      none: z.boolean(),
+      inactive: z.boolean(),
+      dormant: z.boolean(),
+      escheat: z.boolean(),
+      block: z.boolean(),
+      blockCredit: z.boolean(),
+      blockDebit: z.boolean()
+    }),
+    blockReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const BlockAccountResponseSchema = z.object(BlockAccountResponseShape);
+
+export type BlockAccountRequest = z.infer<typeof BlockAccountRequestSchema>;
+export type BlockAccountResponse = z.infer<typeof BlockAccountResponseSchema>;
+
+export const HoldAmountRequestShape = {
+  transactionAmount: z.number(),
+  holdAmountReasonCodeId: z.number()
+};
+
+export const HoldAmountRequestSchema = z.object(HoldAmountRequestShape);
+
+export const HoldAmountResponseShape = {
+  id: z.string(),
+  resourceId: z.number(),
+  changes: z.object({
+    savingsAmountOnHold: z.number(),
+    blockAmountReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const HoldAmountResponseSchema = z.object(HoldAmountResponseShape);
+
+export type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
+export type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
+
+export const GenerateAccountStatementRequestShape = {
+  reportName: z.string(),
+  parentEntityType: z.string(),
+  parentEntityId: z.number(),
+  reportType: z.enum(['PDF', 'CSV', 'EXCELL', 'EXCELL 2007']),
+  docType: z.string(),
+  params: z.object({
+    start_date: z.string(),
+    end_date: z.string(),
+    saving_no: z.string()
+  })
+};
+
+export const GenerateAccountStatementRequestSchema = z.object(GenerateAccountStatementRequestShape);
+
+export const GenerateAccountStatementResponseShape = {
+  jobId: z.number(),
+  status: z.string()
+};
+
+export const GenerateAccountStatementResponseSchema = z.object(GenerateAccountStatementResponseShape);
+
+export type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
+export type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;
+
+export const DownloadAccountStatementRequestShape = {
+  savingsAccountId: z.number(),
+  documentId: z.string()
+};
+
+export const DownloadAccountStatementRequestSchema = z.object(DownloadAccountStatementRequestShape);
+
+export const DownloadAccountStatementResponseShape = {
+  data: z.instanceof(Blob),
+  fileName: z.string().optional(),
+  contentType: z.string().optional()
+};
+
+export const DownloadAccountStatementResponseSchema = z.object(DownloadAccountStatementResponseShape);
+
+export type DownloadAccountStatementRequest = z.infer<typeof DownloadAccountStatementRequestSchema>;
+export type DownloadAccountStatementResponse = z.infer<typeof DownloadAccountStatementResponseSchema>;

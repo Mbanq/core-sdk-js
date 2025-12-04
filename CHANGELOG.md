@@ -1,3 +1,41 @@
+# [0.16.0](https://github.com/mbanq/core-sdk-js/compare/v0.15.0...v0.16.0) (2025-12-04)
+
+
+### Features
+
+* Add `DownloadAccountStatement` command to download account statements and include its tests. ([7ecdf0d](https://github.com/mbanq/core-sdk-js/commit/7ecdf0dbf4bdda55c4245c52276063b7a81211c5))
+
+# [0.15.0](https://github.com/mbanq/core-sdk-js/compare/v0.14.0...v0.15.0) (2025-12-04)
+
+
+### Features
+
+* add `HoldAmount` command, types, and tests, and export `ScheduleAccountClosure` for account management. ([6e9bdcf](https://github.com/mbanq/core-sdk-js/commit/6e9bdcfdd1ab78cd9bc26313b40698918b09b817))
+* add account statement generation command, types, and tests ([642fee8](https://github.com/mbanq/core-sdk-js/commit/642fee8ce8473f9d319ac404841eb8ebefcb141a))
+* add command and tests for scheduling savings account closure ([53d9e7f](https://github.com/mbanq/core-sdk-js/commit/53d9e7f9d5638ee4d7ef641b2395b2933cd1ea77))
+
+# [0.14.0](https://github.com/mbanq/core-sdk-js/compare/v0.13.0...v0.14.0) (2025-12-03)
+
+
+### Features
+
+* Add `CreateAndActivateAccount` command, types, tests, and documentation for account creation and activation ([#38](https://github.com/mbanq/core-sdk-js/issues/38)) ([090f8fa](https://github.com/mbanq/core-sdk-js/commit/090f8fa08a4d3dd775c79d43add6f1c67dae7e93))
+* Add `CreateAndActivateAccount` command, types, tests, and documentation for account creation and activation ([#42](https://github.com/mbanq/core-sdk-js/issues/42)) ([e19736e](https://github.com/mbanq/core-sdk-js/commit/e19736e939ae3693193816601c0673dfedcf9acc))
+
+# [0.13.0](https://github.com/mbanq/core-sdk-js/compare/v0.12.0...v0.13.0) (2025-12-03)
+
+
+### Features
+
+* Add `CreateAndActivateAccount` command, types, tests, and documentation for account creation and activation ([#37](https://github.com/mbanq/core-sdk-js/issues/37)) ([9f52988](https://github.com/mbanq/core-sdk-js/commit/9f52988418306df62a34d8b341e6b8a991a41cfe))
+
+# [0.12.0](https://github.com/mbanq/core-sdk-js/compare/v0.11.0...v0.12.0) (2025-12-02)
+
+
+### Features
+
+* client addresses ([158164d](https://github.com/mbanq/core-sdk-js/commit/158164df423907678c8f3f66bbac75d1483e9d41))
+
 # [0.11.0](https://github.com/mbanq/core-sdk-js/compare/v0.10.0...v0.11.0) (2025-12-02)
 
 

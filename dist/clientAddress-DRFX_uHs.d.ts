@@ -1,4 +1,4 @@
-import { a as Command, G as GraphQLRequest } from './config.d-io5V_aK4.mjs';
+import { a as Command, G as GraphQLRequest } from './config.d-io5V_aK4.js';
 import z$1, { z } from 'zod';
 import * as buffer from 'buffer';
 
@@ -7337,6 +7337,550 @@ declare const UpdateAccountRequestSchema: z.ZodObject<{
 type ListAccountsOfClientRequest = z.infer<typeof ListAccountsRequestSchema>;
 type SavingAccount = z.infer<typeof SavingAccountSchema>;
 type UpdateAccountRequest = z.infer<typeof UpdateAccountRequestSchema>;
+declare const CreateAndActivateAccountRequestSchema: z.ZodObject<{
+    clientId: z.ZodNumber;
+    productId: z.ZodNumber;
+    locale: z.ZodString;
+    dateFormat: z.ZodString;
+    submittedOnDate: z.ZodString;
+    monthDayFormat: z.ZodString;
+    nominalAnnualInterestRate: z.ZodOptional<z.ZodNumber>;
+    minRequiredOpeningBalance: z.ZodOptional<z.ZodString>;
+    lockinPeriodFrequency: z.ZodOptional<z.ZodNumber>;
+    withdrawalFeeForTransfers: z.ZodOptional<z.ZodBoolean>;
+    allowOverdraft: z.ZodOptional<z.ZodBoolean>;
+    overdraftLimit: z.ZodOptional<z.ZodNumber>;
+    nominalAnnualInterestRateOverdraft: z.ZodOptional<z.ZodNumber>;
+    minOverdraftForInterestCalculation: z.ZodOptional<z.ZodNumber>;
+    enforceMinRequiredBalance: z.ZodOptional<z.ZodBoolean>;
+    minRequiredBalance: z.ZodOptional<z.ZodNumber>;
+    withHoldTax: z.ZodOptional<z.ZodBoolean>;
+    interestCompoundingPeriodType: z.ZodOptional<z.ZodNumber>;
+    interestPostingPeriodType: z.ZodOptional<z.ZodNumber>;
+    interestCalculationType: z.ZodOptional<z.ZodNumber>;
+    interestCalculationDaysInYearType: z.ZodOptional<z.ZodNumber>;
+    externalId: z.ZodOptional<z.ZodString>;
+    lockinPeriodFrequencyType: z.ZodOptional<z.ZodNumber>;
+    nickname: z.ZodOptional<z.ZodString>;
+    charges: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        chargeId: z.ZodNumber;
+        amount: z.ZodOptional<z.ZodNumber>;
+        dueDate: z.ZodOptional<z.ZodString>;
+        feeInterval: z.ZodOptional<z.ZodNumber>;
+    }, "strip", z.ZodTypeAny, {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }, {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }>, "many">>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    dateFormat: string;
+    locale: string;
+    submittedOnDate: string;
+    productId: number;
+    monthDayFormat: string;
+    externalId?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    nominalAnnualInterestRate?: number | undefined;
+    interestCompoundingPeriodType?: number | undefined;
+    interestPostingPeriodType?: number | undefined;
+    interestCalculationType?: number | undefined;
+    interestCalculationDaysInYearType?: number | undefined;
+    lockinPeriodFrequency?: number | undefined;
+    lockinPeriodFrequencyType?: number | undefined;
+    overdraftLimit?: number | undefined;
+    minRequiredBalance?: number | undefined;
+    minOverdraftForInterestCalculation?: number | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }[] | undefined;
+    nominalAnnualInterestRateOverdraft?: number | undefined;
+    nickname?: string | undefined;
+}, {
+    clientId: number;
+    dateFormat: string;
+    locale: string;
+    submittedOnDate: string;
+    productId: number;
+    monthDayFormat: string;
+    externalId?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    nominalAnnualInterestRate?: number | undefined;
+    interestCompoundingPeriodType?: number | undefined;
+    interestPostingPeriodType?: number | undefined;
+    interestCalculationType?: number | undefined;
+    interestCalculationDaysInYearType?: number | undefined;
+    lockinPeriodFrequency?: number | undefined;
+    lockinPeriodFrequencyType?: number | undefined;
+    overdraftLimit?: number | undefined;
+    minRequiredBalance?: number | undefined;
+    minOverdraftForInterestCalculation?: number | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        chargeId: number;
+        amount?: number | undefined;
+        dueDate?: string | undefined;
+        feeInterval?: number | undefined;
+    }[] | undefined;
+    nominalAnnualInterestRateOverdraft?: number | undefined;
+    nickname?: string | undefined;
+}>;
+declare const CreateAndActivateAccountResponseSchema: z.ZodObject<{
+    officeId: z.ZodNumber;
+    clientId: z.ZodNumber;
+    savingsId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+    changes: z.ZodObject<{
+        status: z.ZodString;
+        locale: z.ZodString;
+        dateFormat: z.ZodString;
+        activatedOnDate: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    }, {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    };
+}, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        activatedOnDate: string;
+    };
+}>;
+type CreateAndActivateAccountRequest = z.infer<typeof CreateAndActivateAccountRequestSchema>;
+type CreateAndActivateAccountResponse = z.infer<typeof CreateAndActivateAccountResponseSchema>;
+declare const CloseAccountRequestSchema: z.ZodObject<{
+    closedOnDate: z.ZodOptional<z.ZodString>;
+    dateFormat: z.ZodOptional<z.ZodString>;
+    locale: z.ZodOptional<z.ZodString>;
+    withdrawBalance: z.ZodOptional<z.ZodBoolean>;
+    postInterestValidationOnClosure: z.ZodOptional<z.ZodBoolean>;
+    ignoreNegativeBalance: z.ZodOptional<z.ZodBoolean>;
+    paymentTypeId: z.ZodOptional<z.ZodNumber>;
+    closeReasonCodeId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    closeReasonCodeId: number;
+    dateFormat?: string | undefined;
+    locale?: string | undefined;
+    closedOnDate?: string | undefined;
+    withdrawBalance?: boolean | undefined;
+    postInterestValidationOnClosure?: boolean | undefined;
+    ignoreNegativeBalance?: boolean | undefined;
+    paymentTypeId?: number | undefined;
+}, {
+    closeReasonCodeId: number;
+    dateFormat?: string | undefined;
+    locale?: string | undefined;
+    closedOnDate?: string | undefined;
+    withdrawBalance?: boolean | undefined;
+    postInterestValidationOnClosure?: boolean | undefined;
+    ignoreNegativeBalance?: boolean | undefined;
+    paymentTypeId?: number | undefined;
+}>;
+declare const CloseAccountResponseSchema: z.ZodObject<{
+    officeId: z.ZodNumber;
+    clientId: z.ZodNumber;
+    savingsId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+    changes: z.ZodObject<{
+        status: z.ZodString;
+        locale: z.ZodString;
+        dateFormat: z.ZodString;
+        closedOnDate: z.ZodString;
+        closeReason: z.ZodObject<{
+            id: z.ZodNumber;
+            name: z.ZodString;
+            codeName: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+            id: number;
+            codeName: string;
+        }, {
+            name: string;
+            id: number;
+            codeName: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        closedOnDate: string;
+        closeReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }, {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        closedOnDate: string;
+        closeReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        closedOnDate: string;
+        closeReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}, {
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        status: string;
+        dateFormat: string;
+        locale: string;
+        closedOnDate: string;
+        closeReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}>;
+type CloseAccountRequest = z.infer<typeof CloseAccountRequestSchema>;
+type CloseAccountResponse = z.infer<typeof CloseAccountResponseSchema>;
+declare const BlockAccountRequestSchema: z.ZodObject<{
+    blockReasonCodeId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    blockReasonCodeId: number;
+}, {
+    blockReasonCodeId: number;
+}>;
+declare const BlockAccountResponseSchema: z.ZodObject<{
+    id: z.ZodNumber;
+    clientId: z.ZodNumber;
+    officeId: z.ZodNumber;
+    savingsId: z.ZodNumber;
+    resourceId: z.ZodNumber;
+    changes: z.ZodObject<{
+        subStatus: z.ZodObject<{
+            id: z.ZodNumber;
+            code: z.ZodString;
+            value: z.ZodString;
+            none: z.ZodBoolean;
+            inactive: z.ZodBoolean;
+            dormant: z.ZodBoolean;
+            escheat: z.ZodBoolean;
+            block: z.ZodBoolean;
+            blockCredit: z.ZodBoolean;
+            blockDebit: z.ZodBoolean;
+        }, "strip", z.ZodTypeAny, {
+            value: string;
+            code: string;
+            id: number;
+            none: boolean;
+            inactive: boolean;
+            dormant: boolean;
+            escheat: boolean;
+            block: boolean;
+            blockCredit: boolean;
+            blockDebit: boolean;
+        }, {
+            value: string;
+            code: string;
+            id: number;
+            none: boolean;
+            inactive: boolean;
+            dormant: boolean;
+            escheat: boolean;
+            block: boolean;
+            blockCredit: boolean;
+            blockDebit: boolean;
+        }>;
+        blockReason: z.ZodObject<{
+            id: z.ZodNumber;
+            name: z.ZodString;
+            codeName: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+            id: number;
+            codeName: string;
+        }, {
+            name: string;
+            id: number;
+            codeName: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        subStatus: {
+            value: string;
+            code: string;
+            id: number;
+            none: boolean;
+            inactive: boolean;
+            dormant: boolean;
+            escheat: boolean;
+            block: boolean;
+            blockCredit: boolean;
+            blockDebit: boolean;
+        };
+        blockReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }, {
+        subStatus: {
+            value: string;
+            code: string;
+            id: number;
+            none: boolean;
+            inactive: boolean;
+            dormant: boolean;
+            escheat: boolean;
+            block: boolean;
+            blockCredit: boolean;
+            blockDebit: boolean;
+        };
+        blockReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        subStatus: {
+            value: string;
+            code: string;
+            id: number;
+            none: boolean;
+            inactive: boolean;
+            dormant: boolean;
+            escheat: boolean;
+            block: boolean;
+            blockCredit: boolean;
+            blockDebit: boolean;
+        };
+        blockReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+    officeId: number;
+    savingsId: number;
+    changes: {
+        subStatus: {
+            value: string;
+            code: string;
+            id: number;
+            none: boolean;
+            inactive: boolean;
+            dormant: boolean;
+            escheat: boolean;
+            block: boolean;
+            blockCredit: boolean;
+            blockDebit: boolean;
+        };
+        blockReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}>;
+type BlockAccountRequest = z.infer<typeof BlockAccountRequestSchema>;
+type BlockAccountResponse = z.infer<typeof BlockAccountResponseSchema>;
+declare const HoldAmountRequestSchema: z.ZodObject<{
+    transactionAmount: z.ZodNumber;
+    holdAmountReasonCodeId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    transactionAmount: number;
+    holdAmountReasonCodeId: number;
+}, {
+    transactionAmount: number;
+    holdAmountReasonCodeId: number;
+}>;
+declare const HoldAmountResponseSchema: z.ZodObject<{
+    id: z.ZodString;
+    resourceId: z.ZodNumber;
+    changes: z.ZodObject<{
+        savingsAmountOnHold: z.ZodNumber;
+        blockAmountReason: z.ZodObject<{
+            id: z.ZodNumber;
+            name: z.ZodString;
+            codeName: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+            id: number;
+            codeName: string;
+        }, {
+            name: string;
+            id: number;
+            codeName: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }, {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    resourceId: number;
+    changes: {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}, {
+    id: string;
+    resourceId: number;
+    changes: {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}>;
+type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
+type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
+declare const GenerateAccountStatementRequestSchema: z.ZodObject<{
+    reportName: z.ZodString;
+    parentEntityType: z.ZodString;
+    parentEntityId: z.ZodNumber;
+    reportType: z.ZodEnum<["PDF", "CSV", "EXCELL", "EXCELL 2007"]>;
+    docType: z.ZodString;
+    params: z.ZodObject<{
+        start_date: z.ZodString;
+        end_date: z.ZodString;
+        saving_no: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    }, {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    params: {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    };
+    reportName: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
+    docType: string;
+}, {
+    params: {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    };
+    reportName: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
+    docType: string;
+}>;
+declare const GenerateAccountStatementResponseSchema: z.ZodObject<{
+    jobId: z.ZodNumber;
+    status: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    status: string;
+    jobId: number;
+}, {
+    status: string;
+    jobId: number;
+}>;
+type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
+type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;
+declare const DownloadAccountStatementResponseSchema: z.ZodObject<{
+    data: z.ZodType<buffer.Blob, z.ZodTypeDef, buffer.Blob>;
+    fileName: z.ZodOptional<z.ZodString>;
+    contentType: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    data: buffer.Blob;
+    fileName?: string | undefined;
+    contentType?: string | undefined;
+}, {
+    data: buffer.Blob;
+    fileName?: string | undefined;
+    contentType?: string | undefined;
+}>;
+type DownloadAccountStatementResponse = z.infer<typeof DownloadAccountStatementResponseSchema>;
 
 declare const UserDetailShape: {
     username: z.ZodString;
@@ -7406,11 +7950,11 @@ declare const UserDetailSchema: z.ZodObject<{
     isTwoFactorAuthenticationRequired: z.ZodBoolean;
     isSelfServiceUser: z.ZodBoolean;
 }, "strip", z.ZodTypeAny, {
+    officeId: number;
     username: string;
     userId: number;
     accessToken: string;
     authenticated: boolean;
-    officeId: number;
     officeName: string;
     roles: {
         name: string;
@@ -7425,11 +7969,11 @@ declare const UserDetailSchema: z.ZodObject<{
     isTwoFactorAuthenticationRequired: boolean;
     isSelfServiceUser: boolean;
 }, {
+    officeId: number;
     username: string;
     userId: number;
     accessToken: string;
     authenticated: boolean;
-    officeId: number;
     officeName: string;
     roles: {
         name: string;
@@ -7458,8 +8002,8 @@ declare const EnableSelfServiceAccessRequestSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
     clients: z.ZodOptional<z.ZodArray<z.ZodNumber, "many">>;
 }, "strip", z.ZodTypeAny, {
-    username: string;
     officeId: number;
+    username: string;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7470,8 +8014,8 @@ declare const EnableSelfServiceAccessRequestSchema: z.ZodObject<{
     enabled?: boolean | undefined;
     clients?: number[] | undefined;
 }, {
-    username: string;
     officeId: number;
+    username: string;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7663,9 +8207,9 @@ declare const UpdateSelfServiceUserRequestSchema: z.ZodObject<{
     clients: z.ZodOptional<z.ZodArray<z.ZodNumber, "many">>;
     userId: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    officeId: number;
     username: string;
     userId: number;
-    officeId: number;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7676,9 +8220,9 @@ declare const UpdateSelfServiceUserRequestSchema: z.ZodObject<{
     enabled?: boolean | undefined;
     clients?: number[] | undefined;
 }, {
+    officeId: number;
     username: string;
     userId: number;
-    officeId: number;
     roles: number[];
     firstname: string;
     lastname: string;
@@ -7955,12 +8499,12 @@ declare const DocumentUploadRequestSchema: z$1.ZodObject<{
     description: z$1.ZodOptional<z$1.ZodString>;
 }, "strip", z$1.ZodTypeAny, {
     name: string;
-    file: Buffer<ArrayBufferLike> | buffer.Blob | buffer.File;
+    file: buffer.Blob | Buffer<ArrayBufferLike> | buffer.File;
     type?: string | undefined;
     description?: string | undefined;
 }, {
     name: string;
-    file: Buffer<ArrayBufferLike> | buffer.Blob | buffer.File;
+    file: buffer.Blob | Buffer<ArrayBufferLike> | buffer.File;
     type?: string | undefined;
     description?: string | undefined;
 }>;
@@ -10529,50 +11073,370 @@ declare const GetStatusOfVerifyClient: (params: {
     clientId: number;
 }, GetStatusOfVerifyClientResponse>;
 
-declare const GetAccount: (params: {
-    id: number;
-    tenantId?: string;
-}) => Command<{
-    id: number;
-    tenantId?: string;
-}, SavingAccount>;
-declare const UpdateAccount: (params: {
-    clientId: number;
-    accountId: number;
-    updates: UpdateAccountRequest;
-    tenantId?: string;
-}) => Command<{
-    clientId: number;
-    accountId: number;
-    updates: UpdateAccountRequest;
-    tenantId?: string;
-}, any>;
-declare const DeleteAccount: (params: {
-    accountId: number;
+/**
+ * Retrieves detailed information about a specific savings account.
+ *
+ * @param accountId - The ID of the savings account to retrieve
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the full SavingAccount details
+ *
+ * @example
+ * ```typescript
+ * const getAccountCmd = GetAccount(123, { tenantId: "tokoro" });
+ * const account = await getAccountCmd.execute(config);
+ * console.log(account.accountNo, account.accountBalance);
+ * ```
+ */
+declare const GetAccount: (accountId: number, configuration?: {
     tenantId?: string;
 }) => Command<{
     accountId: number;
-    tenantId?: string;
-}, ProcessOutput$1>;
-declare const ListAccountsOfClient: (params?: {
-    clientId: number;
-    tenantId?: string;
-}) => {
-    list: () => {
-        where: (field: string) => {
-            eq: (value: any) => /*elided*/ any;
-        };
-        execute: () => Command<any, ListAccountsOfClientRequest>;
+    configuration?: {
+        tenantId?: string;
     };
-};
+}, SavingAccount>;
+/**
+ * Updates an existing savings account with new details.
+ *
+ * @param accountId - The ID of the account to update
+ * @param requestData - The account fields to update (see UpdateAccountRequest)
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the update response
+ *
+ * @example
+ * ```typescript
+ * const updateCmd = UpdateAccount(
+ *   123,
+ *   {
+ *     clientId: 1,
+ *     productId: 2,
+ *     submittedOnDate: "01 December 2025",
+ *     nominalAnnualInterestRate: "5.5",
+ *     locale: "en",
+ *     dateFormat: "dd MMMM yyyy"
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await updateCmd.execute(config);
+ * ```
+ */
+declare const UpdateAccount: (accountId: number, requestData: UpdateAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    requestData: UpdateAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, any>;
+/**
+ * Deletes a savings account from the system.
+ *
+ * @param accountId - The ID of the account to delete
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the deletion confirmation
+ *
+ * @example
+ * ```typescript
+ * const deleteCmd = DeleteAccount(123, { tenantId: "tokoro" });
+ * const result = await deleteCmd.execute(config);
+ * ```
+ */
+declare const DeleteAccount: (accountId: number, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    configuration?: {
+        tenantId?: string;
+    };
+}, ProcessOutput$1>;
 declare const GetAccountsOfClient: (clientId: number, params: ListAccountsOfClientRequest, configuration: {
     tenantId?: string;
 }) => Command<{
+    clientId: number;
     params: ListAccountsOfClientRequest;
     configuration: {
         tenantId?: string;
     };
 }, ListAccountsOfClientRequest>;
+/**
+ * Creates a new savings account and immediately activates it in a single operation.
+ * This combines the submit, approve, and activate commands.
+ *
+ * @param params - The account creation parameters (see CreateAndActivateAccountRequest)
+ * @param params.clientId - The ID of the client who will own the account
+ * @param params.productId - The ID of the savings product to use
+ * @param params.submittedOnDate - The date the account is submitted (format: "dd MMMM yyyy")
+ * @param params.locale - The locale for date formatting (e.g., "en")
+ * @param params.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the created and activated account details
+ *
+ * @example
+ * ```typescript
+ * const createCmd = CreateAndActivateAccount(
+ *   {
+ *     clientId: 1,
+ *     productId: 2,
+ *     locale: "en",
+ *     dateFormat: "dd MMMM yyyy",
+ *     submittedOnDate: "01 December 2025",
+ *     monthDayFormat: "dd MMM",
+ *     nominalAnnualInterestRate: 5.0
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await createCmd.execute(config);
+ * console.log(result.savingsId);
+ * ```
+ */
+declare const CreateAndActivateAccount: (params: CreateAndActivateAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    params: CreateAndActivateAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CreateAndActivateAccountResponse>;
+/**
+ * Closes a savings account permanently. This deactivates the account so no further transactions can be performed.
+ *
+ * @param savingsAccountId - The ID of the savings account to close
+ * @param requestData - The closure parameters (see CloseAccountRequest)
+ * @param requestData.closedOnDate - The date the account is closed (format must match dateFormat)
+ * @param requestData.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param requestData.locale - The locale for date formatting (e.g., "en")
+ * @param requestData.closeReasonCodeId - The ID representing the reason for account closure
+ * @param requestData.withdrawBalance - Optional: Whether to withdraw remaining balance during closure
+ * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
+ * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
+ * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
+ * @param params - Optional configuration
+ * @param params.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the account closure confirmation
+ *
+ * @example
+ * ```typescript
+ * const closeCmd = CloseAccount(
+ *   5100,
+ *   {
+ *     closedOnDate: "01 April 2025",
+ *     dateFormat: "dd MMMM yyyy",
+ *     locale: "en",
+ *     withdrawBalance: false,
+ *     postInterestValidationOnClosure: true,
+ *     ignoreNegativeBalance: false,
+ *     closeReasonCodeId: 5100
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await closeCmd.execute(config);
+ * console.log(result.changes.status); // "ACCOUNT_CLOSE_REASON"
+ * ```
+ */
+declare const CloseAccount: (savingsAccountId: number, requestData: CloseAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    savingsAccountId: number;
+    requestData: CloseAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CloseAccountResponse>;
+/**
+ * Schedules the closure of a savings account.
+ *
+ * @param accountId - The ID of the savings account to schedule for closure
+ * @param requestData - The closure parameters (see CloseAccountRequest)
+ * @param requestData.closedOnDate - The date the account is scheduled to be closed
+ * @param requestData.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param requestData.locale - The locale for date formatting (e.g., "en")
+ * @param requestData.closeReasonCodeId - The ID representing the reason for account closure
+ * @param requestData.withdrawBalance - Optional: Whether to withdraw remaining balance during closure
+ * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
+ * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
+ * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the schedule closure confirmation
+ *
+ * @example
+ * ```typescript
+ * const scheduleCloseCmd = ScheduleAccountClosure(
+ *   5100,
+ *   {
+ *     closedOnDate: "01 April 2025",
+ *     dateFormat: "dd MMMM yyyy",
+ *     locale: "en",
+ *     withdrawBalance: false,
+ *     postInterestValidationOnClosure: true,
+ *     ignoreNegativeBalance: false,
+ *     closeReasonCodeId: 5100
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await scheduleCloseCmd.execute(config);
+ * ```
+ */
+declare const ScheduleAccountClosure: (accountId: number, requestData: CloseAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    requestData: CloseAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CloseAccountResponse>;
+/**
+ * Blocks a savings account.
+ *
+ * @param accountId - The ID of the savings account to block
+ * @param requestData - The block parameters (see BlockAccountRequest)
+ * @param requestData.blockReasonCodeId - The ID representing the reason for blocking the account
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the block confirmation
+ *
+ * @example
+ * ```typescript
+ * const blockCmd = BlockAccount(
+ *   123,
+ *   { blockReasonCodeId: 5100 },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await blockCmd.execute(config);
+ * console.log(result.changes.subStatus.value); // "Block"
+ * ```
+ */
+declare const BlockAccount: (accountId: number, requestData: BlockAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    requestData: BlockAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, BlockAccountResponse>;
+/**
+ * Places a hold on a specific amount in a client's account.
+ *
+ * @param accountId - The ID of the savings account
+ * @param requestData - The hold amount parameters (see HoldAmountRequest)
+ * @param requestData.transactionAmount - The amount to be held
+ * @param requestData.holdAmountReasonCodeId - The ID representing the reason for holding the amount
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the hold amount confirmation
+ *
+ * @example
+ * ```typescript
+ * const holdCmd = HoldAmount(
+ *   123,
+ *   { transactionAmount: 45, holdAmountReasonCodeId: 6100 },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await holdCmd.execute(config);
+ * console.log(result.changes.savingsAmountOnHold); // 45
+ * ```
+ */
+declare const HoldAmount: (accountId: number, requestData: HoldAmountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    requestData: HoldAmountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, HoldAmountResponse>;
+/**
+ * Generates an account statement.
+ *
+ * @param requestData - The statement generation parameters (see GenerateAccountStatementRequest)
+ * @param requestData.reportName - The name of the report
+ * @param requestData.parentEntityType - The parent entity type (e.g., "savings")
+ * @param requestData.parentEntityId - The parent entity ID
+ * @param requestData.reportType - The report type (e.g., "PDF")
+ * @param requestData.docType - The document type (e.g., "statement")
+ * @param requestData.params - Additional parameters (start_date, end_date, saving_no)
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the statement generation job details
+ *
+ * @example
+ * ```typescript
+ * const generateCmd = GenerateAccountStatement(
+ *   {
+ *     reportName: "Report current and saving account(Pentaho)",
+ *     parentEntityType: "savings",
+ *     parentEntityId: 1,
+ *     reportType: "PDF",
+ *     docType: "statement",
+ *     params: {
+ *       start_date: "01 January 2023",
+ *       end_date: "02 January 2023",
+ *       saving_no: "1"
+ *     }
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await generateCmd.execute(config);
+ * console.log(result.jobId); // 315
+ * ```
+ */
+declare const GenerateAccountStatement: (requestData: GenerateAccountStatementRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    requestData: GenerateAccountStatementRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GenerateAccountStatementResponse>;
+/**
+ * Downloads a document associated with a specific savings account.
+ * This API returns a binary file as a raw byte stream.
+ *
+ * @param savingsAccountId - The ID of the savings account
+ * @param documentId - The UUID of the document to download
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the document as a Blob with metadata
+ *
+ * @example
+ * ```typescript
+ * const downloadCmd = DownloadAccountStatement(
+ *   12,
+ *   "45ac4379-7185-471b-a103-916d25dc648d",
+ *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ * );
+ * const result = await downloadCmd.execute(config);
+ * // result.data is a Blob containing the file
+ * // result.fileName contains the extracted filename (if available)
+ * // result.contentType contains the MIME type (if available)
+ * ```
+ */
+declare const DownloadAccountStatement: (savingsAccountId: number, documentId: string, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    savingsAccountId: number;
+    documentId: string;
+    configuration?: {
+        tenantId?: string;
+    };
+}, DownloadAccountStatementResponse>;
 
 declare const CreateTransfer: (params: {
     transfer: CreateTransferInput;
@@ -11875,4 +12739,207 @@ declare const UpdateCardProduct: (cardProductId: number, params: CardProductUpda
     };
 }, CreateCardProductResponse>;
 
-export { type GetTransferInput as $, ApproveRejectClientDocument as A, GetRecipient as B, CreatePayment as C, DeletePayment as D, CreateRecipient as E, DeleteRecipient as F, GetPayment as G, GetRecipients as H, GraphQL as I, GetUserDetail as J, EnableSelfServiceAccess as K, ListClientDocument as L, MarkAsSuccess as M, UpdateSelfServiceUser as N, DeleteSelfServiceUser as O, ListCardProduct as P, GetCardProduct as Q, CreateCardProduct as R, SendAuthorizationToCore as S, UpdateCardProduct as T, UpdatePayment as U, VerifyWithActivateClients as V, type Payment as W, type CreatePaymentInput as X, type UpdatePaymentInput as Y, type PaymentResponse as Z, type Transfer as _, GetPayments as a, ClientSchema as a$, type CreateTransferInput as a0, type TransferResponse as a1, type MarkAsReturnInput as a2, type UpdateTraceNumbersInput as a3, type ProcessOutput$1 as a4, type PaymentRail as a5, type Recipient as a6, type CreateRecipientRequest as a7, type RecipientRequest as a8, type RecipientFilterKey as a9, RecipientFilterKeySchema as aA, RecipientShape as aB, CreateRecipientRequestShape as aC, RecipientRequestShape as aD, BankInformationSchema as aE, AccountDetailsDataSchema as aF, AddressSchema as aG, RecipientsSchema as aH, TransferSchema as aI, CreateTransferInputSchema as aJ, GetTransferInputSchema as aK, MarkAsReturnInputSchema as aL, UpdateTraceNumbersInputSchema as aM, ProcessOutputSchema$1 as aN, TransferResponseSchema as aO, CreateTransferOutputSchema as aP, PaymentRailSchema$1 as aQ, PaymentTypeSchema$1 as aR, AccountTypeSchema as aS, TransferShape as aT, CreateTransferInputShape as aU, GetTransferInputShape as aV, MarkAsReturnInputShape as aW, UpdateTraceNumbersInputShape as aX, ProcessOutputShape as aY, TransferResponseShape as aZ, CreateTransferOutputShape as a_, PaymentStatusSchema as aa, PaymentRailSchema as ab, PaymentTypeSchema as ac, SortOrderSchema as ad, CreatePaymentInputSchema as ae, UpdatePaymentInputSchema as af, PaymentResponseSchema as ag, PaymentShape as ah, CreatePaymentInputShape as ai, UpdatePaymentInputShape as aj, SavingAccountSchema as ak, SavingAccountShape as al, type SavingAccount as am, ListAccountsOfClientResponseShape as an, ListAccountsOfClientResponseSchema as ao, ListAccountsRequestShape as ap, ListAccountsRequestSchema as aq, type UpdateAccountRequest as ar, UpdateAccountRequestSchema as as, UpdateAccountRequestShape as at, type UserDetail as au, UserDetailSchema as av, UserDetailShape as aw, RecipientSchema as ax, CreateRecipientRequestSchema as ay, RecipientRequestSchema as az, UpdateCardID as b, AgentSchema as b0, PartySchema as b1, type UpdateRecipientRequest as b2, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, ListAccountsOfClient as p, UpdateAccount as q, DeleteAccount as r, MarkAsReturned as s, MarkAsFail as t, MarkAsProcessing as u, LogFailTransfer as v, GetTransfers as w, UpdateTraceNumber as x, CreateTransfer as y, GetTransfer as z };
+declare const ClientAddressShape: z$1.ZodArray<z$1.ZodObject<{
+    clientId: z$1.ZodNumber;
+    addressType: z$1.ZodString;
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+    isActive: z$1.ZodBoolean;
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodString;
+    addressLine3: z$1.ZodString;
+    mobileNo: z$1.ZodNumber;
+    townVillage: z$1.ZodString;
+    countyDistrict: z$1.ZodString;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryName: z$1.ZodString;
+    stateName: z$1.ZodString;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodNumber;
+    createdBy: z$1.ZodString;
+    updatedBy: z$1.ZodString;
+    minifiedAddress: z$1.ZodArray<z$1.ZodString, "many">;
+}, "strip", z$1.ZodTypeAny, {
+    clientId: number;
+    postalCode: number;
+    city: string;
+    mobileNo: number;
+    addressType: string;
+    addressId: number;
+    addressTypeId: number;
+    isActive: boolean;
+    addressLine1: string;
+    addressLine2: string;
+    addressLine3: string;
+    townVillage: string;
+    countyDistrict: string;
+    stateProvinceId: number;
+    countryName: string;
+    stateName: string;
+    countryId: number;
+    createdBy: string;
+    updatedBy: string;
+    minifiedAddress: string[];
+}, {
+    clientId: number;
+    postalCode: number;
+    city: string;
+    mobileNo: number;
+    addressType: string;
+    addressId: number;
+    addressTypeId: number;
+    isActive: boolean;
+    addressLine1: string;
+    addressLine2: string;
+    addressLine3: string;
+    townVillage: string;
+    countyDistrict: string;
+    stateProvinceId: number;
+    countryName: string;
+    stateName: string;
+    countryId: number;
+    createdBy: string;
+    updatedBy: string;
+    minifiedAddress: string[];
+}>, "many">;
+type GetClientAddressResponse = z$1.infer<typeof ClientAddressShape>;
+declare const CreateClientAddressResponseSchema: z$1.ZodObject<{
+    clientId: z$1.ZodNumber;
+    resourceId: z$1.ZodNumber;
+}, "strip", z$1.ZodTypeAny, {
+    clientId: number;
+    resourceId: number;
+}, {
+    clientId: number;
+    resourceId: number;
+}>;
+type CreateClientAddressResponse = z$1.infer<typeof CreateClientAddressResponseSchema>;
+declare const UpdateClientAddressResponseSchema: z$1.ZodObject<{
+    id: z$1.ZodNumber;
+    clientId: z$1.ZodNumber;
+    resourceId: z$1.ZodNumber;
+}, "strip", z$1.ZodTypeAny, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+}, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+}>;
+type UpdateClientAddressResponse = z$1.infer<typeof UpdateClientAddressResponseSchema>;
+declare const CreateClientAddressSchema: z$1.ZodObject<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    isActive: z$1.ZodBoolean;
+}, "strip", z$1.ZodAny, z$1.objectOutputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    isActive: z$1.ZodBoolean;
+}, z$1.ZodAny, "strip">, z$1.objectInputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    isActive: z$1.ZodBoolean;
+}, z$1.ZodAny, "strip">>;
+type CreateClientAddressRequest = z$1.infer<typeof CreateClientAddressSchema>;
+declare const UpdateClientAddressSchema: z$1.ZodObject<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+}, "strip", z$1.ZodAny, z$1.objectOutputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+}, z$1.ZodAny, "strip">, z$1.objectInputType<{
+    addressLine1: z$1.ZodString;
+    addressLine2: z$1.ZodOptional<z$1.ZodString>;
+    addressLine3: z$1.ZodOptional<z$1.ZodString>;
+    city: z$1.ZodString;
+    stateProvinceId: z$1.ZodNumber;
+    countryId: z$1.ZodNumber;
+    postalCode: z$1.ZodString;
+} & {
+    addressId: z$1.ZodNumber;
+    addressTypeId: z$1.ZodNumber;
+}, z$1.ZodAny, "strip">>;
+type UpdateClientAddressRequest = z$1.infer<typeof UpdateClientAddressSchema>;
+
+declare const GetClientAddress: (clientId: number, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetClientAddressResponse>;
+declare const CreateClientAddress: (clientId: number, type: number, params: CreateClientAddressRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    type: number;
+    params: CreateClientAddressRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CreateClientAddressResponse>;
+declare const UpdateClientAddress: (clientId: number, type: number, params: UpdateClientAddressRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    type: number;
+    params: UpdateClientAddressRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, UpdateClientAddressResponse>;
+declare const SetClientAddressStatus: (clientId: number, type: number, params: {
+    addressId: number;
+    isActive: boolean;
+}, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    clientId: number;
+    type: number;
+    params: {
+        addressId: number;
+        isActive: boolean;
+    };
+    configuration?: {
+        tenantId?: string;
+    };
+}, UpdateClientAddressResponse>;
+
+export { UpdateCardProduct as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, GetTransfers as E, UpdateTraceNumber as F, GetPayment as G, HoldAmount as H, CreateTransfer as I, GetTransfer as J, GetRecipient as K, ListClientDocument as L, MarkAsSuccess as M, CreateRecipient as N, DeleteRecipient as O, GetRecipients as P, GraphQL as Q, GetUserDetail as R, SendAuthorizationToCore as S, EnableSelfServiceAccess as T, UpdatePayment as U, VerifyWithActivateClients as V, UpdateSelfServiceUser as W, DeleteSelfServiceUser as X, ListCardProduct as Y, GetCardProduct as Z, CreateCardProduct as _, GetPayments as a, PaymentTypeSchema$1 as a$, GetClientAddress as a0, CreateClientAddress as a1, UpdateClientAddress as a2, SetClientAddressStatus as a3, type Payment as a4, type CreatePaymentInput as a5, type UpdatePaymentInput as a6, type PaymentResponse as a7, type Transfer as a8, type GetTransferInput as a9, ListAccountsRequestSchema as aA, type UpdateAccountRequest as aB, UpdateAccountRequestSchema as aC, UpdateAccountRequestShape as aD, type UserDetail as aE, UserDetailSchema as aF, UserDetailShape as aG, RecipientSchema as aH, CreateRecipientRequestSchema as aI, RecipientRequestSchema as aJ, RecipientFilterKeySchema as aK, RecipientShape as aL, CreateRecipientRequestShape as aM, RecipientRequestShape as aN, BankInformationSchema as aO, AccountDetailsDataSchema as aP, AddressSchema as aQ, RecipientsSchema as aR, TransferSchema as aS, CreateTransferInputSchema as aT, GetTransferInputSchema as aU, MarkAsReturnInputSchema as aV, UpdateTraceNumbersInputSchema as aW, ProcessOutputSchema$1 as aX, TransferResponseSchema as aY, CreateTransferOutputSchema as aZ, PaymentRailSchema$1 as a_, type CreateTransferInput as aa, type TransferResponse as ab, type MarkAsReturnInput as ac, type UpdateTraceNumbersInput as ad, type ProcessOutput$1 as ae, type PaymentRail as af, type Recipient as ag, type CreateRecipientRequest as ah, type RecipientRequest as ai, type RecipientFilterKey as aj, PaymentStatusSchema as ak, PaymentRailSchema as al, PaymentTypeSchema as am, SortOrderSchema as an, CreatePaymentInputSchema as ao, UpdatePaymentInputSchema as ap, PaymentResponseSchema as aq, PaymentShape as ar, CreatePaymentInputShape as as, UpdatePaymentInputShape as at, SavingAccountSchema as au, SavingAccountShape as av, type SavingAccount as aw, ListAccountsOfClientResponseShape as ax, ListAccountsOfClientResponseSchema as ay, ListAccountsRequestShape as az, UpdateCardID as b, AccountTypeSchema as b0, TransferShape as b1, CreateTransferInputShape as b2, GetTransferInputShape as b3, MarkAsReturnInputShape as b4, UpdateTraceNumbersInputShape as b5, ProcessOutputShape as b6, TransferResponseShape as b7, CreateTransferOutputShape as b8, ClientSchema as b9, AgentSchema as ba, PartySchema as bb, type UpdateRecipientRequest as bc, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, ScheduleAccountClosure as t, GenerateAccountStatement as u, DownloadAccountStatement as v, MarkAsReturned as w, MarkAsFail as x, MarkAsProcessing as y, LogFailTransfer as z };

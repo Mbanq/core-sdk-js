@@ -3,7 +3,7 @@ export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } 
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument, ListClientDocument, DeleteClientDocument, ApproveRejectClientDocument } from './commands/rest/clientIdentifier';
 export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from './commands/rest/client';
-export { GetAccount, GetAccountsOfClient, ListAccountsOfClient, UpdateAccount, DeleteAccount } from './commands/rest/account';
+export { GetAccount, GetAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount, CloseAccount, BlockAccount, ScheduleAccountClosure, HoldAmount, GenerateAccountStatement, DownloadAccountStatement } from './commands/rest/account';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './commands/rest/transfer';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './commands/rest/recipient';
 export { GraphQL } from './commands/graphql/index';
@@ -12,7 +12,8 @@ export { createLoggingMiddleware } from './middlewares/logging';
 export { createMetricsMiddleware } from './middlewares/metrics';
 export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './commands/rest/user';
 export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct } from './commands/rest/cardProduct';
-export { SwitchClientClassification, GetClientClassification, CancelSwitchClientClassification } from './commands/rest/clientClassification'
+export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './commands/rest/clientAddress';
+export { SwitchClientClassification, GetClientClassification, CancelSwitchClientClassification } from './commands/rest/clientClassification';
 
 export type {
   Config,
