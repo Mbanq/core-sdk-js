@@ -44,3 +44,71 @@ export const CreateAccountProductResponseSchema = z.object(CreateAccountProductR
 
 export type CreateAccountProductRequest = z.infer<typeof CreateAccountProductRequestSchema>;
 export type CreateAccountProductResponse = z.infer<typeof CreateAccountProductResponseSchema>;
+
+export const UpdateAccountProductRequestShape = {
+    name: z.string().optional(),
+    shortName: z.string().optional(),
+    description: z.string().optional(),
+    currencyCode: z.string().optional(),
+    digitsAfterDecimal: z.number().optional(),
+    inMultiplesOf: z.string().optional(),
+    nominalAnnualInterestRate: z.string().optional(),
+    minRequiredOpeningBalance: z.string().optional(),
+    withdrawalFeeForTransfers: z.boolean().optional(),
+    interestCompoundingPeriodType: z.number().optional(),
+    interestPostingPeriodType: z.number().optional(),
+    interestCalculationType: z.number().optional(),
+    interestCalculationDaysInYearType: z.number().optional(),
+    accountingRule: z.number().optional(),
+    allowOverdraft: z.boolean().optional(),
+    enforceMinRequiredBalance: z.boolean().optional(),
+    withHoldTax: z.boolean().optional(),
+    isDormancyTrackingActive: z.boolean().optional(),
+    isUsedForSuspenseAccounting: z.boolean().optional(),
+    isLinkedWithFundSourceAccount: z.boolean().optional(),
+    skipCollectTransferCharge: z.boolean().optional(),
+    isReservedProduct: z.boolean().optional(),
+    isLinkedToFloatingInterestRates: z.boolean().optional(),
+    floatingRateId: z.number().optional(),
+    interestRateDifferential: z.string().optional(),
+    isFloatingInterestRateCalculationAllowed: z.boolean().optional(),
+    minDifferentialRate: z.string().optional(),
+    defaultDifferentialRate: z.string().optional(),
+    maxDifferentialRate: z.string().optional(),
+    paymentChannelToFundSourceMappings: z.string().optional(),
+    feeToIncomeAccountMappings: z.string().optional(),
+    penaltyToIncomeAccountMappings: z.string().optional(),
+    charges: z.array(z.object({
+        id: z.number().optional(),
+        isMandatory: z.boolean().optional()
+    })).optional(),
+    locale: z.string().optional(),
+    dateFormat: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional()
+};
+
+export const UpdateAccountProductRequestSchema = z.object(UpdateAccountProductRequestShape);
+
+export const UpdateAccountProductResponseShape = {
+    id: z.string(),
+    resourceId: z.string(),
+    changes: z.object({
+        name: z.string().optional(),
+        shortName: z.string().optional(),
+        nominalAnnualInterestRate: z.number().optional(),
+        locale: z.string().optional(),
+        minRequiredOpeningBalance: z.number().optional(),
+        charges: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        paymentChannelToFundSourceMappings: z.string().optional(),
+        penaltyToIncomeAccountMappings: z.string().optional(),
+        feeToIncomeAccountMappings: z.string().optional()
+    }).optional()
+};
+
+export const UpdateAccountProductResponseSchema = z.object(UpdateAccountProductResponseShape);
+
+export type UpdateAccountProductRequest = z.infer<typeof UpdateAccountProductRequestSchema>;
+export type UpdateAccountProductResponse = z.infer<typeof UpdateAccountProductResponseSchema>;

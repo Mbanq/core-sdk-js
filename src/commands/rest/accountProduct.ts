@@ -3,7 +3,9 @@ import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 import {
     CreateAccountProductRequest,
-    CreateAccountProductResponse
+    CreateAccountProductResponse,
+    UpdateAccountProductRequest,
+    UpdateAccountProductResponse
 } from '../../types/accountProduct';
 
 /**
@@ -81,6 +83,90 @@ export const CreateAccountProduct = (
             try {
                 const response = await axiosInstance.post<CreateAccountProductResponse>(
                     '/v1/savingsproducts',
+                    params
+                );
+                return response.data;
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+    };
+};
+
+/**
+ * Updates an existing savings account product.
+ * 
+ * @param productId - The ID of the savings product to update
+ * @param params - The account product update parameters (see UpdateAccountProductRequest)
+ * @param params.name - The updated name of the savings product
+ * @param params.shortName - The updated short name for the savings product
+ * @param params.description - A brief description of the savings product
+ * @param params.currencyCode - The currency code for the savings product
+ * @param params.digitsAfterDecimal - The number of digits after the decimal point
+ * @param params.nominalAnnualInterestRate - The nominal annual interest rate
+ * @param params.minRequiredOpeningBalance - The minimum balance required to open the savings account
+ * @param params.locale - The locale for formatting date and number fields
+ * @param params.dateFormat - The date format string
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the update response with changes
+ * 
+ * @example
+ * ```typescript
+ * const updateCmd = UpdateAccountProduct(
+ *   101,
+ *   {
+ *     name: "Saving Product test",
+ *     shortName: "savi",
+ *     description: "SAVING TEST",
+ *     currencyCode: "USD",
+ *     digitsAfterDecimal: 2,
+ *     inMultiplesOf: "1",
+ *     nominalAnnualInterestRate: "2",
+ *     minRequiredOpeningBalance: "1000",
+ *     withdrawalFeeForTransfers: false,
+ *     interestCompoundingPeriodType: 1,
+ *     interestPostingPeriodType: 4,
+ *     interestCalculationType: 1,
+ *     interestCalculationDaysInYearType: 365,
+ *     accountingRule: 1,
+ *     charges: [{ id: 132, isMandatory: false }],
+ *     startDate: "2023-07-01",
+ *     endDate: "2024-09-30",
+ *     paymentChannelToFundSourceMappings: "[]",
+ *     penaltyToIncomeAccountMappings: "[]",
+ *     feeToIncomeAccountMappings: "[]",
+ *     locale: "en",
+ *     dateFormat: "dd MMMM yyyy"
+ *   },
+ *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ * );
+ * const result = await updateCmd.execute(config);
+ * console.log(result.changes);
+ * ```
+ */
+export const UpdateAccountProduct = (
+    productId: number,
+    params: UpdateAccountProductRequest,
+    configuration?: { tenantId?: string }
+): Command<{ productId: number, params: UpdateAccountProductRequest, configuration?: { tenantId?: string } }, UpdateAccountProductResponse> => {
+    return {
+        input: { productId, params, configuration },
+        metadata: {
+            commandName: 'UpdateAccountProduct',
+            path: `/v1/savingsproducts/${productId}`,
+            method: 'PUT'
+        },
+        execute: async (config: Config) => {
+            if (configuration?.tenantId) {
+                config.tenantId = configuration.tenantId;
+            }
+            const axiosInstance = await baseRequest(config);
+
+            try {
+                const response = await axiosInstance.put<UpdateAccountProductResponse>(
+                    `/v1/savingsproducts/${productId}`,
                     params
                 );
                 return response.data;

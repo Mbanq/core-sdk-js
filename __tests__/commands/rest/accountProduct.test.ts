@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { CreateAccountProduct } from '../../../src/commands/rest/accountProduct';
+import { CreateAccountProduct, UpdateAccountProduct } from '../../../src/commands/rest/accountProduct';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
@@ -265,6 +265,235 @@ describe('CreateAccountProduct', () => {
 
         expect(mockAxiosInstance.post).toHaveBeenCalledWith(
             '/v1/savingsproducts',
+            requestData
+        );
+        expect(result).toEqual(mockResponse);
+    });
+});
+
+describe('UpdateAccountProduct', () => {
+    let mockAxiosInstance: MockAxiosInstance;
+
+    beforeEach(() => {
+        vi.stubEnv('SECRET', 'your_secret');
+        vi.stubEnv('SIGNEE', 'your_signee');
+        vi.stubEnv('TENANT_ID', 'your_tenant_id');
+        vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+        mockAxiosInstance = {
+            get: vi.fn(),
+            post: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn()
+        };
+
+        vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+    });
+
+    afterEach(() => {
+        vi.clearAllMocks();
+        vi.unstubAllEnvs();
+    });
+
+    it('should create an UpdateAccountProduct command with correct metadata', () => {
+        const params = {
+            name: "Saving Product test",
+            shortName: "savi",
+            description: "SAVING TEST"
+        };
+
+        const command = UpdateAccountProduct(101, params, { tenantId: 'test-tenant' });
+
+        expect(command.input).toEqual({
+            productId: 101,
+            params,
+            configuration: { tenantId: 'test-tenant' }
+        });
+        expect(command.metadata).toEqual({
+            commandName: 'UpdateAccountProduct',
+            path: '/v1/savingsproducts/101',
+            method: 'PUT'
+        });
+    });
+
+    it('should execute PUT request and return response data', async () => {
+        const requestData = {
+            name: "Saving Product test",
+            shortName: "savi",
+            description: "SAVING TEST",
+            currencyCode: "USD",
+            digitsAfterDecimal: 2,
+            inMultiplesOf: "1",
+            nominalAnnualInterestRate: "2",
+            minRequiredOpeningBalance: "1000",
+            withdrawalFeeForTransfers: false,
+            interestCompoundingPeriodType: 1,
+            interestPostingPeriodType: 4,
+            interestCalculationType: 1,
+            interestCalculationDaysInYearType: 365,
+            accountingRule: 1,
+            charges: [{ id: 132, isMandatory: false }],
+            startDate: "2023-07-01",
+            endDate: "2024-09-30",
+            paymentChannelToFundSourceMappings: "[]",
+            penaltyToIncomeAccountMappings: "[]",
+            feeToIncomeAccountMappings: "[]",
+            locale: "en",
+            dateFormat: "dd MMMM yyyy"
+        };
+
+        const mockResponse = {
+            id: "2329",
+            resourceId: "2329",
+            changes: {
+                name: "savings test1",
+                shortName: "terB",
+                nominalAnnualInterestRate: 1,
+                locale: "en",
+                minRequiredOpeningBalance: 10000,
+                charges: "[{\"id\":132,\"isMandatory\":false}]",
+                startDate: "2023-07-01",
+                endDate: "2024-09-30",
+                paymentChannelToFundSourceMappings: "[]",
+                penaltyToIncomeAccountMappings: "[]",
+                feeToIncomeAccountMappings: "[]"
+            }
+        };
+
+        mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+        const command = UpdateAccountProduct(101, requestData, { tenantId: 'test-tenant' });
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        const result = await command.execute(config);
+
+        expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+            '/v1/savingsproducts/101',
+            requestData
+        );
+        expect(result).toEqual(mockResponse);
+        expect(config.tenantId).toBe('test-tenant');
+    });
+
+    it('should handle partial updates with minimal fields', async () => {
+        const requestData = {
+            name: "Updated Product Name",
+            shortName: "UPN"
+        };
+
+        const mockResponse = {
+            id: "101",
+            resourceId: "101",
+            changes: {
+                name: "Updated Product Name",
+                shortName: "UPN"
+            }
+        };
+
+        mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+        const command = UpdateAccountProduct(101, requestData);
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        const result = await command.execute(config);
+
+        expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+            '/v1/savingsproducts/101',
+            requestData
+        );
+        expect(result).toEqual(mockResponse);
+    });
+
+    it('should handle axios errors during product update', async () => {
+        const mockError: MockAxiosError = new Error('Update failed');
+        mockError.response = {
+            status: 400,
+            data: {
+                message: 'Invalid product data',
+                developerMessage: 'Validation failed for product update'
+            }
+        };
+        mockError.isAxiosError = true;
+
+        mockAxiosInstance.put.mockRejectedValue(mockError);
+
+        const command = UpdateAccountProduct(101, {
+            name: "Test Product"
+        });
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        await expect(command.execute(config)).rejects.toThrow();
+    });
+
+    it('should not override tenantId if not provided in params', async () => {
+        const mockResponse = {
+            id: "101",
+            resourceId: "101",
+            changes: {}
+        };
+        mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+        const command = UpdateAccountProduct(101, {
+            name: "Test Product"
+        });
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        await command.execute(config);
+
+        expect(config.tenantId).toBe('default-tenant');
+    });
+
+    it('should handle updates with all optional fields', async () => {
+        const requestData = {
+            name: "Complete Update",
+            shortName: "CU",
+            description: "Full update test",
+            currencyCode: "EUR",
+            digitsAfterDecimal: 2,
+            nominalAnnualInterestRate: "3.5",
+            minRequiredOpeningBalance: "500",
+            isLinkedToFloatingInterestRates: true,
+            floatingRateId: 5,
+            interestRateDifferential: "1.5",
+            locale: "en",
+            dateFormat: "dd MMMM yyyy"
+        };
+
+        const mockResponse = {
+            id: "101",
+            resourceId: "101",
+            changes: requestData
+        };
+
+        mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+        const command = UpdateAccountProduct(101, requestData);
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        const result = await command.execute(config);
+
+        expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+            '/v1/savingsproducts/101',
             requestData
         );
         expect(result).toEqual(mockResponse);
