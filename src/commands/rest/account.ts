@@ -623,5 +623,3 @@ export const DownloadAccountStatement = (
     }
   };
 };
-
-
