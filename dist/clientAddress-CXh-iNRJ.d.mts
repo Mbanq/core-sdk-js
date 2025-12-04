@@ -7745,6 +7745,128 @@ declare const BlockAccountResponseSchema: z.ZodObject<{
 }>;
 type BlockAccountRequest = z.infer<typeof BlockAccountRequestSchema>;
 type BlockAccountResponse = z.infer<typeof BlockAccountResponseSchema>;
+declare const HoldAmountRequestSchema: z.ZodObject<{
+    transactionAmount: z.ZodNumber;
+    holdAmountReasonCodeId: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    transactionAmount: number;
+    holdAmountReasonCodeId: number;
+}, {
+    transactionAmount: number;
+    holdAmountReasonCodeId: number;
+}>;
+declare const HoldAmountResponseSchema: z.ZodObject<{
+    id: z.ZodString;
+    resourceId: z.ZodNumber;
+    changes: z.ZodObject<{
+        savingsAmountOnHold: z.ZodNumber;
+        blockAmountReason: z.ZodObject<{
+            id: z.ZodNumber;
+            name: z.ZodString;
+            codeName: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            name: string;
+            id: number;
+            codeName: string;
+        }, {
+            name: string;
+            id: number;
+            codeName: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }, {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    resourceId: number;
+    changes: {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}, {
+    id: string;
+    resourceId: number;
+    changes: {
+        savingsAmountOnHold: number;
+        blockAmountReason: {
+            name: string;
+            id: number;
+            codeName: string;
+        };
+    };
+}>;
+type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
+type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
+declare const GenerateAccountStatementRequestSchema: z.ZodObject<{
+    reportName: z.ZodString;
+    parentEntityType: z.ZodString;
+    parentEntityId: z.ZodNumber;
+    reportType: z.ZodEnum<["PDF", "CSV", "EXCELL", "EXCELL 2007"]>;
+    docType: z.ZodString;
+    params: z.ZodObject<{
+        start_date: z.ZodString;
+        end_date: z.ZodString;
+        saving_no: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    }, {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    params: {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    };
+    reportName: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
+    docType: string;
+}, {
+    params: {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    };
+    reportName: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
+    docType: string;
+}>;
+declare const GenerateAccountStatementResponseSchema: z.ZodObject<{
+    jobId: z.ZodNumber;
+    status: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    status: string;
+    jobId: number;
+}, {
+    status: string;
+    jobId: number;
+}>;
+type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
+type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;
 
 declare const UserDetailShape: {
     username: z.ZodString;
@@ -11117,6 +11239,51 @@ declare const CloseAccount: (savingsAccountId: number, requestData: CloseAccount
     };
 }, CloseAccountResponse>;
 /**
+ * Schedules the closure of a savings account.
+ *
+ * @param accountId - The ID of the savings account to schedule for closure
+ * @param requestData - The closure parameters (see CloseAccountRequest)
+ * @param requestData.closedOnDate - The date the account is scheduled to be closed
+ * @param requestData.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param requestData.locale - The locale for date formatting (e.g., "en")
+ * @param requestData.closeReasonCodeId - The ID representing the reason for account closure
+ * @param requestData.withdrawBalance - Optional: Whether to withdraw remaining balance during closure
+ * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
+ * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
+ * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the schedule closure confirmation
+ *
+ * @example
+ * ```typescript
+ * const scheduleCloseCmd = ScheduleAccountClosure(
+ *   5100,
+ *   {
+ *     closedOnDate: "01 April 2025",
+ *     dateFormat: "dd MMMM yyyy",
+ *     locale: "en",
+ *     withdrawBalance: false,
+ *     postInterestValidationOnClosure: true,
+ *     ignoreNegativeBalance: false,
+ *     closeReasonCodeId: 5100
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await scheduleCloseCmd.execute(config);
+ * ```
+ */
+declare const ScheduleAccountClosure: (accountId: number, requestData: CloseAccountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    requestData: CloseAccountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CloseAccountResponse>;
+/**
  * Blocks a savings account.
  *
  * @param accountId - The ID of the savings account to block
@@ -11147,6 +11314,82 @@ declare const BlockAccount: (accountId: number, requestData: BlockAccountRequest
         tenantId?: string;
     };
 }, BlockAccountResponse>;
+/**
+ * Places a hold on a specific amount in a client's account.
+ *
+ * @param accountId - The ID of the savings account
+ * @param requestData - The hold amount parameters (see HoldAmountRequest)
+ * @param requestData.transactionAmount - The amount to be held
+ * @param requestData.holdAmountReasonCodeId - The ID representing the reason for holding the amount
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the hold amount confirmation
+ *
+ * @example
+ * ```typescript
+ * const holdCmd = HoldAmount(
+ *   123,
+ *   { transactionAmount: 45, holdAmountReasonCodeId: 6100 },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await holdCmd.execute(config);
+ * console.log(result.changes.savingsAmountOnHold); // 45
+ * ```
+ */
+declare const HoldAmount: (accountId: number, requestData: HoldAmountRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    accountId: number;
+    requestData: HoldAmountRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, HoldAmountResponse>;
+/**
+ * Generates an account statement.
+ *
+ * @param requestData - The statement generation parameters (see GenerateAccountStatementRequest)
+ * @param requestData.reportName - The name of the report
+ * @param requestData.parentEntityType - The parent entity type (e.g., "savings")
+ * @param requestData.parentEntityId - The parent entity ID
+ * @param requestData.reportType - The report type (e.g., "PDF")
+ * @param requestData.docType - The document type (e.g., "statement")
+ * @param requestData.params - Additional parameters (start_date, end_date, saving_no)
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the statement generation job details
+ *
+ * @example
+ * ```typescript
+ * const generateCmd = GenerateAccountStatement(
+ *   {
+ *     reportName: "Report current and saving account(Pentaho)",
+ *     parentEntityType: "savings",
+ *     parentEntityId: 1,
+ *     reportType: "PDF",
+ *     docType: "statement",
+ *     params: {
+ *       start_date: "01 January 2023",
+ *       end_date: "02 January 2023",
+ *       saving_no: "1"
+ *     }
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await generateCmd.execute(config);
+ * console.log(result.jobId); // 315
+ * ```
+ */
+declare const GenerateAccountStatement: (requestData: GenerateAccountStatementRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    requestData: GenerateAccountStatementRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GenerateAccountStatementResponse>;
 
 declare const CreateTransfer: (params: {
     transfer: CreateTransferInput;
@@ -12652,4 +12895,4 @@ declare const SetClientAddressStatus: (clientId: number, type: number, params: {
     };
 }, UpdateClientAddressResponse>;
 
-export { SetClientAddressStatus as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, GetTransfer as E, GetRecipient as F, GetPayment as G, CreateRecipient as H, DeleteRecipient as I, GetRecipients as J, GraphQL as K, ListClientDocument as L, MarkAsSuccess as M, GetUserDetail as N, EnableSelfServiceAccess as O, UpdateSelfServiceUser as P, DeleteSelfServiceUser as Q, ListCardProduct as R, SendAuthorizationToCore as S, GetCardProduct as T, UpdatePayment as U, VerifyWithActivateClients as V, CreateCardProduct as W, UpdateCardProduct as X, GetClientAddress as Y, CreateClientAddress as Z, UpdateClientAddress as _, GetPayments as a, GetTransferInputShape as a$, type Payment as a0, type CreatePaymentInput as a1, type UpdatePaymentInput as a2, type PaymentResponse as a3, type Transfer as a4, type GetTransferInput as a5, type CreateTransferInput as a6, type TransferResponse as a7, type MarkAsReturnInput as a8, type UpdateTraceNumbersInput as a9, type UserDetail as aA, UserDetailSchema as aB, UserDetailShape as aC, RecipientSchema as aD, CreateRecipientRequestSchema as aE, RecipientRequestSchema as aF, RecipientFilterKeySchema as aG, RecipientShape as aH, CreateRecipientRequestShape as aI, RecipientRequestShape as aJ, BankInformationSchema as aK, AccountDetailsDataSchema as aL, AddressSchema as aM, RecipientsSchema as aN, TransferSchema as aO, CreateTransferInputSchema as aP, GetTransferInputSchema as aQ, MarkAsReturnInputSchema as aR, UpdateTraceNumbersInputSchema as aS, ProcessOutputSchema$1 as aT, TransferResponseSchema as aU, CreateTransferOutputSchema as aV, PaymentRailSchema$1 as aW, PaymentTypeSchema$1 as aX, AccountTypeSchema as aY, TransferShape as aZ, CreateTransferInputShape as a_, type ProcessOutput$1 as aa, type PaymentRail as ab, type Recipient as ac, type CreateRecipientRequest as ad, type RecipientRequest as ae, type RecipientFilterKey as af, PaymentStatusSchema as ag, PaymentRailSchema as ah, PaymentTypeSchema as ai, SortOrderSchema as aj, CreatePaymentInputSchema as ak, UpdatePaymentInputSchema as al, PaymentResponseSchema as am, PaymentShape as an, CreatePaymentInputShape as ao, UpdatePaymentInputShape as ap, SavingAccountSchema as aq, SavingAccountShape as ar, type SavingAccount as as, ListAccountsOfClientResponseShape as at, ListAccountsOfClientResponseSchema as au, ListAccountsRequestShape as av, ListAccountsRequestSchema as aw, type UpdateAccountRequest as ax, UpdateAccountRequestSchema as ay, UpdateAccountRequestShape as az, UpdateCardID as b, MarkAsReturnInputShape as b0, UpdateTraceNumbersInputShape as b1, ProcessOutputShape as b2, TransferResponseShape as b3, CreateTransferOutputShape as b4, ClientSchema as b5, AgentSchema as b6, PartySchema as b7, type UpdateRecipientRequest as b8, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, MarkAsReturned as t, MarkAsFail as u, MarkAsProcessing as v, LogFailTransfer as w, GetTransfers as x, UpdateTraceNumber as y, CreateTransfer as z };
+export { GetClientAddress as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, UpdateTraceNumber as E, CreateTransfer as F, GetPayment as G, HoldAmount as H, GetTransfer as I, GetRecipient as J, CreateRecipient as K, ListClientDocument as L, MarkAsSuccess as M, DeleteRecipient as N, GetRecipients as O, GraphQL as P, GetUserDetail as Q, EnableSelfServiceAccess as R, SendAuthorizationToCore as S, UpdateSelfServiceUser as T, UpdatePayment as U, VerifyWithActivateClients as V, DeleteSelfServiceUser as W, ListCardProduct as X, GetCardProduct as Y, CreateCardProduct as Z, UpdateCardProduct as _, GetPayments as a, AccountTypeSchema as a$, CreateClientAddress as a0, UpdateClientAddress as a1, SetClientAddressStatus as a2, type Payment as a3, type CreatePaymentInput as a4, type UpdatePaymentInput as a5, type PaymentResponse as a6, type Transfer as a7, type GetTransferInput as a8, type CreateTransferInput as a9, type UpdateAccountRequest as aA, UpdateAccountRequestSchema as aB, UpdateAccountRequestShape as aC, type UserDetail as aD, UserDetailSchema as aE, UserDetailShape as aF, RecipientSchema as aG, CreateRecipientRequestSchema as aH, RecipientRequestSchema as aI, RecipientFilterKeySchema as aJ, RecipientShape as aK, CreateRecipientRequestShape as aL, RecipientRequestShape as aM, BankInformationSchema as aN, AccountDetailsDataSchema as aO, AddressSchema as aP, RecipientsSchema as aQ, TransferSchema as aR, CreateTransferInputSchema as aS, GetTransferInputSchema as aT, MarkAsReturnInputSchema as aU, UpdateTraceNumbersInputSchema as aV, ProcessOutputSchema$1 as aW, TransferResponseSchema as aX, CreateTransferOutputSchema as aY, PaymentRailSchema$1 as aZ, PaymentTypeSchema$1 as a_, type TransferResponse as aa, type MarkAsReturnInput as ab, type UpdateTraceNumbersInput as ac, type ProcessOutput$1 as ad, type PaymentRail as ae, type Recipient as af, type CreateRecipientRequest as ag, type RecipientRequest as ah, type RecipientFilterKey as ai, PaymentStatusSchema as aj, PaymentRailSchema as ak, PaymentTypeSchema as al, SortOrderSchema as am, CreatePaymentInputSchema as an, UpdatePaymentInputSchema as ao, PaymentResponseSchema as ap, PaymentShape as aq, CreatePaymentInputShape as ar, UpdatePaymentInputShape as as, SavingAccountSchema as at, SavingAccountShape as au, type SavingAccount as av, ListAccountsOfClientResponseShape as aw, ListAccountsOfClientResponseSchema as ax, ListAccountsRequestShape as ay, ListAccountsRequestSchema as az, UpdateCardID as b, TransferShape as b0, CreateTransferInputShape as b1, GetTransferInputShape as b2, MarkAsReturnInputShape as b3, UpdateTraceNumbersInputShape as b4, ProcessOutputShape as b5, TransferResponseShape as b6, CreateTransferOutputShape as b7, ClientSchema as b8, AgentSchema as b9, PartySchema as ba, type UpdateRecipientRequest as bb, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, ScheduleAccountClosure as t, GenerateAccountStatement as u, MarkAsReturned as v, MarkAsFail as w, MarkAsProcessing as x, LogFailTransfer as y, GetTransfers as z };

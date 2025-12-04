@@ -1,3 +1,12 @@
+# [0.15.0](https://github.com/mbanq/core-sdk-js/compare/v0.14.0...v0.15.0) (2025-12-04)
+
+
+### Features
+
+* add `HoldAmount` command, types, and tests, and export `ScheduleAccountClosure` for account management. ([6e9bdcf](https://github.com/mbanq/core-sdk-js/commit/6e9bdcfdd1ab78cd9bc26313b40698918b09b817))
+* add account statement generation command, types, and tests ([642fee8](https://github.com/mbanq/core-sdk-js/commit/642fee8ce8473f9d319ac404841eb8ebefcb141a))
+* add command and tests for scheduling savings account closure ([53d9e7f](https://github.com/mbanq/core-sdk-js/commit/53d9e7f9d5638ee4d7ef641b2395b2933cd1ea77))
+
 # [0.14.0](https://github.com/mbanq/core-sdk-js/compare/v0.13.0...v0.14.0) (2025-12-03)
 
 
