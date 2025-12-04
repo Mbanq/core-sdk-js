@@ -366,3 +366,53 @@ export const BlockAccountResponseSchema = z.object(BlockAccountResponseShape);
 
 export type BlockAccountRequest = z.infer<typeof BlockAccountRequestSchema>;
 export type BlockAccountResponse = z.infer<typeof BlockAccountResponseSchema>;
+
+export const HoldAmountRequestShape = {
+  transactionAmount: z.number(),
+  holdAmountReasonCodeId: z.number()
+};
+
+export const HoldAmountRequestSchema = z.object(HoldAmountRequestShape);
+
+export const HoldAmountResponseShape = {
+  id: z.string(),
+  resourceId: z.number(),
+  changes: z.object({
+    savingsAmountOnHold: z.number(),
+    blockAmountReason: z.object({
+      id: z.number(),
+      name: z.string(),
+      codeName: z.string()
+    })
+  })
+};
+
+export const HoldAmountResponseSchema = z.object(HoldAmountResponseShape);
+
+export type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
+export type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
+
+export const GenerateAccountStatementRequestShape = {
+  reportName: z.string(),
+  parentEntityType: z.string(),
+  parentEntityId: z.number(),
+  reportType: z.enum(['PDF', 'CSV', 'EXCELL', 'EXCELL 2007']),
+  docType: z.string(),
+  params: z.object({
+    start_date: z.string(),
+    end_date: z.string(),
+    saving_no: z.string()
+  })
+};
+
+export const GenerateAccountStatementRequestSchema = z.object(GenerateAccountStatementRequestShape);
+
+export const GenerateAccountStatementResponseShape = {
+  jobId: z.number(),
+  status: z.string()
+};
+
+export const GenerateAccountStatementResponseSchema = z.object(GenerateAccountStatementResponseShape);
+
+export type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
+export type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;

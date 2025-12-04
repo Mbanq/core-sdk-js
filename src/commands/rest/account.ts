@@ -8,7 +8,11 @@ import {
   CloseAccountRequest,
   CloseAccountResponse,
   BlockAccountRequest,
-  BlockAccountResponse
+  BlockAccountResponse,
+  HoldAmountRequest,
+  HoldAmountResponse,
+  GenerateAccountStatementRequest,
+  GenerateAccountStatementResponse
 } from '../../types/account';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -305,6 +309,74 @@ export const CloseAccount = (
 };
 
 
+
+/**
+ * Schedules the closure of a savings account.
+ * 
+ * @param accountId - The ID of the savings account to schedule for closure
+ * @param requestData - The closure parameters (see CloseAccountRequest)
+ * @param requestData.closedOnDate - The date the account is scheduled to be closed
+ * @param requestData.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param requestData.locale - The locale for date formatting (e.g., "en")
+ * @param requestData.closeReasonCodeId - The ID representing the reason for account closure
+ * @param requestData.withdrawBalance - Optional: Whether to withdraw remaining balance during closure
+ * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
+ * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
+ * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the schedule closure confirmation
+ * 
+ * @example
+ * ```typescript
+ * const scheduleCloseCmd = ScheduleAccountClosure(
+ *   5100,
+ *   {
+ *     closedOnDate: "01 April 2025",
+ *     dateFormat: "dd MMMM yyyy",
+ *     locale: "en",
+ *     withdrawBalance: false,
+ *     postInterestValidationOnClosure: true,
+ *     ignoreNegativeBalance: false,
+ *     closeReasonCodeId: 5100
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await scheduleCloseCmd.execute(config);
+ * ```
+ */
+export const ScheduleAccountClosure = (
+  accountId: number,
+  requestData: CloseAccountRequest,
+  configuration?: { tenantId?: string }
+): Command<{ accountId: number, requestData: CloseAccountRequest, configuration?: { tenantId?: string } }, CloseAccountResponse> => {
+  return {
+    input: { accountId, requestData, configuration },
+    metadata: {
+      commandName: 'ScheduleAccountClosure',
+      path: `/v1/savingsaccounts/${accountId}?command=SCHEDULECLOSE`,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<CloseAccountResponse>(
+          `/v1/savingsaccounts/${accountId}?command=SCHEDULECLOSE`,
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
 /**
  * Blocks a savings account.
  * 
@@ -357,3 +429,125 @@ export const BlockAccount = (
     }
   };
 };
+
+/**
+ * Places a hold on a specific amount in a client's account.
+ * 
+ * @param accountId - The ID of the savings account
+ * @param requestData - The hold amount parameters (see HoldAmountRequest)
+ * @param requestData.transactionAmount - The amount to be held
+ * @param requestData.holdAmountReasonCodeId - The ID representing the reason for holding the amount
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the hold amount confirmation
+ * 
+ * @example
+ * ```typescript
+ * const holdCmd = HoldAmount(
+ *   123,
+ *   { transactionAmount: 45, holdAmountReasonCodeId: 6100 },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await holdCmd.execute(config);
+ * console.log(result.changes.savingsAmountOnHold); // 45
+ * ```
+ */
+export const HoldAmount = (
+  accountId: number,
+  requestData: HoldAmountRequest,
+  configuration?: { tenantId?: string }
+): Command<{ accountId: number, requestData: HoldAmountRequest, configuration?: { tenantId?: string } }, HoldAmountResponse> => {
+  return {
+    input: { accountId, requestData, configuration },
+    metadata: {
+      commandName: 'HoldAmount',
+      path: `/v1/savingsaccounts/${accountId}?command=hold`,
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<HoldAmountResponse>(
+          `/v1/savingsaccounts/${accountId}?command=hold`,
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Generates an account statement.
+ * 
+ * @param requestData - The statement generation parameters (see GenerateAccountStatementRequest)
+ * @param requestData.reportName - The name of the report
+ * @param requestData.parentEntityType - The parent entity type (e.g., "savings")
+ * @param requestData.parentEntityId - The parent entity ID
+ * @param requestData.reportType - The report type (e.g., "PDF")
+ * @param requestData.docType - The document type (e.g., "statement")
+ * @param requestData.params - Additional parameters (start_date, end_date, saving_no)
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the statement generation job details
+ * 
+ * @example
+ * ```typescript
+ * const generateCmd = GenerateAccountStatement(
+ *   {
+ *     reportName: "Report current and saving account(Pentaho)",
+ *     parentEntityType: "savings",
+ *     parentEntityId: 1,
+ *     reportType: "PDF",
+ *     docType: "statement",
+ *     params: {
+ *       start_date: "01 January 2023",
+ *       end_date: "02 January 2023",
+ *       saving_no: "1"
+ *     }
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await generateCmd.execute(config);
+ * console.log(result.jobId); // 315
+ * ```
+ */
+export const GenerateAccountStatement = (
+  requestData: GenerateAccountStatementRequest,
+  configuration?: { tenantId?: string }
+): Command<{ requestData: GenerateAccountStatementRequest, configuration?: { tenantId?: string } }, GenerateAccountStatementResponse> => {
+  return {
+    input: { requestData, configuration },
+    metadata: {
+      commandName: 'GenerateAccountStatement',
+      path: '/v1/generatestatements',
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.post<GenerateAccountStatementResponse>(
+          '/v1/generatestatements',
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+
