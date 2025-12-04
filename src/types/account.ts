@@ -416,3 +416,21 @@ export const GenerateAccountStatementResponseSchema = z.object(GenerateAccountSt
 
 export type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
 export type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;
+
+export const DownloadAccountStatementRequestShape = {
+  savingsAccountId: z.number(),
+  documentId: z.string()
+};
+
+export const DownloadAccountStatementRequestSchema = z.object(DownloadAccountStatementRequestShape);
+
+export const DownloadAccountStatementResponseShape = {
+  data: z.instanceof(Blob),
+  fileName: z.string().optional(),
+  contentType: z.string().optional()
+};
+
+export const DownloadAccountStatementResponseSchema = z.object(DownloadAccountStatementResponseShape);
+
+export type DownloadAccountStatementRequest = z.infer<typeof DownloadAccountStatementRequestSchema>;
+export type DownloadAccountStatementResponse = z.infer<typeof DownloadAccountStatementResponseSchema>;

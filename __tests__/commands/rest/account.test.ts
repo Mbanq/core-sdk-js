@@ -9,7 +9,8 @@ import {
   ScheduleAccountClosure,
   BlockAccount,
   HoldAmount,
-  GenerateAccountStatement
+  GenerateAccountStatement,
+  DownloadAccountStatement
 } from '../../../src/commands/rest/account';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -1522,4 +1523,220 @@ describe('GenerateAccountStatement', () => {
   });
 });
 
+
+describe('DownloadAccountStatement', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a DownloadAccountStatement command with correct metadata', () => {
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d', { tenantId: 'test-tenant' });
+
+    expect(command.input).toEqual({
+      savingsAccountId: 12,
+      documentId: '45ac4379-7185-471b-a103-916d25dc648d',
+      configuration: { tenantId: 'test-tenant' }
+    });
+    expect(command.metadata).toEqual({
+      commandName: 'DownloadAccountStatement',
+      path: '/v1/savings/12/documents/45ac4379-7185-471b-a103-916d25dc648d/attachment',
+      method: 'GET'
+    });
+  });
+
+  it('should execute GET request with responseType blob and return file data with metadata', async () => {
+    const mockBlob = new Blob(['test file content'], { type: 'application/pdf' });
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="statement.pdf"',
+        'content-type': 'application/pdf'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d', { tenantId: 'test-tenant' });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savings/12/documents/45ac4379-7185-471b-a103-916d25dc648d/attachment',
+      { responseType: 'blob' }
+    );
+    expect(result).toEqual({
+      data: mockBlob,
+      fileName: 'statement.pdf',
+      contentType: 'application/pdf'
+    });
+    expect(config.tenantId).toBe('test-tenant');
+  });
+
+  it('should extract filename from Content-Disposition header without quotes', async () => {
+    const mockBlob = new Blob(['test content']);
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename=account_statement_2023.pdf',
+        'content-type': 'application/pdf'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.fileName).toBe('account_statement_2023.pdf');
+    expect(result?.contentType).toBe('application/pdf');
+  });
+
+  it('should handle missing Content-Disposition header gracefully', async () => {
+    const mockBlob = new Blob(['test content']);
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-type': 'application/pdf'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.data).toBe(mockBlob);
+    expect(result?.fileName).toBeUndefined();
+    expect(result?.contentType).toBe('application/pdf');
+  });
+
+  it('should handle missing Content-Type header gracefully', async () => {
+    const mockBlob = new Blob(['test content']);
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="document.pdf"'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.data).toBe(mockBlob);
+    expect(result?.fileName).toBe('document.pdf');
+    expect(result?.contentType).toBeUndefined();
+  });
+
+  it('should handle axios errors during download', async () => {
+    const mockError: MockAxiosError = new Error('Download failed');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Document not found',
+        developerMessage: 'Document with ID 45ac4379-7185-471b-a103-916d25dc648d does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockBlob = new Blob(['test content']);
+    mockAxiosInstance.get.mockResolvedValue({
+      data: mockBlob,
+      headers: {}
+    });
+
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+
+  it('should handle different file types correctly', async () => {
+    const mockBlob = new Blob(['csv,data,here'], { type: 'text/csv' });
+    const mockResponse = {
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="statement.csv"',
+        'content-type': 'text/csv'
+      }
+    };
+
+    mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+    const command = DownloadAccountStatement(99, 'abc-123-def-456');
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result?.data).toBe(mockBlob);
+    expect(result?.fileName).toBe('statement.csv');
+    expect(result?.contentType).toBe('text/csv');
+  });
+});
 

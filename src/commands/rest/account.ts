@@ -12,7 +12,8 @@ import {
   HoldAmountRequest,
   HoldAmountResponse,
   GenerateAccountStatementRequest,
-  GenerateAccountStatementResponse
+  GenerateAccountStatementResponse,
+  DownloadAccountStatementResponse
 } from '../../types/account';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -543,6 +544,79 @@ export const GenerateAccountStatement = (
           requestData
         );
         return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Downloads a document associated with a specific savings account.
+ * This API returns a binary file as a raw byte stream.
+ * 
+ * @param savingsAccountId - The ID of the savings account
+ * @param documentId - The UUID of the document to download
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the document as a Blob with metadata
+ * 
+ * @example
+ * ```typescript
+ * const downloadCmd = DownloadAccountStatement(
+ *   12,
+ *   "45ac4379-7185-471b-a103-916d25dc648d",
+ *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ * );
+ * const result = await downloadCmd.execute(config);
+ * // result.data is a Blob containing the file
+ * // result.fileName contains the extracted filename (if available)
+ * // result.contentType contains the MIME type (if available)
+ * ```
+ */
+export const DownloadAccountStatement = (
+  savingsAccountId: number,
+  documentId: string,
+  configuration?: { tenantId?: string }
+): Command<{ savingsAccountId: number, documentId: string, configuration?: { tenantId?: string } }, DownloadAccountStatementResponse> => {
+  return {
+    input: { savingsAccountId, documentId, configuration },
+    metadata: {
+      commandName: 'DownloadAccountStatement',
+      path: `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get(
+          `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
+          { responseType: 'blob' }
+        );
+
+        // Extract filename from Content-Disposition header if available
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName: string | undefined;
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="?(.+?)"?$/i);
+          if (fileNameMatch) {
+            fileName = fileNameMatch[1];
+          }
+        }
+
+        // Extract content type from headers
+        const contentType = response.headers['content-type'];
+
+        return {
+          data: response.data,
+          fileName,
+          contentType
+        };
       } catch (error) {
         handleAxiosError(error);
       }
