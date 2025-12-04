@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { CreateAccountProduct, UpdateAccountProduct } from '../../../src/commands/rest/accountProduct';
+import { CreateAccountProduct, UpdateAccountProduct, GetAllAccountProducts } from '../../../src/commands/rest/accountProduct';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
@@ -497,5 +497,116 @@ describe('UpdateAccountProduct', () => {
             requestData
         );
         expect(result).toEqual(mockResponse);
+    });
+});
+
+describe('GetAllAccountProducts', () => {
+    let mockAxiosInstance: MockAxiosInstance;
+
+    beforeEach(() => {
+        vi.stubEnv('SECRET', 'your_secret');
+        vi.stubEnv('SIGNEE', 'your_signee');
+        vi.stubEnv('TENANT_ID', 'your_tenant_id');
+        vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+        mockAxiosInstance = {
+            get: vi.fn(),
+            post: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn()
+        };
+
+        vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+    });
+
+    afterEach(() => {
+        vi.clearAllMocks();
+        vi.unstubAllEnvs();
+    });
+
+    it('should create a GetAllAccountProducts command with correct metadata', () => {
+        const command = GetAllAccountProducts({ tenantId: 'test-tenant' });
+
+        expect(command.input).toEqual({ configuration: { tenantId: 'test-tenant' } });
+        expect(command.metadata).toEqual({
+            commandName: 'GetAllAccountProducts',
+            path: '/v1/savingsproducts',
+            method: 'GET'
+        });
+    });
+
+    it('should execute GET request and return response data', async () => {
+        const mockResponse: any[] = [
+            {
+                id: 543,
+                name: "test_pro1z",
+                shortName: "kj",
+                description: "zn",
+                currency: {
+                    code: "USD",
+                    name: "US Dollar",
+                    decimalPlaces: 0,
+                    displaySymbol: "$",
+                    nameCode: "currency.USD",
+                    displayLabel: "US Dollar ($)"
+                }
+            }
+        ];
+
+        mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+        const command = GetAllAccountProducts({ tenantId: 'test-tenant' });
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        const result = await command.execute(config);
+
+        expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+            '/v1/savingsproducts'
+        );
+        expect(result).toEqual(mockResponse);
+        expect(config.tenantId).toBe('test-tenant');
+    });
+
+    it('should handle axios errors during retrieval', async () => {
+        const mockError: MockAxiosError = new Error('Retrieval failed');
+        mockError.response = {
+            status: 400,
+            data: {
+                message: 'Failed to retrieve products',
+                developerMessage: 'Something went wrong'
+            }
+        };
+        mockError.isAxiosError = true;
+
+        mockAxiosInstance.get.mockRejectedValue(mockError);
+
+        const command = GetAllAccountProducts();
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        await expect(command.execute(config)).rejects.toThrow();
+    });
+
+    it('should not override tenantId if not provided in params', async () => {
+        const mockResponse: any[] = [];
+        mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+        const command = GetAllAccountProducts();
+
+        const config = {
+            baseUrl: 'https://api.example.com',
+            tenantId: 'default-tenant'
+        };
+
+        await command.execute(config);
+
+        expect(config.tenantId).toBe('default-tenant');
     });
 });

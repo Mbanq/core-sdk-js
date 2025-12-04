@@ -112,3 +112,63 @@ export const UpdateAccountProductResponseSchema = z.object(UpdateAccountProductR
 
 export type UpdateAccountProductRequest = z.infer<typeof UpdateAccountProductRequestSchema>;
 export type UpdateAccountProductResponse = z.infer<typeof UpdateAccountProductResponseSchema>;
+
+export const AccountProductItemShape = {
+    id: z.number(),
+    name: z.string(),
+    shortName: z.string(),
+    description: z.string(),
+    currency: z.object({
+        code: z.string(),
+        name: z.string(),
+        decimalPlaces: z.number(),
+        displaySymbol: z.string(),
+        nameCode: z.string(),
+        displayLabel: z.string()
+    }),
+    interestCompoundingPeriodType: z.object({
+        id: z.number(),
+        code: z.string(),
+        value: z.string()
+    }),
+    interestPostingPeriodType: z.object({
+        id: z.number(),
+        code: z.string(),
+        value: z.string()
+    }),
+    interestCalculationType: z.object({
+        id: z.number(),
+        code: z.string(),
+        value: z.string()
+    }),
+    interestCalculationDaysInYearType: z.object({
+        id: z.number(),
+        code: z.string(),
+        value: z.string()
+    }),
+    withdrawalFeeForTransfers: z.boolean(),
+    allowOverdraft: z.boolean(),
+    minRequiredBalance: z.number(),
+    enforceMinRequiredBalance: z.boolean(),
+    withHoldTax: z.boolean(),
+    accountingRule: z.object({
+        id: z.number(),
+        code: z.string(),
+        value: z.string()
+    }),
+    charges: z.array(z.any()),
+    isDormancyTrackingActive: z.boolean(),
+    isLinkedToFloatingInterestRates: z.boolean(),
+    isFloatingInterestRateCalculationAllowed: z.boolean(),
+    isUsedForSuspenseAccounting: z.boolean(),
+    isLinkedWithFundSourceAccount: z.boolean(),
+    isSkipCollectTransferCharge: z.boolean(),
+    isReservedProduct: z.boolean()
+};
+
+export const AccountProductItemSchema = z.object(AccountProductItemShape);
+
+export const GetAllAccountProductsResponseSchema = z.array(AccountProductItemSchema);
+
+export type AccountProductItem = z.infer<typeof AccountProductItemSchema>;
+export type GetAllAccountProductsResponse = z.infer<typeof GetAllAccountProductsResponseSchema>;

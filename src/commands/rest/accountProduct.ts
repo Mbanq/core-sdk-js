@@ -5,7 +5,8 @@ import {
     CreateAccountProductRequest,
     CreateAccountProductResponse,
     UpdateAccountProductRequest,
-    UpdateAccountProductResponse
+    UpdateAccountProductResponse,
+    GetAllAccountProductsResponse
 } from '../../types/accountProduct';
 
 /**
@@ -168,6 +169,49 @@ export const UpdateAccountProduct = (
                 const response = await axiosInstance.put<UpdateAccountProductResponse>(
                     `/v1/savingsproducts/${productId}`,
                     params
+                );
+                return response.data;
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+    };
+};
+
+/**
+ * Retrieves all savings account products.
+ * 
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns a list of all account products
+ * 
+ * @example
+ * ```typescript
+ * const listCmd = GetAllAccountProducts({ tenantId: "z01j3e71zd6zkq908yvf5861a8" });
+ * const result = await listCmd.execute(config);
+ * result.forEach(product => console.log(product.name));
+ * ```
+ */
+export const GetAllAccountProducts = (
+    configuration?: { tenantId?: string }
+): Command<{ configuration?: { tenantId?: string } }, GetAllAccountProductsResponse> => {
+    return {
+        input: { configuration },
+        metadata: {
+            commandName: 'GetAllAccountProducts',
+            path: '/v1/savingsproducts',
+            method: 'GET'
+        },
+        execute: async (config: Config) => {
+            if (configuration?.tenantId) {
+                config.tenantId = configuration.tenantId;
+            }
+            const axiosInstance = await baseRequest(config);
+
+            try {
+                const response = await axiosInstance.get<GetAllAccountProductsResponse>(
+                    '/v1/savingsproducts'
                 );
                 return response.data;
             } catch (error) {
