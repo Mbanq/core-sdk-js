@@ -12,6 +12,7 @@ export { createLoggingMiddleware } from './middlewares/logging';
 export { createMetricsMiddleware } from './middlewares/metrics';
 export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './commands/rest/user';
 export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct } from './commands/rest/cardProduct';
+export { SwitchClientClassification, GetClientClassification, CancelSwitchClientClassification } from './commands/rest/clientClassification'
 
 export type {
   Config,
