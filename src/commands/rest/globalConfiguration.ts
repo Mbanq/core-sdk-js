@@ -28,20 +28,20 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * 
  * @see {@link https://apidocs.cloud.mbanq.com/reference/get_v1-configurations} API Documentation
  */
-export const GetConfigurations = (configuration: {
+export const GetConfigurations = (configuration?: {
     tenantId?: string;
 }): Command<{
     tenantId?: string;
 }, GetConfigurationsResponse> => {
     return {
-        input: configuration,
+        input: configuration ?? {},
         metadata: {
             commandName: 'GetConfigurations',
             path: '/v1/configurations',
             method: 'GET'
         },
         execute: async (config: Config) => {
-            if (configuration.tenantId) {
+            if (configuration?.tenantId) {
                 config.tenantId = configuration.tenantId;
             }
             const axiosInstance = await baseRequest(config);
