@@ -166,7 +166,7 @@ export const EnableDisableConfiguration = (
         metadata: {
             commandName: 'EnableDisableConfiguration',
             path: `/v1/configurations/${configId}`,
-            method: 'POST'
+            method: 'PUT'
         },
         execute: async (config: Config) => {
             if (configuration?.tenantId) {
@@ -175,7 +175,7 @@ export const EnableDisableConfiguration = (
             const axiosInstance = await baseRequest(config);
 
             try {
-                const response = await axiosInstance.post<UpdateConfigurationResponse>(
+                const response = await axiosInstance.put<UpdateConfigurationResponse>(
                     `/v1/configurations/${configId}`,
                     requestData
                 );
