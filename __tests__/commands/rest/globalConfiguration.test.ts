@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GetConfigurations } from '../../../src/commands/rest/globalConfiguration';
+import { GetConfigurations, GetConfigurationByName } from '../../../src/commands/rest/globalConfiguration';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 describe('GlobalConfiguration Commands', () => {
@@ -231,6 +231,156 @@ describe('GlobalConfiguration Commands', () => {
             const command = GetConfigurations(params);
 
             expect(command.input).toEqual({});
+        });
+    });
+
+    describe('GetConfigurationByName', () => {
+        it('should get configuration by name successfully', async () => {
+            const mockResponse = {
+                data: {
+                    'virtual-card-reordering-limit': true,
+                    value: 'string',
+                    id: 0,
+                    description: 'string',
+                    trapDoor: true,
+                    valueDataType: 'string'
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const configName = 'virtual-card-reordering-limit';
+            const command = GetConfigurationByName(configName, { tenantId: 'z01j3e71zd6zkq90' });
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.get).toHaveBeenCalledTimes(1);
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/configurations/name/virtual-card-reordering-limit');
+            expect(result).toBeDefined();
+            expect(result!['virtual-card-reordering-limit']).toBe(true);
+            expect(result!.value).toBe('string');
+            expect(result!.description).toBe('string');
+            expect(result!.trapDoor).toBe(true);
+            expect(result!.valueDataType).toBe('string');
+        });
+
+        it('should get configuration by name without tenantId', async () => {
+            const mockResponse = {
+                data: {
+                    value: 'test-value',
+                    id: 5,
+                    description: 'Test configuration',
+                    trapDoor: false,
+                    valueDataType: 'STRING'
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/configurations/name/test-config');
+            expect(result).toBeDefined();
+            expect(result!.value).toBe('test-value');
+            expect(result!.description).toBe('Test configuration');
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    value: 'test',
+                    id: 1
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName, { tenantId: 'custom-tenant' });
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle configuration with different value data types', async () => {
+            const mockResponse = {
+                data: {
+                    value: '100',
+                    id: 10,
+                    description: 'Numeric configuration',
+                    trapDoor: false,
+                    valueDataType: 'NUMBER'
+                }
+            };
+            mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+            const configName = 'numeric-config';
+            const command = GetConfigurationByName(configName);
+            const result = await command.execute(mockConfig);
+
+            expect(result!.valueDataType).toBe('NUMBER');
+            expect(result!.value).toBe('100');
+        });
+
+        it('should handle configuration not found error', async () => {
+            const mockError = new Error('Configuration not found');
+            mockAxiosInstance.get.mockRejectedValue(mockError);
+
+            const configName = 'non-existent-config';
+            const command = GetConfigurationByName(configName);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Configuration not found');
+        });
+
+        it('should handle network errors', async () => {
+            const mockError = new Error('Network error');
+            mockAxiosInstance.get.mockRejectedValue(mockError);
+
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName, { tenantId: 'test-tenant' });
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Network error');
+        });
+
+        it('should handle unauthorized errors', async () => {
+            const mockError = new Error('Unauthorized');
+            mockAxiosInstance.get.mockRejectedValue(mockError);
+
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Unauthorized');
+        });
+
+        it('should have correct metadata', () => {
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName);
+
+            expect(command.metadata.commandName).toBe('GetConfigurationByName');
+            expect(command.metadata.path).toBe('/v1/configurations/name/test-config');
+            expect(command.metadata.method).toBe('GET');
+        });
+
+        it('should have correct metadata with different config name', () => {
+            const configName = 'virtual-card-reordering-limit';
+            const command = GetConfigurationByName(configName);
+
+            expect(command.metadata.path).toBe('/v1/configurations/name/virtual-card-reordering-limit');
+        });
+
+        it('should have correct input parameters', () => {
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName, { tenantId: 'test-tenant' });
+
+            expect(command.input.configName).toBe('test-config');
+            expect(command.input.configuration?.tenantId).toBe('test-tenant');
+        });
+
+        it('should have correct input parameters when tenantId is not provided', () => {
+            const configName = 'test-config';
+            const command = GetConfigurationByName(configName);
+
+            expect(command.input.configName).toBe('test-config');
+            expect(command.input.configuration).toBeUndefined();
         });
     });
 });

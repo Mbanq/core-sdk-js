@@ -13,5 +13,6 @@ export { UpdateRecipientGQL as UpdateRecipient } from './graphql/recipient';
 export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './rest/user';
 export { ListCardProduct, CreateCardProduct, UpdateCardProduct, GetCardProduct } from './rest/cardProduct';
 export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './rest/clientAddress';
-export { GetConfigurations } from './rest/globalConfiguration';
+export { GetConfigurations, GetConfigurationByName } from './rest/globalConfiguration';
+
 
