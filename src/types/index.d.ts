@@ -25,6 +25,10 @@ import {
 
 import { UserDetail, UserDetailSchema, UserDetailShape } from './user';
 
+import { GlobalConfiguration, GetConfigurationsResponse, GetConfigurationByNameResponse, UpdateConfigurationRequest, UpdateConfigurationResponse } from './globalConfiguration';
+
+
+
 export {
   Config,
   GetTransferInput,
@@ -71,5 +75,10 @@ export {
   UpdateAccountRequestShape,
   UserDetail,
   UserDetailSchema,
-  UserDetailShape
+  UserDetailShape,
+  GlobalConfiguration,
+  GetConfigurationsResponse,
+  GetConfigurationByNameResponse,
+  UpdateConfigurationRequest,
+  UpdateConfigurationResponse
 };
