@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GetConfigurations, GetConfigurationByName } from '../../../src/commands/rest/globalConfiguration';
+import { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from '../../../src/commands/rest/globalConfiguration';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 describe('GlobalConfiguration Commands', () => {
@@ -383,4 +383,164 @@ describe('GlobalConfiguration Commands', () => {
             expect(command.input.configuration).toBeUndefined();
         });
     });
+
+    describe('EnableDisableConfiguration', () => {
+        it('should enable configuration successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: '33',
+                    resourceId: 33,
+                    changes: {
+                        enabled: true
+                    }
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const configId = 33;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'z01j3e71zd6zkq90' });
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledTimes(1);
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/configurations/33', { enabled: true });
+            expect(result).toBeDefined();
+            expect(result!.id).toBe('33');
+            expect(result!.resourceId).toBe(33);
+            expect(result!.changes?.enabled).toBe(true);
+        });
+
+        it('should disable configuration successfully', async () => {
+            const mockResponse = {
+                data: {
+                    id: '33',
+                    resourceId: 33,
+                    changes: {
+                        enabled: false
+                    }
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const configId = 33;
+            const requestData = { enabled: false };
+            const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'z01j3e71zd6zkq90' });
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/configurations/33', { enabled: false });
+            expect(result!.changes?.enabled).toBe(false);
+        });
+
+        it('should update configuration without tenantId', async () => {
+            const mockResponse = {
+                data: {
+                    id: '10',
+                    resourceId: 10,
+                    changes: {
+                        enabled: true
+                    }
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const configId = 10;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData);
+            const result = await command.execute(mockConfig);
+
+            expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/configurations/10', { enabled: true });
+            expect(result).toBeDefined();
+            expect(result!.resourceId).toBe(10);
+        });
+
+        it('should use custom tenantId when provided', async () => {
+            const mockResponse = {
+                data: {
+                    id: '5',
+                    resourceId: 5
+                }
+            };
+            mockAxiosInstance.post.mockResolvedValue(mockResponse);
+
+            const configId = 5;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'custom-tenant' });
+            const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+            await command.execute(mockConfig);
+
+            expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+        });
+
+        it('should handle configuration not found error', async () => {
+            const mockError = new Error('Configuration not found');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const configId = 999;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Configuration not found');
+        });
+
+        it('should handle network errors', async () => {
+            const mockError = new Error('Network error');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const configId = 33;
+            const requestData = { enabled: false };
+            const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'test-tenant' });
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Network error');
+        });
+
+        it('should handle unauthorized errors', async () => {
+            const mockError = new Error('Unauthorized');
+            mockAxiosInstance.post.mockRejectedValue(mockError);
+
+            const configId = 33;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData);
+
+            await expect(command.execute(mockConfig)).rejects.toThrow('Unauthorized');
+        });
+
+        it('should have correct metadata', () => {
+            const configId = 33;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData);
+
+            expect(command.metadata.commandName).toBe('EnableDisableConfiguration');
+            expect(command.metadata.path).toBe('/v1/configurations/33');
+            expect(command.metadata.method).toBe('POST');
+        });
+
+        it('should have correct metadata with different config ID', () => {
+            const configId = 100;
+            const requestData = { enabled: false };
+            const command = EnableDisableConfiguration(configId, requestData);
+
+            expect(command.metadata.path).toBe('/v1/configurations/100');
+        });
+
+        it('should have correct input parameters', () => {
+            const configId = 33;
+            const requestData = { enabled: true };
+            const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'test-tenant' });
+
+            expect(command.input.configId).toBe(33);
+            expect(command.input.requestData).toEqual({ enabled: true });
+            expect(command.input.configuration?.tenantId).toBe('test-tenant');
+        });
+
+        it('should have correct input parameters when tenantId is not provided', () => {
+            const configId = 33;
+            const requestData = { enabled: false };
+            const command = EnableDisableConfiguration(configId, requestData);
+
+            expect(command.input.configId).toBe(33);
+            expect(command.input.requestData).toEqual({ enabled: false });
+            expect(command.input.configuration).toBeUndefined();
+        });
+    });
 });
+

@@ -15,7 +15,8 @@ export { createMetricsMiddleware } from './middlewares/metrics';
 export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from './commands/rest/user';
 export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct } from './commands/rest/cardProduct';
 export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './commands/rest/clientAddress';
-export { GetConfigurations, GetConfigurationByName } from './commands/rest/globalConfiguration';
+export { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from './commands/rest/globalConfiguration';
+
 
 
 export type {

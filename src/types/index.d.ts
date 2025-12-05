@@ -25,7 +25,7 @@ import {
 
 import { UserDetail, UserDetailSchema, UserDetailShape } from './user';
 
-import { GlobalConfiguration, GetConfigurationsResponse, GetConfigurationByNameResponse } from './globalConfiguration';
+import { GlobalConfiguration, GetConfigurationsResponse, GetConfigurationByNameResponse, UpdateConfigurationRequest, UpdateConfigurationResponse } from './globalConfiguration';
 
 
 
@@ -78,5 +78,7 @@ export {
   UserDetailShape,
   GlobalConfiguration,
   GetConfigurationsResponse,
-  GetConfigurationByNameResponse
+  GetConfigurationByNameResponse,
+  UpdateConfigurationRequest,
+  UpdateConfigurationResponse
 };

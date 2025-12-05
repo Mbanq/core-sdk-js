@@ -18,3 +18,15 @@ export interface GetConfigurationByNameResponse {
     trapDoor?: boolean;
     valueDataType?: string;
 }
+
+export interface UpdateConfigurationRequest {
+    enabled: boolean;
+}
+
+export interface UpdateConfigurationResponse {
+    id?: string;
+    resourceId?: number;
+    changes?: {
+        enabled?: boolean;
+    };
+}

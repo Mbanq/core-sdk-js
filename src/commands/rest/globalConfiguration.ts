@@ -1,5 +1,5 @@
-import { type Command, type Config } from '../../types';
-import { GetConfigurationsResponse, GetConfigurationByNameResponse } from '../../types/globalConfiguration';
+import { type Command, type Config, ProcessOutput } from '../../types';
+import { GetConfigurationsResponse, GetConfigurationByNameResponse, UpdateConfigurationRequest, UpdateConfigurationResponse } from '../../types/globalConfiguration';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 
@@ -107,6 +107,77 @@ export const GetConfigurationByName = (
             try {
                 const response = await axiosInstance.get<GetConfigurationByNameResponse>(
                     `/v1/configurations/name/${configName}`
+                );
+                return response.data;
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+    };
+};
+
+/**
+ * Enables or disables a specific global configuration.
+ * 
+ * This API allows you to enable or disable a configuration by its ID.
+ * The configuration's enabled status will be updated according to the provided value.
+ * 
+ * @param configId - The ID of the configuration to update
+ * @param requestData - The update parameters
+ * @param requestData.enabled - Whether the configuration should be enabled (true) or disabled (false)
+ * @param configuration - Configuration parameters
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ * 
+ * @returns A Command that when executed returns the update confirmation
+ * 
+ * @example
+ * ```typescript
+ * // Enable a configuration
+ * const enableCmd = EnableDisableConfiguration(
+ *   33,
+ *   { enabled: true },
+ *   { tenantId: "z01j3e71zd6zkq90" }
+ * );
+ * const result = await enableCmd.execute(config);
+ * console.log(`Configuration ${result.resourceId} updated`);
+ * 
+ * // Disable a configuration
+ * const disableCmd = EnableDisableConfiguration(
+ *   33,
+ *   { enabled: false },
+ *   { tenantId: "z01j3e71zd6zkq90" }
+ * );
+ * await disableCmd.execute(config);
+ * ```
+ * 
+ * @see {@link https://apidocs.cloud.mbanq.com/reference/enabledisableconfiguration} API Documentation
+ */
+export const EnableDisableConfiguration = (
+    configId: number,
+    requestData: UpdateConfigurationRequest,
+    configuration?: { tenantId?: string }
+): Command<{
+    configId: number;
+    requestData: UpdateConfigurationRequest;
+    configuration?: { tenantId?: string };
+}, UpdateConfigurationResponse> => {
+    return {
+        input: { configId, requestData, configuration },
+        metadata: {
+            commandName: 'EnableDisableConfiguration',
+            path: `/v1/configurations/${configId}`,
+            method: 'POST'
+        },
+        execute: async (config: Config) => {
+            if (configuration?.tenantId) {
+                config.tenantId = configuration.tenantId;
+            }
+            const axiosInstance = await baseRequest(config);
+
+            try {
+                const response = await axiosInstance.post<UpdateConfigurationResponse>(
+                    `/v1/configurations/${configId}`,
+                    requestData
                 );
                 return response.data;
             } catch (error) {
