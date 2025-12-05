@@ -74,6 +74,7 @@ export const SwitchClientClassification = (clientId: number, params: SwitchClien
  * @returns a promise that resolves to the response from the server
  */
 export const CancelSwitchClientClassification = (clientId: number, params: { switchClassificationRequestId: number }, configuration?: { tenantId: string }): Command<{ clientId: number, params: { switchClassificationRequestId: number }, configuration?: { tenantId: string } }, SwitchClientClassificationResponse> => {
+  // this function cannot be tested right now.
   const path = `/v1/clients/${clientId}?command=cancelSwitchclassification`;
   return {
     input: { clientId, params, configuration },
