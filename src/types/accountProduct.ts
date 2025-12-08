@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-export const CreateAccountProductRequestShape = {
+const ChargeShape = {
+    id: z.number().optional(),
+    isMandatory: z.boolean().optional()
+};
+
+// Base shape containing all possible fields for account product operations
+const BaseAccountProductShape = {
     currencyCode: z.string(),
     digitsAfterDecimal: z.number(),
     interestCompoundingPeriodType: z.number(),
@@ -11,29 +17,51 @@ export const CreateAccountProductRequestShape = {
     name: z.string(),
     shortName: z.string(),
     description: z.string(),
-    inMultiplesOf: z.string().optional(),
-    isLinkedToFloatingInterestRates: z.boolean().optional(),
-    floatingRateId: z.number().optional(),
-    minDifferentialRate: z.string().optional(),
-    interestRateDifferential: z.string().optional(),
-    defaultDifferentialRate: z.string().optional(),
-    maxDifferentialRate: z.string().optional(),
-    isFloatingInterestRateCalculationAllowed: z.boolean().optional(),
-    minRequiredOpeningBalance: z.string().optional(),
-    paymentChannelToFundSourceMappings: z.string().optional(),
-    feeToIncomeAccountMappings: z.string().optional(),
-    penaltyToIncomeAccountMappings: z.string().optional(),
-    charges: z.array(z.object({
-        id: z.number().optional(),
-        isMandatory: z.boolean().optional()
-    })).optional(),
+    nominalAnnualInterestRate: z.string(),
+    inMultiplesOf: z.string(),
+    minRequiredOpeningBalance: z.string(),
+    withdrawalFeeForTransfers: z.boolean(),
+    allowOverdraft: z.boolean(),
+    enforceMinRequiredBalance: z.boolean(),
+    withHoldTax: z.boolean(),
+    isDormancyTrackingActive: z.boolean(),
+    isUsedForSuspenseAccounting: z.boolean(),
+    isLinkedWithFundSourceAccount: z.boolean(),
+    skipCollectTransferCharge: z.boolean(),
+    isReservedProduct: z.boolean(),
+    isLinkedToFloatingInterestRates: z.boolean(),
+    floatingRateId: z.number(),
+    minDifferentialRate: z.string(),
+    interestRateDifferential: z.string(),
+    defaultDifferentialRate: z.string(),
+    maxDifferentialRate: z.string(),
+    isFloatingInterestRateCalculationAllowed: z.boolean(),
+    paymentChannelToFundSourceMappings: z.string(),
+    feeToIncomeAccountMappings: z.string(),
+    penaltyToIncomeAccountMappings: z.string(),
+    charges: z.array(z.object(ChargeShape)),
     locale: z.string(),
     dateFormat: z.string(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional()
+    startDate: z.string(),
+    endDate: z.string()
 };
 
-export const CreateAccountProductRequestSchema = z.object(CreateAccountProductRequestShape);
+// Create schema: Start with all fields optional, then mark specific fields as required
+export const CreateAccountProductRequestSchema = z.object(BaseAccountProductShape)
+    .partial()
+    .required({
+        currencyCode: true,
+        digitsAfterDecimal: true,
+        interestCompoundingPeriodType: true,
+        interestPostingPeriodType: true,
+        interestCalculationType: true,
+        interestCalculationDaysInYearType: true,
+        accountingRule: true,
+        name: true,
+        shortName: true,
+        description: true,
+        locale: true
+    });
 
 export const CreateAccountProductResponseShape = {
     resourceId: z.string(),
@@ -45,67 +73,13 @@ export const CreateAccountProductResponseSchema = z.object(CreateAccountProductR
 export type CreateAccountProductRequest = z.infer<typeof CreateAccountProductRequestSchema>;
 export type CreateAccountProductResponse = z.infer<typeof CreateAccountProductResponseSchema>;
 
-export const UpdateAccountProductRequestShape = {
-    name: z.string().optional(),
-    shortName: z.string().optional(),
-    description: z.string().optional(),
-    currencyCode: z.string().optional(),
-    digitsAfterDecimal: z.number().optional(),
-    inMultiplesOf: z.string().optional(),
-    nominalAnnualInterestRate: z.string().optional(),
-    minRequiredOpeningBalance: z.string().optional(),
-    withdrawalFeeForTransfers: z.boolean().optional(),
-    interestCompoundingPeriodType: z.number().optional(),
-    interestPostingPeriodType: z.number().optional(),
-    interestCalculationType: z.number().optional(),
-    interestCalculationDaysInYearType: z.number().optional(),
-    accountingRule: z.number().optional(),
-    allowOverdraft: z.boolean().optional(),
-    enforceMinRequiredBalance: z.boolean().optional(),
-    withHoldTax: z.boolean().optional(),
-    isDormancyTrackingActive: z.boolean().optional(),
-    isUsedForSuspenseAccounting: z.boolean().optional(),
-    isLinkedWithFundSourceAccount: z.boolean().optional(),
-    skipCollectTransferCharge: z.boolean().optional(),
-    isReservedProduct: z.boolean().optional(),
-    isLinkedToFloatingInterestRates: z.boolean().optional(),
-    floatingRateId: z.number().optional(),
-    interestRateDifferential: z.string().optional(),
-    isFloatingInterestRateCalculationAllowed: z.boolean().optional(),
-    minDifferentialRate: z.string().optional(),
-    defaultDifferentialRate: z.string().optional(),
-    maxDifferentialRate: z.string().optional(),
-    paymentChannelToFundSourceMappings: z.string().optional(),
-    feeToIncomeAccountMappings: z.string().optional(),
-    penaltyToIncomeAccountMappings: z.string().optional(),
-    charges: z.array(z.object({
-        id: z.number().optional(),
-        isMandatory: z.boolean().optional()
-    })).optional(),
-    locale: z.string().optional(),
-    dateFormat: z.string().optional(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional()
-};
-
-export const UpdateAccountProductRequestSchema = z.object(UpdateAccountProductRequestShape);
+// Update schema: all fields are optional
+export const UpdateAccountProductRequestSchema = z.object(BaseAccountProductShape).partial();
 
 export const UpdateAccountProductResponseShape = {
     id: z.string(),
     resourceId: z.string(),
-    changes: z.object({
-        name: z.string().optional(),
-        shortName: z.string().optional(),
-        nominalAnnualInterestRate: z.number().optional(),
-        locale: z.string().optional(),
-        minRequiredOpeningBalance: z.number().optional(),
-        charges: z.string().optional(),
-        startDate: z.string().optional(),
-        endDate: z.string().optional(),
-        paymentChannelToFundSourceMappings: z.string().optional(),
-        penaltyToIncomeAccountMappings: z.string().optional(),
-        feeToIncomeAccountMappings: z.string().optional()
-    }).optional()
+    changes: z.record(z.unknown()).optional()
 };
 
 export const UpdateAccountProductResponseSchema = z.object(UpdateAccountProductResponseShape);
@@ -156,7 +130,7 @@ export const AccountProductItemShape = {
         code: z.string(),
         value: z.string()
     }),
-    charges: z.array(z.any()),
+    charges: z.array(z.object(ChargeShape)),
     isDormancyTrackingActive: z.boolean(),
     isLinkedToFloatingInterestRates: z.boolean(),
     isFloatingInterestRateCalculationAllowed: z.boolean(),
