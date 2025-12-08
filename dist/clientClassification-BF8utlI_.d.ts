@@ -1,4 +1,4 @@
-import { a as Command, G as GraphQLRequest } from './config.d-io5V_aK4.mjs';
+import { a as Command, G as GraphQLRequest } from './config.d-io5V_aK4.js';
 import z$1, { z } from 'zod';
 import * as buffer from 'buffer';
 
@@ -12942,4 +12942,297 @@ declare const SetClientAddressStatus: (clientId: number, type: number, params: {
     };
 }, UpdateClientAddressResponse>;
 
-export { UpdateCardProduct as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, GetTransfers as E, UpdateTraceNumber as F, GetPayment as G, HoldAmount as H, CreateTransfer as I, GetTransfer as J, GetRecipient as K, ListClientDocument as L, MarkAsSuccess as M, CreateRecipient as N, DeleteRecipient as O, GetRecipients as P, GraphQL as Q, GetUserDetail as R, SendAuthorizationToCore as S, EnableSelfServiceAccess as T, UpdatePayment as U, VerifyWithActivateClients as V, UpdateSelfServiceUser as W, DeleteSelfServiceUser as X, ListCardProduct as Y, GetCardProduct as Z, CreateCardProduct as _, GetPayments as a, PaymentTypeSchema$1 as a$, GetClientAddress as a0, CreateClientAddress as a1, UpdateClientAddress as a2, SetClientAddressStatus as a3, type Payment as a4, type CreatePaymentInput as a5, type UpdatePaymentInput as a6, type PaymentResponse as a7, type Transfer as a8, type GetTransferInput as a9, ListAccountsRequestSchema as aA, type UpdateAccountRequest as aB, UpdateAccountRequestSchema as aC, UpdateAccountRequestShape as aD, type UserDetail as aE, UserDetailSchema as aF, UserDetailShape as aG, RecipientSchema as aH, CreateRecipientRequestSchema as aI, RecipientRequestSchema as aJ, RecipientFilterKeySchema as aK, RecipientShape as aL, CreateRecipientRequestShape as aM, RecipientRequestShape as aN, BankInformationSchema as aO, AccountDetailsDataSchema as aP, AddressSchema as aQ, RecipientsSchema as aR, TransferSchema as aS, CreateTransferInputSchema as aT, GetTransferInputSchema as aU, MarkAsReturnInputSchema as aV, UpdateTraceNumbersInputSchema as aW, ProcessOutputSchema$1 as aX, TransferResponseSchema as aY, CreateTransferOutputSchema as aZ, PaymentRailSchema$1 as a_, type CreateTransferInput as aa, type TransferResponse as ab, type MarkAsReturnInput as ac, type UpdateTraceNumbersInput as ad, type ProcessOutput$1 as ae, type PaymentRail as af, type Recipient as ag, type CreateRecipientRequest as ah, type RecipientRequest as ai, type RecipientFilterKey as aj, PaymentStatusSchema as ak, PaymentRailSchema as al, PaymentTypeSchema as am, SortOrderSchema as an, CreatePaymentInputSchema as ao, UpdatePaymentInputSchema as ap, PaymentResponseSchema as aq, PaymentShape as ar, CreatePaymentInputShape as as, UpdatePaymentInputShape as at, SavingAccountSchema as au, SavingAccountShape as av, type SavingAccount as aw, ListAccountsOfClientResponseShape as ax, ListAccountsOfClientResponseSchema as ay, ListAccountsRequestShape as az, UpdateCardID as b, AccountTypeSchema as b0, TransferShape as b1, CreateTransferInputShape as b2, GetTransferInputShape as b3, MarkAsReturnInputShape as b4, UpdateTraceNumbersInputShape as b5, ProcessOutputShape as b6, TransferResponseShape as b7, CreateTransferOutputShape as b8, ClientSchema as b9, AgentSchema as ba, PartySchema as bb, type UpdateRecipientRequest as bc, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, ScheduleAccountClosure as t, GenerateAccountStatement as u, DownloadAccountStatement as v, MarkAsReturned as w, MarkAsFail as x, MarkAsProcessing as y, LogFailTransfer as z };
+declare const ClientClassificationResponseSchema: z$1.ZodObject<{
+    clientId: z$1.ZodNumber;
+    currentClassificationStartDate: z$1.ZodString;
+    applicableDate: z$1.ZodString;
+    upcomingClassificationRequestId: z$1.ZodNumber;
+    currentClassification: z$1.ZodObject<{
+        id: z$1.ZodNumber;
+        name: z$1.ZodString;
+        position: z$1.ZodNumber;
+        description: z$1.ZodString;
+        active: z$1.ZodBoolean;
+        mandatory: z$1.ZodBoolean;
+        systemDefined: z$1.ZodBoolean;
+        codeName: z$1.ZodString;
+        isMasked: z$1.ZodBoolean;
+        charges: z$1.ZodArray<z$1.ZodObject<{
+            chargeId: z$1.ZodNumber;
+            numberOfFeeExemptedCharge: z$1.ZodNumber;
+            exemptedFeeAmount: z$1.ZodNumber;
+            chargeAmount: z$1.ZodNumber;
+        }, "strip", z$1.ZodTypeAny, {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }, {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }>, "many">;
+    }, "strip", z$1.ZodTypeAny, {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    }, {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    }>;
+    upcomingClassification: z$1.ZodOptional<z$1.ZodObject<{
+        id: z$1.ZodNumber;
+        name: z$1.ZodString;
+        position: z$1.ZodNumber;
+        description: z$1.ZodString;
+        active: z$1.ZodBoolean;
+        mandatory: z$1.ZodBoolean;
+        systemDefined: z$1.ZodBoolean;
+        codeName: z$1.ZodString;
+        isMasked: z$1.ZodBoolean;
+        charges: z$1.ZodArray<z$1.ZodObject<{
+            chargeId: z$1.ZodNumber;
+            numberOfFeeExemptedCharge: z$1.ZodNumber;
+            exemptedFeeAmount: z$1.ZodNumber;
+            chargeAmount: z$1.ZodNumber;
+        }, "strip", z$1.ZodTypeAny, {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }, {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }>, "many">;
+    }, "strip", z$1.ZodTypeAny, {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    }, {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    }>>;
+}, "strip", z$1.ZodTypeAny, {
+    clientId: number;
+    currentClassificationStartDate: string;
+    applicableDate: string;
+    upcomingClassificationRequestId: number;
+    currentClassification: {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    };
+    upcomingClassification?: {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    } | undefined;
+}, {
+    clientId: number;
+    currentClassificationStartDate: string;
+    applicableDate: string;
+    upcomingClassificationRequestId: number;
+    currentClassification: {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    };
+    upcomingClassification?: {
+        name: string;
+        id: number;
+        active: boolean;
+        charges: {
+            chargeId: number;
+            numberOfFeeExemptedCharge: number;
+            exemptedFeeAmount: number;
+            chargeAmount: number;
+        }[];
+        codeName: string;
+        description: string;
+        position: number;
+        isMasked: boolean;
+        mandatory: boolean;
+        systemDefined: boolean;
+    } | undefined;
+}>;
+type ClientClassificationResponse = z$1.infer<typeof ClientClassificationResponseSchema>;
+declare const SwitchClientClassificationRequestSchema: z$1.ZodEffects<z$1.ZodObject<{
+    classificationId: z$1.ZodNumber;
+    expectedApplicableDate: z$1.ZodString;
+    dateFormat: z$1.ZodString;
+    locale: z$1.ZodOptional<z$1.ZodString>;
+}, "strip", z$1.ZodTypeAny, {
+    dateFormat: string;
+    classificationId: number;
+    expectedApplicableDate: string;
+    locale?: string | undefined;
+}, {
+    dateFormat: string;
+    classificationId: number;
+    expectedApplicableDate: string;
+    locale?: string | undefined;
+}>, {
+    dateFormat: string;
+    classificationId: number;
+    expectedApplicableDate: string;
+    locale?: string | undefined;
+}, {
+    dateFormat: string;
+    classificationId: number;
+    expectedApplicableDate: string;
+    locale?: string | undefined;
+}>;
+declare const SwitchClientClassificationResponseSchema: z$1.ZodObject<{
+    id: z$1.ZodNumber;
+    clientId: z$1.ZodNumber;
+    resourceId: z$1.ZodNumber;
+    data: z$1.ZodObject<{
+        oldClassificationId: z$1.ZodNumber;
+        newClassificationId: z$1.ZodNumber;
+    }, "strip", z$1.ZodTypeAny, {
+        oldClassificationId: number;
+        newClassificationId: number;
+    }, {
+        oldClassificationId: number;
+        newClassificationId: number;
+    }>;
+}, "strip", z$1.ZodTypeAny, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+    data: {
+        oldClassificationId: number;
+        newClassificationId: number;
+    };
+}, {
+    id: number;
+    clientId: number;
+    resourceId: number;
+    data: {
+        oldClassificationId: number;
+        newClassificationId: number;
+    };
+}>;
+type SwitchClientClassificationRequest = z$1.infer<typeof SwitchClientClassificationRequestSchema>;
+type SwitchClientClassificationResponse = z$1.infer<typeof SwitchClientClassificationResponseSchema>;
+
+/**
+ * Retrieves the classification for a client.
+ * @param clientId The id of the client to retrieve the classification for.
+ * @param configuration The configuration object containing the tenant id.
+ * @returns A promise that resolves to the classification for the given client.
+ */
+declare const GetClientClassification: (clientId: number, configuration?: {
+    tenantId: string;
+}) => Command<{
+    clientId: number;
+    configuration?: {
+        tenantId: string;
+    };
+}, ClientClassificationResponse>;
+/**
+ * Switches the client classification for the given client id.
+ * @param clientId the id of the client to switch the classification for
+ * @param configuration the configuration object containing the tenant id
+ * @returns a promise that resolves to the response from the server
+ */
+declare const SwitchClientClassification: (clientId: number, params: SwitchClientClassificationRequest, configuration?: {
+    tenantId: string;
+}) => Command<{
+    clientId: number;
+    params: SwitchClientClassificationRequest;
+    configuration?: {
+        tenantId: string;
+    };
+}, SwitchClientClassificationResponse>;
+
+export { UpdateCardProduct as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, GetTransfers as E, UpdateTraceNumber as F, GetPayment as G, HoldAmount as H, CreateTransfer as I, GetTransfer as J, GetRecipient as K, ListClientDocument as L, MarkAsSuccess as M, CreateRecipient as N, DeleteRecipient as O, GetRecipients as P, GraphQL as Q, GetUserDetail as R, SendAuthorizationToCore as S, EnableSelfServiceAccess as T, UpdatePayment as U, VerifyWithActivateClients as V, UpdateSelfServiceUser as W, DeleteSelfServiceUser as X, ListCardProduct as Y, GetCardProduct as Z, CreateCardProduct as _, GetPayments as a, CreateTransferOutputSchema as a$, GetClientAddress as a0, CreateClientAddress as a1, UpdateClientAddress as a2, SetClientAddressStatus as a3, SwitchClientClassification as a4, GetClientClassification as a5, type Payment as a6, type CreatePaymentInput as a7, type UpdatePaymentInput as a8, type PaymentResponse as a9, ListAccountsOfClientResponseSchema as aA, ListAccountsRequestShape as aB, ListAccountsRequestSchema as aC, type UpdateAccountRequest as aD, UpdateAccountRequestSchema as aE, UpdateAccountRequestShape as aF, type UserDetail as aG, UserDetailSchema as aH, UserDetailShape as aI, RecipientSchema as aJ, CreateRecipientRequestSchema as aK, RecipientRequestSchema as aL, RecipientFilterKeySchema as aM, RecipientShape as aN, CreateRecipientRequestShape as aO, RecipientRequestShape as aP, BankInformationSchema as aQ, AccountDetailsDataSchema as aR, AddressSchema as aS, RecipientsSchema as aT, TransferSchema as aU, CreateTransferInputSchema as aV, GetTransferInputSchema as aW, MarkAsReturnInputSchema as aX, UpdateTraceNumbersInputSchema as aY, ProcessOutputSchema$1 as aZ, TransferResponseSchema as a_, type Transfer as aa, type GetTransferInput as ab, type CreateTransferInput as ac, type TransferResponse as ad, type MarkAsReturnInput as ae, type UpdateTraceNumbersInput as af, type ProcessOutput$1 as ag, type PaymentRail as ah, type Recipient as ai, type CreateRecipientRequest as aj, type RecipientRequest as ak, type RecipientFilterKey as al, PaymentStatusSchema as am, PaymentRailSchema as an, PaymentTypeSchema as ao, SortOrderSchema as ap, CreatePaymentInputSchema as aq, UpdatePaymentInputSchema as ar, PaymentResponseSchema as as, PaymentShape as at, CreatePaymentInputShape as au, UpdatePaymentInputShape as av, SavingAccountSchema as aw, SavingAccountShape as ax, type SavingAccount as ay, ListAccountsOfClientResponseShape as az, UpdateCardID as b, PaymentRailSchema$1 as b0, PaymentTypeSchema$1 as b1, AccountTypeSchema as b2, TransferShape as b3, CreateTransferInputShape as b4, GetTransferInputShape as b5, MarkAsReturnInputShape as b6, UpdateTraceNumbersInputShape as b7, ProcessOutputShape as b8, TransferResponseShape as b9, CreateTransferOutputShape as ba, ClientSchema as bb, AgentSchema as bc, PartySchema as bd, type UpdateRecipientRequest as be, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, ScheduleAccountClosure as t, GenerateAccountStatement as u, DownloadAccountStatement as v, MarkAsReturned as w, MarkAsFail as x, MarkAsProcessing as y, LogFailTransfer as z };
