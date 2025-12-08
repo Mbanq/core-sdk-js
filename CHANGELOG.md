@@ -1,3 +1,17 @@
+# [0.17.0](https://github.com/mbanq/core-sdk-js/compare/v0.16.0...v0.17.0) (2025-12-08)
+
+
+### Features
+
+* client classification ([#46](https://github.com/mbanq/core-sdk-js/issues/46)) ([5b18cf6](https://github.com/mbanq/core-sdk-js/commit/5b18cf6f80e7f50554b1b576fa438b70f84c0859))
+
+# [0.16.0](https://github.com/mbanq/core-sdk-js/compare/v0.15.0...v0.16.0) (2025-12-04)
+
+
+### Features
+
+* Add `DownloadAccountStatement` command to download account statements and include its tests. ([7ecdf0d](https://github.com/mbanq/core-sdk-js/commit/7ecdf0dbf4bdda55c4245c52276063b7a81211c5))
+
 # [0.15.0](https://github.com/mbanq/core-sdk-js/compare/v0.14.0...v0.15.0) (2025-12-04)
 
 
