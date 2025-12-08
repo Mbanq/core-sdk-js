@@ -27,6 +27,13 @@ import { UserDetail, UserDetailSchema, UserDetailShape } from './user';
 
 import { GlobalConfiguration, GetConfigurationsResponse, GetConfigurationByNameResponse, UpdateConfigurationRequest, UpdateConfigurationResponse } from './globalConfiguration';
 
+import {
+  GetPendingTransactionsResponse,
+  GetPendingTransactionsRequest,
+  PendingTransaction,
+  Transfer as TransactionTransfer
+} from './transaction';
+
 
 
 export {
@@ -80,5 +87,9 @@ export {
   GetConfigurationsResponse,
   GetConfigurationByNameResponse,
   UpdateConfigurationRequest,
-  UpdateConfigurationResponse
+  UpdateConfigurationResponse,
+  GetPendingTransactionsResponse,
+  GetPendingTransactionsRequest,
+  PendingTransaction,
+  TransactionTransfer
 };
