@@ -3,7 +3,9 @@ export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } 
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument, ListClientDocument, DeleteClientDocument, ApproveRejectClientDocument } from './commands/rest/clientIdentifier';
 export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, VerifyWithActivateClients, GetStatusOfVerifyClient } from './commands/rest/client';
-export { GetAccount, GetAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount, CloseAccount, BlockAccount, ScheduleAccountClosure, HoldAmount, GenerateAccountStatement, DownloadAccountStatement } from './commands/rest/account';
+export { GetAccount, GetAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount, CloseAccount, BlockAccount, ScheduleAccountClosure, HoldAmount } from './commands/rest/account';
+export { CreateAccountProduct, UpdateAccountProduct, GetAllAccountProducts, GetAccountProductById } from './commands/rest/accountProduct';
+export { GenerateAccountStatement, DownloadAccountStatement, GetAccountDocumentsDetails } from './commands/rest/accountStatement';
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './commands/rest/transfer';
 export { GetRecipient, CreateRecipient, DeleteRecipient, GetRecipients } from './commands/rest/recipient';
 export { GraphQL } from './commands/graphql/index';
@@ -14,6 +16,8 @@ export { GetUserDetail, EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSe
 export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct } from './commands/rest/cardProduct';
 export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './commands/rest/clientAddress';
 export { SwitchClientClassification, GetClientClassification } from './commands/rest/clientClassification';
+export { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from './commands/rest/globalConfiguration';
+export { GetPendingTransactions, GetCompletedTransactions } from './commands/rest/transaction';
 
 export type {
   Config,

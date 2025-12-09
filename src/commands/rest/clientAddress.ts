@@ -37,8 +37,8 @@ export const GetClientAddress = (clientId: number, configuration?: { tenantId?: 
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 export const CreateClientAddress = (
   clientId: number,
@@ -72,8 +72,8 @@ export const CreateClientAddress = (
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 export const UpdateClientAddress = (
   clientId: number,
@@ -107,8 +107,8 @@ export const UpdateClientAddress = (
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 export const SetClientAddressStatus = (
   clientId: number,
@@ -142,5 +142,5 @@ export const SetClientAddressStatus = (
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};

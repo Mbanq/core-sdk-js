@@ -25,6 +25,20 @@ import {
 
 import { UserDetail, UserDetailSchema, UserDetailShape } from './user';
 
+import { GlobalConfiguration, GetConfigurationsResponse, GetConfigurationByNameResponse, UpdateConfigurationRequest, UpdateConfigurationResponse } from './globalConfiguration';
+
+import {
+  GetPendingTransactionsResponse,
+  GetPendingTransactionsRequest,
+  PendingTransaction,
+  Transfer as TransactionTransfer,
+  GetCompletedTransactionsResponse,
+  GetCompletedTransactionsRequest,
+  CompletedTransaction,
+  SubTransactionType,
+  TransactionType
+} from './transaction';
+
 export {
   Config,
   GetTransferInput,
@@ -71,5 +85,19 @@ export {
   UpdateAccountRequestShape,
   UserDetail,
   UserDetailSchema,
-  UserDetailShape
+  UserDetailShape,
+  GlobalConfiguration,
+  GetConfigurationsResponse,
+  GetConfigurationByNameResponse,
+  UpdateConfigurationRequest,
+  UpdateConfigurationResponse,
+  GetPendingTransactionsResponse,
+  GetPendingTransactionsRequest,
+  PendingTransaction,
+  TransactionTransfer,
+  GetCompletedTransactionsResponse,
+  GetCompletedTransactionsRequest,
+  CompletedTransaction,
+  SubTransactionType,
+  TransactionType
 };

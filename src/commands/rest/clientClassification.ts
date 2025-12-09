@@ -14,7 +14,7 @@ import {
  * @returns A promise that resolves to the classification for the given client.
  */
 export const GetClientClassification = (clientId: number, configuration?: { tenantId: string }): Command<{ clientId: number, configuration?: { tenantId: string } }, ClientClassificationResponse> => {
-  const path = `/v1/clients/${clientId}/classifications`
+  const path = `/v1/clients/${clientId}/classifications`;
   return {
     input: { clientId, configuration },
     metadata: {
@@ -34,8 +34,8 @@ export const GetClientClassification = (clientId: number, configuration?: { tena
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 /**
  * Switches the client classification for the given client id.
  * @param clientId the id of the client to switch the classification for
@@ -63,8 +63,8 @@ export const SwitchClientClassification = (clientId: number, params: SwitchClien
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 /**
  * Cancels the switch client classification for the given client id.
@@ -95,5 +95,5 @@ export const CancelSwitchClientClassification = (clientId: number, params: { swi
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};

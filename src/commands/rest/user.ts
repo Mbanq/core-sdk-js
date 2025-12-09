@@ -114,4 +114,3 @@ export const DeleteSelfServiceUser = (userId: number, params: { tenantId?: strin
     }
   };
 };
-

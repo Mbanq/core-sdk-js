@@ -386,4 +386,3 @@ describe('DeleteSelfServiceUser', () => {
     expect(mockAxios.delete).toHaveBeenCalledWith('/v1/users/456');
   });
 });
-
