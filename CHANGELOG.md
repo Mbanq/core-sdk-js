@@ -1,3 +1,26 @@
+# [0.18.0](https://github.com/mbanq/core-sdk-js/compare/v0.17.0...v0.18.0) (2025-12-09)
+
+
+### Bug Fixes
+
+* change method for Enable/Disable configuration function ([ef914db](https://github.com/mbanq/core-sdk-js/commit/ef914dba654424aac26e546fdbcdefcf8ef8ad87))
+* improve type in accountProduct ([4a02529](https://github.com/mbanq/core-sdk-js/commit/4a025294aed657d0e07a87aeb6d6aa780752ff31))
+* Make param configuration in function GetConfiguration to optional ([1a936ea](https://github.com/mbanq/core-sdk-js/commit/1a936ea91966b7463dacc05823d4086b29826a57))
+
+
+### Features
+
+* Add `CreateAccountProduct` command, types, and tests. ([b353249](https://github.com/mbanq/core-sdk-js/commit/b353249d0df2c20497c91566634d5e35db576f7c))
+* Add `GetAccountProductById` command, its response type, and unit tests. ([e108369](https://github.com/mbanq/core-sdk-js/commit/e1083690811eb89422412be27b5971d7afbdbaf6))
+* Add `GetAllAccountProducts` command, types, and tests for retrieving all account products. ([cb39311](https://github.com/mbanq/core-sdk-js/commit/cb39311d8b7db1e41ac0194ae967656740520979))
+* Add functionGetCompletedTransactions and  Update and expand REST commands and types for various entities, add transaction tests, and refine build outputs. ([5b68637](https://github.com/mbanq/core-sdk-js/commit/5b68637ad4cd6051e0c7311429ed7e40d006a78c))
+* Add GetPendingTransactions command and types, and refactor command exports. ([2544961](https://github.com/mbanq/core-sdk-js/commit/2544961717876a04e793a8423bd2cecebb76a1fa))
+* Add global configuration and account product commands and types, refactoring exports. ([d2649a8](https://github.com/mbanq/core-sdk-js/commit/d2649a86740a3f41198a22d1761af718397d0496))
+* Add global configuration command with associated types and tests. ([47fcbb6](https://github.com/mbanq/core-sdk-js/commit/47fcbb69a7c3cb9e54f6514c6ae2d7132706946b))
+* Add global configuration management commands and account product features. ([2d5e87d](https://github.com/mbanq/core-sdk-js/commit/2d5e87dfcf36621d4259e01c42880ff9441aeb42))
+* implement `UpdateAccountProduct` command, types, and tests for savings account products. ([232276a](https://github.com/mbanq/core-sdk-js/commit/232276aa46aa87d101ea17966394476535f87ef1))
+* introduce dedicated account statement commands and types, refactoring related logic from account commands. ([1432d76](https://github.com/mbanq/core-sdk-js/commit/1432d762c115c41a62823d12433d2410e5c4cd2f))
+
 # [0.17.0](https://github.com/mbanq/core-sdk-js/compare/v0.16.0...v0.17.0) (2025-12-08)
 
 

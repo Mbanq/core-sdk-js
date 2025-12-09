@@ -7813,74 +7813,6 @@ declare const HoldAmountResponseSchema: z.ZodObject<{
 }>;
 type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
 type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
-declare const GenerateAccountStatementRequestSchema: z.ZodObject<{
-    reportName: z.ZodString;
-    parentEntityType: z.ZodString;
-    parentEntityId: z.ZodNumber;
-    reportType: z.ZodEnum<["PDF", "CSV", "EXCELL", "EXCELL 2007"]>;
-    docType: z.ZodString;
-    params: z.ZodObject<{
-        start_date: z.ZodString;
-        end_date: z.ZodString;
-        saving_no: z.ZodString;
-    }, "strip", z.ZodTypeAny, {
-        start_date: string;
-        end_date: string;
-        saving_no: string;
-    }, {
-        start_date: string;
-        end_date: string;
-        saving_no: string;
-    }>;
-}, "strip", z.ZodTypeAny, {
-    params: {
-        start_date: string;
-        end_date: string;
-        saving_no: string;
-    };
-    reportName: string;
-    parentEntityType: string;
-    parentEntityId: number;
-    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
-    docType: string;
-}, {
-    params: {
-        start_date: string;
-        end_date: string;
-        saving_no: string;
-    };
-    reportName: string;
-    parentEntityType: string;
-    parentEntityId: number;
-    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
-    docType: string;
-}>;
-declare const GenerateAccountStatementResponseSchema: z.ZodObject<{
-    jobId: z.ZodNumber;
-    status: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    status: string;
-    jobId: number;
-}, {
-    status: string;
-    jobId: number;
-}>;
-type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
-type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;
-declare const DownloadAccountStatementResponseSchema: z.ZodObject<{
-    data: z.ZodType<buffer.Blob, z.ZodTypeDef, buffer.Blob>;
-    fileName: z.ZodOptional<z.ZodString>;
-    contentType: z.ZodOptional<z.ZodString>;
-}, "strip", z.ZodTypeAny, {
-    data: buffer.Blob;
-    fileName?: string | undefined;
-    contentType?: string | undefined;
-}, {
-    data: buffer.Blob;
-    fileName?: string | undefined;
-    contentType?: string | undefined;
-}>;
-type DownloadAccountStatementResponse = z.infer<typeof DownloadAccountStatementResponseSchema>;
 
 declare const UserDetailShape: {
     username: z.ZodString;
@@ -8266,6 +8198,2551 @@ declare const DeleteSelfServiceUserResponseSchema: z.ZodObject<{
 }>;
 type DeleteSelfServiceUserResponse = z.infer<typeof DeleteSelfServiceUserResponseSchema>;
 
+interface GlobalConfiguration {
+    name: string;
+    enabled: boolean;
+    id: number;
+    trapDoor: boolean;
+    valueDataType: string;
+}
+interface GetConfigurationsResponse {
+    globalConfiguration: GlobalConfiguration[];
+}
+interface GetConfigurationByNameResponse {
+    'virtual-card-reordering-limit'?: boolean;
+    value?: string;
+    id?: number;
+    description?: string;
+    trapDoor?: boolean;
+    valueDataType?: string;
+}
+interface UpdateConfigurationRequest {
+    enabled: boolean;
+}
+interface UpdateConfigurationResponse {
+    id?: string;
+    resourceId?: number;
+    changes?: {
+        enabled?: boolean;
+    };
+}
+
+declare const GetPendingTransactionsResponseSchema: z.ZodObject<{
+    totalFilteredRecords: z.ZodNumber;
+    pageItems: z.ZodArray<z.ZodObject<{
+        id: z.ZodNumber;
+        transfer: z.ZodObject<{
+            id: z.ZodNumber;
+            amount: z.ZodNumber;
+            correlationId: z.ZodString;
+            creditor: z.ZodObject<{
+                identifier: z.ZodString;
+                name: z.ZodString;
+                city: z.ZodOptional<z.ZodString>;
+                postalCode: z.ZodOptional<z.ZodString>;
+                country: z.ZodString;
+                stateOrProvince: z.ZodOptional<z.ZodString>;
+                agent: z.ZodOptional<z.ZodObject<{
+                    identifier: z.ZodOptional<z.ZodString>;
+                    name: z.ZodOptional<z.ZodString>;
+                    country: z.ZodString;
+                    address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                }, "strip", z.ZodTypeAny, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }>>;
+                address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                accountType: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }>;
+            debtor: z.ZodObject<{
+                identifier: z.ZodString;
+                name: z.ZodString;
+                city: z.ZodOptional<z.ZodString>;
+                postalCode: z.ZodOptional<z.ZodString>;
+                country: z.ZodString;
+                stateOrProvince: z.ZodOptional<z.ZodString>;
+                agent: z.ZodOptional<z.ZodObject<{
+                    identifier: z.ZodOptional<z.ZodString>;
+                    name: z.ZodOptional<z.ZodString>;
+                    country: z.ZodString;
+                    address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                }, "strip", z.ZodTypeAny, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }>>;
+                address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                accountType: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }>;
+            createdAt: z.ZodString;
+            executedAt: z.ZodString;
+            externalId: z.ZodString;
+            reference: z.ZodArray<z.ZodString, "many">;
+            status: z.ZodString;
+            transactionId: z.ZodString;
+            type: z.ZodString;
+            valueDate: z.ZodString;
+            paymentType: z.ZodString;
+            debtorAccountNumber: z.ZodString;
+            debtorAccountId: z.ZodNumber;
+            creditorAccountNumber: z.ZodString;
+            paymentRailMetaData: z.ZodOptional<z.ZodObject<{
+                businessFunctionCode: z.ZodOptional<z.ZodObject<{
+                    businessFunctionCode: z.ZodString;
+                    transactionTypeCode: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                }, {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                }>>;
+                receiverDepositoryInstitution: z.ZodOptional<z.ZodObject<{
+                    receiverABANumber: z.ZodString;
+                    receiverShortName: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                }, {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                }>>;
+                originator: z.ZodOptional<z.ZodObject<{
+                    personal: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodString;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode: string;
+                    }, {
+                        identificationCode: string;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }>>;
+                beneficiary: z.ZodOptional<z.ZodObject<{
+                    personal: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodString;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode: string;
+                    }, {
+                        identificationCode: string;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }>>;
+                beneficiaryFI: z.ZodOptional<z.ZodObject<{
+                    financialInstitution: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodOptional<z.ZodString>;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode?: string | undefined;
+                    }, {
+                        identificationCode?: string | undefined;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }>>;
+                beneficiaryIntermediaryFI: z.ZodOptional<z.ZodObject<{
+                    financialInstitution: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodOptional<z.ZodString>;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode?: string | undefined;
+                    }, {
+                        identificationCode?: string | undefined;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }>>;
+                typeSubType: z.ZodOptional<z.ZodObject<{
+                    typeCode: z.ZodString;
+                    subTypeCode: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    typeCode: string;
+                    subTypeCode: string;
+                }, {
+                    typeCode: string;
+                    subTypeCode: string;
+                }>>;
+                fiPaymentMethodToBeneficiary: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+            }, "strip", z.ZodTypeAny, {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            }, {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            }>>;
+            traceNumbers: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+            statementDescription: z.ZodString;
+            stopFutureDebit: z.ZodBoolean;
+            createdBySystem: z.ZodBoolean;
+        }, "strip", z.ZodTypeAny, {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        }, {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        }>;
+        typeOf: z.ZodString;
+        valueDate: z.ZodString;
+        amount: z.ZodNumber;
+        pendingAmount: z.ZodNumber;
+        createdAt: z.ZodString;
+        manual: z.ZodBoolean;
+        active: z.ZodBoolean;
+        type: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        type: string;
+        id: number;
+        amount: number;
+        createdAt: string;
+        valueDate: string;
+        active: boolean;
+        transfer: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        };
+        typeOf: string;
+        pendingAmount: number;
+        manual: boolean;
+    }, {
+        type: string;
+        id: number;
+        amount: number;
+        createdAt: string;
+        valueDate: string;
+        active: boolean;
+        transfer: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        };
+        typeOf: string;
+        pendingAmount: number;
+        manual: boolean;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    totalFilteredRecords: number;
+    pageItems: {
+        type: string;
+        id: number;
+        amount: number;
+        createdAt: string;
+        valueDate: string;
+        active: boolean;
+        transfer: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        };
+        typeOf: string;
+        pendingAmount: number;
+        manual: boolean;
+    }[];
+}, {
+    totalFilteredRecords: number;
+    pageItems: {
+        type: string;
+        id: number;
+        amount: number;
+        createdAt: string;
+        valueDate: string;
+        active: boolean;
+        transfer: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        };
+        typeOf: string;
+        pendingAmount: number;
+        manual: boolean;
+    }[];
+}>;
+declare const GetPendingTransactionsRequestSchema: z.ZodObject<{
+    offset: z.ZodOptional<z.ZodNumber>;
+    limit: z.ZodOptional<z.ZodNumber>;
+    orderBy: z.ZodOptional<z.ZodString>;
+    sortOrder: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    orderBy?: string | undefined;
+    sortOrder?: string | undefined;
+    limit?: number | undefined;
+    offset?: number | undefined;
+}, {
+    orderBy?: string | undefined;
+    sortOrder?: string | undefined;
+    limit?: number | undefined;
+    offset?: number | undefined;
+}>;
+type GetPendingTransactionsResponse = z.infer<typeof GetPendingTransactionsResponseSchema>;
+type GetPendingTransactionsRequest = z.infer<typeof GetPendingTransactionsRequestSchema>;
+declare const GetCompletedTransactionsResponseSchema: z.ZodObject<{
+    totalFilteredRecords: z.ZodNumber;
+    pageItems: z.ZodArray<z.ZodObject<{
+        id: z.ZodNumber;
+        transactionType: z.ZodObject<{
+            id: z.ZodNumber;
+            code: z.ZodString;
+            value: z.ZodString;
+            deposit: z.ZodOptional<z.ZodBoolean>;
+            dividendPayout: z.ZodOptional<z.ZodBoolean>;
+            withdrawal: z.ZodOptional<z.ZodBoolean>;
+            interestPosting: z.ZodOptional<z.ZodBoolean>;
+            feeDeduction: z.ZodOptional<z.ZodBoolean>;
+            initiateTransfer: z.ZodOptional<z.ZodBoolean>;
+            approveTransfer: z.ZodOptional<z.ZodBoolean>;
+            withdrawTransfer: z.ZodOptional<z.ZodBoolean>;
+            rejectTransfer: z.ZodOptional<z.ZodBoolean>;
+            overdraftInterest: z.ZodOptional<z.ZodBoolean>;
+            writtenoff: z.ZodOptional<z.ZodBoolean>;
+            overdraftFee: z.ZodOptional<z.ZodBoolean>;
+            withholdTax: z.ZodOptional<z.ZodBoolean>;
+            escheat: z.ZodOptional<z.ZodBoolean>;
+            amountHold: z.ZodOptional<z.ZodBoolean>;
+            amountRelease: z.ZodOptional<z.ZodBoolean>;
+            interestpayableAccrued: z.ZodOptional<z.ZodBoolean>;
+            overdraftInterestReceivableAccrued: z.ZodOptional<z.ZodBoolean>;
+            isDebit: z.ZodOptional<z.ZodBoolean>;
+            chargeBack: z.ZodOptional<z.ZodBoolean>;
+            isFeeReversal: z.ZodOptional<z.ZodBoolean>;
+        }, "strip", z.ZodTypeAny, {
+            value: string;
+            code: string;
+            id: number;
+            escheat?: boolean | undefined;
+            deposit?: boolean | undefined;
+            dividendPayout?: boolean | undefined;
+            withdrawal?: boolean | undefined;
+            interestPosting?: boolean | undefined;
+            feeDeduction?: boolean | undefined;
+            initiateTransfer?: boolean | undefined;
+            approveTransfer?: boolean | undefined;
+            withdrawTransfer?: boolean | undefined;
+            rejectTransfer?: boolean | undefined;
+            overdraftInterest?: boolean | undefined;
+            writtenoff?: boolean | undefined;
+            overdraftFee?: boolean | undefined;
+            withholdTax?: boolean | undefined;
+            amountHold?: boolean | undefined;
+            amountRelease?: boolean | undefined;
+            interestpayableAccrued?: boolean | undefined;
+            overdraftInterestReceivableAccrued?: boolean | undefined;
+            isDebit?: boolean | undefined;
+            chargeBack?: boolean | undefined;
+            isFeeReversal?: boolean | undefined;
+        }, {
+            value: string;
+            code: string;
+            id: number;
+            escheat?: boolean | undefined;
+            deposit?: boolean | undefined;
+            dividendPayout?: boolean | undefined;
+            withdrawal?: boolean | undefined;
+            interestPosting?: boolean | undefined;
+            feeDeduction?: boolean | undefined;
+            initiateTransfer?: boolean | undefined;
+            approveTransfer?: boolean | undefined;
+            withdrawTransfer?: boolean | undefined;
+            rejectTransfer?: boolean | undefined;
+            overdraftInterest?: boolean | undefined;
+            writtenoff?: boolean | undefined;
+            overdraftFee?: boolean | undefined;
+            withholdTax?: boolean | undefined;
+            amountHold?: boolean | undefined;
+            amountRelease?: boolean | undefined;
+            interestpayableAccrued?: boolean | undefined;
+            overdraftInterestReceivableAccrued?: boolean | undefined;
+            isDebit?: boolean | undefined;
+            chargeBack?: boolean | undefined;
+            isFeeReversal?: boolean | undefined;
+        }>;
+        accountId: z.ZodOptional<z.ZodNumber>;
+        accountNo: z.ZodOptional<z.ZodString>;
+        enrichedTransactionData: z.ZodOptional<z.ZodObject<{
+            id: z.ZodOptional<z.ZodString>;
+            merchantLogoUrl: z.ZodOptional<z.ZodString>;
+            merchantWebsite: z.ZodOptional<z.ZodString>;
+            merchantName: z.ZodOptional<z.ZodString>;
+            paymentChannel: z.ZodOptional<z.ZodString>;
+            personalFinanceCategoryIconUrl: z.ZodOptional<z.ZodString>;
+            personalFinanceCategory: z.ZodOptional<z.ZodString>;
+            personalFinanceSubCategory: z.ZodOptional<z.ZodString>;
+            isRecurring: z.ZodOptional<z.ZodBoolean>;
+            merchantPhoneNumber: z.ZodOptional<z.ZodString>;
+            location: z.ZodOptional<z.ZodObject<{
+                address: z.ZodOptional<z.ZodString>;
+                city: z.ZodOptional<z.ZodString>;
+                region: z.ZodOptional<z.ZodString>;
+                postal_code: z.ZodOptional<z.ZodString>;
+                country: z.ZodOptional<z.ZodString>;
+                store_number: z.ZodOptional<z.ZodString>;
+                lat: z.ZodOptional<z.ZodNumber>;
+                lon: z.ZodOptional<z.ZodNumber>;
+            }, "strip", z.ZodTypeAny, {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            }, {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            }>>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string | undefined;
+            merchantLogoUrl?: string | undefined;
+            merchantWebsite?: string | undefined;
+            merchantName?: string | undefined;
+            paymentChannel?: string | undefined;
+            personalFinanceCategoryIconUrl?: string | undefined;
+            personalFinanceCategory?: string | undefined;
+            personalFinanceSubCategory?: string | undefined;
+            isRecurring?: boolean | undefined;
+            merchantPhoneNumber?: string | undefined;
+            location?: {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            } | undefined;
+        }, {
+            id?: string | undefined;
+            merchantLogoUrl?: string | undefined;
+            merchantWebsite?: string | undefined;
+            merchantName?: string | undefined;
+            paymentChannel?: string | undefined;
+            personalFinanceCategoryIconUrl?: string | undefined;
+            personalFinanceCategory?: string | undefined;
+            personalFinanceSubCategory?: string | undefined;
+            isRecurring?: boolean | undefined;
+            merchantPhoneNumber?: string | undefined;
+            location?: {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            } | undefined;
+        }>>;
+        date: z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodNumber, "many">]>;
+        dateTime: z.ZodOptional<z.ZodString>;
+        currency: z.ZodObject<{
+            code: z.ZodString;
+            name: z.ZodString;
+            decimalPlaces: z.ZodNumber;
+            inMultiplesOf: z.ZodNumber;
+            displaySymbol: z.ZodString;
+            nameCode: z.ZodString;
+            displayLabel: z.ZodString;
+            currencyCodeInDigit: z.ZodOptional<z.ZodNumber>;
+            isBaseCurrency: z.ZodOptional<z.ZodBoolean>;
+        }, "strip", z.ZodTypeAny, {
+            code: string;
+            name: string;
+            decimalPlaces: number;
+            displaySymbol: string;
+            nameCode: string;
+            inMultiplesOf: number;
+            displayLabel: string;
+            currencyCodeInDigit?: number | undefined;
+            isBaseCurrency?: boolean | undefined;
+        }, {
+            code: string;
+            name: string;
+            decimalPlaces: number;
+            displaySymbol: string;
+            nameCode: string;
+            inMultiplesOf: number;
+            displayLabel: string;
+            currencyCodeInDigit?: number | undefined;
+            isBaseCurrency?: boolean | undefined;
+        }>;
+        paymentDetailData: z.ZodOptional<z.ZodObject<{
+            id: z.ZodNumber;
+            paymentType: z.ZodOptional<z.ZodObject<{
+                id: z.ZodNumber;
+                name: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                name: string;
+                id: number;
+            }, {
+                name: string;
+                id: number;
+            }>>;
+            reference: z.ZodOptional<z.ZodString>;
+            accountNumber: z.ZodOptional<z.ZodString>;
+            checkNumber: z.ZodOptional<z.ZodString>;
+            routingCode: z.ZodOptional<z.ZodString>;
+            receiptNumber: z.ZodOptional<z.ZodString>;
+            bankNumber: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id: number;
+            paymentType?: {
+                name: string;
+                id: number;
+            } | undefined;
+            reference?: string | undefined;
+            accountNumber?: string | undefined;
+            checkNumber?: string | undefined;
+            routingCode?: string | undefined;
+            receiptNumber?: string | undefined;
+            bankNumber?: string | undefined;
+        }, {
+            id: number;
+            paymentType?: {
+                name: string;
+                id: number;
+            } | undefined;
+            reference?: string | undefined;
+            accountNumber?: string | undefined;
+            checkNumber?: string | undefined;
+            routingCode?: string | undefined;
+            receiptNumber?: string | undefined;
+            bankNumber?: string | undefined;
+        }>>;
+        amount: z.ZodNumber;
+        runningBalance: z.ZodNumber;
+        accrualRunningBalance: z.ZodOptional<z.ZodNumber>;
+        interestPayableDerived: z.ZodOptional<z.ZodNumber>;
+        reversed: z.ZodBoolean;
+        submittedOnDate: z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodNumber, "many">]>;
+        interestedPostedAsOn: z.ZodBoolean;
+        bookingDate: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodNumber, "many">]>>;
+        submittedByUsername: z.ZodOptional<z.ZodString>;
+        isReversal: z.ZodOptional<z.ZodBoolean>;
+        originalTransactionId: z.ZodOptional<z.ZodNumber>;
+        lienTransaction: z.ZodOptional<z.ZodBoolean>;
+        releaseTransactionId: z.ZodOptional<z.ZodNumber>;
+        reasonForBlock: z.ZodOptional<z.ZodString>;
+        refNo: z.ZodOptional<z.ZodString>;
+        subTransactionType: z.ZodOptional<z.ZodString>;
+        status: z.ZodOptional<z.ZodString>;
+        isAlreadyChargeBack: z.ZodOptional<z.ZodBoolean>;
+        initiatedAt: z.ZodOptional<z.ZodString>;
+        transactionReferenceId: z.ZodOptional<z.ZodString>;
+        createdBySystem: z.ZodOptional<z.ZodBoolean>;
+        transfer: z.ZodOptional<z.ZodObject<{
+            id: z.ZodNumber;
+            amount: z.ZodNumber;
+            correlationId: z.ZodString;
+            creditor: z.ZodObject<{
+                identifier: z.ZodString;
+                name: z.ZodString;
+                city: z.ZodOptional<z.ZodString>;
+                postalCode: z.ZodOptional<z.ZodString>;
+                country: z.ZodString;
+                stateOrProvince: z.ZodOptional<z.ZodString>;
+                agent: z.ZodOptional<z.ZodObject<{
+                    identifier: z.ZodOptional<z.ZodString>;
+                    name: z.ZodOptional<z.ZodString>;
+                    country: z.ZodString;
+                    address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                }, "strip", z.ZodTypeAny, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }>>;
+                address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                accountType: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }>;
+            debtor: z.ZodObject<{
+                identifier: z.ZodString;
+                name: z.ZodString;
+                city: z.ZodOptional<z.ZodString>;
+                postalCode: z.ZodOptional<z.ZodString>;
+                country: z.ZodString;
+                stateOrProvince: z.ZodOptional<z.ZodString>;
+                agent: z.ZodOptional<z.ZodObject<{
+                    identifier: z.ZodOptional<z.ZodString>;
+                    name: z.ZodOptional<z.ZodString>;
+                    country: z.ZodString;
+                    address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                }, "strip", z.ZodTypeAny, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }, {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                }>>;
+                address: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+                accountType: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }, {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            }>;
+            createdAt: z.ZodString;
+            executedAt: z.ZodString;
+            externalId: z.ZodString;
+            reference: z.ZodArray<z.ZodString, "many">;
+            status: z.ZodString;
+            transactionId: z.ZodString;
+            type: z.ZodString;
+            valueDate: z.ZodString;
+            paymentType: z.ZodString;
+            debtorAccountNumber: z.ZodString;
+            debtorAccountId: z.ZodNumber;
+            creditorAccountNumber: z.ZodString;
+            paymentRailMetaData: z.ZodOptional<z.ZodObject<{
+                businessFunctionCode: z.ZodOptional<z.ZodObject<{
+                    businessFunctionCode: z.ZodString;
+                    transactionTypeCode: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                }, {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                }>>;
+                receiverDepositoryInstitution: z.ZodOptional<z.ZodObject<{
+                    receiverABANumber: z.ZodString;
+                    receiverShortName: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                }, {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                }>>;
+                originator: z.ZodOptional<z.ZodObject<{
+                    personal: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodString;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode: string;
+                    }, {
+                        identificationCode: string;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }>>;
+                beneficiary: z.ZodOptional<z.ZodObject<{
+                    personal: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodString;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode: string;
+                    }, {
+                        identificationCode: string;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }, {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                }>>;
+                beneficiaryFI: z.ZodOptional<z.ZodObject<{
+                    financialInstitution: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodOptional<z.ZodString>;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode?: string | undefined;
+                    }, {
+                        identificationCode?: string | undefined;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }>>;
+                beneficiaryIntermediaryFI: z.ZodOptional<z.ZodObject<{
+                    financialInstitution: z.ZodOptional<z.ZodObject<{
+                        identificationCode: z.ZodOptional<z.ZodString>;
+                    }, "strip", z.ZodTypeAny, {
+                        identificationCode?: string | undefined;
+                    }, {
+                        identificationCode?: string | undefined;
+                    }>>;
+                }, "strip", z.ZodTypeAny, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }, {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                }>>;
+                typeSubType: z.ZodOptional<z.ZodObject<{
+                    typeCode: z.ZodString;
+                    subTypeCode: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    typeCode: string;
+                    subTypeCode: string;
+                }, {
+                    typeCode: string;
+                    subTypeCode: string;
+                }>>;
+                fiPaymentMethodToBeneficiary: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+            }, "strip", z.ZodTypeAny, {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            }, {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            }>>;
+            traceNumbers: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
+            statementDescription: z.ZodString;
+            stopFutureDebit: z.ZodBoolean;
+            createdBySystem: z.ZodBoolean;
+        }, "strip", z.ZodTypeAny, {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        }, {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        date: string | number[];
+        id: number;
+        currency: {
+            code: string;
+            name: string;
+            decimalPlaces: number;
+            displaySymbol: string;
+            nameCode: string;
+            inMultiplesOf: number;
+            displayLabel: string;
+            currencyCodeInDigit?: number | undefined;
+            isBaseCurrency?: boolean | undefined;
+        };
+        amount: number;
+        submittedOnDate: string | number[];
+        transactionType: {
+            value: string;
+            code: string;
+            id: number;
+            escheat?: boolean | undefined;
+            deposit?: boolean | undefined;
+            dividendPayout?: boolean | undefined;
+            withdrawal?: boolean | undefined;
+            interestPosting?: boolean | undefined;
+            feeDeduction?: boolean | undefined;
+            initiateTransfer?: boolean | undefined;
+            approveTransfer?: boolean | undefined;
+            withdrawTransfer?: boolean | undefined;
+            rejectTransfer?: boolean | undefined;
+            overdraftInterest?: boolean | undefined;
+            writtenoff?: boolean | undefined;
+            overdraftFee?: boolean | undefined;
+            withholdTax?: boolean | undefined;
+            amountHold?: boolean | undefined;
+            amountRelease?: boolean | undefined;
+            interestpayableAccrued?: boolean | undefined;
+            overdraftInterestReceivableAccrued?: boolean | undefined;
+            isDebit?: boolean | undefined;
+            chargeBack?: boolean | undefined;
+            isFeeReversal?: boolean | undefined;
+        };
+        runningBalance: number;
+        reversed: boolean;
+        interestedPostedAsOn: boolean;
+        status?: string | undefined;
+        accountNo?: string | undefined;
+        accountId?: number | undefined;
+        submittedByUsername?: string | undefined;
+        createdBySystem?: boolean | undefined;
+        transfer?: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        } | undefined;
+        enrichedTransactionData?: {
+            id?: string | undefined;
+            merchantLogoUrl?: string | undefined;
+            merchantWebsite?: string | undefined;
+            merchantName?: string | undefined;
+            paymentChannel?: string | undefined;
+            personalFinanceCategoryIconUrl?: string | undefined;
+            personalFinanceCategory?: string | undefined;
+            personalFinanceSubCategory?: string | undefined;
+            isRecurring?: boolean | undefined;
+            merchantPhoneNumber?: string | undefined;
+            location?: {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            } | undefined;
+        } | undefined;
+        dateTime?: string | undefined;
+        paymentDetailData?: {
+            id: number;
+            paymentType?: {
+                name: string;
+                id: number;
+            } | undefined;
+            reference?: string | undefined;
+            accountNumber?: string | undefined;
+            checkNumber?: string | undefined;
+            routingCode?: string | undefined;
+            receiptNumber?: string | undefined;
+            bankNumber?: string | undefined;
+        } | undefined;
+        accrualRunningBalance?: number | undefined;
+        interestPayableDerived?: number | undefined;
+        bookingDate?: string | number[] | undefined;
+        isReversal?: boolean | undefined;
+        originalTransactionId?: number | undefined;
+        lienTransaction?: boolean | undefined;
+        releaseTransactionId?: number | undefined;
+        reasonForBlock?: string | undefined;
+        refNo?: string | undefined;
+        subTransactionType?: string | undefined;
+        isAlreadyChargeBack?: boolean | undefined;
+        initiatedAt?: string | undefined;
+        transactionReferenceId?: string | undefined;
+    }, {
+        date: string | number[];
+        id: number;
+        currency: {
+            code: string;
+            name: string;
+            decimalPlaces: number;
+            displaySymbol: string;
+            nameCode: string;
+            inMultiplesOf: number;
+            displayLabel: string;
+            currencyCodeInDigit?: number | undefined;
+            isBaseCurrency?: boolean | undefined;
+        };
+        amount: number;
+        submittedOnDate: string | number[];
+        transactionType: {
+            value: string;
+            code: string;
+            id: number;
+            escheat?: boolean | undefined;
+            deposit?: boolean | undefined;
+            dividendPayout?: boolean | undefined;
+            withdrawal?: boolean | undefined;
+            interestPosting?: boolean | undefined;
+            feeDeduction?: boolean | undefined;
+            initiateTransfer?: boolean | undefined;
+            approveTransfer?: boolean | undefined;
+            withdrawTransfer?: boolean | undefined;
+            rejectTransfer?: boolean | undefined;
+            overdraftInterest?: boolean | undefined;
+            writtenoff?: boolean | undefined;
+            overdraftFee?: boolean | undefined;
+            withholdTax?: boolean | undefined;
+            amountHold?: boolean | undefined;
+            amountRelease?: boolean | undefined;
+            interestpayableAccrued?: boolean | undefined;
+            overdraftInterestReceivableAccrued?: boolean | undefined;
+            isDebit?: boolean | undefined;
+            chargeBack?: boolean | undefined;
+            isFeeReversal?: boolean | undefined;
+        };
+        runningBalance: number;
+        reversed: boolean;
+        interestedPostedAsOn: boolean;
+        status?: string | undefined;
+        accountNo?: string | undefined;
+        accountId?: number | undefined;
+        submittedByUsername?: string | undefined;
+        createdBySystem?: boolean | undefined;
+        transfer?: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        } | undefined;
+        enrichedTransactionData?: {
+            id?: string | undefined;
+            merchantLogoUrl?: string | undefined;
+            merchantWebsite?: string | undefined;
+            merchantName?: string | undefined;
+            paymentChannel?: string | undefined;
+            personalFinanceCategoryIconUrl?: string | undefined;
+            personalFinanceCategory?: string | undefined;
+            personalFinanceSubCategory?: string | undefined;
+            isRecurring?: boolean | undefined;
+            merchantPhoneNumber?: string | undefined;
+            location?: {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            } | undefined;
+        } | undefined;
+        dateTime?: string | undefined;
+        paymentDetailData?: {
+            id: number;
+            paymentType?: {
+                name: string;
+                id: number;
+            } | undefined;
+            reference?: string | undefined;
+            accountNumber?: string | undefined;
+            checkNumber?: string | undefined;
+            routingCode?: string | undefined;
+            receiptNumber?: string | undefined;
+            bankNumber?: string | undefined;
+        } | undefined;
+        accrualRunningBalance?: number | undefined;
+        interestPayableDerived?: number | undefined;
+        bookingDate?: string | number[] | undefined;
+        isReversal?: boolean | undefined;
+        originalTransactionId?: number | undefined;
+        lienTransaction?: boolean | undefined;
+        releaseTransactionId?: number | undefined;
+        reasonForBlock?: string | undefined;
+        refNo?: string | undefined;
+        subTransactionType?: string | undefined;
+        isAlreadyChargeBack?: boolean | undefined;
+        initiatedAt?: string | undefined;
+        transactionReferenceId?: string | undefined;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    totalFilteredRecords: number;
+    pageItems: {
+        date: string | number[];
+        id: number;
+        currency: {
+            code: string;
+            name: string;
+            decimalPlaces: number;
+            displaySymbol: string;
+            nameCode: string;
+            inMultiplesOf: number;
+            displayLabel: string;
+            currencyCodeInDigit?: number | undefined;
+            isBaseCurrency?: boolean | undefined;
+        };
+        amount: number;
+        submittedOnDate: string | number[];
+        transactionType: {
+            value: string;
+            code: string;
+            id: number;
+            escheat?: boolean | undefined;
+            deposit?: boolean | undefined;
+            dividendPayout?: boolean | undefined;
+            withdrawal?: boolean | undefined;
+            interestPosting?: boolean | undefined;
+            feeDeduction?: boolean | undefined;
+            initiateTransfer?: boolean | undefined;
+            approveTransfer?: boolean | undefined;
+            withdrawTransfer?: boolean | undefined;
+            rejectTransfer?: boolean | undefined;
+            overdraftInterest?: boolean | undefined;
+            writtenoff?: boolean | undefined;
+            overdraftFee?: boolean | undefined;
+            withholdTax?: boolean | undefined;
+            amountHold?: boolean | undefined;
+            amountRelease?: boolean | undefined;
+            interestpayableAccrued?: boolean | undefined;
+            overdraftInterestReceivableAccrued?: boolean | undefined;
+            isDebit?: boolean | undefined;
+            chargeBack?: boolean | undefined;
+            isFeeReversal?: boolean | undefined;
+        };
+        runningBalance: number;
+        reversed: boolean;
+        interestedPostedAsOn: boolean;
+        status?: string | undefined;
+        accountNo?: string | undefined;
+        accountId?: number | undefined;
+        submittedByUsername?: string | undefined;
+        createdBySystem?: boolean | undefined;
+        transfer?: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        } | undefined;
+        enrichedTransactionData?: {
+            id?: string | undefined;
+            merchantLogoUrl?: string | undefined;
+            merchantWebsite?: string | undefined;
+            merchantName?: string | undefined;
+            paymentChannel?: string | undefined;
+            personalFinanceCategoryIconUrl?: string | undefined;
+            personalFinanceCategory?: string | undefined;
+            personalFinanceSubCategory?: string | undefined;
+            isRecurring?: boolean | undefined;
+            merchantPhoneNumber?: string | undefined;
+            location?: {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            } | undefined;
+        } | undefined;
+        dateTime?: string | undefined;
+        paymentDetailData?: {
+            id: number;
+            paymentType?: {
+                name: string;
+                id: number;
+            } | undefined;
+            reference?: string | undefined;
+            accountNumber?: string | undefined;
+            checkNumber?: string | undefined;
+            routingCode?: string | undefined;
+            receiptNumber?: string | undefined;
+            bankNumber?: string | undefined;
+        } | undefined;
+        accrualRunningBalance?: number | undefined;
+        interestPayableDerived?: number | undefined;
+        bookingDate?: string | number[] | undefined;
+        isReversal?: boolean | undefined;
+        originalTransactionId?: number | undefined;
+        lienTransaction?: boolean | undefined;
+        releaseTransactionId?: number | undefined;
+        reasonForBlock?: string | undefined;
+        refNo?: string | undefined;
+        subTransactionType?: string | undefined;
+        isAlreadyChargeBack?: boolean | undefined;
+        initiatedAt?: string | undefined;
+        transactionReferenceId?: string | undefined;
+    }[];
+}, {
+    totalFilteredRecords: number;
+    pageItems: {
+        date: string | number[];
+        id: number;
+        currency: {
+            code: string;
+            name: string;
+            decimalPlaces: number;
+            displaySymbol: string;
+            nameCode: string;
+            inMultiplesOf: number;
+            displayLabel: string;
+            currencyCodeInDigit?: number | undefined;
+            isBaseCurrency?: boolean | undefined;
+        };
+        amount: number;
+        submittedOnDate: string | number[];
+        transactionType: {
+            value: string;
+            code: string;
+            id: number;
+            escheat?: boolean | undefined;
+            deposit?: boolean | undefined;
+            dividendPayout?: boolean | undefined;
+            withdrawal?: boolean | undefined;
+            interestPosting?: boolean | undefined;
+            feeDeduction?: boolean | undefined;
+            initiateTransfer?: boolean | undefined;
+            approveTransfer?: boolean | undefined;
+            withdrawTransfer?: boolean | undefined;
+            rejectTransfer?: boolean | undefined;
+            overdraftInterest?: boolean | undefined;
+            writtenoff?: boolean | undefined;
+            overdraftFee?: boolean | undefined;
+            withholdTax?: boolean | undefined;
+            amountHold?: boolean | undefined;
+            amountRelease?: boolean | undefined;
+            interestpayableAccrued?: boolean | undefined;
+            overdraftInterestReceivableAccrued?: boolean | undefined;
+            isDebit?: boolean | undefined;
+            chargeBack?: boolean | undefined;
+            isFeeReversal?: boolean | undefined;
+        };
+        runningBalance: number;
+        reversed: boolean;
+        interestedPostedAsOn: boolean;
+        status?: string | undefined;
+        accountNo?: string | undefined;
+        accountId?: number | undefined;
+        submittedByUsername?: string | undefined;
+        createdBySystem?: boolean | undefined;
+        transfer?: {
+            type: string;
+            status: string;
+            id: number;
+            paymentType: string;
+            amount: number;
+            externalId: string;
+            reference: string[];
+            statementDescription: string;
+            createdAt: string;
+            debtor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            creditor: {
+                name: string;
+                identifier: string;
+                country: string;
+                accountType?: string | undefined;
+                agent?: {
+                    country: string;
+                    name?: string | undefined;
+                    identifier?: string | undefined;
+                    address?: string[] | undefined;
+                } | undefined;
+                address?: string[] | undefined;
+                postalCode?: string | undefined;
+                city?: string | undefined;
+                stateOrProvince?: string | undefined;
+            };
+            executedAt: string;
+            correlationId: string;
+            valueDate: string;
+            transactionId: string;
+            debtorAccountNumber: string;
+            debtorAccountId: number;
+            creditorAccountNumber: string;
+            stopFutureDebit: boolean;
+            createdBySystem: boolean;
+            traceNumbers?: Record<string, any> | undefined;
+            paymentRailMetaData?: {
+                originator?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                businessFunctionCode?: {
+                    businessFunctionCode: string;
+                    transactionTypeCode: string;
+                } | undefined;
+                receiverDepositoryInstitution?: {
+                    receiverABANumber: string;
+                    receiverShortName: string;
+                } | undefined;
+                beneficiary?: {
+                    personal?: {
+                        identificationCode: string;
+                    } | undefined;
+                } | undefined;
+                beneficiaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                beneficiaryIntermediaryFI?: {
+                    financialInstitution?: {
+                        identificationCode?: string | undefined;
+                    } | undefined;
+                } | undefined;
+                typeSubType?: {
+                    typeCode: string;
+                    subTypeCode: string;
+                } | undefined;
+                fiPaymentMethodToBeneficiary?: Record<string, any> | undefined;
+            } | undefined;
+        } | undefined;
+        enrichedTransactionData?: {
+            id?: string | undefined;
+            merchantLogoUrl?: string | undefined;
+            merchantWebsite?: string | undefined;
+            merchantName?: string | undefined;
+            paymentChannel?: string | undefined;
+            personalFinanceCategoryIconUrl?: string | undefined;
+            personalFinanceCategory?: string | undefined;
+            personalFinanceSubCategory?: string | undefined;
+            isRecurring?: boolean | undefined;
+            merchantPhoneNumber?: string | undefined;
+            location?: {
+                address?: string | undefined;
+                city?: string | undefined;
+                country?: string | undefined;
+                region?: string | undefined;
+                postal_code?: string | undefined;
+                store_number?: string | undefined;
+                lat?: number | undefined;
+                lon?: number | undefined;
+            } | undefined;
+        } | undefined;
+        dateTime?: string | undefined;
+        paymentDetailData?: {
+            id: number;
+            paymentType?: {
+                name: string;
+                id: number;
+            } | undefined;
+            reference?: string | undefined;
+            accountNumber?: string | undefined;
+            checkNumber?: string | undefined;
+            routingCode?: string | undefined;
+            receiptNumber?: string | undefined;
+            bankNumber?: string | undefined;
+        } | undefined;
+        accrualRunningBalance?: number | undefined;
+        interestPayableDerived?: number | undefined;
+        bookingDate?: string | number[] | undefined;
+        isReversal?: boolean | undefined;
+        originalTransactionId?: number | undefined;
+        lienTransaction?: boolean | undefined;
+        releaseTransactionId?: number | undefined;
+        reasonForBlock?: string | undefined;
+        refNo?: string | undefined;
+        subTransactionType?: string | undefined;
+        isAlreadyChargeBack?: boolean | undefined;
+        initiatedAt?: string | undefined;
+        transactionReferenceId?: string | undefined;
+    }[];
+}>;
+declare enum SubTransactionType {
+    NONE = 0,
+    CARD_TRANSACTION = 1,
+    SETTLEMENT_RETURN_CREDIT = 2,
+    LOAN_DISBURSEMENT = 3,
+    LOAN_REPAYMENT = 4,
+    CARD_AUTHORIZE_PAYMENT = 5,
+    DOMESTIC_ATM_WITHDRAWAL_FEE = 6,
+    INTERNATIONAL_ATM_WITHDRAWAL_FEE = 7,
+    INTERNATIONAL_TRANSACTION_FEE = 8,
+    EXTERNAL_CARD_PUSH_TRANSACTION_FEE = 9,
+    EXTERNAL_CARD_PULL_TRANSACTION_FEE = 10,
+    MERCHANT_CREDIT = 11,
+    MERCHANT_CREDIT_REVERSAL = 12,
+    MCC_CHARGE = 13,
+    TRANSFER_FEE = 14,
+    EXTERNAL_CARD_CHARGE_BACK = 15,
+    EXTERNAL_CARD = 16,
+    CREDIT_CARD_DUE_PAYMENT = 17,
+    TRANSFER_RETURN_FEE = 18,
+    ACH = 19,
+    SWIFT = 20,
+    WIRE = 21,
+    OPERATIONAL_ACCOUNT_LOAN_TRANSACTION = 22,
+    OPERATIONAL_ACCOUNT_SAVINGS_TRANSACTION = 23,
+    SAVINGS_ACCOUNT_WAIVE_CHARGE_TRANSACTION = 24,
+    DOMESTIC_ATM_WITHDRAWAL_FEE_REVERSAL = 25,
+    INTERNATIONAL_ATM_WITHDRAWAL_FEE_REVERSAL = 26,
+    INTERNATIONAL_TRANSACTION_FEE_REVERSAL = 27,
+    FEE_OTHER = 28,
+    FEE_OTHER_REVERSAL = 29
+}
+declare enum TransactionType {
+    INVALID = 0,
+    DEPOSIT = 1,
+    WITHDRAWAL = 2,
+    INTEREST_POSTING = 3,
+    WITHDRAWAL_FEE = 4,
+    ANNUAL_FEE = 5,
+    WAIVE_CHARGES = 6,
+    PAY_CHARGE = 7,
+    DIVIDEND_PAYOUT = 8,
+    INITIATE_TRANSFER = 12,
+    APPROVE_TRANSFER = 13,
+    WITHDRAW_TRANSFER = 14,
+    REJECT_TRANSFER = 15,
+    WRITTEN_OFF = 16,
+    OVERDRAFT_INTEREST = 17,
+    WITHHOLD_TAX = 18,
+    ESCHEAT = 19,
+    AMOUNT_HOLD = 20,
+    AMOUNT_RELEASE = 21,
+    INTEREST_PAYABLE_ACCRUED = 22,
+    OVERDRAFT_INTEREST_RECEIVABLE_ACCRUED = 23,
+    PAY_CHARGE_REVERSAL = 24,
+    CHARGE_BACK = 25,
+    FUNDS_ALLOCATION = 30,
+    FUNDS_DEALLOCATION = 31
+}
+declare const GetCompletedTransactionsRequestSchema: z.ZodObject<{
+    offset: z.ZodOptional<z.ZodNumber>;
+    limit: z.ZodOptional<z.ZodNumber>;
+    showEnrichedTransactions: z.ZodDefault<z.ZodBoolean>;
+    subTransactionType: z.ZodOptional<z.ZodNativeEnum<typeof SubTransactionType>>;
+    statusType: z.ZodOptional<z.ZodString>;
+    transactionType: z.ZodOptional<z.ZodNativeEnum<typeof TransactionType>>;
+    startDate: z.ZodOptional<z.ZodString>;
+    endDate: z.ZodOptional<z.ZodString>;
+    reference: z.ZodOptional<z.ZodString>;
+    paymentType: z.ZodOptional<z.ZodString>;
+    fromAmount: z.ZodOptional<z.ZodNumber>;
+    toAmount: z.ZodOptional<z.ZodNumber>;
+    isCardTransaction: z.ZodOptional<z.ZodBoolean>;
+    showInterestAccruals: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
+    orderBy: z.ZodOptional<z.ZodString>;
+    sortOrder: z.ZodOptional<z.ZodString>;
+    getCardData: z.ZodOptional<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    showEnrichedTransactions: boolean;
+    paymentType?: string | undefined;
+    reference?: string | undefined;
+    orderBy?: string | undefined;
+    sortOrder?: string | undefined;
+    limit?: number | undefined;
+    offset?: number | undefined;
+    transactionType?: TransactionType | undefined;
+    subTransactionType?: SubTransactionType | undefined;
+    statusType?: string | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    fromAmount?: number | undefined;
+    toAmount?: number | undefined;
+    isCardTransaction?: boolean | undefined;
+    showInterestAccruals?: boolean | undefined;
+    getCardData?: boolean | undefined;
+}, {
+    paymentType?: string | undefined;
+    reference?: string | undefined;
+    orderBy?: string | undefined;
+    sortOrder?: string | undefined;
+    limit?: number | undefined;
+    offset?: number | undefined;
+    transactionType?: TransactionType | undefined;
+    subTransactionType?: SubTransactionType | undefined;
+    showEnrichedTransactions?: boolean | undefined;
+    statusType?: string | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    fromAmount?: number | undefined;
+    toAmount?: number | undefined;
+    isCardTransaction?: boolean | undefined;
+    showInterestAccruals?: boolean | undefined;
+    getCardData?: boolean | undefined;
+}>;
+type GetCompletedTransactionsResponse = z.infer<typeof GetCompletedTransactionsResponseSchema>;
+type GetCompletedTransactionsRequest = z.infer<typeof GetCompletedTransactionsRequestSchema>;
+
 declare const CreatePayment: (params: {
     payment: CreatePaymentInput;
     tenantId?: string;
@@ -8499,12 +10976,12 @@ declare const DocumentUploadRequestSchema: z$1.ZodObject<{
     description: z$1.ZodOptional<z$1.ZodString>;
 }, "strip", z$1.ZodTypeAny, {
     name: string;
-    file: buffer.Blob | Buffer<ArrayBufferLike> | buffer.File;
+    file: Buffer<ArrayBufferLike> | buffer.Blob | buffer.File;
     type?: string | undefined;
     description?: string | undefined;
 }, {
     name: string;
-    file: buffer.Blob | Buffer<ArrayBufferLike> | buffer.File;
+    file: Buffer<ArrayBufferLike> | buffer.Blob | buffer.File;
     type?: string | undefined;
     description?: string | undefined;
 }>;
@@ -11360,6 +13837,1037 @@ declare const HoldAmount: (accountId: number, requestData: HoldAmountRequest, co
         tenantId?: string;
     };
 }, HoldAmountResponse>;
+
+declare const CreateAccountProductRequestSchema: z.ZodObject<{
+    name: z.ZodString;
+    dateFormat: z.ZodOptional<z.ZodString>;
+    locale: z.ZodString;
+    inMultiplesOf: z.ZodOptional<z.ZodString>;
+    withdrawalFeeForTransfers: z.ZodOptional<z.ZodBoolean>;
+    allowOverdraft: z.ZodOptional<z.ZodBoolean>;
+    enforceMinRequiredBalance: z.ZodOptional<z.ZodBoolean>;
+    withHoldTax: z.ZodOptional<z.ZodBoolean>;
+    isDormancyTrackingActive: z.ZodOptional<z.ZodBoolean>;
+    isLinkedToFloatingInterestRates: z.ZodOptional<z.ZodBoolean>;
+    skipCollectTransferCharge: z.ZodOptional<z.ZodBoolean>;
+    nominalAnnualInterestRate: z.ZodOptional<z.ZodString>;
+    interestCompoundingPeriodType: z.ZodNumber;
+    interestPostingPeriodType: z.ZodNumber;
+    interestCalculationType: z.ZodNumber;
+    interestCalculationDaysInYearType: z.ZodNumber;
+    interestRateDifferential: z.ZodOptional<z.ZodString>;
+    floatingRateId: z.ZodOptional<z.ZodNumber>;
+    isFloatingInterestRateCalculationAllowed: z.ZodOptional<z.ZodBoolean>;
+    minRequiredOpeningBalance: z.ZodOptional<z.ZodString>;
+    charges: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        id: z.ZodOptional<z.ZodNumber>;
+        isMandatory: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }>, "many">>;
+    description: z.ZodString;
+    startDate: z.ZodOptional<z.ZodString>;
+    endDate: z.ZodOptional<z.ZodString>;
+    currencyCode: z.ZodString;
+    digitsAfterDecimal: z.ZodNumber;
+    accountingRule: z.ZodNumber;
+    shortName: z.ZodString;
+    isUsedForSuspenseAccounting: z.ZodOptional<z.ZodBoolean>;
+    isLinkedWithFundSourceAccount: z.ZodOptional<z.ZodBoolean>;
+    isReservedProduct: z.ZodOptional<z.ZodBoolean>;
+    minDifferentialRate: z.ZodOptional<z.ZodString>;
+    defaultDifferentialRate: z.ZodOptional<z.ZodString>;
+    maxDifferentialRate: z.ZodOptional<z.ZodString>;
+    paymentChannelToFundSourceMappings: z.ZodOptional<z.ZodString>;
+    feeToIncomeAccountMappings: z.ZodOptional<z.ZodString>;
+    penaltyToIncomeAccountMappings: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    locale: string;
+    interestCompoundingPeriodType: number;
+    interestPostingPeriodType: number;
+    interestCalculationType: number;
+    interestCalculationDaysInYearType: number;
+    description: string;
+    currencyCode: string;
+    digitsAfterDecimal: number;
+    accountingRule: number;
+    shortName: string;
+    dateFormat?: string | undefined;
+    inMultiplesOf?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    isDormancyTrackingActive?: boolean | undefined;
+    isLinkedToFloatingInterestRates?: boolean | undefined;
+    skipCollectTransferCharge?: boolean | undefined;
+    nominalAnnualInterestRate?: string | undefined;
+    interestRateDifferential?: string | undefined;
+    floatingRateId?: number | undefined;
+    isFloatingInterestRateCalculationAllowed?: boolean | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[] | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    isUsedForSuspenseAccounting?: boolean | undefined;
+    isLinkedWithFundSourceAccount?: boolean | undefined;
+    isReservedProduct?: boolean | undefined;
+    minDifferentialRate?: string | undefined;
+    defaultDifferentialRate?: string | undefined;
+    maxDifferentialRate?: string | undefined;
+    paymentChannelToFundSourceMappings?: string | undefined;
+    feeToIncomeAccountMappings?: string | undefined;
+    penaltyToIncomeAccountMappings?: string | undefined;
+}, {
+    name: string;
+    locale: string;
+    interestCompoundingPeriodType: number;
+    interestPostingPeriodType: number;
+    interestCalculationType: number;
+    interestCalculationDaysInYearType: number;
+    description: string;
+    currencyCode: string;
+    digitsAfterDecimal: number;
+    accountingRule: number;
+    shortName: string;
+    dateFormat?: string | undefined;
+    inMultiplesOf?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    isDormancyTrackingActive?: boolean | undefined;
+    isLinkedToFloatingInterestRates?: boolean | undefined;
+    skipCollectTransferCharge?: boolean | undefined;
+    nominalAnnualInterestRate?: string | undefined;
+    interestRateDifferential?: string | undefined;
+    floatingRateId?: number | undefined;
+    isFloatingInterestRateCalculationAllowed?: boolean | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[] | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    isUsedForSuspenseAccounting?: boolean | undefined;
+    isLinkedWithFundSourceAccount?: boolean | undefined;
+    isReservedProduct?: boolean | undefined;
+    minDifferentialRate?: string | undefined;
+    defaultDifferentialRate?: string | undefined;
+    maxDifferentialRate?: string | undefined;
+    paymentChannelToFundSourceMappings?: string | undefined;
+    feeToIncomeAccountMappings?: string | undefined;
+    penaltyToIncomeAccountMappings?: string | undefined;
+}>;
+declare const CreateAccountProductResponseSchema: z.ZodObject<{
+    resourceId: z.ZodString;
+    id: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    resourceId: string;
+}, {
+    id: string;
+    resourceId: string;
+}>;
+type CreateAccountProductRequest = z.infer<typeof CreateAccountProductRequestSchema>;
+type CreateAccountProductResponse = z.infer<typeof CreateAccountProductResponseSchema>;
+declare const UpdateAccountProductRequestSchema: z.ZodObject<{
+    currencyCode: z.ZodOptional<z.ZodString>;
+    digitsAfterDecimal: z.ZodOptional<z.ZodNumber>;
+    interestCompoundingPeriodType: z.ZodOptional<z.ZodNumber>;
+    interestPostingPeriodType: z.ZodOptional<z.ZodNumber>;
+    interestCalculationType: z.ZodOptional<z.ZodNumber>;
+    interestCalculationDaysInYearType: z.ZodOptional<z.ZodNumber>;
+    accountingRule: z.ZodOptional<z.ZodNumber>;
+    name: z.ZodOptional<z.ZodString>;
+    shortName: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodString>;
+    nominalAnnualInterestRate: z.ZodOptional<z.ZodString>;
+    inMultiplesOf: z.ZodOptional<z.ZodString>;
+    minRequiredOpeningBalance: z.ZodOptional<z.ZodString>;
+    withdrawalFeeForTransfers: z.ZodOptional<z.ZodBoolean>;
+    allowOverdraft: z.ZodOptional<z.ZodBoolean>;
+    enforceMinRequiredBalance: z.ZodOptional<z.ZodBoolean>;
+    withHoldTax: z.ZodOptional<z.ZodBoolean>;
+    isDormancyTrackingActive: z.ZodOptional<z.ZodBoolean>;
+    isUsedForSuspenseAccounting: z.ZodOptional<z.ZodBoolean>;
+    isLinkedWithFundSourceAccount: z.ZodOptional<z.ZodBoolean>;
+    skipCollectTransferCharge: z.ZodOptional<z.ZodBoolean>;
+    isReservedProduct: z.ZodOptional<z.ZodBoolean>;
+    isLinkedToFloatingInterestRates: z.ZodOptional<z.ZodBoolean>;
+    floatingRateId: z.ZodOptional<z.ZodNumber>;
+    minDifferentialRate: z.ZodOptional<z.ZodString>;
+    interestRateDifferential: z.ZodOptional<z.ZodString>;
+    defaultDifferentialRate: z.ZodOptional<z.ZodString>;
+    maxDifferentialRate: z.ZodOptional<z.ZodString>;
+    isFloatingInterestRateCalculationAllowed: z.ZodOptional<z.ZodBoolean>;
+    paymentChannelToFundSourceMappings: z.ZodOptional<z.ZodString>;
+    feeToIncomeAccountMappings: z.ZodOptional<z.ZodString>;
+    penaltyToIncomeAccountMappings: z.ZodOptional<z.ZodString>;
+    charges: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        id: z.ZodOptional<z.ZodNumber>;
+        isMandatory: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }>, "many">>;
+    locale: z.ZodOptional<z.ZodString>;
+    dateFormat: z.ZodOptional<z.ZodString>;
+    startDate: z.ZodOptional<z.ZodString>;
+    endDate: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    name?: string | undefined;
+    dateFormat?: string | undefined;
+    locale?: string | undefined;
+    inMultiplesOf?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    isDormancyTrackingActive?: boolean | undefined;
+    isLinkedToFloatingInterestRates?: boolean | undefined;
+    skipCollectTransferCharge?: boolean | undefined;
+    nominalAnnualInterestRate?: string | undefined;
+    interestCompoundingPeriodType?: number | undefined;
+    interestPostingPeriodType?: number | undefined;
+    interestCalculationType?: number | undefined;
+    interestCalculationDaysInYearType?: number | undefined;
+    interestRateDifferential?: string | undefined;
+    floatingRateId?: number | undefined;
+    isFloatingInterestRateCalculationAllowed?: boolean | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[] | undefined;
+    description?: string | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    currencyCode?: string | undefined;
+    digitsAfterDecimal?: number | undefined;
+    accountingRule?: number | undefined;
+    shortName?: string | undefined;
+    isUsedForSuspenseAccounting?: boolean | undefined;
+    isLinkedWithFundSourceAccount?: boolean | undefined;
+    isReservedProduct?: boolean | undefined;
+    minDifferentialRate?: string | undefined;
+    defaultDifferentialRate?: string | undefined;
+    maxDifferentialRate?: string | undefined;
+    paymentChannelToFundSourceMappings?: string | undefined;
+    feeToIncomeAccountMappings?: string | undefined;
+    penaltyToIncomeAccountMappings?: string | undefined;
+}, {
+    name?: string | undefined;
+    dateFormat?: string | undefined;
+    locale?: string | undefined;
+    inMultiplesOf?: string | undefined;
+    withdrawalFeeForTransfers?: boolean | undefined;
+    allowOverdraft?: boolean | undefined;
+    enforceMinRequiredBalance?: boolean | undefined;
+    withHoldTax?: boolean | undefined;
+    isDormancyTrackingActive?: boolean | undefined;
+    isLinkedToFloatingInterestRates?: boolean | undefined;
+    skipCollectTransferCharge?: boolean | undefined;
+    nominalAnnualInterestRate?: string | undefined;
+    interestCompoundingPeriodType?: number | undefined;
+    interestPostingPeriodType?: number | undefined;
+    interestCalculationType?: number | undefined;
+    interestCalculationDaysInYearType?: number | undefined;
+    interestRateDifferential?: string | undefined;
+    floatingRateId?: number | undefined;
+    isFloatingInterestRateCalculationAllowed?: boolean | undefined;
+    minRequiredOpeningBalance?: string | undefined;
+    charges?: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[] | undefined;
+    description?: string | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    currencyCode?: string | undefined;
+    digitsAfterDecimal?: number | undefined;
+    accountingRule?: number | undefined;
+    shortName?: string | undefined;
+    isUsedForSuspenseAccounting?: boolean | undefined;
+    isLinkedWithFundSourceAccount?: boolean | undefined;
+    isReservedProduct?: boolean | undefined;
+    minDifferentialRate?: string | undefined;
+    defaultDifferentialRate?: string | undefined;
+    maxDifferentialRate?: string | undefined;
+    paymentChannelToFundSourceMappings?: string | undefined;
+    feeToIncomeAccountMappings?: string | undefined;
+    penaltyToIncomeAccountMappings?: string | undefined;
+}>;
+declare const UpdateAccountProductResponseSchema: z.ZodObject<{
+    id: z.ZodString;
+    resourceId: z.ZodString;
+    changes: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    resourceId: string;
+    changes?: Record<string, unknown> | undefined;
+}, {
+    id: string;
+    resourceId: string;
+    changes?: Record<string, unknown> | undefined;
+}>;
+type UpdateAccountProductRequest = z.infer<typeof UpdateAccountProductRequestSchema>;
+type UpdateAccountProductResponse = z.infer<typeof UpdateAccountProductResponseSchema>;
+declare const AccountProductItemSchema: z.ZodObject<{
+    id: z.ZodNumber;
+    name: z.ZodString;
+    shortName: z.ZodString;
+    description: z.ZodString;
+    currency: z.ZodObject<{
+        code: z.ZodString;
+        name: z.ZodString;
+        decimalPlaces: z.ZodNumber;
+        displaySymbol: z.ZodString;
+        nameCode: z.ZodString;
+        displayLabel: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    }, {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    }>;
+    interestCompoundingPeriodType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    interestPostingPeriodType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    interestCalculationType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    interestCalculationDaysInYearType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    withdrawalFeeForTransfers: z.ZodBoolean;
+    allowOverdraft: z.ZodBoolean;
+    minRequiredBalance: z.ZodNumber;
+    enforceMinRequiredBalance: z.ZodBoolean;
+    withHoldTax: z.ZodBoolean;
+    accountingRule: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    charges: z.ZodArray<z.ZodObject<{
+        id: z.ZodOptional<z.ZodNumber>;
+        isMandatory: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }>, "many">;
+    isDormancyTrackingActive: z.ZodBoolean;
+    isLinkedToFloatingInterestRates: z.ZodBoolean;
+    isFloatingInterestRateCalculationAllowed: z.ZodBoolean;
+    isUsedForSuspenseAccounting: z.ZodBoolean;
+    isLinkedWithFundSourceAccount: z.ZodBoolean;
+    isSkipCollectTransferCharge: z.ZodBoolean;
+    isReservedProduct: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    id: number;
+    currency: {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    };
+    withdrawalFeeForTransfers: boolean;
+    allowOverdraft: boolean;
+    enforceMinRequiredBalance: boolean;
+    withHoldTax: boolean;
+    isDormancyTrackingActive: boolean;
+    isLinkedToFloatingInterestRates: boolean;
+    interestCompoundingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestPostingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationDaysInYearType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    isFloatingInterestRateCalculationAllowed: boolean;
+    minRequiredBalance: number;
+    charges: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[];
+    description: string;
+    accountingRule: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    shortName: string;
+    isUsedForSuspenseAccounting: boolean;
+    isLinkedWithFundSourceAccount: boolean;
+    isReservedProduct: boolean;
+    isSkipCollectTransferCharge: boolean;
+}, {
+    name: string;
+    id: number;
+    currency: {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    };
+    withdrawalFeeForTransfers: boolean;
+    allowOverdraft: boolean;
+    enforceMinRequiredBalance: boolean;
+    withHoldTax: boolean;
+    isDormancyTrackingActive: boolean;
+    isLinkedToFloatingInterestRates: boolean;
+    interestCompoundingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestPostingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationDaysInYearType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    isFloatingInterestRateCalculationAllowed: boolean;
+    minRequiredBalance: number;
+    charges: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[];
+    description: string;
+    accountingRule: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    shortName: string;
+    isUsedForSuspenseAccounting: boolean;
+    isLinkedWithFundSourceAccount: boolean;
+    isReservedProduct: boolean;
+    isSkipCollectTransferCharge: boolean;
+}>;
+declare const GetAllAccountProductsResponseSchema: z.ZodArray<z.ZodObject<{
+    id: z.ZodNumber;
+    name: z.ZodString;
+    shortName: z.ZodString;
+    description: z.ZodString;
+    currency: z.ZodObject<{
+        code: z.ZodString;
+        name: z.ZodString;
+        decimalPlaces: z.ZodNumber;
+        displaySymbol: z.ZodString;
+        nameCode: z.ZodString;
+        displayLabel: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    }, {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    }>;
+    interestCompoundingPeriodType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    interestPostingPeriodType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    interestCalculationType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    interestCalculationDaysInYearType: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    withdrawalFeeForTransfers: z.ZodBoolean;
+    allowOverdraft: z.ZodBoolean;
+    minRequiredBalance: z.ZodNumber;
+    enforceMinRequiredBalance: z.ZodBoolean;
+    withHoldTax: z.ZodBoolean;
+    accountingRule: z.ZodObject<{
+        id: z.ZodNumber;
+        code: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        value: string;
+        code: string;
+        id: number;
+    }, {
+        value: string;
+        code: string;
+        id: number;
+    }>;
+    charges: z.ZodArray<z.ZodObject<{
+        id: z.ZodOptional<z.ZodNumber>;
+        isMandatory: z.ZodOptional<z.ZodBoolean>;
+    }, "strip", z.ZodTypeAny, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }, {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }>, "many">;
+    isDormancyTrackingActive: z.ZodBoolean;
+    isLinkedToFloatingInterestRates: z.ZodBoolean;
+    isFloatingInterestRateCalculationAllowed: z.ZodBoolean;
+    isUsedForSuspenseAccounting: z.ZodBoolean;
+    isLinkedWithFundSourceAccount: z.ZodBoolean;
+    isSkipCollectTransferCharge: z.ZodBoolean;
+    isReservedProduct: z.ZodBoolean;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    id: number;
+    currency: {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    };
+    withdrawalFeeForTransfers: boolean;
+    allowOverdraft: boolean;
+    enforceMinRequiredBalance: boolean;
+    withHoldTax: boolean;
+    isDormancyTrackingActive: boolean;
+    isLinkedToFloatingInterestRates: boolean;
+    interestCompoundingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestPostingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationDaysInYearType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    isFloatingInterestRateCalculationAllowed: boolean;
+    minRequiredBalance: number;
+    charges: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[];
+    description: string;
+    accountingRule: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    shortName: string;
+    isUsedForSuspenseAccounting: boolean;
+    isLinkedWithFundSourceAccount: boolean;
+    isReservedProduct: boolean;
+    isSkipCollectTransferCharge: boolean;
+}, {
+    name: string;
+    id: number;
+    currency: {
+        code: string;
+        name: string;
+        decimalPlaces: number;
+        displaySymbol: string;
+        nameCode: string;
+        displayLabel: string;
+    };
+    withdrawalFeeForTransfers: boolean;
+    allowOverdraft: boolean;
+    enforceMinRequiredBalance: boolean;
+    withHoldTax: boolean;
+    isDormancyTrackingActive: boolean;
+    isLinkedToFloatingInterestRates: boolean;
+    interestCompoundingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestPostingPeriodType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    interestCalculationDaysInYearType: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    isFloatingInterestRateCalculationAllowed: boolean;
+    minRequiredBalance: number;
+    charges: {
+        id?: number | undefined;
+        isMandatory?: boolean | undefined;
+    }[];
+    description: string;
+    accountingRule: {
+        value: string;
+        code: string;
+        id: number;
+    };
+    shortName: string;
+    isUsedForSuspenseAccounting: boolean;
+    isLinkedWithFundSourceAccount: boolean;
+    isReservedProduct: boolean;
+    isSkipCollectTransferCharge: boolean;
+}>, "many">;
+type AccountProductItem = z.infer<typeof AccountProductItemSchema>;
+type GetAllAccountProductsResponse = z.infer<typeof GetAllAccountProductsResponseSchema>;
+type GetAccountProductByIdResponse = AccountProductItem;
+
+/**
+ * Creates a new savings account product.
+ *
+ * @param params - The account product creation parameters (see CreateAccountProductRequest)
+ * @param params.currencyCode - The currency code for the savings product (e.g., "USD")
+ * @param params.digitsAfterDecimal - The number of digits after the decimal point for amounts
+ * @param params.interestCompoundingPeriodType - The period type for interest compounding
+ * @param params.interestPostingPeriodType - The period type for posting interest to the account
+ * @param params.interestCalculationType - The method used to calculate interest
+ * @param params.interestCalculationDaysInYearType - The number of days used in interest calculations for the year
+ * @param params.accountingRule - The accounting rule used for this savings product
+ * @param params.name - The name of the saving product
+ * @param params.shortName - A short name for the savings product
+ * @param params.description - A brief description of the savings product
+ * @param params.locale - The locale for formatting date and number fields (e.g., "en")
+ * @param params.dateFormat - The date format string (e.g., "dd MMMM yyyy")
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the created account product details
+ *
+ * @example
+ * ```typescript
+ * const createCmd = CreateAccountProduct(
+ *   {
+ *     currencyCode: "USD",
+ *     digitsAfterDecimal: 2,
+ *     interestCompoundingPeriodType: 1,
+ *     interestPostingPeriodType: 4,
+ *     interestCalculationType: 1,
+ *     interestCalculationDaysInYearType: 365,
+ *     accountingRule: 1,
+ *     name: "savings product",
+ *     shortName: "te21",
+ *     description: "test",
+ *     inMultiplesOf: "1",
+ *     isLinkedToFloatingInterestRates: true,
+ *     floatingRateId: 1,
+ *     minDifferentialRate: "1",
+ *     interestRateDifferential: "12",
+ *     defaultDifferentialRate: "3",
+ *     maxDifferentialRate: "14",
+ *     isFloatingInterestRateCalculationAllowed: true,
+ *     minRequiredOpeningBalance: "1000",
+ *     locale: "en",
+ *     dateFormat: "dd MMMM yyyy",
+ *     startDate: "01 January 2024",
+ *     endDate: "31 December 2024"
+ *   },
+ *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ * );
+ * const result = await createCmd.execute(config);
+ * console.log(result.resourceId, result.id);
+ * ```
+ */
+declare const CreateAccountProduct: (params: CreateAccountProductRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    params: CreateAccountProductRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, CreateAccountProductResponse>;
+/**
+ * Updates an existing savings account product.
+ *
+ * @param productId - The ID of the savings product to update
+ * @param params - The account product update parameters (see UpdateAccountProductRequest)
+ * @param params.name - The updated name of the savings product
+ * @param params.shortName - The updated short name for the savings product
+ * @param params.description - A brief description of the savings product
+ * @param params.currencyCode - The currency code for the savings product
+ * @param params.digitsAfterDecimal - The number of digits after the decimal point
+ * @param params.nominalAnnualInterestRate - The nominal annual interest rate
+ * @param params.minRequiredOpeningBalance - The minimum balance required to open the savings account
+ * @param params.locale - The locale for formatting date and number fields
+ * @param params.dateFormat - The date format string
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the update response with changes
+ *
+ * @example
+ * ```typescript
+ * const updateCmd = UpdateAccountProduct(
+ *   101,
+ *   {
+ *     name: "Saving Product test",
+ *     shortName: "savi",
+ *     description: "SAVING TEST",
+ *     currencyCode: "USD",
+ *     digitsAfterDecimal: 2,
+ *     inMultiplesOf: "1",
+ *     nominalAnnualInterestRate: "2",
+ *     minRequiredOpeningBalance: "1000",
+ *     withdrawalFeeForTransfers: false,
+ *     interestCompoundingPeriodType: 1,
+ *     interestPostingPeriodType: 4,
+ *     interestCalculationType: 1,
+ *     interestCalculationDaysInYearType: 365,
+ *     accountingRule: 1,
+ *     charges: [{ id: 132, isMandatory: false }],
+ *     startDate: "2023-07-01",
+ *     endDate: "2024-09-30",
+ *     paymentChannelToFundSourceMappings: "[]",
+ *     penaltyToIncomeAccountMappings: "[]",
+ *     feeToIncomeAccountMappings: "[]",
+ *     locale: "en",
+ *     dateFormat: "dd MMMM yyyy"
+ *   },
+ *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ * );
+ * const result = await updateCmd.execute(config);
+ * console.log(result.changes);
+ * ```
+ */
+declare const UpdateAccountProduct: (productId: number, params: UpdateAccountProductRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    productId: number;
+    params: UpdateAccountProductRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, UpdateAccountProductResponse>;
+/**
+ * Retrieves all savings account products.
+ *
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns a list of all account products
+ *
+ * @example
+ * ```typescript
+ * const listCmd = GetAllAccountProducts({ tenantId: "z01j3e71zd6zkq908yvf5861a8" });
+ * const result = await listCmd.execute(config);
+ * result.forEach(product => console.log(product.name));
+ * ```
+ */
+declare const GetAllAccountProducts: (configuration?: {
+    tenantId?: string;
+}) => Command<{
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetAllAccountProductsResponse>;
+/**
+ * Retrieves a single savings account product by its ID.
+ *
+ * @param productId - The ID of the savings product to retrieve
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the account product details
+ *
+ * @example
+ * ```typescript
+ * const getCmd = GetAccountProductById(101, { tenantId: "z01j3e71zd6zkq908yvf5861a8" });
+ * const result = await getCmd.execute(config);
+ * console.log(result.name);
+ * ```
+ */
+declare const GetAccountProductById: (productId: number, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    productId: number;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetAccountProductByIdResponse>;
+
+declare const GenerateAccountStatementRequestSchema: z.ZodObject<{
+    reportName: z.ZodString;
+    parentEntityType: z.ZodString;
+    parentEntityId: z.ZodNumber;
+    reportType: z.ZodEnum<["PDF", "CSV", "EXCELL", "EXCELL 2007"]>;
+    docType: z.ZodString;
+    params: z.ZodObject<{
+        start_date: z.ZodString;
+        end_date: z.ZodString;
+        saving_no: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    }, {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    params: {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    };
+    reportName: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
+    docType: string;
+}, {
+    params: {
+        start_date: string;
+        end_date: string;
+        saving_no: string;
+    };
+    reportName: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    reportType: "PDF" | "CSV" | "EXCELL" | "EXCELL 2007";
+    docType: string;
+}>;
+declare const GenerateAccountStatementResponseSchema: z.ZodObject<{
+    jobId: z.ZodNumber;
+    status: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    status: string;
+    jobId: number;
+}, {
+    status: string;
+    jobId: number;
+}>;
+type GenerateAccountStatementRequest = z.infer<typeof GenerateAccountStatementRequestSchema>;
+type GenerateAccountStatementResponse = z.infer<typeof GenerateAccountStatementResponseSchema>;
+declare const DownloadAccountStatementResponseSchema: z.ZodObject<{
+    data: z.ZodType<buffer.Blob, z.ZodTypeDef, buffer.Blob>;
+    fileName: z.ZodOptional<z.ZodString>;
+    contentType: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    data: buffer.Blob;
+    fileName?: string | undefined;
+    contentType?: string | undefined;
+}, {
+    data: buffer.Blob;
+    fileName?: string | undefined;
+    contentType?: string | undefined;
+}>;
+type DownloadAccountStatementResponse = z.infer<typeof DownloadAccountStatementResponseSchema>;
+declare const GetAccountDocumentsDetailsQueryParamsSchema: z.ZodObject<{
+    createdAtFrom: z.ZodOptional<z.ZodString>;
+    createdAtTo: z.ZodOptional<z.ZodString>;
+    name: z.ZodOptional<z.ZodString>;
+    type: z.ZodOptional<z.ZodEnum<["statement", "receipt", "report", "passport"]>>;
+}, "strip", z.ZodTypeAny, {
+    type?: "statement" | "receipt" | "report" | "passport" | undefined;
+    name?: string | undefined;
+    createdAtFrom?: string | undefined;
+    createdAtTo?: string | undefined;
+}, {
+    type?: "statement" | "receipt" | "report" | "passport" | undefined;
+    name?: string | undefined;
+    createdAtFrom?: string | undefined;
+    createdAtTo?: string | undefined;
+}>;
+type GetAccountDocumentsDetailsQueryParams = z.infer<typeof GetAccountDocumentsDetailsQueryParamsSchema>;
+declare const GetAccountDocumentsDetailsResponseSchema: z.ZodArray<z.ZodObject<{
+    id: z.ZodString;
+    parentEntityType: z.ZodString;
+    parentEntityId: z.ZodNumber;
+    name: z.ZodString;
+    fileName: z.ZodString;
+    size: z.ZodNumber;
+    mimeType: z.ZodString;
+    type: z.ZodString;
+    description: z.ZodString;
+    createdAt: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    type: string;
+    name: string;
+    id: string;
+    createdAt: string;
+    description: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    fileName: string;
+    size: number;
+    mimeType: string;
+}, {
+    type: string;
+    name: string;
+    id: string;
+    createdAt: string;
+    description: string;
+    parentEntityType: string;
+    parentEntityId: number;
+    fileName: string;
+    size: number;
+    mimeType: string;
+}>, "many">;
+type GetAccountDocumentsDetailsResponse = z.infer<typeof GetAccountDocumentsDetailsResponseSchema>;
+
 /**
  * Generates an account statement.
  *
@@ -11437,6 +14945,40 @@ declare const DownloadAccountStatement: (savingsAccountId: number, documentId: s
         tenantId?: string;
     };
 }, DownloadAccountStatementResponse>;
+/**
+ * Retrieves the details of all documents linked to a savings account.
+ *
+ * @param savingsAccountId - The ID of the savings account
+ * @param queryParams - Optional query parameters for filtering documents
+ * @param queryParams.createdAtFrom - Filter documents created from this date (e.g., "2023-01-01+00:00:00")
+ * @param queryParams.createdAtTo - Filter documents created up to this date (e.g., "2023-12-31+23:59:00")
+ * @param queryParams.name - Name of the document (e.g., "January 01st - July 17st")
+ * @param queryParams.type - Filter documents by type (statement, receipt, report, passport)
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns a list of document details
+ *
+ * @example
+ * ```typescript
+ * const getDocsCmd = GetAccountDocumentsDetails(
+ *   123,
+ *   { type: "statement", createdAtFrom: "2023-01-01+00:00:00" },
+ *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ * );
+ * const result = await getDocsCmd.execute(config);
+ * result.forEach(doc => console.log(doc.name));
+ * ```
+ */
+declare const GetAccountDocumentsDetails: (savingsAccountId: number, queryParams?: GetAccountDocumentsDetailsQueryParams, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    savingsAccountId: number;
+    queryParams?: GetAccountDocumentsDetailsQueryParams;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetAccountDocumentsDetailsResponse>;
 
 declare const CreateTransfer: (params: {
     transfer: CreateTransferInput;
@@ -12330,6 +15872,7 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         name: string;
         id: number;
         active: boolean;
+        currencyCode: string;
         bin: string;
         cardType: string;
         network: string;
@@ -12338,7 +15881,6 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         digitalFirst: boolean;
         atmWithdrawalsEnabled: boolean;
         internationalPaymentsEnabled: boolean;
-        currencyCode: string;
         currencyDigitsAfterDecimal: number;
         currencyInMultiplesOf: number;
         cardProcessorId: number;
@@ -12350,6 +15892,7 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         name: string;
         id: number;
         active: boolean;
+        currencyCode: string;
         bin: string;
         cardType: string;
         network: string;
@@ -12358,7 +15901,6 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         digitalFirst: boolean;
         atmWithdrawalsEnabled: boolean;
         internationalPaymentsEnabled: boolean;
-        currencyCode: string;
         currencyDigitsAfterDecimal: number;
         currencyInMultiplesOf: number;
         cardProcessorId: number;
@@ -12373,6 +15915,7 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         name: string;
         id: number;
         active: boolean;
+        currencyCode: string;
         bin: string;
         cardType: string;
         network: string;
@@ -12381,7 +15924,6 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         digitalFirst: boolean;
         atmWithdrawalsEnabled: boolean;
         internationalPaymentsEnabled: boolean;
-        currencyCode: string;
         currencyDigitsAfterDecimal: number;
         currencyInMultiplesOf: number;
         cardProcessorId: number;
@@ -12396,6 +15938,7 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         name: string;
         id: number;
         active: boolean;
+        currencyCode: string;
         bin: string;
         cardType: string;
         network: string;
@@ -12404,7 +15947,6 @@ declare const CardProductResponseShape: z$1.ZodObject<{
         digitalFirst: boolean;
         atmWithdrawalsEnabled: boolean;
         internationalPaymentsEnabled: boolean;
-        currencyCode: string;
         currencyDigitsAfterDecimal: number;
         currencyInMultiplesOf: number;
         cardProcessorId: number;
@@ -12478,6 +16020,7 @@ declare const CardProductDetailShape: z$1.ZodObject<{
     id: number;
     legalForm: number;
     active: boolean;
+    currencyCode: string;
     bin: number;
     cardType: string;
     network: string;
@@ -12486,7 +16029,6 @@ declare const CardProductDetailShape: z$1.ZodObject<{
     digitalFirst: boolean;
     atmWithdrawalsEnabled: boolean;
     internationalPaymentsEnabled: boolean;
-    currencyCode: string;
     currencyDigitsAfterDecimal: number;
     currencyInMultiplesOf: number;
     cardProcessorId: number;
@@ -12516,6 +16058,7 @@ declare const CardProductDetailShape: z$1.ZodObject<{
     id: number;
     legalForm: number;
     active: boolean;
+    currencyCode: string;
     bin: number;
     cardType: string;
     network: string;
@@ -12524,7 +16067,6 @@ declare const CardProductDetailShape: z$1.ZodObject<{
     digitalFirst: boolean;
     atmWithdrawalsEnabled: boolean;
     internationalPaymentsEnabled: boolean;
-    currencyCode: string;
     currencyDigitsAfterDecimal: number;
     currencyInMultiplesOf: number;
     cardProcessorId: number;
@@ -12576,10 +16118,10 @@ declare const CardProductRequestShape: z$1.ZodObject<{
 }, "strip", z$1.ZodTypeAny, {
     name: string;
     legalForm: number;
+    currencyCode: string;
     bin: string;
     cardType: "CREDIT" | "DEBIT";
     network: string;
-    currencyCode: string;
     currencyDigitsAfterDecimal: number;
     cardProcessorId: number;
     yearExpire: number;
@@ -12598,8 +16140,8 @@ declare const CardProductRequestShape: z$1.ZodObject<{
 }, {
     name: string;
     legalForm: number;
-    bin: string;
     currencyCode: string;
+    bin: string;
     currencyDigitsAfterDecimal: number;
     yearExpire: number;
     active?: boolean | undefined;
@@ -12644,6 +16186,7 @@ declare const CardProductUpdateRequestShape: z$1.ZodObject<{
     name?: string | undefined;
     legalForm?: number | undefined;
     active?: boolean | undefined;
+    currencyCode?: string | undefined;
     bin?: string | undefined;
     cardType?: "CREDIT" | "DEBIT" | undefined;
     network?: string | undefined;
@@ -12651,7 +16194,6 @@ declare const CardProductUpdateRequestShape: z$1.ZodObject<{
     virtual?: boolean | undefined;
     atmWithdrawalsEnabled?: boolean | undefined;
     internationalPaymentsEnabled?: boolean | undefined;
-    currencyCode?: string | undefined;
     currencyDigitsAfterDecimal?: number | undefined;
     cardProcessorId?: number | undefined;
     yearExpire?: number | undefined;
@@ -12666,6 +16208,7 @@ declare const CardProductUpdateRequestShape: z$1.ZodObject<{
     name?: string | undefined;
     legalForm?: number | undefined;
     active?: boolean | undefined;
+    currencyCode?: string | undefined;
     bin?: string | undefined;
     cardType?: "CREDIT" | "DEBIT" | undefined;
     network?: string | undefined;
@@ -12673,7 +16216,6 @@ declare const CardProductUpdateRequestShape: z$1.ZodObject<{
     virtual?: boolean | undefined;
     atmWithdrawalsEnabled?: boolean | undefined;
     internationalPaymentsEnabled?: boolean | undefined;
-    currencyCode?: string | undefined;
     currencyDigitsAfterDecimal?: number | undefined;
     cardProcessorId?: number | undefined;
     yearExpire?: number | undefined;
@@ -13235,4 +16777,219 @@ declare const SwitchClientClassification: (clientId: number, params: SwitchClien
     };
 }, SwitchClientClassificationResponse>;
 
-export { UpdateCardProduct as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, GetTransfers as E, UpdateTraceNumber as F, GetPayment as G, HoldAmount as H, CreateTransfer as I, GetTransfer as J, GetRecipient as K, ListClientDocument as L, MarkAsSuccess as M, CreateRecipient as N, DeleteRecipient as O, GetRecipients as P, GraphQL as Q, GetUserDetail as R, SendAuthorizationToCore as S, EnableSelfServiceAccess as T, UpdatePayment as U, VerifyWithActivateClients as V, UpdateSelfServiceUser as W, DeleteSelfServiceUser as X, ListCardProduct as Y, GetCardProduct as Z, CreateCardProduct as _, GetPayments as a, CreateTransferOutputSchema as a$, GetClientAddress as a0, CreateClientAddress as a1, UpdateClientAddress as a2, SetClientAddressStatus as a3, SwitchClientClassification as a4, GetClientClassification as a5, type Payment as a6, type CreatePaymentInput as a7, type UpdatePaymentInput as a8, type PaymentResponse as a9, ListAccountsOfClientResponseSchema as aA, ListAccountsRequestShape as aB, ListAccountsRequestSchema as aC, type UpdateAccountRequest as aD, UpdateAccountRequestSchema as aE, UpdateAccountRequestShape as aF, type UserDetail as aG, UserDetailSchema as aH, UserDetailShape as aI, RecipientSchema as aJ, CreateRecipientRequestSchema as aK, RecipientRequestSchema as aL, RecipientFilterKeySchema as aM, RecipientShape as aN, CreateRecipientRequestShape as aO, RecipientRequestShape as aP, BankInformationSchema as aQ, AccountDetailsDataSchema as aR, AddressSchema as aS, RecipientsSchema as aT, TransferSchema as aU, CreateTransferInputSchema as aV, GetTransferInputSchema as aW, MarkAsReturnInputSchema as aX, UpdateTraceNumbersInputSchema as aY, ProcessOutputSchema$1 as aZ, TransferResponseSchema as a_, type Transfer as aa, type GetTransferInput as ab, type CreateTransferInput as ac, type TransferResponse as ad, type MarkAsReturnInput as ae, type UpdateTraceNumbersInput as af, type ProcessOutput$1 as ag, type PaymentRail as ah, type Recipient as ai, type CreateRecipientRequest as aj, type RecipientRequest as ak, type RecipientFilterKey as al, PaymentStatusSchema as am, PaymentRailSchema as an, PaymentTypeSchema as ao, SortOrderSchema as ap, CreatePaymentInputSchema as aq, UpdatePaymentInputSchema as ar, PaymentResponseSchema as as, PaymentShape as at, CreatePaymentInputShape as au, UpdatePaymentInputShape as av, SavingAccountSchema as aw, SavingAccountShape as ax, type SavingAccount as ay, ListAccountsOfClientResponseShape as az, UpdateCardID as b, PaymentRailSchema$1 as b0, PaymentTypeSchema$1 as b1, AccountTypeSchema as b2, TransferShape as b3, CreateTransferInputShape as b4, GetTransferInputShape as b5, MarkAsReturnInputShape as b6, UpdateTraceNumbersInputShape as b7, ProcessOutputShape as b8, TransferResponseShape as b9, CreateTransferOutputShape as ba, ClientSchema as bb, AgentSchema as bc, PartySchema as bd, type UpdateRecipientRequest as be, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, ScheduleAccountClosure as t, GenerateAccountStatement as u, DownloadAccountStatement as v, MarkAsReturned as w, MarkAsFail as x, MarkAsProcessing as y, LogFailTransfer as z };
+/**
+ * Retrieves all global configurations for the banking system.
+ *
+ * This API returns all configuration settings including their names, enabled status,
+ * IDs, trap door settings, and value data types. These configurations control various
+ * aspects of the banking platform's behavior.
+ *
+ * @param configuration - Configuration parameters
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns all global configurations
+ *
+ * @example
+ * ```typescript
+ * const getConfigsCmd = GetConfigurations({ tenantId: "z01j3e71zd6zkq90" });
+ * const result = await getConfigsCmd.execute(config);
+ *
+ * // Access the configurations array
+ * result.globalConfiguration.forEach(config => {
+ *   console.log(`${config.name}: ${config.enabled ? 'enabled' : 'disabled'}`);
+ * });
+ * ```
+ *
+ * @see {@link https://apidocs.cloud.mbanq.com/reference/get_v1-configurations} API Documentation
+ */
+declare const GetConfigurations: (configuration?: {
+    tenantId?: string;
+}) => Command<{
+    tenantId?: string;
+}, GetConfigurationsResponse>;
+/**
+ * Retrieves a specific global configuration by its name.
+ *
+ * This API returns the configuration details for a specific global configuration
+ * identified by its name, including its value, description, trap door setting,
+ * and value data type.
+ *
+ * @param configName - The name of the configuration to retrieve
+ * @param configuration - Configuration parameters
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the specific configuration details
+ *
+ * @example
+ * ```typescript
+ * const getConfigCmd = GetConfigurationByName(
+ *   'virtual-card-reordering-limit',
+ *   { tenantId: "z01j3e71zd6zkq90" }
+ * );
+ * const result = await getConfigCmd.execute(config);
+ *
+ * console.log(`Value: ${result.value}`);
+ * console.log(`Description: ${result.description}`);
+ * console.log(`Data Type: ${result.valueDataType}`);
+ * ```
+ *
+ * @see {@link https://apidocs.cloud.mbanq.com/reference/get_v1-configurations-name-configname} API Documentation
+ */
+declare const GetConfigurationByName: (configName: string, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    configName: string;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetConfigurationByNameResponse>;
+/**
+ * Enables or disables a specific global configuration.
+ *
+ * This API allows you to enable or disable a configuration by its ID.
+ * The configuration's enabled status will be updated according to the provided value.
+ *
+ * @param configId - The ID of the configuration to update
+ * @param requestData - The update parameters
+ * @param requestData.enabled - Whether the configuration should be enabled (true) or disabled (false)
+ * @param configuration - Configuration parameters
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the update confirmation
+ *
+ * @example
+ * ```typescript
+ * // Enable a configuration
+ * const enableCmd = EnableDisableConfiguration(
+ *   33,
+ *   { enabled: true },
+ *   { tenantId: "z01j3e71zd6zkq90" }
+ * );
+ * const result = await enableCmd.execute(config);
+ * console.log(`Configuration ${result.resourceId} updated`);
+ *
+ * // Disable a configuration
+ * const disableCmd = EnableDisableConfiguration(
+ *   33,
+ *   { enabled: false },
+ *   { tenantId: "z01j3e71zd6zkq90" }
+ * );
+ * await disableCmd.execute(config);
+ * ```
+ *
+ * @see {@link https://apidocs.cloud.mbanq.com/reference/enabledisableconfiguration} API Documentation
+ */
+declare const EnableDisableConfiguration: (configId: number, requestData: UpdateConfigurationRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    configId: number;
+    requestData: UpdateConfigurationRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, UpdateConfigurationResponse>;
+
+/**
+ * Retrieves pending transactions for a specific savings account.
+ *
+ * Use this API to retrieve the pending transactions of an account, including pending
+ * card authorizations and ACH transactions.
+ *
+ * Pending transactions are those that have not been completed yet. For example, a
+ * transaction under AML (Anti-Money Laundering) screening is considered a pending transaction.
+ *
+ * @param savingsId - The ID of the savings account
+ * @param params - Optional query parameters for pagination and sorting
+ * @param params.offset - Indicates the result from which pagination starts. Defaults to 0
+ * @param params.limit - Restricts the size of results returned. Defaults to 200
+ * @param params.orderBy - In which property order data will be fetched. Defaults to "createdAt"
+ * @param params.sortOrder - Specifies the sorting order. Possible values: ASC, DESC. Defaults to "DESC"
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the pending transactions response
+ *
+ * @example
+ * ```typescript
+ * const getPendingCmd = GetPendingTransactions(
+ *   123,
+ *   { offset: 0, limit: 200, orderBy: "createdAt", sortOrder: "DESC" },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await getPendingCmd.execute(config);
+ * console.log(result.totalFilteredRecords);
+ * console.log(result.pageItems[0].transfer.status); // "AML_SCREENING"
+ * ```
+ */
+declare const GetPendingTransactions: (savingsId: number, params?: GetPendingTransactionsRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    savingsId: number;
+    params?: GetPendingTransactionsRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetPendingTransactionsResponse>;
+/**
+ * Retrieves completed transactions for a specific savings account.
+ *
+ * Use this API to retrieve completed transactions of an account, excluding pending
+ * transactions. Completed transactions include those successfully processed, such as
+ * an incoming return credited to the account or an outgoing ACH transaction sent to the bank.
+ *
+ * Additional filters can be applied to narrow down results. Refer to the Query Params
+ * section for more details.
+ *
+ * @param savingsAccountId - The ID associated to the account
+ * @param params - Optional query parameters for filtering, pagination and sorting
+ * @param params.offset - Indicates the result from which pagination starts. Defaults to 0
+ * @param params.limit - Restricts the size of results returned. Defaults to 200
+ * @param params.showEnrichedTransactions - Indicates whether to display enriched transaction details in the response. Defaults to true
+ * @param params.subTransactionType - Transaction Sub Type can be used as a filter to retrieve the transactions
+ * @param params.statusType - The status of transactions (e.g., PROCESSED, PROCESSING, REJECTED)
+ * @param params.transactionType - Filter can be based on the transaction type
+ * @param params.startDate - Use this to retrieve transactions from the start date (format: dd MMM yyyy)
+ * @param params.endDate - Retrieve the transaction until the end Date (format: dd MMM yyyy)
+ * @param params.reference - Filter based on the reference provided at the time of the transaction
+ * @param params.paymentType - Different payment type we do like ACH, INTERNAL, CASH etc.
+ * @param params.fromAmount - Use this to retrieve Transactions which are greater than the fromAmount
+ * @param params.toAmount - Type amount range till
+ * @param params.isCardTransaction - Type amount range till
+ * @param params.showInterestAccruals - Do you want to display the accruals transactions
+ * @param params.orderBy - The list is sorted by the indicated field. Defaults to "id"
+ * @param params.sortOrder - Specifies the sorting order. Possible values: ASC, DESC
+ * @param params.getCardData - Do you want to get Card data. Defaults to false
+ * @param configuration - Optional configuration
+ * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
+ *
+ * @returns A Command that when executed returns the completed transactions response
+ *
+ * @example
+ * ```typescript
+ * const getCompletedCmd = GetCompletedTransactions(
+ *   123,
+ *   {
+ *     offset: 0,
+ *     limit: 15,
+ *     showEnrichedTransactions: true,
+ *     orderBy: "id",
+ *     sortOrder: "DESC"
+ *   },
+ *   { tenantId: "tokoro" }
+ * );
+ * const result = await getCompletedCmd.execute(config);
+ * console.log(result.totalFilteredRecords);
+ * console.log(result.pageItems[0].transactionType.code);
+ * ```
+ */
+declare const GetCompletedTransactions: (savingsAccountId: number, params?: GetCompletedTransactionsRequest, configuration?: {
+    tenantId?: string;
+}) => Command<{
+    savingsAccountId: number;
+    params?: GetCompletedTransactionsRequest;
+    configuration?: {
+        tenantId?: string;
+    };
+}, GetCompletedTransactionsResponse>;
+
+export { UpdateSelfServiceUser as $, ApproveRejectClientDocument as A, BlockAccount as B, CreatePayment as C, DeletePayment as D, GetAccountDocumentsDetails as E, MarkAsReturned as F, GetPayment as G, HoldAmount as H, MarkAsFail as I, MarkAsProcessing as J, LogFailTransfer as K, ListClientDocument as L, MarkAsSuccess as M, GetTransfers as N, UpdateTraceNumber as O, CreateTransfer as P, GetTransfer as Q, GetRecipient as R, SendAuthorizationToCore as S, CreateRecipient as T, UpdatePayment as U, VerifyWithActivateClients as V, DeleteRecipient as W, GetRecipients as X, GraphQL as Y, GetUserDetail as Z, EnableSelfServiceAccess as _, GetPayments as a, AccountDetailsDataSchema as a$, DeleteSelfServiceUser as a0, ListCardProduct as a1, GetCardProduct as a2, CreateCardProduct as a3, UpdateCardProduct as a4, GetClientAddress as a5, CreateClientAddress as a6, UpdateClientAddress as a7, SetClientAddressStatus as a8, SwitchClientClassification as a9, CreatePaymentInputSchema as aA, UpdatePaymentInputSchema as aB, PaymentResponseSchema as aC, PaymentShape as aD, CreatePaymentInputShape as aE, UpdatePaymentInputShape as aF, SavingAccountSchema as aG, SavingAccountShape as aH, type SavingAccount as aI, ListAccountsOfClientResponseShape as aJ, ListAccountsOfClientResponseSchema as aK, ListAccountsRequestShape as aL, ListAccountsRequestSchema as aM, type UpdateAccountRequest as aN, UpdateAccountRequestSchema as aO, UpdateAccountRequestShape as aP, type UserDetail as aQ, UserDetailSchema as aR, UserDetailShape as aS, RecipientSchema as aT, CreateRecipientRequestSchema as aU, RecipientRequestSchema as aV, RecipientFilterKeySchema as aW, RecipientShape as aX, CreateRecipientRequestShape as aY, RecipientRequestShape as aZ, BankInformationSchema as a_, GetClientClassification as aa, GetConfigurations as ab, GetConfigurationByName as ac, EnableDisableConfiguration as ad, GetPendingTransactions as ae, GetCompletedTransactions as af, type Payment as ag, type CreatePaymentInput as ah, type UpdatePaymentInput as ai, type PaymentResponse as aj, type Transfer as ak, type GetTransferInput as al, type CreateTransferInput as am, type TransferResponse as an, type MarkAsReturnInput as ao, type UpdateTraceNumbersInput as ap, type ProcessOutput$1 as aq, type PaymentRail as ar, type Recipient as as, type CreateRecipientRequest as at, type RecipientRequest as au, type RecipientFilterKey as av, PaymentStatusSchema as aw, PaymentRailSchema as ax, PaymentTypeSchema as ay, SortOrderSchema as az, UpdateCardID as b, AddressSchema as b0, RecipientsSchema as b1, TransferSchema as b2, CreateTransferInputSchema as b3, GetTransferInputSchema as b4, MarkAsReturnInputSchema as b5, UpdateTraceNumbersInputSchema as b6, ProcessOutputSchema$1 as b7, TransferResponseSchema as b8, CreateTransferOutputSchema as b9, PaymentRailSchema$1 as ba, PaymentTypeSchema$1 as bb, AccountTypeSchema as bc, TransferShape as bd, CreateTransferInputShape as be, GetTransferInputShape as bf, MarkAsReturnInputShape as bg, UpdateTraceNumbersInputShape as bh, ProcessOutputShape as bi, TransferResponseShape as bj, CreateTransferOutputShape as bk, ClientSchema as bl, AgentSchema as bm, PartySchema as bn, type UpdateRecipientRequest as bo, GetPermittedDocumentTypes as c, CreateClientIdentifier as d, UpdateClientIdentifier as e, UploadClientIdentifierDocument as f, DeleteClientDocument as g, GetClient as h, UpdateClient as i, CreateClient as j, GetClients as k, DeleteClient as l, GetStatusOfVerifyClient as m, GetAccount as n, GetAccountsOfClient as o, UpdateAccount as p, DeleteAccount as q, CreateAndActivateAccount as r, CloseAccount as s, ScheduleAccountClosure as t, CreateAccountProduct as u, UpdateAccountProduct as v, GetAllAccountProducts as w, GetAccountProductById as x, GenerateAccountStatement as y, DownloadAccountStatement as z };
