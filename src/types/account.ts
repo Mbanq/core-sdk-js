@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 const statusSchema = z.object({
   id: z.number(),
   code: z.string(),
@@ -391,4 +390,3 @@ export const HoldAmountResponseSchema = z.object(HoldAmountResponseShape);
 
 export type HoldAmountRequest = z.infer<typeof HoldAmountRequestSchema>;
 export type HoldAmountResponse = z.infer<typeof HoldAmountResponseSchema>;
-

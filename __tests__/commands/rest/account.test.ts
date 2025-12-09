@@ -999,7 +999,6 @@ describe('CloseAccount', () => {
   });
 });
 
-
 describe('BlockAccount', () => {
   let mockAxiosInstance: MockAxiosInstance;
 
@@ -1124,9 +1123,6 @@ describe('BlockAccount', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
-
-
-
 
 describe('ScheduleAccountClosure', () => {
   let mockAxiosInstance: MockAxiosInstance;
@@ -1373,4 +1369,3 @@ describe('HoldAmount', () => {
     expect(config.tenantId).toBe('default-tenant');
   });
 });
-

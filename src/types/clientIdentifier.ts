@@ -52,7 +52,6 @@ export const ClientIdentifierItemSchema = z.object(ClientIdentifierItemShape).ca
 
 export const ListClientDocumentResponseSchema = z.array(ClientIdentifierItemSchema);
 
-
 export type ClientIdentifierRequest = z.infer<typeof ClientIdentifierRequestSchema>;
 export type ClientIdentifierResponse = z.infer<typeof ClientIdentifierResponseSchema>;
 export type ClientIdentifierItem = z.infer<typeof ClientIdentifierItemSchema>;
@@ -93,7 +92,6 @@ export const DeleteClientDocumentResponseSchema = z.object({
 });
 
 export type DeleteClientDocumentResponse = z.infer<typeof DeleteClientDocumentResponseSchema>;
-
 
 export const ApproveRejectClientDocumentResponseSchema = z.object({
   clientId: z.number(),

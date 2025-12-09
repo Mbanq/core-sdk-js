@@ -2,16 +2,16 @@ import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 import {
-    GenerateAccountStatementRequest,
-    GenerateAccountStatementResponse,
-    DownloadAccountStatementResponse,
-    GetAccountDocumentsDetailsResponse,
-    GetAccountDocumentsDetailsQueryParams
+  GenerateAccountStatementRequest,
+  GenerateAccountStatementResponse,
+  DownloadAccountStatementResponse,
+  GetAccountDocumentsDetailsResponse,
+  GetAccountDocumentsDetailsQueryParams
 } from '../../types/accountStatement';
 
 /**
  * Generates an account statement.
- * 
+ *
  * @param requestData - The statement generation parameters (see GenerateAccountStatementRequest)
  * @param requestData.reportName - The name of the report
  * @param requestData.parentEntityType - The parent entity type (e.g., "savings")
@@ -21,9 +21,9 @@ import {
  * @param requestData.params - Additional parameters (start_date, end_date, saving_no)
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the statement generation job details
- * 
+ *
  * @example
  * ```typescript
  * const generateCmd = GenerateAccountStatement(
@@ -46,46 +46,46 @@ import {
  * ```
  */
 export const GenerateAccountStatement = (
-    requestData: GenerateAccountStatementRequest,
-    configuration?: { tenantId?: string }
+  requestData: GenerateAccountStatementRequest,
+  configuration?: { tenantId?: string }
 ): Command<{ requestData: GenerateAccountStatementRequest, configuration?: { tenantId?: string } }, GenerateAccountStatementResponse> => {
-    return {
-        input: { requestData, configuration },
-        metadata: {
-            commandName: 'GenerateAccountStatement',
-            path: '/v1/generatestatements',
-            method: 'POST'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { requestData, configuration },
+    metadata: {
+      commandName: 'GenerateAccountStatement',
+      path: '/v1/generatestatements',
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.post<GenerateAccountStatementResponse>(
-                    '/v1/generatestatements',
-                    requestData
-                );
-                return response.data;
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-    };
+      try {
+        const response = await axiosInstance.post<GenerateAccountStatementResponse>(
+          '/v1/generatestatements',
+          requestData
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };
 
 /**
  * Downloads a document associated with a specific savings account.
  * This API returns a binary file as a raw byte stream.
- * 
+ *
  * @param savingsAccountId - The ID of the savings account
  * @param documentId - The UUID of the document to download
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the document as a Blob with metadata
- * 
+ *
  * @example
  * ```typescript
  * const downloadCmd = DownloadAccountStatement(
@@ -100,57 +100,57 @@ export const GenerateAccountStatement = (
  * ```
  */
 export const DownloadAccountStatement = (
-    savingsAccountId: number,
-    documentId: string,
-    configuration?: { tenantId?: string }
+  savingsAccountId: number,
+  documentId: string,
+  configuration?: { tenantId?: string }
 ): Command<{ savingsAccountId: number, documentId: string, configuration?: { tenantId?: string } }, DownloadAccountStatementResponse> => {
-    return {
-        input: { savingsAccountId, documentId, configuration },
-        metadata: {
-            commandName: 'DownloadAccountStatement',
-            path: `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
-            method: 'GET'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { savingsAccountId, documentId, configuration },
+    metadata: {
+      commandName: 'DownloadAccountStatement',
+      path: `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.get(
-                    `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
-                    { responseType: 'blob' }
-                );
+      try {
+        const response = await axiosInstance.get(
+          `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
+          { responseType: 'blob' }
+        );
 
-                // Extract filename from Content-Disposition header if available
-                const contentDisposition = response.headers['content-disposition'];
-                let fileName: string | undefined;
-                if (contentDisposition) {
-                    const fileNameMatch = contentDisposition.match(/filename="?(.+?)"?$/i);
-                    if (fileNameMatch) {
-                        fileName = fileNameMatch[1];
-                    }
-                }
-
-                // Extract content type from headers
-                const contentType = response.headers['content-type'];
-
-                return {
-                    data: response.data,
-                    fileName,
-                    contentType
-                };
-            } catch (error) {
-                handleAxiosError(error);
-            }
+        // Extract filename from Content-Disposition header if available
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName: string | undefined;
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="?(.+?)"?$/i);
+          if (fileNameMatch) {
+            fileName = fileNameMatch[1];
+          }
         }
-    };
+
+        // Extract content type from headers
+        const contentType = response.headers['content-type'];
+
+        return {
+          data: response.data,
+          fileName,
+          contentType
+        };
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };
 
 /**
  * Retrieves the details of all documents linked to a savings account.
- * 
+ *
  * @param savingsAccountId - The ID of the savings account
  * @param queryParams - Optional query parameters for filtering documents
  * @param queryParams.createdAtFrom - Filter documents created from this date (e.g., "2023-01-01+00:00:00")
@@ -159,9 +159,9 @@ export const DownloadAccountStatement = (
  * @param queryParams.type - Filter documents by type (statement, receipt, report, passport)
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns a list of document details
- * 
+ *
  * @example
  * ```typescript
  * const getDocsCmd = GetAccountDocumentsDetails(
@@ -174,32 +174,32 @@ export const DownloadAccountStatement = (
  * ```
  */
 export const GetAccountDocumentsDetails = (
-    savingsAccountId: number,
-    queryParams?: GetAccountDocumentsDetailsQueryParams,
-    configuration?: { tenantId?: string }
+  savingsAccountId: number,
+  queryParams?: GetAccountDocumentsDetailsQueryParams,
+  configuration?: { tenantId?: string }
 ): Command<{ savingsAccountId: number, queryParams?: GetAccountDocumentsDetailsQueryParams, configuration?: { tenantId?: string } }, GetAccountDocumentsDetailsResponse> => {
-    return {
-        input: { savingsAccountId, queryParams, configuration },
-        metadata: {
-            commandName: 'GetAccountDocumentsDetails',
-            path: `/v1/savings/${savingsAccountId}/documents`,
-            method: 'GET'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { savingsAccountId, queryParams, configuration },
+    metadata: {
+      commandName: 'GetAccountDocumentsDetails',
+      path: `/v1/savings/${savingsAccountId}/documents`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.get<GetAccountDocumentsDetailsResponse>(
-                    `/v1/savings/${savingsAccountId}/documents`,
-                    { params: queryParams }
-                );
-                return response.data;
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-    };
+      try {
+        const response = await axiosInstance.get<GetAccountDocumentsDetailsResponse>(
+          `/v1/savings/${savingsAccountId}/documents`,
+          { params: queryParams }
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };

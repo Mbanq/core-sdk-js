@@ -18,13 +18,13 @@ import { handleAxiosError } from '../../utils/errorHandler';
 
 /**
  * Retrieves detailed information about a specific savings account.
- * 
+ *
  * @param accountId - The ID of the savings account to retrieve
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the full SavingAccount details
- * 
+ *
  * @example
  * ```typescript
  * const getAccountCmd = GetAccount(123, { tenantId: "tokoro" });
@@ -58,14 +58,14 @@ export const GetAccount = (accountId: number, configuration?: { tenantId?: strin
 
 /**
  * Updates an existing savings account with new details.
- * 
+ *
  * @param accountId - The ID of the account to update
  * @param requestData - The account fields to update (see UpdateAccountRequest)
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the update response
- * 
+ *
  * @example
  * ```typescript
  * const updateCmd = UpdateAccount(
@@ -113,13 +113,13 @@ export const UpdateAccount = (
 
 /**
  * Deletes a savings account from the system.
- * 
+ *
  * @param accountId - The ID of the account to delete
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the deletion confirmation
- * 
+ *
  * @example
  * ```typescript
  * const deleteCmd = DeleteAccount(123, { tenantId: "tokoro" });
@@ -150,7 +150,6 @@ export const DeleteAccount = (accountId: number, configuration?: { tenantId?: st
   };
 };
 
-
 export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string }): Command<{ clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string } }, ListAccountsOfClientRequest> => {
   return {
     input: { clientId, params, configuration },
@@ -178,7 +177,7 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
 /**
  * Creates a new savings account and immediately activates it in a single operation.
  * This combines the submit, approve, and activate commands.
- * 
+ *
  * @param params - The account creation parameters (see CreateAndActivateAccountRequest)
  * @param params.clientId - The ID of the client who will own the account
  * @param params.productId - The ID of the savings product to use
@@ -187,9 +186,9 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
  * @param params.dateFormat - The date format string (e.g., "dd MMMM yyyy")
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the created and activated account details
- * 
+ *
  * @example
  * ```typescript
  * const createCmd = CreateAndActivateAccount(
@@ -240,7 +239,7 @@ export const CreateAndActivateAccount = (
 
 /**
  * Closes a savings account permanently. This deactivates the account so no further transactions can be performed.
- * 
+ *
  * @param savingsAccountId - The ID of the savings account to close
  * @param requestData - The closure parameters (see CloseAccountRequest)
  * @param requestData.closedOnDate - The date the account is closed (format must match dateFormat)
@@ -253,9 +252,9 @@ export const CreateAndActivateAccount = (
  * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
  * @param params - Optional configuration
  * @param params.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the account closure confirmation
- * 
+ *
  * @example
  * ```typescript
  * const closeCmd = CloseAccount(
@@ -306,11 +305,9 @@ export const CloseAccount = (
   };
 };
 
-
-
 /**
  * Schedules the closure of a savings account.
- * 
+ *
  * @param accountId - The ID of the savings account to schedule for closure
  * @param requestData - The closure parameters (see CloseAccountRequest)
  * @param requestData.closedOnDate - The date the account is scheduled to be closed
@@ -323,9 +320,9 @@ export const CloseAccount = (
  * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the schedule closure confirmation
- * 
+ *
  * @example
  * ```typescript
  * const scheduleCloseCmd = ScheduleAccountClosure(
@@ -377,15 +374,15 @@ export const ScheduleAccountClosure = (
 
 /**
  * Blocks a savings account.
- * 
+ *
  * @param accountId - The ID of the savings account to block
  * @param requestData - The block parameters (see BlockAccountRequest)
  * @param requestData.blockReasonCodeId - The ID representing the reason for blocking the account
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the block confirmation
- * 
+ *
  * @example
  * ```typescript
  * const blockCmd = BlockAccount(
@@ -430,16 +427,16 @@ export const BlockAccount = (
 
 /**
  * Places a hold on a specific amount in a client's account.
- * 
+ *
  * @param accountId - The ID of the savings account
  * @param requestData - The hold amount parameters (see HoldAmountRequest)
  * @param requestData.transactionAmount - The amount to be held
  * @param requestData.holdAmountReasonCodeId - The ID representing the reason for holding the amount
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the hold amount confirmation
- * 
+ *
  * @example
  * ```typescript
  * const holdCmd = HoldAmount(
@@ -481,4 +478,3 @@ export const HoldAmount = (
     }
   };
 };
-

@@ -2,17 +2,17 @@ import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 import {
-    CreateAccountProductRequest,
-    CreateAccountProductResponse,
-    UpdateAccountProductRequest,
-    UpdateAccountProductResponse,
-    GetAllAccountProductsResponse,
-    GetAccountProductByIdResponse
+  CreateAccountProductRequest,
+  CreateAccountProductResponse,
+  UpdateAccountProductRequest,
+  UpdateAccountProductResponse,
+  GetAllAccountProductsResponse,
+  GetAccountProductByIdResponse
 } from '../../types/accountProduct';
 
 /**
  * Creates a new savings account product.
- * 
+ *
  * @param params - The account product creation parameters (see CreateAccountProductRequest)
  * @param params.currencyCode - The currency code for the savings product (e.g., "USD")
  * @param params.digitsAfterDecimal - The number of digits after the decimal point for amounts
@@ -28,9 +28,9 @@ import {
  * @param params.dateFormat - The date format string (e.g., "dd MMMM yyyy")
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the created account product details
- * 
+ *
  * @example
  * ```typescript
  * const createCmd = CreateAccountProduct(
@@ -66,38 +66,38 @@ import {
  * ```
  */
 export const CreateAccountProduct = (
-    params: CreateAccountProductRequest,
-    configuration?: { tenantId?: string }
+  params: CreateAccountProductRequest,
+  configuration?: { tenantId?: string }
 ): Command<{ params: CreateAccountProductRequest, configuration?: { tenantId?: string } }, CreateAccountProductResponse> => {
-    return {
-        input: { params, configuration },
-        metadata: {
-            commandName: 'CreateAccountProduct',
-            path: '/v1/savingsproducts',
-            method: 'POST'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { params, configuration },
+    metadata: {
+      commandName: 'CreateAccountProduct',
+      path: '/v1/savingsproducts',
+      method: 'POST'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.post<CreateAccountProductResponse>(
-                    '/v1/savingsproducts',
-                    params
-                );
-                return response.data;
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-    };
+      try {
+        const response = await axiosInstance.post<CreateAccountProductResponse>(
+          '/v1/savingsproducts',
+          params
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };
 
 /**
  * Updates an existing savings account product.
- * 
+ *
  * @param productId - The ID of the savings product to update
  * @param params - The account product update parameters (see UpdateAccountProductRequest)
  * @param params.name - The updated name of the savings product
@@ -111,9 +111,9 @@ export const CreateAccountProduct = (
  * @param params.dateFormat - The date format string
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the update response with changes
- * 
+ *
  * @example
  * ```typescript
  * const updateCmd = UpdateAccountProduct(
@@ -149,44 +149,44 @@ export const CreateAccountProduct = (
  * ```
  */
 export const UpdateAccountProduct = (
-    productId: number,
-    params: UpdateAccountProductRequest,
-    configuration?: { tenantId?: string }
+  productId: number,
+  params: UpdateAccountProductRequest,
+  configuration?: { tenantId?: string }
 ): Command<{ productId: number, params: UpdateAccountProductRequest, configuration?: { tenantId?: string } }, UpdateAccountProductResponse> => {
-    return {
-        input: { productId, params, configuration },
-        metadata: {
-            commandName: 'UpdateAccountProduct',
-            path: `/v1/savingsproducts/${productId}`,
-            method: 'PUT'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { productId, params, configuration },
+    metadata: {
+      commandName: 'UpdateAccountProduct',
+      path: `/v1/savingsproducts/${productId}`,
+      method: 'PUT'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.put<UpdateAccountProductResponse>(
-                    `/v1/savingsproducts/${productId}`,
-                    params
-                );
-                return response.data;
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-    };
+      try {
+        const response = await axiosInstance.put<UpdateAccountProductResponse>(
+          `/v1/savingsproducts/${productId}`,
+          params
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };
 
 /**
  * Retrieves all savings account products.
- * 
+ *
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns a list of all account products
- * 
+ *
  * @example
  * ```typescript
  * const listCmd = GetAllAccountProducts({ tenantId: "z01j3e71zd6zkq908yvf5861a8" });
@@ -195,42 +195,42 @@ export const UpdateAccountProduct = (
  * ```
  */
 export const GetAllAccountProducts = (
-    configuration?: { tenantId?: string }
+  configuration?: { tenantId?: string }
 ): Command<{ configuration?: { tenantId?: string } }, GetAllAccountProductsResponse> => {
-    return {
-        input: { configuration },
-        metadata: {
-            commandName: 'GetAllAccountProducts',
-            path: '/v1/savingsproducts',
-            method: 'GET'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { configuration },
+    metadata: {
+      commandName: 'GetAllAccountProducts',
+      path: '/v1/savingsproducts',
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.get<GetAllAccountProductsResponse>(
-                    '/v1/savingsproducts'
-                );
-                return response.data;
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-    };
+      try {
+        const response = await axiosInstance.get<GetAllAccountProductsResponse>(
+          '/v1/savingsproducts'
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };
 
 /**
  * Retrieves a single savings account product by its ID.
- * 
+ *
  * @param productId - The ID of the savings product to retrieve
  * @param configuration - Optional configuration
  * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- * 
+ *
  * @returns A Command that when executed returns the account product details
- * 
+ *
  * @example
  * ```typescript
  * const getCmd = GetAccountProductById(101, { tenantId: "z01j3e71zd6zkq908yvf5861a8" });
@@ -239,30 +239,30 @@ export const GetAllAccountProducts = (
  * ```
  */
 export const GetAccountProductById = (
-    productId: number,
-    configuration?: { tenantId?: string }
+  productId: number,
+  configuration?: { tenantId?: string }
 ): Command<{ productId: number, configuration?: { tenantId?: string } }, GetAccountProductByIdResponse> => {
-    return {
-        input: { productId, configuration },
-        metadata: {
-            commandName: 'GetAccountProductById',
-            path: `/v1/savingsproducts/${productId}`,
-            method: 'GET'
-        },
-        execute: async (config: Config) => {
-            if (configuration?.tenantId) {
-                config.tenantId = configuration.tenantId;
-            }
-            const axiosInstance = await baseRequest(config);
+  return {
+    input: { productId, configuration },
+    metadata: {
+      commandName: 'GetAccountProductById',
+      path: `/v1/savingsproducts/${productId}`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      if (configuration?.tenantId) {
+        config.tenantId = configuration.tenantId;
+      }
+      const axiosInstance = await baseRequest(config);
 
-            try {
-                const response = await axiosInstance.get<GetAccountProductByIdResponse>(
-                    `/v1/savingsproducts/${productId}`
-                );
-                return response.data;
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-    };
+      try {
+        const response = await axiosInstance.get<GetAccountProductByIdResponse>(
+          `/v1/savingsproducts/${productId}`
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
 };

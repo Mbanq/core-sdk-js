@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { 
-  GetClientClassification, 
-  SwitchClientClassification, 
-  CancelSwitchClientClassification 
+import {
+  GetClientClassification,
+  SwitchClientClassification,
+  CancelSwitchClientClassification
 } from '../../../src/commands/rest/clientClassification';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
@@ -162,7 +162,6 @@ describe('Client Classification Commands', () => {
       );
       expect(result).toEqual(mockResponse.data);
     });
-
 
     it('should handle errors properly', async () => {
       const mockError = new Error('Cancel switch classification failed');

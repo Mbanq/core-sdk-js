@@ -31,10 +31,13 @@ import {
   GetPendingTransactionsResponse,
   GetPendingTransactionsRequest,
   PendingTransaction,
-  Transfer as TransactionTransfer
+  Transfer as TransactionTransfer,
+  GetCompletedTransactionsResponse,
+  GetCompletedTransactionsRequest,
+  CompletedTransaction,
+  SubTransactionType,
+  TransactionType
 } from './transaction';
-
-
 
 export {
   Config,
@@ -91,5 +94,10 @@ export {
   GetPendingTransactionsResponse,
   GetPendingTransactionsRequest,
   PendingTransaction,
-  TransactionTransfer
+  TransactionTransfer,
+  GetCompletedTransactionsResponse,
+  GetCompletedTransactionsRequest,
+  CompletedTransaction,
+  SubTransactionType,
+  TransactionType
 };

@@ -69,8 +69,8 @@ export const ListClientDocument = (params: {
         handleAxiosError(error);
       }
     }
-  }
-}
+  };
+};
 
 export const CreateClientIdentifier = (params:
   { tenatId?: string; clientId: number; input: ClientIdentifierRequest }
@@ -271,4 +271,3 @@ export const ApproveRejectClientDocument = (
     }
   };
 };
-

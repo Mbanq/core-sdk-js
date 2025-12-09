@@ -6,7 +6,7 @@ import {
   CardProductDetail,
   CardProductRequest,
   CardProductUpdateRequest,
-  CreateCardProductResponse,
+  CreateCardProductResponse
 } from '../../types/cardProduct';
 
 export const ListCardProduct = (params: { limit?: number, offset?: number } = {}, configuration?: { tenantId?: string }): Command<{ params: { limit?: number, offset?: number }, configuration?: { tenantId?: string } }, CardProducts> => {

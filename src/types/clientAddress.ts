@@ -47,7 +47,7 @@ const ClientAddressFieldsSchema = z.object({
   city: z.string(),
   stateProvinceId: z.number(),
   countryId: z.number(),
-  postalCode: z.string(),
+  postalCode: z.string()
 });
 
 export const CreateClientAddressSchema = ClientAddressFieldsSchema.extend({

@@ -4,7 +4,7 @@ export { GetClient, UpdateClient, CreateClient, GetClients, DeleteClient, Verify
 export { MarkAsSuccess, MarkAsReturned, MarkAsFail, MarkAsProcessing, LogFailTransfer, GetTransfers, UpdateTraceNumber, CreateTransfer, GetTransfer } from './rest/transfer';
 export { GetPayment, GetPayments, CreatePayment, UpdatePayment, DeletePayment } from './rest/payment';
 export { GetAccount, GetAccountsOfClient, UpdateAccount, DeleteAccount, CreateAndActivateAccount, CloseAccount, BlockAccount, ScheduleAccountClosure, HoldAmount } from './rest/account';
-export { GetPendingTransactions } from './rest/transaction';
+export { GetPendingTransactions, GetCompletedTransactions } from './rest/transaction';
 export { CreateAccountProduct, UpdateAccountProduct, GetAllAccountProducts, GetAccountProductById } from './rest/accountProduct';
 export { GenerateAccountStatement, DownloadAccountStatement, GetAccountDocumentsDetails } from './rest/accountStatement';
 export { GraphQL } from './graphql';

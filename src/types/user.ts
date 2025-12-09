@@ -106,8 +106,7 @@ export type UpdateSelfServiceUserResponse = z.infer<
 >;
 
 export const DeleteSelfServiceUserResponseSchema = z.object({
-  ...ResponseShape,
+  ...ResponseShape
 });
 
 export type DeleteSelfServiceUserResponse = z.infer<typeof DeleteSelfServiceUserResponseSchema>;
-
