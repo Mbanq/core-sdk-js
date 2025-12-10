@@ -225,49 +225,81 @@ The SDK supports middleware for cross-cutting concerns like logging and metrics.
 
 **Note**: This is different from the Axios instance logger above. Middleware loggers handle command-level logging, while the Axios logger handles HTTP request/response logging.
 
-### Available Middleware
+### Understanding Middleware Concepts
 
-#### Logging Middleware
-Logs command execution details including inputs, outputs, and errors.
+There are three key concepts to understand:
 
+1. **Middleware** - A wrapper that runs code before/after command execution
+2. **Logger Interface** - A contract defining what methods a logger object must have
+3. **Custom Middleware** - Your own middleware implementing the Middleware interface
+
+### Quick Comparison
+
+| Concept | What It Is | When to Use |
+|---------|-----------|-------------|
+| **Logging Middleware** | Pre-built middleware for logging commands | Use `createLoggingMiddleware(logger)` when you want automatic command logging |
+| **Logger Interface** | Contract for logger objects | Implement this when creating a custom logger for Logging Middleware |
+| **Metrics Middleware** | Pre-built middleware for tracking metrics | Use `createMetricsMiddleware(client)` when you want to track command metrics |
+| **Custom Middleware** | Build-your-own middleware | Implement the Middleware interface when you need custom behavior |
+
+---
+
+### 1. Logging Middleware
+
+**Purpose**: Automatically logs command execution details (inputs, outputs, errors).
+
+**Basic Usage** (with console):
 ```javascript
 import { createInstance, createLoggingMiddleware } from '@mbanq/core-sdk-js';
-
-const loggingMiddleware = createLoggingMiddleware(console); // or custom logger
 
 const client = createInstance({
   secret: 'testing123',
   signee: 'TESTING',
   baseUrl: 'https://example.com',
   tenantId: 'testing',
-  middlewares: [loggingMiddleware]
+  middlewares: [createLoggingMiddleware(console)]
 });
 ```
 
-#### Logger Interface
-For custom loggers, implement the Logger interface:
+**With Custom Logger**:
+
+First, create a logger that implements the Logger interface:
 
 ```typescript
+// Logger Interface - what your logger must implement
 interface Logger {
-  info: (message: string, ...args: unknown[]) => void;
-  error: (message: string, ...args: unknown[]) => void;
-  warn?: (message: string, ...args: unknown[]) => void; // Optional
-  log?: (message: string, ...args: unknown[]) => void;  // Optional
+  info: (message: string, ...args: unknown[]) => void;   // Required
+  error: (message: string, ...args: unknown[]) => void;  // Required
+  warn?: (message: string, ...args: unknown[]) => void;  // Optional
+  log?: (message: string, ...args: unknown[]) => void;   // Optional
 }
 
-// Example with a custom logger
+// Example: Custom logger implementation
 const customLogger = {
   info: (message, ...args) => myLoggingService.info(message, args),
   error: (message, ...args) => myLoggingService.error(message, args),
   warn: (message, ...args) => myLoggingService.warn(message, args)
 };
 
+// Use your custom logger with Logging Middleware
 const middleware = createLoggingMiddleware(customLogger);
+
+const client = createInstance({
+  secret: 'testing123',
+  signee: 'TESTING',
+  baseUrl: 'https://example.com',
+  tenantId: 'testing',
+  middlewares: [middleware]
+});
 ```
 
-#### Metrics Middleware
-Tracks command execution metrics including counters for started, completed, and error events.
+---
 
+### 2. Metrics Middleware
+
+**Purpose**: Tracks command execution metrics (counters for started, completed, and error events).
+
+**Usage**:
 ```javascript
 import { createInstance, createMetricsMiddleware } from '@mbanq/core-sdk-js';
 
@@ -283,60 +315,88 @@ const metricsClient = {
   }
 };
 
-const metricsMiddleware = createMetricsMiddleware(metricsClient);
+const client = createInstance({
+  secret: 'testing123',
+  signee: 'TESTING',
+  baseUrl: 'https://example.com',
+  tenantId: 'testing',
+  middlewares: [createMetricsMiddleware(metricsClient)]
+});
+```
+
+**MetricsClient Interface**:
+```typescript
+interface MetricsClient {
+  incrementCounter: (counterName: string) => void;  // Required
+  recordError?: (error: Error) => void;             // Optional
+}
+```
+
+---
+
+### 3. Custom Middleware
+
+**Purpose**: Create your own middleware for custom behavior (e.g., performance monitoring, audit logging, caching).
+
+**Middleware Interface**:
+```typescript
+interface Middleware {
+  before?: (command: Command) => Promise<void>;              // Called before execution
+  after?: (command: Command, response: any) => Promise<void>; // Called after success
+  onError?: (command: Command, error: Error) => Promise<void>; // Called on error
+}
+```
+
+**Example - Performance Monitoring**:
+```javascript
+const performanceMiddleware = {
+  before: async (command) => {
+    command._startTime = Date.now();
+    console.log(`[${command.metadata.commandName}] Starting...`);
+  },
+  after: async (command, response) => {
+    const duration = Date.now() - command._startTime;
+    console.log(`[${command.metadata.commandName}] Completed in ${duration}ms`);
+  },
+  onError: async (command, error) => {
+    const duration = Date.now() - command._startTime;
+    console.error(`[${command.metadata.commandName}] Failed after ${duration}ms:`, error.message);
+  }
+};
 
 const client = createInstance({
   secret: 'testing123',
   signee: 'TESTING',
   baseUrl: 'https://example.com',
   tenantId: 'testing',
-  middlewares: [metricsMiddleware]
+  middlewares: [performanceMiddleware]
 });
 ```
 
-#### MetricsClient Interface
-```typescript
-interface MetricsClient {
-  incrementCounter: (counterName: string) => void;
-  recordError?: (error: Error) => void; // Optional
-}
-```
+---
 
-#### Using Multiple Middleware
+### Using Multiple Middleware
+
+You can combine multiple middleware together. They execute in the order provided:
+
 ```javascript
 const client = createInstance({
-  // ... other config
+  secret: 'testing123',
+  signee: 'TESTING',
+  baseUrl: 'https://example.com',
+  tenantId: 'testing',
   middlewares: [
-    createLoggingMiddleware(console),
-    createMetricsMiddleware(metricsClient)
+    createLoggingMiddleware(console),      // Logs commands
+    createMetricsMiddleware(metricsClient), // Tracks metrics
+    performanceMiddleware                   // Custom performance tracking
   ]
 });
 ```
 
-#### Custom Middleware
-You can create custom middleware by implementing the Middleware interface:
-
-```javascript
-const customMiddleware = {
-  before: async (command) => {
-    // Called before command execution
-    console.log(`Starting ${command.metadata.commandName}`);
-  },
-  after: async (command, response) => {
-    // Called after successful execution
-    console.log(`Completed ${command.metadata.commandName}`, response);
-  },
-  onError: async (command, error) => {
-    // Called when command fails
-    console.error(`Error in ${command.metadata.commandName}`, error);
-  }
-};
-
-const client = createInstance({
-  // ... other config
-  middlewares: [customMiddleware]
-});
-```
+**Execution Order**:
+1. All `before` hooks run in order
+2. Command executes
+3. All `after` hooks run in reverse order (or `onError` if command fails)
 
 ## API Reference
 
