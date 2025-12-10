@@ -36,7 +36,13 @@ import {
   GetCompletedTransactionsRequest,
   CompletedTransaction,
   SubTransactionType,
-  TransactionType
+  TransactionType,
+  AuthorizedTransactionType,
+  SavingsTransactionType,
+  RejectedAuthTransactionType,
+  GetRecentTransactionsResponse,
+  GetRecentTransactionsRequest,
+  RecentTransaction
 } from './transaction';
 
 export {
@@ -100,5 +106,11 @@ export {
   GetCompletedTransactionsRequest,
   CompletedTransaction,
   SubTransactionType,
-  TransactionType
+  TransactionType,
+  AuthorizedTransactionType,
+  SavingsTransactionType,
+  RejectedAuthTransactionType,
+  GetRecentTransactionsResponse,
+  GetRecentTransactionsRequest,
+  RecentTransaction
 };

@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   GetPendingTransactions,
-  GetCompletedTransactions
+  GetCompletedTransactions,
+  GetRecentTransactions
 } from '../../../src/commands/rest/transaction';
+import { SavingsTransactionType, SubTransactionType } from '../../../src/types/transaction';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
@@ -455,3 +457,333 @@ describe('GetCompletedTransactions', () => {
     expect(result).toEqual(mockResponse);
   });
 });
+
+describe('GetRecentTransactions', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a GetRecentTransactions command with correct metadata', () => {
+    const params = {
+      offset: 0,
+      limit: 50,
+      orderBy: 'createdAt' as const,
+      sortOrder: 'DESC' as const
+    };
+    const command = GetRecentTransactions(101, params);
+
+    expect(command.input).toEqual({
+      savingsId: 101,
+      params
+    });
+    expect(command.metadata).toEqual({
+      commandName: 'GetRecentTransactions',
+      path: '/v1/savingsaccounts/101/unifiedtransactions',
+      method: 'GET'
+    });
+  });
+
+  it('should execute GET request and return recent transactions data', async () => {
+    const mockResponse = {
+      totalFilteredRecords: 1,
+      pageItems: [
+        {
+          type: 'SAVINGS_TX',
+          transactionId: 456370,
+          transactionType: 'INTEREST_POSTING',
+          subTransactionType: 'TRANSFER_AUTHORIZATION',
+          submittedOnDate: [2024, 6, 6],
+          createdAt: {
+            date: [2025, 6, 25],
+            time: {
+              hour: 14,
+              minute: 11,
+              second: 25,
+              nano: 329650000
+            }
+          },
+          paymentDetailData: {
+            creditor: {
+              name: 'testName'
+            },
+            debtor: {
+              name: 'Testing Associated'
+            }
+          },
+          transactionAmount: 1024.22,
+          bookingDate: [2024, 6, 6],
+          status: 'PROCESSED',
+          transactionDate: [2024, 5, 31],
+          reference: 'TXN-2024-001234',
+          cardNumber: '****1234',
+          cardId: 5678,
+          cardToken: 'd51ca3b1-b88b-47f7-9e6f-536fdf1287c0',
+          cardAuthorizationId: 287
+        }
+      ]
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetRecentTransactions(
+      101,
+      {
+        offset: 0,
+        limit: 50,
+        orderBy: 'createdAt',
+        sortOrder: 'DESC'
+      }
+    );
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/101/unifiedtransactions',
+      {
+        params: {
+          offset: 0,
+          limit: 50,
+          orderBy: 'createdAt',
+          sortOrder: 'DESC'
+        }
+      }
+    );
+    expect(result).toEqual(mockResponse);
+    expect(result.pageItems[0].cardNumber).toBe('****1234');
+    expect(result.pageItems[0].transactionAmount).toBe(1024.22);
+    expect(config.tenantId).toBe('default-tenant');
+  });
+
+  it('should execute GET request with transaction type enums', async () => {
+    const mockResponse = {
+      totalFilteredRecords: 2,
+      pageItems: [
+        {
+          type: 'SAVINGS_TX',
+          transactionId: 456371,
+          transactionType: 'DEPOSIT',
+          submittedOnDate: [2024, 6, 7],
+          createdAt: {
+            date: [2024, 6, 7],
+            time: { hour: 10, minute: 0, second: 0, nano: 0 }
+          },
+          transactionAmount: 500.00,
+          status: 'PROCESSED'
+        },
+        {
+          type: 'SAVINGS_TX',
+          transactionId: 456372,
+          transactionType: 'WITHDRAWAL',
+          submittedOnDate: [2024, 6, 8],
+          createdAt: {
+            date: [2024, 6, 8],
+            time: { hour: 15, minute: 30, second: 0, nano: 0 }
+          },
+          transactionAmount: 200.00,
+          status: 'PROCESSED'
+        }
+      ]
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const params = {
+      offset: 0,
+      limit: 50,
+      transactionType: [
+        SavingsTransactionType.DEPOSIT,
+        SavingsTransactionType.WITHDRAWAL
+      ],
+      subTransactionType: [
+        SubTransactionType.ACH,
+        SubTransactionType.CARD_TRANSACTION
+      ]
+    };
+
+    const command = GetRecentTransactions(101, params);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/101/unifiedtransactions',
+      { params }
+    );
+    expect(result).toEqual(mockResponse);
+    expect(result.totalFilteredRecords).toBe(2);
+  });
+
+  it('should execute GET request with all filter parameters', async () => {
+    const mockResponse = {
+      totalFilteredRecords: 0,
+      pageItems: []
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const params = {
+      offset: 0,
+      limit: 50,
+      orderBy: 'transactionAmount' as const,
+      sortOrder: 'ASC' as const,
+      type: ['SAVINGS_TX', 'AUTHORIZED_TX'],
+      transactionType: [SavingsTransactionType.DEPOSIT],
+      subTransactionType: [SubTransactionType.ACH],
+      cardId: [1234, 5678],
+      status: ['PROCESSED', 'PROCESSING'],
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      reference: 'TXN-2024-001234'
+    };
+
+    const command = GetRecentTransactions(101, params);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/101/unifiedtransactions',
+      { params }
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle axios errors', async () => {
+    const mockError: MockAxiosError = new Error('Request failed');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Account not found',
+        developerMessage: 'Savings account with ID 101 does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    const command = GetRecentTransactions(101);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should work without params', async () => {
+    const mockResponse = {
+      totalFilteredRecords: 1,
+      pageItems: [
+        {
+          type: 'SAVINGS_TX',
+          transactionId: 456373,
+          transactionType: 'DEPOSIT',
+          submittedOnDate: [2024, 6, 9],
+          createdAt: {
+            date: [2024, 6, 9],
+            time: { hour: 12, minute: 0, second: 0, nano: 0 }
+          },
+          transactionAmount: 1000.00,
+          status: 'PROCESSED'
+        }
+      ]
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetRecentTransactions(101);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/101/unifiedtransactions',
+      { params: undefined }
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle card transaction data correctly', async () => {
+    const mockResponse = {
+      totalFilteredRecords: 1,
+      pageItems: [
+        {
+          type: 'AUTHORIZED_TX',
+          transactionId: 456374,
+          transactionType: 'PAYMENT_AMOUNT',
+          subTransactionType: 'CARD_TRANSACTION',
+          submittedOnDate: [2024, 6, 10],
+          createdAt: {
+            date: [2024, 6, 10],
+            time: { hour: 16, minute: 45, second: 30, nano: 123456789 }
+          },
+          paymentDetailData: {
+            creditor: { name: 'Merchant ABC' },
+            debtor: { name: 'John Doe' }
+          },
+          transactionAmount: 75.50,
+          status: 'PROCESSED',
+          cardNumber: '****9876',
+          cardId: 9999,
+          cardToken: 'abc123-def456-ghi789',
+          cardAuthorizationId: 555
+        }
+      ]
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetRecentTransactions(101, {
+      type: ['AUTHORIZED_TX'],
+      cardId: [9999]
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(result.pageItems[0].cardNumber).toBe('****9876');
+    expect(result.pageItems[0].cardId).toBe(9999);
+    expect(result.pageItems[0].cardToken).toBe('abc123-def456-ghi789');
+    expect(result.pageItems[0].cardAuthorizationId).toBe(555);
+  });
+});
+
