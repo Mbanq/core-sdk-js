@@ -480,6 +480,9 @@ The SDK uses a Command Pattern for all operations. Commands are created using fa
 |---------|-------------|
 | `GetPendingTransactions` | Query pending transactions with filters |
 | `GetCompletedTransactions` | Query completed transactions with filters |
+| `GetRecentTransactions` | Retrieve recent transactions including status (Completed, Pending, Rejected) and card information |
+| `GetTransactionById` | Get details of a specific transaction by ID with optional enriched data |
+| `GetBankDetailsFromRoutingCode` | Get bank details from routing code for ACH or WIRE transfers |
 
 #### Transfer Operations
 
