@@ -42,7 +42,10 @@ import {
   RejectedAuthTransactionType,
   GetRecentTransactionsResponse,
   GetRecentTransactionsRequest,
-  RecentTransaction
+  RecentTransaction,
+  GetTransactionByIdResponse,
+  GetTransactionByIdRequest,
+  TransactionById
 } from './transaction';
 
 export {
@@ -112,5 +115,8 @@ export {
   RejectedAuthTransactionType,
   GetRecentTransactionsResponse,
   GetRecentTransactionsRequest,
-  RecentTransaction
+  RecentTransaction,
+  GetTransactionByIdResponse,
+  GetTransactionByIdRequest,
+  TransactionById
 };

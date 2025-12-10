@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   GetPendingTransactions,
   GetCompletedTransactions,
-  GetRecentTransactions
+  GetRecentTransactions,
+  GetTransactionById
 } from '../../../src/commands/rest/transaction';
 import { SavingsTransactionType, SubTransactionType } from '../../../src/types/transaction';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
@@ -787,3 +788,217 @@ describe('GetRecentTransactions', () => {
   });
 });
 
+
+describe('GetTransactionById', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a GetTransactionById command with correct metadata', () => {
+    const command = GetTransactionById(12, 19, { associations: 'includeEnrichedData' });
+
+    expect(command.input).toEqual({
+      savingsAccountId: 12,
+      transactionId: 19,
+      params: { associations: 'includeEnrichedData' }
+    });
+    expect(command.metadata).toEqual({
+      commandName: 'GetTransactionById',
+      path: '/v1/savingsaccounts/12/transactions/19',
+      method: 'GET'
+    });
+  });
+
+  it('should execute GET request and return transaction details', async () => {
+    const mockResponse = {
+      id: 19,
+      transactionType: {
+        id: 2,
+        code: 'savingsAccountTransactionType.withdrawal',
+        value: 'Withdrawal',
+        withdrawal: true,
+        isDebit: true
+      },
+      accountId: 12,
+      accountNo: '000000012',
+      enrichedTransactionData: {
+        id: '3123244',
+        merchantName: 'Walmart',
+        merchantWebsite: 'walmart.com'
+      },
+      date: [2023, 7, 4],
+      dateTime: '2023-07-04 08:44:07',
+      currency: {
+        code: 'USD',
+        name: 'US Dollar',
+        decimalPlaces: 2,
+        inMultiplesOf: 0,
+        displaySymbol: '$',
+        nameCode: 'currency.USD',
+        displayLabel: 'US Dollar ($)'
+      },
+      paymentDetailData: {
+        id: 7,
+        paymentType: {
+          id: 1,
+          name: 'INTERNAL'
+        },
+        reference: 'Transfer to Rakesh Ranjan Behera'
+      },
+      amount: 0.1,
+      runningBalance: 10002.17,
+      reversed: false,
+      submittedOnDate: [2023, 7, 4],
+      interestedPostedAsOn: false,
+      bookingDate: [2023, 7, 4],
+      subTransactionType: 'NONE',
+      status: 'PROCESSED',
+      transferData: {
+        id: 4,
+        clientId: 12,
+        amount: 0.1,
+        currency: 'USD',
+        currencyData: {
+          code: 'USD',
+          name: 'US Dollar',
+          decimalPlaces: 2,
+          displaySymbol: '$',
+          nameCode: 'US Dollar'
+        },
+        correlationId: '0fae0009-4feb-4981-a07a-4cb8ff6f89de',
+        creditor: {
+          name: 'Rakesh Ranjan Behera',
+          country: 'US',
+          accountType: 'SAVINGS'
+        },
+        debtor: {
+          identifier: 'id:12',
+          name: 'Alexa Smart',
+          country: 'US',
+          accountType: 'SAVINGS'
+        },
+        createdAt: '2023-07-04 08:44:07',
+        executedAt: '2023-07-04 08:44:08',
+        externalId: '1688478247957GW',
+        reference: ['internal tran'],
+        status: 'EXECUTION_SUCCESS',
+        transactionId: '0fae0009-4feb-4981-a07a-4cb8ff6f89de',
+        type: 'CREDIT',
+        valueDate: '2023-07-04',
+        paymentType: 'INTERNAL',
+        debtorAccountNumber: '000000012',
+        debtorAccountId: 12,
+        statementDescription: 'Transfer to Rakesh Ranjan Behera',
+        stopFutureDebit: false
+      },
+      enrichedData: {
+        categories: [],
+        hasMatchingTransaction: false,
+        isRecurring: false,
+        isPotentialDuplicate: false
+      },
+      media: {}
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetTransactionById(12, 19, { associations: 'includeEnrichedData' });
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/12/transactions/19',
+      { params: { associations: 'includeEnrichedData' } }
+    );
+    expect(result).toEqual(mockResponse);
+    expect(result.transferData?.status).toBe('EXECUTION_SUCCESS');
+    expect(result.enrichedData?.isRecurring).toBe(false);
+  });
+
+  it('should work without params', async () => {
+    const mockResponse = {
+      id: 19,
+      transactionType: {
+        id: 2,
+        code: 'savingsAccountTransactionType.withdrawal',
+        value: 'Withdrawal'
+      },
+      date: [2023, 7, 4],
+      currency: {
+        code: 'USD',
+        name: 'US Dollar',
+        decimalPlaces: 2,
+        inMultiplesOf: 0,
+        displaySymbol: '$',
+        nameCode: 'currency.USD',
+        displayLabel: 'US Dollar ($)'
+      },
+      amount: 0.1,
+      runningBalance: 10002.17,
+      reversed: false,
+      submittedOnDate: [2023, 7, 4],
+      interestedPostedAsOn: false
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetTransactionById(12, 19);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/savingsaccounts/12/transactions/19',
+      { params: undefined }
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle axios errors', async () => {
+    const mockError: MockAxiosError = new Error('Request failed');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Transaction not found',
+        developerMessage: 'Transaction with ID 19 does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    const command = GetTransactionById(12, 19);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+});

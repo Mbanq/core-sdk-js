@@ -474,3 +474,74 @@ export const GetRecentTransactionsRequestSchema = z.object(GetRecentTransactions
 export type GetRecentTransactionsResponse = z.infer<typeof GetRecentTransactionsResponseSchema>;
 export type GetRecentTransactionsRequest = z.infer<typeof GetRecentTransactionsRequestSchema>;
 export type RecentTransaction = z.infer<typeof recentTransactionSchema>;
+
+// Get Transaction By Id Types
+const transferDataSchema = z.object({
+  id: z.number(),
+  clientId: z.number(),
+  amount: z.number(),
+  currency: z.string(),
+  currencyData: z.object({
+    code: z.string(),
+    name: z.string(),
+    decimalPlaces: z.number(),
+    displaySymbol: z.string(),
+    nameCode: z.string()
+  }),
+  correlationId: z.string(),
+  creditor: z.object({
+    name: z.string(),
+    country: z.string(),
+    accountType: z.string()
+  }),
+  debtor: z.object({
+    identifier: z.string().optional(),
+    name: z.string(),
+    city: z.string().optional(),
+    postalCode: z.string().optional(),
+    country: z.string(),
+    stateOrProvince: z.string().optional(),
+    address: z.array(z.string()).optional(),
+    accountType: z.string()
+  }),
+  createdAt: z.string(),
+  executedAt: z.string(),
+  externalId: z.string(),
+  reference: z.array(z.string()),
+  status: z.string(),
+  transactionId: z.string(),
+  type: z.string(),
+  valueDate: z.string(),
+  paymentType: z.string(),
+  debtorAccountNumber: z.string(),
+  debtorAccountId: z.number(),
+  inOrOut: z.string().optional(),
+  statementDescription: z.string(),
+  isManualAllocation: z.boolean().optional(),
+  stopFutureDebit: z.boolean()
+});
+
+const enrichedDataSchema = z.object({
+  categories: z.array(z.any()),
+  hasMatchingTransaction: z.boolean(),
+  isRecurring: z.boolean(),
+  isPotentialDuplicate: z.boolean()
+});
+
+const transactionByIdSchema = completedTransactionSchema.extend({
+  media: z.record(z.any()).optional(),
+  transferData: transferDataSchema.optional(),
+  enrichedData: enrichedDataSchema.optional()
+});
+
+export const GetTransactionByIdResponseSchema = transactionByIdSchema;
+
+export const GetTransactionByIdRequestShape = {
+  associations: z.string().optional()
+};
+
+export const GetTransactionByIdRequestSchema = z.object(GetTransactionByIdRequestShape);
+
+export type GetTransactionByIdResponse = z.infer<typeof GetTransactionByIdResponseSchema>;
+export type GetTransactionByIdRequest = z.infer<typeof GetTransactionByIdRequestSchema>;
+export type TransactionById = z.infer<typeof transactionByIdSchema>;

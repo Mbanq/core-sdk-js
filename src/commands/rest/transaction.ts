@@ -4,7 +4,9 @@ import {
   GetCompletedTransactionsRequest,
   GetCompletedTransactionsResponse,
   GetRecentTransactionsRequest,
-  GetRecentTransactionsResponse
+  GetRecentTransactionsResponse,
+  GetTransactionByIdRequest,
+  GetTransactionByIdResponse
 } from '../../types/transaction';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -216,6 +218,63 @@ export const GetRecentTransactions = (
       try {
         const response = await axiosInstance.get<GetRecentTransactionsResponse>(
           `/v1/savingsaccounts/${savingsId}/unifiedtransactions`,
+          { params }
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Retrieves the details of a specific account transaction.
+ *
+ * Use this API to retrieve the details of a specific account transaction.
+ * Provide the transaction Id as a parameter to access the transaction details.
+ *
+ * @param savingsAccountId - The associated account ID
+ * @param transactionId - The ID associated with the transaction (Example: 12)
+ * @param params - Optional query parameters
+ * @param params.associations - Specifies the type of associations to include in the response (Example: includeEnrichedData). Defaults to includeEnrichedData
+ *
+ * @returns A Command that when executed returns the transaction details
+ *
+ * @example
+ * ```typescript
+ * const getTransactionCmd = GetTransactionById(
+ *   12,
+ *   19,
+ *   { associations: "includeEnrichedData" }
+ * );
+ * const result = await getTransactionCmd.execute(config);
+ * console.log(result.transactionType.value); // "Withdrawal"
+ * console.log(result.amount); // 0.1
+ * console.log(result.transferData?.status); // "EXECUTION_SUCCESS"
+ * ```
+ */
+export const GetTransactionById = (
+  savingsAccountId: number,
+  transactionId: number,
+  params?: GetTransactionByIdRequest
+): Command<
+  { savingsAccountId: number; transactionId: number; params?: GetTransactionByIdRequest },
+  GetTransactionByIdResponse
+> => {
+  return {
+    input: { savingsAccountId, transactionId, params },
+    metadata: {
+      commandName: 'GetTransactionById',
+      path: `/v1/savingsaccounts/${savingsAccountId}/transactions/${transactionId}`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get<GetTransactionByIdResponse>(
+          `/v1/savingsaccounts/${savingsAccountId}/transactions/${transactionId}`,
           { params }
         );
         return response.data;
