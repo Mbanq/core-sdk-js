@@ -6,7 +6,9 @@ import {
   GetRecentTransactionsRequest,
   GetRecentTransactionsResponse,
   GetTransactionByIdRequest,
-  GetTransactionByIdResponse
+  GetTransactionByIdResponse,
+  GetBankDetailsFromRoutingCodeRequest,
+  GetBankDetailsFromRoutingCodeResponse
 } from '../../types/transaction';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -275,6 +277,62 @@ export const GetTransactionById = (
       try {
         const response = await axiosInstance.get<GetTransactionByIdResponse>(
           `/v1/savingsaccounts/${savingsAccountId}/transactions/${transactionId}`,
+          { params }
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Get the bank details from the routing code.
+ *
+ * Use this API to get the bank details from the routing code.
+ * Financial institutions often utilize distinct routing codes for ACH (Automated Clearing House) and wire transfers.
+ *
+ * We can use the Query param 'scheme' to differentiate between ACH and Wire transfers.
+ *
+ * @param routingNumber - Routing codes identify each financial institution with a unique ID (Example: 273976369). Pattern: \b\d{9}\b
+ * @param params - Optional query parameters
+ * @param params.scheme - Scheme used for retrieving the Bank Details. Supported values are "ACH" and "WIRE"
+ *
+ * @returns A Command that when executed returns the bank details
+ *
+ * @example
+ * ```typescript
+ * const getBankDetailsCmd = GetBankDetailsFromRoutingCode(
+ *   "273976369",
+ *   { scheme: "ACH" }
+ * );
+ * const result = await getBankDetailsCmd.execute(config);
+ * console.log(result.bankName); // "VERIDIAN CREDIT UNION"
+ * console.log(result.achLocation.city); // "WATERLOO"
+ * console.log(result.scheme); // "ACH"
+ * ```
+ */
+export const GetBankDetailsFromRoutingCode = (
+  routingNumber: string,
+  params?: GetBankDetailsFromRoutingCodeRequest
+): Command<
+  { routingNumber: string; params?: GetBankDetailsFromRoutingCodeRequest },
+  GetBankDetailsFromRoutingCodeResponse
+> => {
+  return {
+    input: { routingNumber, params },
+    metadata: {
+      commandName: 'GetBankDetailsFromRoutingCode',
+      path: `/v1/bankdetails/routing/${routingNumber}`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get<GetBankDetailsFromRoutingCodeResponse>(
+          `/v1/bankdetails/routing/${routingNumber}`,
           { params }
         );
         return response.data;

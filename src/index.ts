@@ -17,7 +17,7 @@ export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct }
 export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './commands/rest/clientAddress';
 export { SwitchClientClassification, GetClientClassification } from './commands/rest/clientClassification';
 export { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from './commands/rest/globalConfiguration';
-export { GetPendingTransactions, GetCompletedTransactions, GetRecentTransactions, GetTransactionById } from './commands/rest/transaction';
+export { GetPendingTransactions, GetCompletedTransactions, GetRecentTransactions, GetTransactionById, GetBankDetailsFromRoutingCode } from './commands/rest/transaction';
 
 export type {
   Config,

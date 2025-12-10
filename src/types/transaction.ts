@@ -545,3 +545,30 @@ export const GetTransactionByIdRequestSchema = z.object(GetTransactionByIdReques
 export type GetTransactionByIdResponse = z.infer<typeof GetTransactionByIdResponseSchema>;
 export type GetTransactionByIdRequest = z.infer<typeof GetTransactionByIdRequestSchema>;
 export type TransactionById = z.infer<typeof transactionByIdSchema>;
+
+// Get Bank Details from Routing Code Types
+const achLocationSchema = z.object({
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  postalCode: z.string(),
+  postalExtension: z.number()
+});
+
+const bankDetailsSchema = z.object({
+  bankName: z.string(),
+  achLocation: achLocationSchema,
+  scheme: z.string()
+});
+
+export const GetBankDetailsFromRoutingCodeResponseSchema = bankDetailsSchema;
+
+export const GetBankDetailsFromRoutingCodeRequestShape = {
+  scheme: z.string().optional()
+};
+
+export const GetBankDetailsFromRoutingCodeRequestSchema = z.object(GetBankDetailsFromRoutingCodeRequestShape);
+
+export type GetBankDetailsFromRoutingCodeResponse = z.infer<typeof GetBankDetailsFromRoutingCodeResponseSchema>;
+export type GetBankDetailsFromRoutingCodeRequest = z.infer<typeof GetBankDetailsFromRoutingCodeRequestSchema>;
+export type BankDetails = z.infer<typeof bankDetailsSchema>;

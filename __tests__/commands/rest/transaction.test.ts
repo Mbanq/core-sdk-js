@@ -3,7 +3,8 @@ import {
   GetPendingTransactions,
   GetCompletedTransactions,
   GetRecentTransactions,
-  GetTransactionById
+  GetTransactionById,
+  GetBankDetailsFromRoutingCode
 } from '../../../src/commands/rest/transaction';
 import { SavingsTransactionType, SubTransactionType } from '../../../src/types/transaction';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
@@ -994,6 +995,160 @@ describe('GetTransactionById', () => {
     mockAxiosInstance.get.mockRejectedValue(mockError);
 
     const command = GetTransactionById(12, 19);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+});
+
+describe('GetBankDetailsFromRoutingCode', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a GetBankDetailsFromRoutingCode command with correct metadata', () => {
+    const command = GetBankDetailsFromRoutingCode('273976369', { scheme: 'ACH' });
+
+    expect(command.input).toEqual({
+      routingNumber: '273976369',
+      params: { scheme: 'ACH' }
+    });
+    expect(command.metadata).toEqual({
+      commandName: 'GetBankDetailsFromRoutingCode',
+      path: '/v1/bankdetails/routing/273976369',
+      method: 'GET'
+    });
+  });
+
+  it('should execute GET request and return bank details', async () => {
+    const mockResponse = {
+      bankName: 'VERIDIAN CREDIT UNION',
+      achLocation: {
+        address: '1827 ANSBOROUGH',
+        city: 'WATERLOO',
+        state: 'IA',
+        postalCode: '50702',
+        postalExtension: 0
+      },
+      scheme: 'ACH'
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetBankDetailsFromRoutingCode('273976369', { scheme: 'ACH' });
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/bankdetails/routing/273976369',
+      { params: { scheme: 'ACH' } }
+    );
+    expect(result).toEqual(mockResponse);
+    expect(result.bankName).toBe('VERIDIAN CREDIT UNION');
+    expect(result.achLocation.city).toBe('WATERLOO');
+    expect(result.scheme).toBe('ACH');
+  });
+
+  it('should work with WIRE scheme', async () => {
+    const mockResponse = {
+      bankName: 'VERIDIAN CREDIT UNION',
+      achLocation: {
+        address: '1827 ANSBOROUGH',
+        city: 'WATERLOO',
+        state: 'IA',
+        postalCode: '50702',
+        postalExtension: 0
+      },
+      scheme: 'WIRE'
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetBankDetailsFromRoutingCode('273976369', { scheme: 'WIRE' });
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/bankdetails/routing/273976369',
+      { params: { scheme: 'WIRE' } }
+    );
+    expect(result.scheme).toBe('WIRE');
+  });
+
+  it('should work without params', async () => {
+    const mockResponse = {
+      bankName: 'VERIDIAN CREDIT UNION',
+      achLocation: {
+        address: '1827 ANSBOROUGH',
+        city: 'WATERLOO',
+        state: 'IA',
+        postalCode: '50702',
+        postalExtension: 0
+      },
+      scheme: 'ACH'
+    };
+
+    mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+    const command = GetBankDetailsFromRoutingCode('273976369');
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+      '/v1/bankdetails/routing/273976369',
+      { params: undefined }
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should handle axios errors', async () => {
+    const mockError: MockAxiosError = new Error('Request failed');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Routing number not found',
+        developerMessage: 'Routing number 273976369 does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    const command = GetBankDetailsFromRoutingCode('273976369');
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'

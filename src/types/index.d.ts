@@ -45,7 +45,10 @@ import {
   RecentTransaction,
   GetTransactionByIdResponse,
   GetTransactionByIdRequest,
-  TransactionById
+  TransactionById,
+  GetBankDetailsFromRoutingCodeResponse,
+  GetBankDetailsFromRoutingCodeRequest,
+  BankDetails
 } from './transaction';
 
 export {
@@ -118,5 +121,8 @@ export {
   RecentTransaction,
   GetTransactionByIdResponse,
   GetTransactionByIdRequest,
-  TransactionById
+  TransactionById,
+  GetBankDetailsFromRoutingCodeResponse,
+  GetBankDetailsFromRoutingCodeRequest,
+  BankDetails
 };
