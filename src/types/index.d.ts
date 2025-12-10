@@ -1,4 +1,4 @@
-import type { Config, Command, Middleware } from './config';
+import type { Config, Command, Middleware, RequestOptions } from './config';
 import type { Transfer } from './transfer';
 import type { DocumentNode } from 'graphql';
 import type { GetTransferInput, MarkAsReturnInput, ProcessOutput, CreateTransferInput, CreateTransferOutput } from './transfer';
@@ -41,6 +41,7 @@ import {
 
 export {
   Config,
+  RequestOptions,
   GetTransferInput,
   MarkAsReturnInput,
   ProcessOutput,

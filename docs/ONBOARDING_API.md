@@ -14,9 +14,9 @@ The Core SDK provides a comprehensive process for user onboarding. This document
 ### Creating a Client Instance
 
 ```typescript
-import { createClient } from 'core-sdk-js';
+import { createInstance } from 'core-sdk-js';
 
-const client = createClient({
+const client = createInstance({
   baseUrl: 'https://api.example.com',
   tenantId: 'your-tenant-id',
   secret: 'your-api-secret',
@@ -79,7 +79,7 @@ client.resetConfig();
 const tenantClient = client.tenant('specific-tenant-id');
 
 // All operations on tenantClient will use the specified tenant ID
-await tenantClient.onboarding.createClient(clientData);
+await tenantClient.onboarding.createInstance(clientData);
 ```
 
 ## Upload KYC Document
@@ -109,7 +109,7 @@ const data = {
   issuedDate: '8 February 2028'
 };
 
-const createCommand = client.onboarding.createClientIdentifier(data);
+const createCommand = client.onboarding.createInstanceIdentifier(data);
 const result = await createCommand.execute();
 ```
 
@@ -175,7 +175,7 @@ try {
 ### Custom Error Handling with Middleware
 
 ```typescript
-import { createClient } from 'core-sdk-js';
+import { createInstance } from 'core-sdk-js';
 
 const errorHandlingMiddleware = {
   onError: async (command, error) => {
@@ -184,7 +184,7 @@ const errorHandlingMiddleware = {
   }
 };
 
-const client = createClient({
+const client = createInstance({
   baseUrl: 'https://api.example.com',
   tenantId: 'your-tenant-id',
   secret: 'your-secret',

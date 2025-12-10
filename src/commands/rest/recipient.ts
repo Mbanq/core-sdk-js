@@ -1,25 +1,24 @@
+import { Recipient, RecipientRequest, Recipients, CreateRecipientRequest } from '../../types/recipient';
 import { ProcessOutput } from '../../types';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
-import { Recipient, RecipientRequest, Recipients, CreateRecipientRequest } from '../../types/recipient';
 
-export const GetRecipient = (params: { clientId: number, id: number, tenantId?: string }): Command<{ clientId: number, id: number; tenantId?: string }, Recipient> => {
+export const GetRecipient = (clientId: number, id: number): Command<{ clientId: number; id: number }, Recipient> => {
+  const path = `/v1/clients/${clientId}/recipients/${id}`;
+
   return {
-    input: params,
+    input: { clientId, id },
     metadata: {
       commandName: 'GetRecipient',
-      path: `/v1/clients/${params.clientId}/recipients/${params.id}`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<Recipient>(`/v1/clients/${params.clientId}/recipients/${params.id}`);
+        const response = await axiosInstance.get<Recipient>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -28,30 +27,27 @@ export const GetRecipient = (params: { clientId: number, id: number, tenantId?: 
   };
 };
 
-export const CreateRecipient = (params: {
+export const CreateRecipient = (
+  clientId: number,
+  recipient: CreateRecipientRequest
+): Command<{
   clientId: number;
   recipient: CreateRecipientRequest;
-  tenantId?: string;
-}): Command<{
-  clientId: number;
-  recipient: CreateRecipientRequest;
-  tenantId?: string;
 }, Recipient> => {
+  const path = `/v1/clients/${clientId}/recipients`;
+
   return {
-    input: params,
+    input: { clientId, recipient },
     metadata: {
       commandName: 'CreateRecipient',
-      path: `/v1/clients/${params.clientId}/recipients`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<Recipient>(`/v1/clients/${params.clientId}/recipients`, params.recipient);
+        const response = await axiosInstance.post<Recipient>(path, recipient);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -60,22 +56,21 @@ export const CreateRecipient = (params: {
   };
 };
 
-export const DeleteRecipient = (params: { clientId: number, recipientId: number, tenantId?: string }): Command<{ clientId: number, recipientId: number, tenantId?: string }, ProcessOutput> => {
+export const DeleteRecipient = (clientId: number, recipientId: number): Command<{ clientId: number; recipientId: number }, ProcessOutput> => {
+  const path = `/v1/clients/${clientId}/recipients/${recipientId}`;
+
   return {
-    input: params,
+    input: { clientId, recipientId },
     metadata: {
       commandName: 'DeleteRecipient',
-      path: `/v1/clients/${params.clientId}/recipients/${params.recipientId}`,
+      path,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.delete(`/v1/clients/${params.clientId}/recipients/${params.recipientId}`);
+        const response = await axiosInstance.delete(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -84,19 +79,17 @@ export const DeleteRecipient = (params: { clientId: number, recipientId: number,
   };
 };
 
-export const GetRecipients = (clientId: number, params: RecipientRequest, configuration: { tenantId?: string }): Command<{params: RecipientRequest, configuration: { tenantId?: string }}, Recipients> => {
+export const GetRecipients = (clientId: number, params: RecipientRequest): Command<{ clientId: number; params: RecipientRequest }, Recipients> => {
+  const path = `/v1/clients/${clientId}/recipients`;
+
   return {
-    input: { params, configuration },
+    input: { clientId, params },
     metadata: {
       commandName: 'GetRecipients',
-      path: `/v1/clients/${clientId}/recipients`,
+      path,
       method: 'GET'
     },
-
     execute: async (config: Config) => {
-      if (configuration.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       if (!params.limit || params.limit <= 0) {
@@ -108,7 +101,7 @@ export const GetRecipients = (clientId: number, params: RecipientRequest, config
       }
 
       try {
-        const response = await axiosInstance.get<Recipients>(`/v1/clients/${clientId}/recipients`, { params });
+        const response = await axiosInstance.get<Recipients>(path, { params });
         return response.data;
       } catch (error) {
         handleAxiosError(error);

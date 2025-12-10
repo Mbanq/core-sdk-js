@@ -22,11 +22,9 @@
   - [Metrics Middleware](#metrics-middleware)
   - [Custom Middleware](#custom-middleware)
 - [API Reference](#api-reference)
-  - [Client Operations](#client-operations)
+  - [Transfer Operations](#transfer-operations)
   - [Client Identifier Operations](#client-identifier-operations)
-  - [Account Operations](#account-operations)
-  - [Payment Operations](#payment-operations)
-  - [Multi-Tenant Support](#multi-tenant-support)
+  - [User Operations](#user-operations)
 - [Documentation](#documentation)
 - [Type Safety & Validation](#type-safety--validation)
 - [Error Handling](#error-handling)
@@ -43,9 +41,9 @@ npm install @mbanq/core-sdk-js
 ## Quick Start
 
 ```javascript
-import { createClient, CreatePayment, GetTransfers } from '@mbanq/core-sdk-js';
+import { createInstance, CreatePayment, GetTransfers } from '@mbanq/core-sdk-js';
 
-const client = createClient({
+const client = createInstance({
   secret: 'your-jwt-secret',
   signee: 'YOUR-SIGNEE',
   baseUrl: 'https://api.cloud.mbanq.com',
@@ -54,17 +52,33 @@ const client = createClient({
 
 // Create payment
 const payment = await client.request(CreatePayment({
-  payment: {
-    amount: 100.00,
-    currency: 'USD',
-    description: 'Payment for invoice #123'
+  amount: 100.00,
+  currency: 'USD',
+  paymentRail: 'ACH',
+  paymentType: 'CREDIT',
+  originator: { accountId: '123456789' },
+  recipient: {
+    name: 'Jane Smith',
+    accountNumber: '987654321',
+    accountType: 'SAVINGS',
+    recipientType: 'INDIVIDUAL',
+    address: {
+      line1: '789 Oak Ave',
+      city: 'Another Town',
+      stateCode: 'CA',
+      countryCode: 'US',
+      postalCode: '54321'
+    },
+    bankInformation: { routingNumber: '321070007' }
   }
 }));
 
 // Get transfers
 const transfers = await client.request(GetTransfers({
   transferStatus: 'EXECUTION_SCHEDULED',
-  tenantId: 'default'
+  executedAt: '2025-01-22',
+  paymentType: 'ACH',
+  queryLimit: 200
 }));
 ```
 
@@ -78,7 +92,7 @@ The SDK supports multiple authentication methods. Choose the one that fits your 
 Use your API secret and signee for JWT-based authentication:
 
 ```javascript
-const client = createClient({
+const client = createInstance({
   secret: 'your-jwt-secret',
   signee: 'YOUR-SIGNEE', 
   baseUrl: 'https://api.cloud.mbanq.com',
@@ -91,14 +105,14 @@ If you already have a valid access token:
 
 ```javascript
 // With "Bearer " prefix (recommended)
-const client = createClient({
+const client = createInstance({
   bearerToken: 'Bearer your-access-token',
   baseUrl: 'https://api.cloud.mbanq.com', 
   tenantId: 'your-tenant-id'
 });
 
 // Without "Bearer " prefix (automatically added)
-const client = createClient({
+const client = createInstance({
   bearerToken: 'your-access-token', // "Bearer " will be added automatically
   baseUrl: 'https://api.cloud.mbanq.com', 
   tenantId: 'your-tenant-id'
@@ -109,7 +123,7 @@ const client = createClient({
 For OAuth 2.0 password grant flow:
 
 ```javascript
-const client = createClient({
+const client = createInstance({
   credential: {
     client_id: 'your-client-id',
     client_secret: 'your-client-secret',
@@ -130,7 +144,7 @@ When multiple authentication methods are provided, the SDK uses them in this ord
 
 #### Additional Configuration Options
 ```javascript
-const client = createClient({
+const client = createInstance({
   // Choose one authentication method from above
   secret: 'your-jwt-secret',
   signee: 'YOUR-SIGNEE',
@@ -161,7 +175,7 @@ const client = createClient({
 
 #### Environment Variables Example
 ```javascript
-const client = createClient({
+const client = createInstance({
   secret: process.env.MBANQ_API_SECRET,
   signee: process.env.MBANQ_API_SIGNEE,
   baseUrl: process.env.MBANQ_API_URL,
@@ -197,7 +211,7 @@ const axiosLogger = (axiosInstance) => {
   );
 };
 
-const coreSDK = createClient({
+const coreSDK = createInstance({
   secret: 'testing123',
   signee: 'TESTING',
   baseUrl: 'https://example.com',
@@ -217,11 +231,11 @@ The SDK supports middleware for cross-cutting concerns like logging and metrics.
 Logs command execution details including inputs, outputs, and errors.
 
 ```javascript
-import { createClient, createLoggingMiddleware } from '@mbanq/core-sdk-js';
+import { createInstance, createLoggingMiddleware } from '@mbanq/core-sdk-js';
 
 const loggingMiddleware = createLoggingMiddleware(console); // or custom logger
 
-const client = createClient({
+const client = createInstance({
   secret: 'testing123',
   signee: 'TESTING',
   baseUrl: 'https://example.com',
@@ -255,7 +269,7 @@ const middleware = createLoggingMiddleware(customLogger);
 Tracks command execution metrics including counters for started, completed, and error events.
 
 ```javascript
-import { createClient, createMetricsMiddleware } from '@mbanq/core-sdk-js';
+import { createInstance, createMetricsMiddleware } from '@mbanq/core-sdk-js';
 
 // Your metrics client must implement the MetricsClient interface
 const metricsClient = {
@@ -271,7 +285,7 @@ const metricsClient = {
 
 const metricsMiddleware = createMetricsMiddleware(metricsClient);
 
-const client = createClient({
+const client = createInstance({
   secret: 'testing123',
   signee: 'TESTING',
   baseUrl: 'https://example.com',
@@ -290,7 +304,7 @@ interface MetricsClient {
 
 #### Using Multiple Middleware
 ```javascript
-const client = createClient({
+const client = createInstance({
   // ... other config
   middlewares: [
     createLoggingMiddleware(console),
@@ -318,7 +332,7 @@ const customMiddleware = {
   }
 };
 
-const client = createClient({
+const client = createInstance({
   // ... other config
   middlewares: [customMiddleware]
 });
@@ -326,473 +340,182 @@ const client = createClient({
 
 ## API Reference
 
-The SDK provides two API patterns for different operations:
-
-### Modern Fluent API (Recommended)
-For payment, client, and account operations, use the modern fluent API with method chaining:
-
-```javascript
-// Create payment
-const payment = await apiClient.payment.create(paymentData).execute();
-
-// Get payment
-const payment = await apiClient.payment.get('payment-456').execute();
-
-// List with filters
-const payments = await apiClient.payment.list()
-  .where('status').eq('DRAFT')
-  .where('paymentRail').eq('ACH')
-  .execute();
-```
-
-### Command Pattern (Legacy Support)
-For transfer operations, the SDK also supports the traditional command pattern:
-
-```javascript
-// Get transfers with filters
-const getTransfersCommand = GetTransfers({
-  transferStatus: 'EXECUTION_SCHEDULED',
-  executedAt: '2025-01-22',
-  paymentType: 'ACH',
-  queryLimit: 200,
-  tenantId: 'default'
-});
-const transfers = await coreSDK.request(getTransfersCommand);
-
-// Create a new transfer
-const createTransferCommand = CreateTransfer({
-  amount: 1000,
-  currency: 'USD',
-  paymentRail: 'ACH',
-  paymentType: 'CREDIT',
-  debtor: {
-    name: 'Sender Name',
-    identifier: '123456789',
-    agent: { name: 'Bank Name', identifier: '021000021' }
-  },
-  creditor: {
-    name: 'Recipient Name',
-    identifier: '987654321',
-    agent: { name: 'Recipient Bank', identifier: '121000248' }
-  },
-  tenantId: 'default'
-});
-const newTransfer = await coreSDK.request(createTransferCommand);
-
-// Get specific transfer by ID
-const getTransferCommand = GetTransfer({
-  transferId: 'transfer-123',
-  tenantId: 'default'
-});
-const transfer = await coreSDK.request(getTransferCommand);
-
-// Mark transfer as successful
-const markSuccessCommand = MarkAsSuccess({
-  transferId: 'transfer-123',
-  tenantId: 'default'
-});
-await coreSDK.request(markSuccessCommand);
-
-// Mark transfer as processing
-const markProcessingCommand = MarkAsProcessing({
-  transferId: 'transfer-123',
-  tenantId: 'default'
-});
-await coreSDK.request(markProcessingCommand);
-
-// Mark transfer as returned
-const markReturnedCommand = MarkAsReturned({
-  transferId: 'transfer-123',
-  returnCode: 'R01',
-  returnReason: 'Insufficient funds',
-  tenantId: 'default'
-});
-await coreSDK.request(markReturnedCommand);
-
-// Log failed transfer
-const logFailCommand = LogFailTransfer({
-  transferId: 'transfer-123',
-  errorCode: 'E001',
-  errorMessage: 'Processing error',
-  tenantId: 'default'
-});
-await coreSDK.request(logFailCommand);
-
-// Mark transfer as failed
-const markFailCommand = MarkAsFail({
-  transferId: 'transfer-123',
-  failureReason: 'Bank rejected',
-  tenantId: 'default'
-});
-await coreSDK.request(markFailCommand);
-
-// Update trace number
-const updateTraceCommand = UpdateTraceNumber({
-  transferId: 'transfer-123',
-  traceNumber: 'TRC123456789',
-  tenantId: 'default'
-});
-await coreSDK.request(updateTraceCommand);
-```
-
-Available transfer commands: `GetTransfers`, `CreateTransfer`, `GetTransfer`, `MarkAsSuccess`, `MarkAsProcessing`, `MarkAsReturned`, `LogFailTransfer`, `MarkAsFail`, `UpdateTraceNumber`
-
-### Client Operations
-
-The SDK provides comprehensive client management capabilities with full CRUD operations and advanced filtering. For complete documentation, see [Client API Documentation](./docs/CLIENT_API.md).
-
-```javascript
-// Create a new client
-const client = await apiClient.client.create({
-  firstname: 'John',
-  lastname: 'Doe',
-  emailAddress: 'john.doe@example.com',
-  dateOfBirth: '1990-01-01',
-  locale: 'en'
-}).execute();
-
-// Get client details
-const clientDetails = await apiClient.client.get(123).execute();
-
-// List clients with filtering
-const clients = await apiClient.client.list()
-  .where('status').eq('active')
-  .limit(10)
-  .execute();
-
-// Update client information
-const updatedClient = await apiClient.client.update(123, {
-  emailAddress: 'john.updated@example.com'
-}).execute();
-```
-
-### Client Identifier Operations
-
-Manage client identity documents (KYC documents) such as passports, driver licenses, and other identification documents. The SDK provides full CRUD operations for client identifiers with support for document masking and field filtering.
-
-```javascript
-import { 
-  ListClientDocument, 
-  CreateClientIdentifier, 
-  UpdateClientIdentifier,
-  GetPermittedDocumentTypes,
-  DeleteClientDocument,
-  ApproveRejectClientDocument
-} from '@mbanq/core-sdk-js';
-
-// List all client identifiers (documents)
-const listCommand = ListClientDocument({ clientId: 15 });
-const identifiers = await client.request(listCommand);
-
-// List with unmasked document values
-const unmaskedCommand = ListClientDocument({ 
-  clientId: 15, 
-  unmaskValue: true 
-});
-const unmaskedIdentifiers = await client.request(unmaskedCommand);
-
-// List with specific fields only
-const fieldsCommand = ListClientDocument({ 
-  clientId: 15,
-  fields: 'documentKey,documentType,status'
-});
-const filteredIdentifiers = await client.request(fieldsCommand);
-
-// Get permitted document types for a client
-const typesCommand = GetPermittedDocumentTypes({ clientId: 15 });
-const documentTypes = await client.request(typesCommand);
-
-// Create a new client identifier
-const createCommand = CreateClientIdentifier({
-  clientId: 15,
-  input: {
-    documentTypeId: '1',
-    documentKey: 'ABC123456',
-    status: 'ACTIVE',
-    description: 'Valid passport',
-    issuedBy: 'Government',
-    locale: 'en_US',
-    dateFormat: 'yyyy-MM-dd',
-    expiryDate: '2030-12-31',
-    nationality: 1,
-    issuedDate: '2020-01-01'
-  }
-});
-const newIdentifier = await client.request(createCommand);
-
-// Update an existing client identifier
-const updateCommand = UpdateClientIdentifier({
-  clientId: 15,
-  identifierId: 'id123',
-  updates: {
-    documentTypeId: '1',
-    documentKey: 'XYZ789456',
-    status: 'ACTIVE',
-    description: 'Updated passport'
-  }
-});
-const updatedIdentifier = await client.request(updateCommand);
-
-// Delete a client identifier
-const deleteCommand = DeleteClientDocument({
-  clientId: 15,
-  identifierId: 15
-});
-const deleteResult = await client.request(deleteCommand);
-// Returns: { officeId: 1, clientId: 15, resourceId: 22411 }
-
-// Approve a client identifier document
-const approveCommand = ApproveRejectClientDocument({
-  clientId: 15,
-  identifierId: 10,
-  command: 'approve'
-});
-const approveResult = await client.request(approveCommand);
-// Returns: { clientId: 15, resourceId: 1 }
-
-// Reject a client identifier document
-const rejectCommand = ApproveRejectClientDocument({
-  clientId: 15,
-  identifierId: 10,
-  command: 'reject'
-});
-const rejectResult = await client.request(rejectCommand);
-// Returns: { clientId: 15, resourceId: 1 }
-```
-
-**Available Commands:** `ListClientDocument`, `GetPermittedDocumentTypes`, `CreateClientIdentifier`, `UpdateClientIdentifier`, `DeleteClientDocument`, `ApproveRejectClientDocument`
-
-**Query Parameters:**
-- `unmaskValue` - Set to `true` to return full document reference (unmasked)
-- `fields` - Comma-separated list of fields to include in response
-
-### User Operations
-
-Manage user access and permissions.
-
-```javascript
-import { EnableSelfServiceAccess, UpdateSelfServiceUser, DeleteSelfServiceUser } from '@mbanq/core-sdk-js';
-
-// Enable self-service access for a user
-const enableAccessCommand = EnableSelfServiceAccess({
-  username: 'testUserName',
-  firstname: 'testFirstName',
-  lastname: 'testLastName',
-  officeId: 1,
-  roles: [1],
-  isSelfServiceUser: true,
-  sendPasswordToEmail: false,
-  email: 'test@gmail.com',
-  password: 'user1234',
-  repeatPassword: 'user1234',
-  enabled: true,
-  clients: [1]
-});
-
-const result = await client.request(enableAccessCommand);
-
-// Update self-service user
-const updateUserCommand = UpdateSelfServiceUser({
-  userId: 123,
-  username: 'updatedUserName',
-  firstname: 'updatedFirstName',
-  lastname: 'updatedLastName',
-  officeId: 1,
-  roles: [1, 2],
-  isSelfServiceUser: true,
-  sendPasswordToEmail: true,
-  email: 'updated@gmail.com',
-  password: 'newPass1234',
-  repeatPassword: 'newPass1234',
-  enabled: true,
-  clients: [1, 2]
-});
-
-const updateResult = await client.request(updateUserCommand);
-
-// Delete self-service user
-const deleteUserCommand = DeleteSelfServiceUser(123, { tenantId: 'default' });
-const deleteResult = await client.request(deleteUserCommand);
-// Returns: { officeId: 1, clientId: 1, resourceId: 123 }
-```
-
-**Available Commands:** `EnableSelfServiceAccess`, `UpdateSelfServiceUser`, `DeleteSelfServiceUser`, `GetUserDetail`
-
-
-
-### Account Operations
-
-Manage client accounts using the scoped account API with comprehensive CRUD operations and advanced query capabilities. For complete documentation, see [Account API Documentation](./docs/ACCOUNT_API.md).
-
-```javascript
-// List all accounts for a client
-const accounts = await apiClient.client.for('client-123').accounts.list().execute();
-
-// Get specific account details
-const account = await apiClient.client.for('client-123').accounts.get(789).execute();
-
-// Filter accounts by criteria
-const savingsAccounts = await apiClient.client.for('client-123').accounts.list()
-  .where('productName').eq('Savings Account')
-  .execute();
-
-// Update account settings
-const updateResult = await apiClient.client.for('client-123').accounts.update('acc_789', {
-  nominalAnnualInterestRate: '2.5',
-  allowOverdraft: true,
-  overdraftLimit: 1000
-}).execute();
-
-// Delete account
-const deleteResult = await apiClient.client.for('client-123').accounts.delete('acc_789').execute();
-```
-
-
-### Payment Operations
-
-The SDK provides comprehensive payment operations with support for multiple payment rails, advanced filtering, and full validation. For complete documentation, see [Payment API Documentation](./docs/PAYMENT_API.md).
-
-```javascript
-// Create payment
-const payment = await client.for('tenant-123').payment.create({
-  originatorName: "John Doe",
-  originatorAccount: "123456789",
-  originatorBankRoutingCode: "021000021",
-  recipientName: "Jane Smith",
-  recipientAccount: "987654321",
-  recipientBankRoutingCode: "021000021",
-  amount: 1000.50,
-  currency: "USD",
-  paymentRail: "ACH",
-  paymentType: "CREDIT",
-  reference: "Invoice #12345"
-});
-
-// Get payment
-const payment = await client.for('tenant-123').payment.get(12345);
-
-// Update payment
-const updated = await client.for('tenant-123').payment.update(12345, {
-  reference: "Updated reference"
-});
-
-// Delete payment
-await client.for('tenant-123').payment.delete(12345);
-
-// List payments with filtering
-const payments = await client.for('tenant-123').payments.list()
-  .where('status', 'EXECUTION_SUCCESS')
-  .where('paymentRail', 'ACH')
-  .execute();
-```
-
-**Supported Payment Rails:** ACH, SAMEDAYACH, WIRE, SWIFT, INTERNAL, FXPAY, CARD
-
-**Available Payment Commands:** `CreatePayment`, `GetPayment`, `UpdatePayment`, `DeletePayment`, `ListPayments`, `GetPayments`
-
-### Multi-Tenant Support
-
-The SDK supports multi-tenant operations through the `.for()` method, allowing you to specify tenant context for operations.
-
-#### Tenant-Specific Operations
-
-All operations can be scoped to a specific tenant:
-
-```javascript
-// Initialize client
-const client = createClient({
-  baseURL: 'https://api.mbanq.com',
-  apiKey: 'your-api-key'
-});
-
-// Payment operations for specific tenant
-const payment = await client.for('tenant-123').payment.create(paymentData);
-const payments = await client.for('tenant-123').payments.list().execute();
-const payment = await client.for('tenant-123').payment.get(12345);
-const updated = await client.for('tenant-123').payment.update(12345, updateData);
-await client.for('tenant-123').payment.delete(12345);
-
-// Account operations for specific tenant
-const account = await client.for('tenant-123').accounts.get(98765);
-const accounts = await client.for('tenant-123').accounts.list().execute();
-const updated = await client.for('tenant-123').accounts.update(98765, accountData);
-await client.for('tenant-123').accounts.delete(98765);
-
-// Query with filters for specific tenant
-const filteredPayments = await client.for('tenant-123').payments.list()
-  .where('status', 'EXECUTION_SUCCESS')
-  .where('paymentRail', 'ACH')
-  .execute();
-```
-
-#### Default Tenant Configuration
-
-You can also configure a default tenant in the client configuration:
-
-```javascript
-const client = createClient({
-  baseURL: 'https://api.mbanq.com',
-  apiKey: 'your-api-key',
-  tenantId: 'default-tenant-123' // Optional default tenant
-});
-
-// Operations will use default tenant if no .for() is specified
-const payment = await client.payment.create(paymentData); // Uses default-tenant-123
-
-// Override default tenant for specific operations
-const payment = await client.for('other-tenant-456').payment.create(paymentData);
-```
-
-#### Tenant Context Best Practices
-
-```javascript
-// Good: Always specify tenant context
-const processPayments = async (tenantId: string) => {
-  const payments = await client.for(tenantId).payments.list()
-    .where('status', 'DRAFT')
-    .execute();
-    
-  for (const payment of payments) {
-    await client.for(tenantId).payment.update(payment.id, {
-      status: 'EXECUTION_SCHEDULED'
-    });
-  }
-};
-
-// Good: Consistent tenant usage across operations
-const transferFunds = async (tenantId: string, fromAccount: number, toAccount: number, amount: number) => {
-  const clientContext = client.for(tenantId);
-  
-  const fromAcc = await clientContext.accounts.get(fromAccount);
-  const toAcc = await clientContext.accounts.get(toAccount);
-  
-  const payment = await clientContext.payment.create({
-    originatorAccount: fromAcc.accountNumber,
-    recipientAccount: toAcc.accountNumber,
-    amount: amount,
-    // ... other payment data
-  });
-  
-  return payment;
-};
-```
+The SDK uses a Command Pattern for all operations. Commands are created using factory functions and executed via the client's `request()` method. Each command function includes detailed JSDoc documentation describing its parameters, return types, and usage.
+
+### Available Commands
+
+#### Account Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetAccount` | Retrieve detailed information about a specific savings account |
+| `UpdateAccount` | Update account settings and configurations |
+| `DeleteAccount` | Delete a savings account |
+| `GetAccountsOfClient` | Get all accounts associated with a specific client |
+| `CreateAndActivateAccount` | Create and immediately activate a new savings account |
+| `ActivateAccount` | Activate an existing account |
+| `ApproveAccount` | Approve a pending account |
+| `RejectAccount` | Reject a pending account |
+| `UndoApprovalAccount` | Undo approval of an account |
+| `CloseAccount` | Close an existing account |
+| `PostInterestAsOn` | Post interest to an account as of a specific date |
+| `CalculateInterestAsOn` | Calculate interest for an account as of a specific date |
+| `WithdrawByClientId` | Process a withdrawal for a client's account |
+| `DepositByClientId` | Process a deposit to a client's account |
+
+#### Account Product Operations
+
+| Command | Description |
+|---------|-------------|
+| `CreateAccountProduct` | Create a new account product configuration |
+| `UpdateAccountProduct` | Update an existing account product |
+| `GetAllAccountProducts` | Retrieve all available account products |
+| `GetAccountProductById` | Get details of a specific account product |
+
+#### Account Statement Operations
+
+| Command | Description |
+|---------|-------------|
+| `GenerateAccountStatement` | Generate a statement for an account |
+| `DownloadAccountStatement` | Download a generated account statement |
+| `GetAccountDocumentsDetails` | Get details of account documents |
+
+#### Card Operations
+
+| Command | Description |
+|---------|-------------|
+| `SendAuthorizationToCore` | Send card authorization request to core system |
+| `UpdateCardID` | Update card identification information |
+
+#### Card Product Operations
+
+| Command | Description |
+|---------|-------------|
+| `ListCardProduct` | List all available card products with pagination |
+| `GetCardProduct` | Get details of a specific card product by ID |
+| `CreateCardProduct` | Create a new card product configuration |
+| `UpdateCardProduct` | Update an existing card product |
+
+#### Client Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetClient` | Retrieve detailed client information with optional related data |
+| `UpdateClient` | Update client information |
+| `CreateClient` | Create a new client record |
+| `GetClients` | List clients with filtering and pagination |
+| `DeleteClient` | Delete a client record |
+| `VerifyWithActivateClients` | Verify and optionally activate a client |
+| `GetStatusOfVerifyClient` | Get verification status of a client |
+| `CloseClient` | Close a client account |
+
+#### Client Address Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetClientAddress` | Retrieve client address information |
+| `CreateClientAddress` | Add a new address for a client |
+| `UpdateClientAddress` | Update existing client address |
+| `SetClientAddressStatus` | Set the status of a client address |
+
+#### Client Classification Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetClientClassification` | Get current classification of a client |
+| `SwitchClientClassification` | Switch client to a different classification |
+| `CancelSwitchClientClassification` | Cancel a pending classification switch |
+
+#### Client Identifier Operations
+
+| Command | Description |
+|---------|-------------|
+| `ListClientDocument` | List all identity documents for a client |
+| `GetPermittedDocumentTypes` | Get allowed document types for a client |
+| `CreateClientIdentifier` | Create a new identity document for a client |
+| `UpdateClientIdentifier` | Update an existing identity document |
+| `DeleteClientDocument` | Delete a client identity document |
+| `ApproveRejectClientDocument` | Approve or reject a client document |
+| `UploadClientIdentifierDocument` | Upload a document file for client identifier |
+
+#### Custom Operations
+
+| Command | Description |
+|---------|-------------|
+| `CustomUpdate` | Execute a custom update operation |
+| `CustomCreate` | Execute a custom create operation |
+| `CustomGet` | Execute a custom get operation |
+
+#### Global Configuration Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetConfigurations` | Retrieve all system configurations |
+| `GetConfigurationByName` | Get a specific configuration by name |
+| `EnableDisableConfiguration` | Enable or disable a configuration |
+| `UpdateConfiguration` | Update a configuration value |
+
+#### Payment Operations
+
+| Command | Description |
+|---------|-------------|
+| `CreatePayment` | Create a new payment |
+| `GetPayment` | Retrieve payment details by ID |
+| `UpdatePayment` | Update an existing payment |
+| `DeletePayment` | Delete a payment |
+| `GetPayments` | List payments with filtering options |
+
+#### Recipient Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetRecipient` | Get details of a specific recipient |
+| `CreateRecipient` | Create a new payment recipient |
+| `DeleteRecipient` | Delete a recipient |
+| `GetRecipients` | List all recipients for a client |
+
+#### Transaction Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetPendingTransactions` | Query pending transactions with filters |
+| `GetCompletedTransactions` | Query completed transactions with filters |
+
+#### Transfer Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetTransfers` | List transfers with filtering options |
+| `CreateTransfer` | Create a new money transfer |
+| `GetTransfer` | Retrieve transfer details by ID |
+| `MarkAsSuccess` | Mark a transfer as successfully completed |
+| `MarkAsProcessing` | Mark a transfer as currently processing |
+| `MarkAsReturned` | Mark a transfer as returned with reason |
+| `LogFailTransfer` | Log a failed transfer with error details |
+| `MarkAsFail` | Mark a transfer as failed |
+| `UpdateTraceNumber` | Update the trace number for a transfer |
+
+#### User Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetUserDetail` | Get current user details |
+| `EnableSelfServiceAccess` | Enable self-service access for a user |
+| `UpdateSelfServiceUser` | Update self-service user information |
+| `DeleteSelfServiceUser` | Delete a self-service user |
 
 ## Documentation
 
-For detailed information about specific features and APIs, refer to the dedicated documentation:
+For detailed information about specific features and APIs, refer to the following resources:
 
 ### API Documentation
-- **[Client API Documentation](./docs/CLIENT_API.md)** - Comprehensive guide to client configuration, initialization, and usage patterns
-- **[Account API Documentation](./docs/ACCOUNT_API.md)** - Complete reference for account operations, query building, and data types
-- **[Payment API Documentation](./docs/PAYMENT_API.md)** - Complete reference for payment operations, filtering, and payment rails
+- **[Mbanq API Reference](https://apidocs.cloud.mbanq.com/reference)** - Official API documentation with detailed endpoint information, request/response schemas, and examples
 
 ### Quick Links
-- [Client Configuration Options](./docs/CLIENT_API.md#configuration-options) - Environment settings, authentication, and middleware
-- [Account Operations](./docs/ACCOUNT_API.md#account-operations) - Get, list, update, and delete account operations
-- [Payment Operations](./docs/PAYMENT_API.md#payment-operations) - Create, get, update, delete, and query payments
-- [Payment Filtering](./docs/PAYMENT_API.md#payment-filter-system) - Advanced payment search and filtering
-- [Error Handling Patterns](./docs/CLIENT_API.md#error-handling) - Error types and handling strategies
-- [Type Definitions](./docs/ACCOUNT_API.md#data-types-and-schemas) - Complete schema and type reference
+- [Authentication Options](#authentication-options) - JWT, Bearer Token, and OAuth configuration
+- [Middleware Configuration](#middleware) - Logging, metrics, and custom middleware
+- [Error Handling Patterns](#error-handling) - Error types and handling strategies
+- [Type Definitions](#type-safety--validation) - Complete schema and type reference
 
 ## Type Safety & Validation
 
@@ -839,21 +562,21 @@ The library uses a consistent error handling pattern. All API calls may throw th
 
 ## Examples
 
-### Complete Payment Flow Example
+### Complete Transfer Flow Example
 
 ```javascript
-import { createClient } from '@mbanq/core-sdk-js';
+import { createInstance, CreateTransfer, GetTransfer, MarkAsSuccess } from '@mbanq/core-sdk-js';
 
 // Initialize the client
-const apiClient = createClient({ 
+const client = createInstance({ 
   secret: 'your-secret', 
   signee: 'YOUR-SIGNEE', 
   baseUrl: 'https://api.cloud.mbanq.com', 
   tenantId: 'your-tenant-id' 
 });
 
-// Create an ACH payment
-const achPayment = await apiClient.payment.create({
+// Create an ACH transfer
+const achTransfer = await client.request(CreateTransfer({
   amount: 1500,
   currency: 'USD',
   paymentRail: 'ACH',
@@ -876,94 +599,36 @@ const achPayment = await apiClient.payment.create({
       identifier: '121000248'
     }
   },
-  clientId: 'client-abc123',
   reference: ['Invoice-2025-001']
-}).execute();
+}));
 
-console.log('Created payment:', achPayment.id);
+console.log('Created transfer:', achTransfer.id);
 
-// Create an international WIRE payment
-const wirePayment = await apiClient.payment.create({
-  amount: 5000,
-  currency: 'USD',
-  paymentRail: 'SWIFT',
-  paymentType: 'CREDIT',
-  debtor: {
-    name: 'US Company',
-    identifier: '123456789',
-    agent: {
-      name: 'Chase Bank',
-      identifier: 'CHASUS33XXX'
-    }
-  },
-  creditor: {
-    name: 'European Partner',
-    identifier: '987654321',
-    address: {
-      streetAddress: '123 Business Ave',
-      city: 'London', 
-      state: 'England',
-      country: 'GB',
-      postalCode: 'SW1A 1AA'
-    },
-    agent: {
-      name: 'HSBC Bank',
-      identifier: 'HBUKGB4BXXX'
-    }
-  },
-  chargeBearer: 'OUR',
-  reference: ['Contract-2025-002'],
-  exchangeRate: 0.85
-}).execute();
+// Get transfer details
+const transfer = await client.request(GetTransfer(achTransfer.id));
+console.log('Transfer status:', transfer.status);
 
-// Retrieve and monitor payments
-const payment = await apiClient.payment.get(achPayment.id).execute();
-console.log('Payment status:', payment.status);
-
-// Update payment if needed
-if (payment.status === 'DRAFT') {
-  await apiClient.payment.update(payment.id, {
-    status: 'EXECUTION_SCHEDULED',
-    reference: ['Updated-Reference']
-  });
+// Mark transfer as successful
+if (transfer.status === 'EXECUTION_PROCESSING') {
+  await client.request(MarkAsSuccess(transfer.externalId, 'ACH'));
+  console.log('Transfer marked as successful');
 }
-
-// List recent payments with filters
-const recentPayments = await apiClient.payment.list()
-  .where('status').eq('EXECUTION_SCHEDULED')
-  .where('paymentRail').eq('ACH')
-  .where('fromExecuteDate').eq('2025-01-01')
-  .where('toExecuteDate').eq('2025-01-31')
-  .limit(25)
-  .execute();
-
-console.log(`Found ${recentPayments.length} scheduled ACH payments`);
-
-// Multi-tenant example
-const tenantPayment = await apiClient.tenant('different-tenant').payment.create({
-  amount: 750,
-  currency: 'USD',
-  paymentRail: 'INTERNAL',
-  paymentType: 'CREDIT',
-  debtor: { name: 'Internal Sender', identifier: '111111' },
-  creditor: { name: 'Internal Receiver', identifier: '222222' }
-}).execute();
 ```
 
 ### Error Handling Example
 
 ```javascript
-import { isCommandError } from '@mbanq/core-sdk-js';
+import { isCommandError, CreateTransfer } from '@mbanq/core-sdk-js';
 
 try {
-  const payment = await apiClient.payment.create({
+  const transfer = await client.request(CreateTransfer({
     amount: -100, // Invalid: negative amount
     currency: 'INVALID', // Invalid: not 3-character code
     // Missing required fields
-  }).execute();
+  }));
 } catch (error) {
   if (isCommandError(error)) {
-    console.error('Payment creation failed:');
+    console.error('Transfer creation failed:');
     console.error('Code:', error.code);
     console.error('Message:', error.message);
     if (error.requestId) {

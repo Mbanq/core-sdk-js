@@ -57,8 +57,7 @@ describe('GlobalConfiguration Commands', () => {
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = { tenantId: 'z01j3e71zd6zkq90' };
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledTimes(1);
@@ -97,8 +96,7 @@ describe('GlobalConfiguration Commands', () => {
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/configurations');
@@ -108,19 +106,9 @@ describe('GlobalConfiguration Commands', () => {
     });
 
     it('should use custom tenantId when provided', async () => {
-      const mockResponse = {
-        data: {
-          globalConfiguration: []
-        }
-      };
-      mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-      const params = { tenantId: 'custom-tenant' };
-      const command = GetConfigurations(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-      await command.execute(mockConfig);
-
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      // This test is no longer applicable since tenantId is not passed via configuration parameter
+      // tenantId should be set at the client level via createInstance or updateConfig
+      expect(true).toBe(true);
     });
 
     it('should handle empty configuration list', async () => {
@@ -131,8 +119,7 @@ describe('GlobalConfiguration Commands', () => {
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
       const result = await command.execute(mockConfig);
 
       expect(result).toBeDefined();
@@ -170,8 +157,7 @@ describe('GlobalConfiguration Commands', () => {
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
       const result = await command.execute(mockConfig);
 
       expect(result!.globalConfiguration).toHaveLength(3);
@@ -184,8 +170,7 @@ describe('GlobalConfiguration Commands', () => {
       const mockError = new Error('Failed to fetch configurations');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Failed to fetch configurations');
     });
@@ -194,8 +179,7 @@ describe('GlobalConfiguration Commands', () => {
       const mockError = new Error('Network error');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const params = { tenantId: 'test-tenant' };
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Network error');
     });
@@ -204,15 +188,13 @@ describe('GlobalConfiguration Commands', () => {
       const mockError = new Error('Unauthorized');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Unauthorized');
     });
 
     it('should have correct metadata', () => {
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
 
       expect(command.metadata.commandName).toBe('GetConfigurations');
       expect(command.metadata.path).toBe('/v1/configurations');
@@ -220,15 +202,13 @@ describe('GlobalConfiguration Commands', () => {
     });
 
     it('should have correct input parameters', () => {
-      const params = { tenantId: 'test-tenant' };
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
 
-      expect(command.input).toEqual({ tenantId: 'test-tenant' });
+      expect(command.input).toEqual({});
     });
 
     it('should have correct input parameters when tenantId is not provided', () => {
-      const params = {};
-      const command = GetConfigurations(params);
+      const command = GetConfigurations();
 
       expect(command.input).toEqual({});
     });
@@ -249,7 +229,7 @@ describe('GlobalConfiguration Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
       const configName = 'virtual-card-reordering-limit';
-      const command = GetConfigurationByName(configName, { tenantId: 'z01j3e71zd6zkq90' });
+      const command = GetConfigurationByName(configName);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledTimes(1);
@@ -285,20 +265,9 @@ describe('GlobalConfiguration Commands', () => {
     });
 
     it('should use custom tenantId when provided', async () => {
-      const mockResponse = {
-        data: {
-          value: 'test',
-          id: 1
-        }
-      };
-      mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-      const configName = 'test-config';
-      const command = GetConfigurationByName(configName, { tenantId: 'custom-tenant' });
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-      await command.execute(mockConfig);
-
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      // This test is no longer applicable since tenantId is not passed via configuration parameter
+      // tenantId should be set at the client level via createInstance or updateConfig
+      expect(true).toBe(true);
     });
 
     it('should handle configuration with different value data types', async () => {
@@ -336,7 +305,7 @@ describe('GlobalConfiguration Commands', () => {
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
       const configName = 'test-config';
-      const command = GetConfigurationByName(configName, { tenantId: 'test-tenant' });
+      const command = GetConfigurationByName(configName);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Network error');
     });
@@ -369,10 +338,9 @@ describe('GlobalConfiguration Commands', () => {
 
     it('should have correct input parameters', () => {
       const configName = 'test-config';
-      const command = GetConfigurationByName(configName, { tenantId: 'test-tenant' });
+      const command = GetConfigurationByName(configName);
 
       expect(command.input.configName).toBe('test-config');
-      expect(command.input.configuration?.tenantId).toBe('test-tenant');
     });
 
     it('should have correct input parameters when tenantId is not provided', () => {
@@ -380,7 +348,6 @@ describe('GlobalConfiguration Commands', () => {
       const command = GetConfigurationByName(configName);
 
       expect(command.input.configName).toBe('test-config');
-      expect(command.input.configuration).toBeUndefined();
     });
   });
 
@@ -399,7 +366,7 @@ describe('GlobalConfiguration Commands', () => {
 
       const configId = 33;
       const requestData = { enabled: true };
-      const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'z01j3e71zd6zkq90' });
+      const command = EnableDisableConfiguration(configId, requestData);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.put).toHaveBeenCalledTimes(1);
@@ -424,7 +391,7 @@ describe('GlobalConfiguration Commands', () => {
 
       const configId = 33;
       const requestData = { enabled: false };
-      const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'z01j3e71zd6zkq90' });
+      const command = EnableDisableConfiguration(configId, requestData);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/configurations/33', { enabled: false });
@@ -454,21 +421,9 @@ describe('GlobalConfiguration Commands', () => {
     });
 
     it('should use custom tenantId when provided', async () => {
-      const mockResponse = {
-        data: {
-          id: '5',
-          resourceId: 5
-        }
-      };
-      mockAxiosInstance.put.mockResolvedValue(mockResponse);
-
-      const configId = 5;
-      const requestData = { enabled: true };
-      const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'custom-tenant' });
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-      await command.execute(mockConfig);
-
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      // This test is no longer applicable since tenantId is not passed via configuration parameter
+      // tenantId should be set at the client level via createInstance or updateConfig
+      expect(true).toBe(true);
     });
 
     it('should handle configuration not found error', async () => {
@@ -488,7 +443,7 @@ describe('GlobalConfiguration Commands', () => {
 
       const configId = 33;
       const requestData = { enabled: false };
-      const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'test-tenant' });
+      const command = EnableDisableConfiguration(configId, requestData);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Network error');
     });
@@ -525,11 +480,10 @@ describe('GlobalConfiguration Commands', () => {
     it('should have correct input parameters', () => {
       const configId = 33;
       const requestData = { enabled: true };
-      const command = EnableDisableConfiguration(configId, requestData, { tenantId: 'test-tenant' });
+      const command = EnableDisableConfiguration(configId, requestData);
 
       expect(command.input.configId).toBe(33);
       expect(command.input.requestData).toEqual({ enabled: true });
-      expect(command.input.configuration?.tenantId).toBe('test-tenant');
     });
 
     it('should have correct input parameters when tenantId is not provided', () => {
@@ -539,7 +493,6 @@ describe('GlobalConfiguration Commands', () => {
 
       expect(command.input.configId).toBe(33);
       expect(command.input.requestData).toEqual({ enabled: false });
-      expect(command.input.configuration).toBeUndefined();
     });
   });
 });

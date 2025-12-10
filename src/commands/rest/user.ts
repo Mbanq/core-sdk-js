@@ -1,26 +1,23 @@
-import { Command, Config } from '../../types';
 import { UserDetail, EnableSelfServiceAccessRequest, EnableSelfServiceAccessResponse, UpdateSelfServiceUserRequest, UpdateSelfServiceUserResponse, DeleteSelfServiceUserResponse } from '../../types/user';
+import { Command, Config } from '../../types';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 
-export const GetUserDetail = (
-  params?: { tenantId?: string }
-): Command<{ tenantId?: string }, UserDetail> => {
+export const GetUserDetail = (): Command<{}, UserDetail> => {
+  const path = `/v1/userdetails`;
+
   return {
-    input: params || {},
+    input: {},
     metadata: {
       commandName: 'GetUserDetail',
-      path: `/v1/userdetails`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params?.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<UserDetail>(`/v1/userdetails`);
+        const response = await axiosInstance.get<UserDetail>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -30,25 +27,23 @@ export const GetUserDetail = (
 };
 
 export const EnableSelfServiceAccess = (
-  requestData: EnableSelfServiceAccessRequest,
-  params?: { tenantId?: string }
-): Command<{ tenantId?: string }, EnableSelfServiceAccessResponse> => {
+  requestData: EnableSelfServiceAccessRequest
+): Command<{ requestData: EnableSelfServiceAccessRequest }, EnableSelfServiceAccessResponse> => {
+  const path = `/v1/users`;
+
   return {
-    input: params || {},
+    input: { requestData },
     metadata: {
       commandName: 'EnableSelfServiceAccess',
-      path: `/v1/users`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params?.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
         const response = await axiosInstance.post<EnableSelfServiceAccessResponse>(
-          `/v1/users`,
+          path,
           requestData
         );
         return response.data;
@@ -60,27 +55,24 @@ export const EnableSelfServiceAccess = (
 };
 
 export const UpdateSelfServiceUser = (
-  requestData: UpdateSelfServiceUserRequest,
-  params?: { tenantId?: string }
-): Command<{ tenantId?: string }, UpdateSelfServiceUserResponse> => {
+  requestData: UpdateSelfServiceUserRequest
+): Command<{ requestData: UpdateSelfServiceUserRequest }, UpdateSelfServiceUserResponse> => {
   const { userId, ...updateData } = requestData;
+  const path = `/v1/users/${userId}`;
 
   return {
-    input: params || {},
+    input: { requestData },
     metadata: {
       commandName: 'UpdateSelfServiceUser',
-      path: `/v1/users/${userId}`,
+      path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (params?.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
         const response = await axiosInstance.put<UpdateSelfServiceUserResponse>(
-          `/v1/users/${userId}`,
+          path,
           { ...updateData, isSelfServiceUser: true }
         );
         return response.data;
@@ -91,22 +83,21 @@ export const UpdateSelfServiceUser = (
   };
 };
 
-export const DeleteSelfServiceUser = (userId: number, params: { tenantId?: string }): Command<{ tenantId?: string }, DeleteSelfServiceUserResponse> => {
+export const DeleteSelfServiceUser = (userId: number): Command<{ userId: number }, DeleteSelfServiceUserResponse> => {
+  const path = `/v1/users/${userId}`;
+
   return {
-    input: params,
+    input: { userId },
     metadata: {
       commandName: 'DeleteSelfServiceUser',
-      path: `/v1/users/${userId}`,
+      path,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.delete<DeleteSelfServiceUserResponse>(`/v1/users/${userId}`);
+        const response = await axiosInstance.delete<DeleteSelfServiceUserResponse>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

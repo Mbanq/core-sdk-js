@@ -1,24 +1,23 @@
-import { Command, Config, ProcessOutput } from '../../types';
 import { CustomCreateInput, CustomGetInput, CustomUpdateInput } from '../../types/custom';
+import { Command, Config, ProcessOutput } from '../../types';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 
-export const CustomUpdate = (params: CustomUpdateInput): Command<CustomUpdateInput, ProcessOutput> => {
+export const CustomUpdate = (params: CustomUpdateInput): Command<{ params: CustomUpdateInput }, ProcessOutput> => {
+  const path = params.url;
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: params.commandName || 'CustomUpdate',
-      path: params.url,
+      path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.put<ProcessOutput>(params.url, { ...params.updates }, { params: params.params });
+        const response = await axiosInstance.put<ProcessOutput>(path, { ...params.updates }, { params: params.params });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -27,22 +26,21 @@ export const CustomUpdate = (params: CustomUpdateInput): Command<CustomUpdateInp
   };
 };
 
-export const CustomCreate = (params: CustomCreateInput): Command<CustomCreateInput, ProcessOutput> => {
+export const CustomCreate = (params: CustomCreateInput): Command<{ params: CustomCreateInput }, ProcessOutput> => {
+  const path = params.url;
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: params.commandName || 'CustomCreate',
-      path: params.url,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>(params.url, params.data, { params: params.params });
+        const response = await axiosInstance.post<ProcessOutput>(path, params.data, { params: params.params });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -51,22 +49,21 @@ export const CustomCreate = (params: CustomCreateInput): Command<CustomCreateInp
   };
 };
 
-export const CustomGet = (params: CustomGetInput): Command<CustomGetInput, any> => {
+export const CustomGet = (params: CustomGetInput): Command<{ params: CustomGetInput }, any> => {
+  const path = params.url;
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: params.commandName || 'CustomGet',
-      path: params.url,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<any>(params.url, {
+        const response = await axiosInstance.get<any>(path, {
           params: params.params
         });
         return response.data;

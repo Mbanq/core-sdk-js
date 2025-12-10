@@ -15,9 +15,9 @@ The Core SDK provides a comprehensive client management system with a fluent API
 ### Creating a Client Instance
 
 ```typescript
-import { createClient } from 'core-sdk-js';
+import { createInstance } from 'core-sdk-js';
 
-const client = createClient({
+const client = createInstance({
   baseUrl: 'https://api.example.com',
   tenantId: 'your-tenant-id',
   secret: 'your-api-secret',
@@ -237,7 +237,7 @@ try {
 ### Custom Error Handling with Middleware
 
 ```typescript
-import { createClient } from 'core-sdk-js';
+import { createInstance } from 'core-sdk-js';
 
 const errorHandlingMiddleware = {
   onError: async (command, error) => {
@@ -246,7 +246,7 @@ const errorHandlingMiddleware = {
   }
 };
 
-const client = createClient({
+const client = createInstance({
   baseUrl: 'https://api.example.com',
   tenantId: 'your-tenant-id',
   secret: 'your-secret',
@@ -259,9 +259,9 @@ const client = createClient({
 ### Complete Client Management Workflow
 
 ```typescript
-import { createClient } from 'core-sdk-js';
+import { createInstance } from 'core-sdk-js';
 
-const client = createClient({
+const client = createInstance({
   baseUrl: 'https://api.example.com',
   tenantId: 'demo-tenant',
   secret: 'demo-secret'

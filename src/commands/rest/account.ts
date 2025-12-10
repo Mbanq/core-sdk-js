@@ -20,30 +20,24 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * Retrieves detailed information about a specific savings account.
  *
  * @param accountId - The ID of the savings account to retrieve
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the full SavingAccount details
  *
  * @example
  * ```typescript
- * const getAccountCmd = GetAccount(123, { tenantId: "tokoro" });
+ * const getAccountCmd = GetAccount(123);
  * const account = await getAccountCmd.execute(config);
  * console.log(account.accountNo, account.accountBalance);
  * ```
  */
-export const GetAccount = (accountId: number, configuration?: { tenantId?: string }): Command<{ accountId: number, configuration?: { tenantId?: string } }, SavingAccount> => {
+export const GetAccount = (accountId: number): Command<{ accountId: number }, SavingAccount> => {
   return {
-    input: { accountId, configuration },
+    input: { accountId },
     metadata: {
       commandName: 'GetAccount',
       path: `/v1/savingsaccounts/${accountId}`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -61,9 +55,6 @@ export const GetAccount = (accountId: number, configuration?: { tenantId?: strin
  *
  * @param accountId - The ID of the account to update
  * @param requestData - The account fields to update (see UpdateAccountRequest)
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the update response
  *
  * @example
@@ -77,28 +68,23 @@ export const GetAccount = (accountId: number, configuration?: { tenantId?: strin
  *     nominalAnnualInterestRate: "5.5",
  *     locale: "en",
  *     dateFormat: "dd MMMM yyyy"
- *   },
- *   { tenantId: "tokoro" }
+ *   }
  * );
  * const result = await updateCmd.execute(config);
  * ```
  */
 export const UpdateAccount = (
   accountId: number,
-  requestData: UpdateAccountRequest,
-  configuration?: { tenantId?: string }
-): Command<{ accountId: number, requestData: UpdateAccountRequest, configuration?: { tenantId?: string } }, any> => {
+  requestData: UpdateAccountRequest
+): Command<{ accountId: number, requestData: UpdateAccountRequest }, any> => {
   return {
-    input: { accountId, requestData, configuration },
+    input: { accountId, requestData },
     metadata: {
       commandName: 'UpdateAccount',
       path: `/v1/savingsaccounts/${accountId}`,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -115,29 +101,23 @@ export const UpdateAccount = (
  * Deletes a savings account from the system.
  *
  * @param accountId - The ID of the account to delete
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the deletion confirmation
  *
  * @example
  * ```typescript
- * const deleteCmd = DeleteAccount(123, { tenantId: "tokoro" });
+ * const deleteCmd = DeleteAccount(123);
  * const result = await deleteCmd.execute(config);
  * ```
  */
-export const DeleteAccount = (accountId: number, configuration?: { tenantId?: string }): Command<{ accountId: number, configuration?: { tenantId?: string } }, ProcessOutput> => {
+export const DeleteAccount = (accountId: number): Command<{ accountId: number }, ProcessOutput> => {
   return {
-    input: { accountId, configuration },
+    input: { accountId },
     metadata: {
       commandName: 'DeleteAccount',
       path: `/v1/savingsaccounts/${accountId}`,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -150,18 +130,28 @@ export const DeleteAccount = (accountId: number, configuration?: { tenantId?: st
   };
 };
 
-export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string }): Command<{ clientId: number, params: ListAccountsOfClientRequest, configuration: { tenantId?: string } }, ListAccountsOfClientRequest> => {
+/**
+ * Retrieves a list of accounts associated with a specific client.
+ *
+ * @param clientId - The ID of the client
+ * @param params - The parameters for the list of accounts (see ListAccountsOfClientRequest)
+ * @returns A Command that when executed returns the list of accounts
+ *
+ * @example
+ * ```typescript
+ * const accountsCmd = GetAccountsOfClient(123, { limit: 10 });
+ * const accounts = await accountsCmd.execute(config);
+ * ```
+ */
+export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClientRequest): Command<{ clientId: number, params: ListAccountsOfClientRequest }, ListAccountsOfClientRequest> => {
   return {
-    input: { clientId, params, configuration },
+    input: { clientId, params },
     metadata: {
       commandName: 'ListAccountsOfClient',
       path: `/v1/clients/${clientId}/accounts`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -184,9 +174,6 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
  * @param params.submittedOnDate - The date the account is submitted (format: "dd MMMM yyyy")
  * @param params.locale - The locale for date formatting (e.g., "en")
  * @param params.dateFormat - The date format string (e.g., "dd MMMM yyyy")
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the created and activated account details
  *
  * @example
@@ -200,28 +187,23 @@ export const GetAccountsOfClient = (clientId: number, params: ListAccountsOfClie
  *     submittedOnDate: "01 December 2025",
  *     monthDayFormat: "dd MMM",
  *     nominalAnnualInterestRate: 5.0
- *   },
- *   { tenantId: "tokoro" }
+ *   }
  * );
  * const result = await createCmd.execute(config);
  * console.log(result.savingsId);
  * ```
  */
 export const CreateAndActivateAccount = (
-  params: CreateAndActivateAccountRequest,
-  configuration?: { tenantId?: string }
-): Command<{ params: CreateAndActivateAccountRequest, configuration?: { tenantId?: string } }, CreateAndActivateAccountResponse> => {
+  params: CreateAndActivateAccountRequest
+): Command<{ params: CreateAndActivateAccountRequest }, CreateAndActivateAccountResponse> => {
   return {
-    input: { params, configuration },
+    input: { params },
     metadata: {
       commandName: 'CreateAndActivateAccount',
       path: '/v1/savingsaccounts',
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -250,9 +232,6 @@ export const CreateAndActivateAccount = (
  * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
  * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
  * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
- * @param params - Optional configuration
- * @param params.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the account closure confirmation
  *
  * @example
@@ -267,8 +246,7 @@ export const CreateAndActivateAccount = (
  *     postInterestValidationOnClosure: true,
  *     ignoreNegativeBalance: false,
  *     closeReasonCodeId: 5100
- *   },
- *   { tenantId: "tokoro" }
+ *   }
  * );
  * const result = await closeCmd.execute(config);
  * console.log(result.changes.status); // "ACCOUNT_CLOSE_REASON"
@@ -276,20 +254,16 @@ export const CreateAndActivateAccount = (
  */
 export const CloseAccount = (
   savingsAccountId: number,
-  requestData: CloseAccountRequest,
-  configuration?: { tenantId?: string }
-): Command<{ savingsAccountId: number, requestData: CloseAccountRequest, configuration?: { tenantId?: string } }, CloseAccountResponse> => {
+  requestData: CloseAccountRequest
+): Command<{ savingsAccountId: number, requestData: CloseAccountRequest }, CloseAccountResponse> => {
   return {
-    input: { savingsAccountId, requestData, configuration },
+    input: { savingsAccountId, requestData },
     metadata: {
       commandName: 'CloseAccount',
       path: `/v1/savingsaccounts/${savingsAccountId}?command=close`,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -318,9 +292,6 @@ export const CloseAccount = (
  * @param requestData.postInterestValidationOnClosure - Optional: Whether to validate interest posting on closure
  * @param requestData.ignoreNegativeBalance - Optional: Whether to allow closure even with negative balance
  * @param requestData.paymentTypeId - Optional: The payment type ID if withdrawing balance
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the schedule closure confirmation
  *
  * @example
@@ -335,28 +306,23 @@ export const CloseAccount = (
  *     postInterestValidationOnClosure: true,
  *     ignoreNegativeBalance: false,
  *     closeReasonCodeId: 5100
- *   },
- *   { tenantId: "tokoro" }
+ *   }
  * );
  * const result = await scheduleCloseCmd.execute(config);
  * ```
  */
 export const ScheduleAccountClosure = (
   accountId: number,
-  requestData: CloseAccountRequest,
-  configuration?: { tenantId?: string }
-): Command<{ accountId: number, requestData: CloseAccountRequest, configuration?: { tenantId?: string } }, CloseAccountResponse> => {
+  requestData: CloseAccountRequest
+): Command<{ accountId: number, requestData: CloseAccountRequest }, CloseAccountResponse> => {
   return {
-    input: { accountId, requestData, configuration },
+    input: { accountId, requestData },
     metadata: {
       commandName: 'ScheduleAccountClosure',
       path: `/v1/savingsaccounts/${accountId}?command=SCHEDULECLOSE`,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -378,17 +344,13 @@ export const ScheduleAccountClosure = (
  * @param accountId - The ID of the savings account to block
  * @param requestData - The block parameters (see BlockAccountRequest)
  * @param requestData.blockReasonCodeId - The ID representing the reason for blocking the account
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the block confirmation
  *
  * @example
  * ```typescript
  * const blockCmd = BlockAccount(
  *   123,
- *   { blockReasonCodeId: 5100 },
- *   { tenantId: "tokoro" }
+ *   { blockReasonCodeId: 5100 }
  * );
  * const result = await blockCmd.execute(config);
  * console.log(result.changes.subStatus.value); // "Block"
@@ -396,20 +358,16 @@ export const ScheduleAccountClosure = (
  */
 export const BlockAccount = (
   accountId: number,
-  requestData: BlockAccountRequest,
-  configuration?: { tenantId?: string }
-): Command<{ accountId: number, requestData: BlockAccountRequest, configuration?: { tenantId?: string } }, BlockAccountResponse> => {
+  requestData: BlockAccountRequest
+): Command<{ accountId: number, requestData: BlockAccountRequest }, BlockAccountResponse> => {
   return {
-    input: { accountId, requestData, configuration },
+    input: { accountId, requestData },
     metadata: {
       commandName: 'BlockAccount',
       path: `/v1/savingsaccounts/${accountId}?command=block`,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -432,17 +390,13 @@ export const BlockAccount = (
  * @param requestData - The hold amount parameters (see HoldAmountRequest)
  * @param requestData.transactionAmount - The amount to be held
  * @param requestData.holdAmountReasonCodeId - The ID representing the reason for holding the amount
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the hold amount confirmation
  *
  * @example
  * ```typescript
  * const holdCmd = HoldAmount(
  *   123,
- *   { transactionAmount: 45, holdAmountReasonCodeId: 6100 },
- *   { tenantId: "tokoro" }
+ *   { transactionAmount: 45, holdAmountReasonCodeId: 6100 }
  * );
  * const result = await holdCmd.execute(config);
  * console.log(result.changes.savingsAmountOnHold); // 45
@@ -450,20 +404,16 @@ export const BlockAccount = (
  */
 export const HoldAmount = (
   accountId: number,
-  requestData: HoldAmountRequest,
-  configuration?: { tenantId?: string }
-): Command<{ accountId: number, requestData: HoldAmountRequest, configuration?: { tenantId?: string } }, HoldAmountResponse> => {
+  requestData: HoldAmountRequest
+): Command<{ accountId: number, requestData: HoldAmountRequest }, HoldAmountResponse> => {
   return {
-    input: { accountId, requestData, configuration },
+    input: { accountId, requestData },
     metadata: {
       commandName: 'HoldAmount',
       path: `/v1/savingsaccounts/${accountId}?command=hold`,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {

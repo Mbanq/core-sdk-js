@@ -1,4 +1,3 @@
-import { type Command, type Config } from '../../types';
 import {
   ClientIdentifierRequest,
   ClientIdentifierResponse,
@@ -10,13 +9,15 @@ import {
   DeleteClientDocumentResponse,
   ApproveRejectClientDocumentResponse
 } from '../../types/clientIdentifier';
+import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
 
-export const GetPermittedDocumentTypes = (params: { tenantId?: string; clientId: number }): Command<{ tenantId?: string; clientId: number }, any> => {
-  const path = `/v1/clients/${params.clientId}/identifiers/template`;
+export const GetPermittedDocumentTypes = (clientId: number): Command<{ clientId: number }, any> => {
+  const path = `/v1/clients/${clientId}/identifiers/template`;
+
   return {
-    input: params,
+    input: { clientId },
     metadata: {
       commandName: 'GetPermittedDocumentTypes',
       path,
@@ -24,6 +25,7 @@ export const GetPermittedDocumentTypes = (params: { tenantId?: string; clientId:
     },
     execute: async (config: Config) => {
       const axiosInstance = await baseRequest(config);
+
       try {
         const response = await axiosInstance.get<ClientIdentifierResponse>(path);
         return response.data;
@@ -35,11 +37,10 @@ export const GetPermittedDocumentTypes = (params: { tenantId?: string; clientId:
 };
 
 export const ListClientDocument = (params: {
-  tenantId?: string;
   clientId: number;
   unmaskValue?: boolean;
   fields?: string;
-}): Command<{ tenantId?: string; clientId: number; unmaskValue?: boolean; fields?: string }, ListClientDocumentResponse> => {
+}): Command<{ params: typeof params }, ListClientDocumentResponse> => {
   const queryParams = new URLSearchParams();
   if (params.unmaskValue !== undefined) {
     queryParams.append('unmaskValue', params.unmaskValue.toString());
@@ -51,17 +52,15 @@ export const ListClientDocument = (params: {
   const path = `/v1/clients/${params.clientId}/identifiers${queryString ? `?${queryString}` : ''}`;
 
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'ListClientDocument',
       path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
+
       try {
         const response = await axiosInstance.get<ListClientDocumentResponse>(path);
         return response.data;
@@ -72,13 +71,15 @@ export const ListClientDocument = (params: {
   };
 };
 
-export const CreateClientIdentifier = (params:
-  { tenatId?: string; clientId: number; input: ClientIdentifierRequest }
-): Command<{ tenantId?: string; clientId: number; input: ClientIdentifierRequest }, ClientIdentifierResponse> => {
-  validateClientIdentifierRequest(params.input);
-  const path = `/v1/clients/${params.clientId}/identifiers`;
+export const CreateClientIdentifier = (
+  clientId: number,
+  input: ClientIdentifierRequest
+): Command<{ clientId: number; input: ClientIdentifierRequest }, ClientIdentifierResponse> => {
+  validateClientIdentifierRequest(input);
+  const path = `/v1/clients/${clientId}/identifiers`;
+
   return {
-    input: params,
+    input: { clientId, input },
     metadata: {
       commandName: 'CreateClientIdentifier',
       path,
@@ -88,7 +89,7 @@ export const CreateClientIdentifier = (params:
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ClientIdentifierResponse>(path, params.input);
+        const response = await axiosInstance.post<ClientIdentifierResponse>(path, input);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -98,25 +99,25 @@ export const CreateClientIdentifier = (params:
 };
 
 export const UpdateClientIdentifier = (
-  params: { tenantId?: string; clientId: number; identifierId: string; updates: ClientIdentifierRequest }
-): Command<{ tenantId?: string; clientId: number; identifierId: string; updates: ClientIdentifierRequest }, ClientIdentifierResponse> => {
-  validateClientIdentifierRequest(params.updates);
-  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}`;
+  clientId: number,
+  identifierId: string,
+  updates: ClientIdentifierRequest
+): Command<{ clientId: number; identifierId: string; updates: ClientIdentifierRequest }, ClientIdentifierResponse> => {
+  validateClientIdentifierRequest(updates);
+  const path = `/v1/clients/${clientId}/identifiers/${identifierId}`;
+
   return {
-    input: params,
+    input: { clientId, identifierId, updates },
     metadata: {
       commandName: 'UpdateClientIdentifier',
       path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.put<ClientIdentifierResponse>(path, { ...params.updates });
+        const response = await axiosInstance.put<ClientIdentifierResponse>(path, { ...updates });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -124,36 +125,30 @@ export const UpdateClientIdentifier = (
     }
   };
 };
+
 export const UploadClientIdentifierDocument = (
-  params: {
-    tenantId?: string;
-    clientId: number;
-    identifierId: string;
-    data: DocumentUploadRequest
-  }
+  clientId: number,
+  identifierId: string,
+  data: DocumentUploadRequest
 ): Command<{
-  tenantId?: string;
   clientId: number;
   identifierId: string;
   data: DocumentUploadRequest
 }, DocumentUploadResponse> => {
-  validateDocumentUploadRequest(params.data);
+  validateDocumentUploadRequest(data);
 
-  const path = `/v1/client_identifiers/${params.identifierId}/documents`;
+  const path = `/v1/client_identifiers/${identifierId}/documents`;
+
   return {
-    input: params,
+    input: { clientId, identifierId, data },
     metadata: {
       commandName: 'UploadClientIdentifierDocument',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
-
       const axiosInstance = await baseRequest(config);
-      const { name, file, type, description } = params.data;
+      const { name, file, type, description } = data;
       const formData = new FormData();
 
       formData.append('name', name);
@@ -199,29 +194,22 @@ export const UploadClientIdentifierDocument = (
 };
 
 export const DeleteClientDocument = (
-  params: {
-    tenantId?: string;
-    clientId: number;
-    identifierId: number;
-  }
+  clientId: number,
+  identifierId: number
 ): Command<{
-  tenantId?: string;
   clientId: number;
   identifierId: number;
 }, DeleteClientDocumentResponse> => {
-  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}`;
+  const path = `/v1/clients/${clientId}/identifiers/${identifierId}`;
+
   return {
-    input: params,
+    input: { clientId, identifierId },
     metadata: {
       commandName: 'DeleteClientDocument',
       path,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
-
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -235,31 +223,24 @@ export const DeleteClientDocument = (
 };
 
 export const ApproveRejectClientDocument = (
-  params: {
-    tenantId?: string;
-    clientId: number;
-    identifierId: number;
-    command: 'approve' | 'reject';
-  }
+  clientId: number,
+  identifierId: number,
+  command: 'approve' | 'reject'
 ): Command<{
-  tenantId?: string;
   clientId: number;
   identifierId: number;
   command: 'approve' | 'reject';
 }, ApproveRejectClientDocumentResponse> => {
-  const path = `/v1/clients/${params.clientId}/identifiers/${params.identifierId}?command=${params.command}`;
+  const path = `/v1/clients/${clientId}/identifiers/${identifierId}?command=${command}`;
+
   return {
-    input: params,
+    input: { clientId, identifierId, command },
     metadata: {
       commandName: 'ApproveRejectClientDocument',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
-
       const axiosInstance = await baseRequest(config);
 
       try {

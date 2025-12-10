@@ -3,21 +3,21 @@ import { CreateAccountProduct, UpdateAccountProduct, GetAllAccountProducts, GetA
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
-    get: ReturnType<typeof vi.fn>;
-    post: ReturnType<typeof vi.fn>;
-    put: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
+  get: ReturnType<typeof vi.fn>;
+  post: ReturnType<typeof vi.fn>;
+  put: ReturnType<typeof vi.fn>;
+  delete: ReturnType<typeof vi.fn>;
 }
 
 interface MockAxiosError extends Error {
-    response?: {
-        status: number;
-        data: {
-            message?: string;
-            developerMessage?: string;
-        };
+  response?: {
+    status: number;
+    data: {
+      message?: string;
+      developerMessage?: string;
     };
-    isAxiosError?: boolean;
+  };
+  isAxiosError?: boolean;
 }
 
 describe('CreateAccountProduct', () => {
@@ -60,9 +60,9 @@ describe('CreateAccountProduct', () => {
       dateFormat: 'dd MMMM yyyy'
     };
 
-    const command = CreateAccountProduct(params, { tenantId: 'test-tenant' });
+    const command = CreateAccountProduct(params);
 
-    expect(command.input).toEqual({ params, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ params });
     expect(command.metadata).toEqual({
       commandName: 'CreateAccountProduct',
       path: '/v1/savingsproducts',
@@ -104,7 +104,7 @@ describe('CreateAccountProduct', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = CreateAccountProduct(requestData, { tenantId: 'test-tenant' });
+    const command = CreateAccountProduct(requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -118,7 +118,7 @@ describe('CreateAccountProduct', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle minimal required fields', async () => {
@@ -302,12 +302,11 @@ describe('UpdateAccountProduct', () => {
       description: 'SAVING TEST'
     };
 
-    const command = UpdateAccountProduct(101, params, { tenantId: 'test-tenant' });
+    const command = UpdateAccountProduct(101, params);
 
     expect(command.input).toEqual({
       productId: 101,
-      params,
-      configuration: { tenantId: 'test-tenant' }
+      params
     });
     expect(command.metadata).toEqual({
       commandName: 'UpdateAccountProduct',
@@ -362,7 +361,7 @@ describe('UpdateAccountProduct', () => {
 
     mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
 
-    const command = UpdateAccountProduct(101, requestData, { tenantId: 'test-tenant' });
+    const command = UpdateAccountProduct(101, requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -376,7 +375,7 @@ describe('UpdateAccountProduct', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle partial updates with minimal fields', async () => {
@@ -525,9 +524,9 @@ describe('GetAllAccountProducts', () => {
   });
 
   it('should create a GetAllAccountProducts command with correct metadata', () => {
-    const command = GetAllAccountProducts({ tenantId: 'test-tenant' });
+    const command = GetAllAccountProducts();
 
-    expect(command.input).toEqual({ configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({});
     expect(command.metadata).toEqual({
       commandName: 'GetAllAccountProducts',
       path: '/v1/savingsproducts',
@@ -555,7 +554,7 @@ describe('GetAllAccountProducts', () => {
 
     mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
 
-    const command = GetAllAccountProducts({ tenantId: 'test-tenant' });
+    const command = GetAllAccountProducts();
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -568,7 +567,7 @@ describe('GetAllAccountProducts', () => {
       '/v1/savingsproducts'
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during retrieval', async () => {
@@ -636,9 +635,9 @@ describe('GetAccountProductById', () => {
   });
 
   it('should create a GetAccountProductById command with correct metadata', () => {
-    const command = GetAccountProductById(101, { tenantId: 'test-tenant' });
+    const command = GetAccountProductById(101);
 
-    expect(command.input).toEqual({ productId: 101, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ productId: 101 });
     expect(command.metadata).toEqual({
       commandName: 'GetAccountProductById',
       path: '/v1/savingsproducts/101',
@@ -664,7 +663,7 @@ describe('GetAccountProductById', () => {
 
     mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
 
-    const command = GetAccountProductById(101, { tenantId: 'test-tenant' });
+    const command = GetAccountProductById(101);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -677,7 +676,7 @@ describe('GetAccountProductById', () => {
       '/v1/savingsproducts/101'
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during retrieval', async () => {

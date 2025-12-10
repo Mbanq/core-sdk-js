@@ -9,7 +9,7 @@ import {
   CreateCardProductResponse
 } from '../../types/cardProduct';
 
-export const ListCardProduct = (params: { limit?: number, offset?: number } = {}, configuration?: { tenantId?: string }): Command<{ params: { limit?: number, offset?: number }, configuration?: { tenantId?: string } }, CardProducts> => {
+export const ListCardProduct = (params: { limit?: number, offset?: number } = {}): Command<{ params: { limit?: number, offset?: number } }, CardProducts> => {
   const path = `/v1/cardproducts`;
   const queryParams = new URLSearchParams();
   queryParams.append('limit', params?.limit?.toString() || '0');
@@ -17,16 +17,13 @@ export const ListCardProduct = (params: { limit?: number, offset?: number } = {}
   const queryString = queryParams.toString();
   const urlPath = `${path}?${queryString}`;
   return {
-    input: { params, configuration },
+    input: { params },
     metadata: {
       commandName: 'ListCardProduct',
       path: urlPath,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.get<CardProducts>(urlPath);
@@ -38,19 +35,16 @@ export const ListCardProduct = (params: { limit?: number, offset?: number } = {}
   };
 };
 
-export const GetCardProduct = (cardProductId: number, configuration?: { tenantId: string; }): Command<{ cardProductId: number, configuration?: { tenantId: string; } }, CardProductDetail> => {
+export const GetCardProduct = (cardProductId: number): Command<{ cardProductId: number }, CardProductDetail> => {
   const path = `/v1/cardproducts/${cardProductId}`;
   return {
-    input: { cardProductId, configuration },
+    input: { cardProductId },
     metadata: {
       commandName: 'GetCardProduct',
       path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.get<CardProductDetail>(path);
@@ -62,19 +56,16 @@ export const GetCardProduct = (cardProductId: number, configuration?: { tenantId
   };
 };
 
-export const CreateCardProduct = (params: CardProductRequest, configuration?: { tenantId?: string }): Command<{ params: CardProductRequest, configuration?: { tenantId?: string } }, CreateCardProductResponse> => {
+export const CreateCardProduct = (params: CardProductRequest): Command<{ params: CardProductRequest }, CreateCardProductResponse> => {
   const path = '/v1/cardproducts';
   return {
-    input: { params, configuration },
+    input: { params },
     metadata: {
       commandName: 'CreateCardProduct',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.post<CreateCardProductResponse>(path, params);
@@ -88,28 +79,20 @@ export const CreateCardProduct = (params: CardProductRequest, configuration?: { 
 
 export const UpdateCardProduct = (
   cardProductId: number,
-  params: CardProductUpdateRequest,
-  configuration?: {
-    tenantId: string
-  }): Command<{
-    cardProductId: number,
-    params: CardProductUpdateRequest,
-    configuration?: {
-      tenantId: string
-    }
-  }, CreateCardProductResponse> => {
+  params: CardProductUpdateRequest
+): Command<{
+  cardProductId: number,
+  params: CardProductUpdateRequest
+}, CreateCardProductResponse> => {
   const path = `/v1/cardproducts/${cardProductId}`;
   return {
-    input: { cardProductId, params, configuration },
+    input: { cardProductId, params },
     metadata: {
       commandName: 'UpdateCardProduct',
       path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.put<CreateCardProductResponse>(path, params);

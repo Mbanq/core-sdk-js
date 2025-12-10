@@ -5,7 +5,6 @@ import {
   UpdateClientIdentifier,
   GetPermittedDocumentTypes,
   DeleteClientDocument,
-  UploadClientIdentifierDocument,
   ApproveRejectClientDocument
 } from '../../../src/commands/rest/clientIdentifier';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
@@ -203,7 +202,7 @@ describe('ClientIdentifier Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = {
         data: { pageItems: [] }
       };
@@ -215,7 +214,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const command = ListClientDocument(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -262,8 +261,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 15 };
-      const command = GetPermittedDocumentTypes(params);
+      const command = GetPermittedDocumentTypes(15);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/15/identifiers/template');
@@ -279,15 +277,13 @@ describe('ClientIdentifier Commands', () => {
       const mockError = new Error('Failed to fetch document types');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const params = { clientId: 15 };
-      const command = GetPermittedDocumentTypes(params);
+      const command = GetPermittedDocumentTypes(15);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Failed to fetch document types');
     });
 
     it('should have correct metadata', () => {
-      const params = { clientId: 15 };
-      const command = GetPermittedDocumentTypes(params);
+      const command = GetPermittedDocumentTypes(15);
 
       expect(command.metadata.commandName).toBe('GetPermittedDocumentTypes');
       expect(command.metadata.path).toBe('/v1/clients/15/identifiers/template');
@@ -311,25 +307,22 @@ describe('ClientIdentifier Commands', () => {
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
       const params = {
-        clientId: 15,
-        input: {
-          documentTypeId: '1',
-          documentKey: 'ABC123456',
-          status: 'ACTIVE',
-          description: 'Valid passport',
-          issuedBy: 'Government',
-          locale: 'en_US',
-          dateFormat: 'yyyy-MM-dd',
-          expiryDate: '2030-12-31',
-          nationality: 1,
-          issuedDate: '2020-01-01'
-        }
+        documentTypeId: '1',
+        documentKey: 'ABC123456',
+        status: 'ACTIVE',
+        description: 'Valid passport',
+        issuedBy: 'Government',
+        locale: 'en_US',
+        dateFormat: 'yyyy-MM-dd',
+        expiryDate: '2030-12-31',
+        nationality: 1,
+        issuedDate: '2020-01-01'
       };
 
-      const command = CreateClientIdentifier(params);
+      const command = CreateClientIdentifier(15, params);
       const result = await command.execute(mockConfig);
 
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers', params.input);
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers', params);
       expect(result).toEqual({
         id: 1,
         officeId: 1,
@@ -346,30 +339,24 @@ describe('ClientIdentifier Commands', () => {
       mockAxiosInstance.post.mockRejectedValue(mockError);
 
       const params = {
-        clientId: 15,
-        input: {
-          documentTypeId: '1',
-          documentKey: 'ABC123',
-          status: 'ACTIVE'
-        }
+        documentTypeId: '1',
+        documentKey: 'ABC123',
+        status: 'ACTIVE'
       };
 
-      const command = CreateClientIdentifier(params);
+      const command = CreateClientIdentifier(15, params);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Validation failed');
     });
 
     it('should have correct metadata', () => {
       const params = {
-        clientId: 15,
-        input: {
-          documentTypeId: '1',
-          documentKey: 'ABC123',
-          status: 'ACTIVE'
-        }
+        documentTypeId: '1',
+        documentKey: 'ABC123',
+        status: 'ACTIVE'
       };
 
-      const command = CreateClientIdentifier(params);
+      const command = CreateClientIdentifier(15, params);
 
       expect(command.metadata.commandName).toBe('CreateClientIdentifier');
       expect(command.metadata.path).toBe('/v1/clients/15/identifiers');
@@ -393,7 +380,6 @@ describe('ClientIdentifier Commands', () => {
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         updates: {
           documentTypeId: '1',
@@ -403,7 +389,7 @@ describe('ClientIdentifier Commands', () => {
         }
       };
 
-      const command = UpdateClientIdentifier(params);
+      const command = UpdateClientIdentifier(15, params.identifierId, params.updates);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.put).toHaveBeenCalledWith(
@@ -421,23 +407,21 @@ describe('ClientIdentifier Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { success: true } };
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         updates: {
           documentTypeId: '1',
           documentKey: 'ABC123',
           status: 'ACTIVE'
-        },
-        tenantId: 'custom-tenant'
+        }
       };
 
-      const command = UpdateClientIdentifier(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = UpdateClientIdentifier(15, params.identifierId, params.updates);
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -448,7 +432,6 @@ describe('ClientIdentifier Commands', () => {
       mockAxiosInstance.put.mockRejectedValue(mockError);
 
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         updates: {
           documentTypeId: '1',
@@ -457,14 +440,13 @@ describe('ClientIdentifier Commands', () => {
         }
       };
 
-      const command = UpdateClientIdentifier(params);
+      const command = UpdateClientIdentifier(15, params.identifierId, params.updates);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Update failed');
     });
 
     it('should have correct metadata', () => {
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         updates: {
           documentTypeId: '1',
@@ -473,7 +455,7 @@ describe('ClientIdentifier Commands', () => {
         }
       };
 
-      const command = UpdateClientIdentifier(params);
+      const command = UpdateClientIdentifier(15, params.identifierId, params.updates);
 
       expect(command.metadata.commandName).toBe('UpdateClientIdentifier');
       expect(command.metadata.path).toBe('/v1/clients/15/identifiers/id123');
@@ -494,7 +476,6 @@ describe('ClientIdentifier Commands', () => {
 
       const mockFile = new File(['test content'], 'passport.pdf', { type: 'application/pdf' });
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'Passport Document',
@@ -505,7 +486,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith(
@@ -536,7 +517,6 @@ describe('ClientIdentifier Commands', () => {
 
       const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'License Document',
@@ -546,7 +526,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalled();
@@ -569,7 +549,6 @@ describe('ClientIdentifier Commands', () => {
 
       const mockBuffer = Buffer.from('test content');
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'ID Card',
@@ -578,7 +557,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalled();
@@ -601,7 +580,6 @@ describe('ClientIdentifier Commands', () => {
 
       const mockFile = new File(['content'], 'doc.pdf');
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'Simple Document',
@@ -610,7 +588,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalled();
@@ -621,7 +599,7 @@ describe('ClientIdentifier Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = {
         data: {
           id: 'doc111',
@@ -633,18 +611,16 @@ describe('ClientIdentifier Commands', () => {
 
       const mockFile = new File(['content'], 'doc.pdf');
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'Document',
           file: mockFile
-        },
-        tenantId: 'custom-tenant'
+        }
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -656,7 +632,6 @@ describe('ClientIdentifier Commands', () => {
 
       const mockFile = new File(['content'], 'doc.pdf');
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'Document',
@@ -665,7 +640,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Upload failed');
     });
@@ -673,7 +648,6 @@ describe('ClientIdentifier Commands', () => {
     it('should have correct metadata', async () => {
       const mockFile = new File(['content'], 'doc.pdf');
       const params = {
-        clientId: 15,
         identifierId: 'id123',
         data: {
           name: 'Document',
@@ -682,7 +656,7 @@ describe('ClientIdentifier Commands', () => {
       };
 
       const { UploadClientIdentifierDocument } = await import('../../../src/commands/rest/clientIdentifier');
-      const command = UploadClientIdentifierDocument(params);
+      const command = UploadClientIdentifierDocument(15, params.identifierId, params.data);
 
       expect(command.metadata.commandName).toBe('UploadClientIdentifierDocument');
       expect(command.metadata.path).toBe('/v1/client_identifiers/id123/documents');
@@ -701,12 +675,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/15/identifiers/15');
@@ -717,7 +686,7 @@ describe('ClientIdentifier Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = {
         data: {
           officeId: 1,
@@ -727,14 +696,8 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15,
-        tenantId: 'custom-tenant'
-      };
-
-      const command = DeleteClientDocument(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = DeleteClientDocument(15, 15);
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -744,12 +707,7 @@ describe('ClientIdentifier Commands', () => {
       const mockError = new Error('Delete failed');
       mockAxiosInstance.delete.mockRejectedValue(mockError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Delete failed');
     });
@@ -770,12 +728,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
 
       try {
         await command.execute(mockConfig);
@@ -796,12 +749,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
 
       try {
         await command.execute(mockConfig);
@@ -826,12 +774,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 999
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 999);
 
       try {
         await command.execute(mockConfig);
@@ -854,12 +797,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
 
       try {
         await command.execute(mockConfig);
@@ -885,12 +823,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockRejectedValue(mockAxiosError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
 
       try {
         await command.execute(mockConfig);
@@ -904,12 +837,7 @@ describe('ClientIdentifier Commands', () => {
     });
 
     it('should have correct metadata', () => {
-      const params = {
-        clientId: 15,
-        identifierId: 15
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(15, 15);
 
       expect(command.metadata.commandName).toBe('DeleteClientDocument');
       expect(command.metadata.path).toBe('/v1/clients/15/identifiers/15');
@@ -926,12 +854,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 100,
-        identifierId: 5000
-      };
-
-      const command = DeleteClientDocument(params);
+      const command = DeleteClientDocument(100, 5000);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/100/identifiers/5000');
@@ -953,13 +876,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'approve' as const
-      };
-
-      const command = ApproveRejectClientDocument(params);
+      const command = ApproveRejectClientDocument(15, 10, 'approve');
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers/10?command=approve');
@@ -978,13 +895,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'reject' as const
-      };
-
-      const command = ApproveRejectClientDocument(params);
+      const command = ApproveRejectClientDocument(15, 10, 'reject');
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/15/identifiers/10?command=reject');
@@ -994,7 +905,7 @@ describe('ClientIdentifier Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = {
         data: {
           clientId: 15,
@@ -1003,15 +914,8 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'approve' as const,
-        tenantId: 'custom-tenant'
-      };
-
-      const command = ApproveRejectClientDocument(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = ApproveRejectClientDocument(15, 10, 'approve');
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -1021,13 +925,7 @@ describe('ClientIdentifier Commands', () => {
       const mockError = new Error('Approval failed');
       mockAxiosInstance.post.mockRejectedValue(mockError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'approve' as const
-      };
-
-      const command = ApproveRejectClientDocument(params);
+      const command = ApproveRejectClientDocument(15, 10, 'approve');
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Approval failed');
     });
@@ -1048,13 +946,7 @@ describe('ClientIdentifier Commands', () => {
       };
       mockAxiosInstance.post.mockRejectedValue(mockAxiosError);
 
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'approve' as const
-      };
-
-      const command = ApproveRejectClientDocument(params);
+      const command = ApproveRejectClientDocument(15, 10, 'approve');
 
       try {
         await command.execute(mockConfig);
@@ -1068,13 +960,7 @@ describe('ClientIdentifier Commands', () => {
     });
 
     it('should have correct metadata for approve command', () => {
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'approve' as const
-      };
-
-      const command = ApproveRejectClientDocument(params);
+      const command = ApproveRejectClientDocument(15, 10, 'approve');
 
       expect(command.metadata.commandName).toBe('ApproveRejectClientDocument');
       expect(command.metadata.path).toBe('/v1/clients/15/identifiers/10?command=approve');
@@ -1082,13 +968,7 @@ describe('ClientIdentifier Commands', () => {
     });
 
     it('should have correct metadata for reject command', () => {
-      const params = {
-        clientId: 15,
-        identifierId: 10,
-        command: 'reject' as const
-      };
-
-      const command = ApproveRejectClientDocument(params);
+      const command = ApproveRejectClientDocument(15, 10, 'reject');
 
       expect(command.metadata.commandName).toBe('ApproveRejectClientDocument');
       expect(command.metadata.path).toBe('/v1/clients/15/identifiers/10?command=reject');

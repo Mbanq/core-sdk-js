@@ -15,7 +15,6 @@ describe('CardProduct Commands', () => {
     tenantId: 'your_tenant_id',
     baseUrl: 'https://test.api.url'
   };
-  const configuration: { tenantId: string } = { tenantId: 'your_tenant_id' };
 
   beforeEach(() => {
     vi.stubEnv('SECRET', 'test_secret');
@@ -40,8 +39,7 @@ describe('CardProduct Commands', () => {
 
   describe('ListCardProduct', () => {
     it('should get card product list successfully with default limit', async () => {
-      const configuration = { tenantId: 'your_tenant_id' };
-      const command = ListCardProduct(undefined, configuration);
+      const command = ListCardProduct();
 
       const mockResponse = {
         data: {
@@ -79,7 +77,7 @@ describe('CardProduct Commands', () => {
 
     it('should get card product list successfully with set limit and offset', async () => {
       const params = { limit: 10, offset: 20 };
-      const command = ListCardProduct(params, configuration);
+      const command = ListCardProduct(params);
 
       const mockResponse = {
         data: {
@@ -131,8 +129,7 @@ describe('CardProduct Commands', () => {
 
   describe('GetCardProduct', () => {
     it('should get card product successfully', async () => {
-      const configuration = { tenantId: 'your_tenant_id' };
-      const command = GetCardProduct(123, configuration);
+      const command = GetCardProduct(123);
 
       const mockResponse = {
         data: {
@@ -243,7 +240,7 @@ describe('CardProduct Commands', () => {
         cardProcessorConfigId: 50000,
         network: 'VISA'
       };
-      const command = CreateCardProduct(params, configuration);
+      const command = CreateCardProduct(params);
 
       const mockError = new Error('Validation error');
 
@@ -258,8 +255,7 @@ describe('CardProduct Commands', () => {
         name: 'Updated Card Product',
         active: false
       };
-      const configuration = { tenantId: mockConfig.tenantId };
-      const command = UpdateCardProduct(789, params, configuration);
+      const command = UpdateCardProduct(789, params);
 
       const mockResponse = {
         data: {
@@ -274,7 +270,7 @@ describe('CardProduct Commands', () => {
 
       expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/cardproducts/789', params);
       expect(result).toEqual(mockResponse.data);
-      expect(command.input).toEqual({ cardProductId: 789, params, configuration });
+      expect(command.input).toEqual({ cardProductId: 789, params });
       expect(command.metadata.commandName).toBe('UpdateCardProduct');
       expect(command.metadata.method).toBe('PUT');
       expect(command.metadata.path).toBe('/v1/cardproducts/789');

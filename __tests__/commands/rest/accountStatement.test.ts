@@ -7,21 +7,21 @@ import {
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
-    get: ReturnType<typeof vi.fn>;
-    post: ReturnType<typeof vi.fn>;
-    put: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
+  get: ReturnType<typeof vi.fn>;
+  post: ReturnType<typeof vi.fn>;
+  put: ReturnType<typeof vi.fn>;
+  delete: ReturnType<typeof vi.fn>;
 }
 
 interface MockAxiosError extends Error {
-    response?: {
-        status: number;
-        data: {
-            message?: string;
-            developerMessage?: string;
-        };
+  response?: {
+    status: number;
+    data: {
+      message?: string;
+      developerMessage?: string;
     };
-    isAxiosError?: boolean;
+  };
+  isAxiosError?: boolean;
 }
 
 describe('GenerateAccountStatement', () => {
@@ -61,9 +61,9 @@ describe('GenerateAccountStatement', () => {
         saving_no: '1'
       }
     };
-    const command = GenerateAccountStatement(requestData, { tenantId: 'test-tenant' });
+    const command = GenerateAccountStatement(requestData);
 
-    expect(command.input).toEqual({ requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ requestData });
     expect(command.metadata).toEqual({
       commandName: 'GenerateAccountStatement',
       path: '/v1/generatestatements',
@@ -92,7 +92,7 @@ describe('GenerateAccountStatement', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = GenerateAccountStatement(requestData, { tenantId: 'test-tenant' });
+    const command = GenerateAccountStatement(requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -106,7 +106,7 @@ describe('GenerateAccountStatement', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during statement generation', async () => {
@@ -196,12 +196,11 @@ describe('DownloadAccountStatement', () => {
   });
 
   it('should create a DownloadAccountStatement command with correct metadata', () => {
-    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d', { tenantId: 'test-tenant' });
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
 
     expect(command.input).toEqual({
       savingsAccountId: 12,
-      documentId: '45ac4379-7185-471b-a103-916d25dc648d',
-      configuration: { tenantId: 'test-tenant' }
+      documentId: '45ac4379-7185-471b-a103-916d25dc648d'
     });
     expect(command.metadata).toEqual({
       commandName: 'DownloadAccountStatement',
@@ -222,7 +221,7 @@ describe('DownloadAccountStatement', () => {
 
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d', { tenantId: 'test-tenant' });
+    const command = DownloadAccountStatement(12, '45ac4379-7185-471b-a103-916d25dc648d');
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -240,7 +239,7 @@ describe('DownloadAccountStatement', () => {
       fileName: 'statement.pdf',
       contentType: 'application/pdf'
     });
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should extract filename from Content-Disposition header without quotes', async () => {
@@ -345,9 +344,9 @@ describe('GetAccountDocumentsDetails', () => {
   });
 
   it('should create a GetAccountDocumentsDetails command with correct metadata', () => {
-    const command = GetAccountDocumentsDetails(123, undefined, { tenantId: 'test-tenant' });
+    const command = GetAccountDocumentsDetails(123);
 
-    expect(command.input).toEqual({ savingsAccountId: 123, queryParams: undefined, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ savingsAccountId: 123, queryParams: undefined });
     expect(command.metadata).toEqual({
       commandName: 'GetAccountDocumentsDetails',
       path: '/v1/savings/123/documents',
@@ -373,7 +372,7 @@ describe('GetAccountDocumentsDetails', () => {
 
     mockAxiosInstance.get.mockResolvedValue({ data: mockDocuments });
 
-    const command = GetAccountDocumentsDetails(123, undefined, { tenantId: 'test-tenant' });
+    const command = GetAccountDocumentsDetails(123);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -387,7 +386,7 @@ describe('GetAccountDocumentsDetails', () => {
       { params: undefined }
     );
     expect(result).toEqual(mockDocuments);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should execute GET request with query parameters', async () => {
@@ -414,7 +413,7 @@ describe('GetAccountDocumentsDetails', () => {
       createdAtTo: '2023-12-31+23:59:00'
     };
 
-    const command = GetAccountDocumentsDetails(123, queryParams, { tenantId: 'test-tenant' });
+    const command = GetAccountDocumentsDetails(123, queryParams);
 
     const config = {
       baseUrl: 'https://api.example.com',

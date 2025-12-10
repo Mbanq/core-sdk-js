@@ -23,8 +23,6 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * @param params.limit - Restricts the size of results returned. Defaults to 200
  * @param params.orderBy - In which property order data will be fetched. Defaults to "createdAt"
  * @param params.sortOrder - Specifies the sorting order. Possible values: ASC, DESC. Defaults to "DESC"
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns the pending transactions response
  *
@@ -32,8 +30,7 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * ```typescript
  * const getPendingCmd = GetPendingTransactions(
  *   123,
- *   { offset: 0, limit: 200, orderBy: "createdAt", sortOrder: "DESC" },
- *   { tenantId: "tokoro" }
+ *   { offset: 0, limit: 200, orderBy: "createdAt", sortOrder: "DESC" }
  * );
  * const result = await getPendingCmd.execute(config);
  * console.log(result.totalFilteredRecords);
@@ -42,23 +39,19 @@ import { handleAxiosError } from '../../utils/errorHandler';
  */
 export const GetPendingTransactions = (
   savingsId: number,
-  params?: GetPendingTransactionsRequest,
-  configuration?: { tenantId?: string }
+  params?: GetPendingTransactionsRequest
 ): Command<
-    { savingsId: number; params?: GetPendingTransactionsRequest; configuration?: { tenantId?: string } },
-    GetPendingTransactionsResponse
+  { savingsId: number; params?: GetPendingTransactionsRequest },
+  GetPendingTransactionsResponse
 > => {
   return {
-    input: { savingsId, params, configuration },
+    input: { savingsId, params },
     metadata: {
       commandName: 'GetPendingTransactions',
       path: `/v1/savingsaccounts/${savingsId}/pendingTransaction`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -103,8 +96,6 @@ export const GetPendingTransactions = (
  * @param params.orderBy - The list is sorted by the indicated field. Defaults to "id"
  * @param params.sortOrder - Specifies the sorting order. Possible values: ASC, DESC
  * @param params.getCardData - Do you want to get Card data. Defaults to false
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns the completed transactions response
  *
@@ -114,42 +105,37 @@ export const GetPendingTransactions = (
  *   123,
  *   {
  *     offset: 0,
- *     limit: 15,
- *     showEnrichedTransactions: true,
- *     orderBy: "id",
- *     sortOrder: "DESC"
- *   },
- *   { tenantId: "tokoro" }
+ *     limit: 200,
+ *     orderBy: "createdAt",
+ *     sortOrder: "DESC",
+ *     subTransactionType: "DEPOSIT"
+ *   }
  * );
  * const result = await getCompletedCmd.execute(config);
  * console.log(result.totalFilteredRecords);
- * console.log(result.pageItems[0].transactionType.code);
+ * console.log(result.pageItems[0].transfer.status); // "COMPLETED"
  * ```
  */
 export const GetCompletedTransactions = (
-  savingsAccountId: number,
-  params?: GetCompletedTransactionsRequest,
-  configuration?: { tenantId?: string }
+  savingsId: number,
+  params?: GetCompletedTransactionsRequest
 ): Command<
-    { savingsAccountId: number; params?: GetCompletedTransactionsRequest; configuration?: { tenantId?: string } },
-    GetCompletedTransactionsResponse
+  { savingsId: number; params?: GetCompletedTransactionsRequest },
+  GetCompletedTransactionsResponse
 > => {
   return {
-    input: { savingsAccountId, params, configuration },
+    input: { savingsId, params },
     metadata: {
       commandName: 'GetCompletedTransactions',
-      path: `/v1/savingsaccounts/${savingsAccountId}/transactions`,
+      path: `/v1/savingsaccounts/${savingsId}/transactions`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
         const response = await axiosInstance.get<GetCompletedTransactionsResponse>(
-          `/v1/savingsaccounts/${savingsAccountId}/transactions`,
+          `/v1/savingsaccounts/${savingsId}/transactions`,
           { params }
         );
         return response.data;

@@ -260,7 +260,7 @@ All operations throw CommandError with:
 The package supports modular imports:
 ```typescript
 import { CoreSDK } from '@mbanq/core-sdk-js';           // Main SDK
-import { createClient } from '@mbanq/core-sdk-js/client';  // Client only
+import { createInstance } from '@mbanq/core-sdk-js/client';  // Client only
 import { commands } from '@mbanq/core-sdk-js/command';     // Commands only
 import { types } from '@mbanq/core-sdk-js/types';         // Types only
 ```

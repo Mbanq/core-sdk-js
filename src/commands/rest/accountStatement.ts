@@ -19,47 +19,38 @@ import {
  * @param requestData.reportType - The report type (e.g., "PDF")
  * @param requestData.docType - The document type (e.g., "statement")
  * @param requestData.params - Additional parameters (start_date, end_date, saving_no)
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns the statement generation job details
  *
  * @example
  * ```typescript
- * const generateCmd = GenerateAccountStatement(
- *   {
- *     reportName: "Report current and saving account(Pentaho)",
- *     parentEntityType: "savings",
- *     parentEntityId: 1,
- *     reportType: "PDF",
- *     docType: "statement",
- *     params: {
- *       start_date: "01 January 2023",
- *       end_date: "02 January 2023",
- *       saving_no: "1"
- *     }
- *   },
- *   { tenantId: "tokoro" }
- * );
+ * const generateCmd = GenerateAccountStatement({
+ *   reportName: "Report current and saving account(Pentaho)",
+ *   parentEntityType: "savings",
+ *   parentEntityId: 1,
+ *   reportType: "PDF",
+ *   docType: "statement",
+ *   params: {
+ *     start_date: "01 January 2023",
+ *     end_date: "02 January 2023",
+ *     saving_no: "1"
+ *   }
+ * });
  * const result = await generateCmd.execute(config);
  * console.log(result.jobId); // 315
  * ```
  */
 export const GenerateAccountStatement = (
-  requestData: GenerateAccountStatementRequest,
-  configuration?: { tenantId?: string }
-): Command<{ requestData: GenerateAccountStatementRequest, configuration?: { tenantId?: string } }, GenerateAccountStatementResponse> => {
+  requestData: GenerateAccountStatementRequest
+): Command<{ requestData: GenerateAccountStatementRequest }, GenerateAccountStatementResponse> => {
   return {
-    input: { requestData, configuration },
+    input: { requestData },
     metadata: {
       commandName: 'GenerateAccountStatement',
       path: '/v1/generatestatements',
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -81,8 +72,6 @@ export const GenerateAccountStatement = (
  *
  * @param savingsAccountId - The ID of the savings account
  * @param documentId - The UUID of the document to download
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns the document as a Blob with metadata
  *
@@ -90,8 +79,7 @@ export const GenerateAccountStatement = (
  * ```typescript
  * const downloadCmd = DownloadAccountStatement(
  *   12,
- *   "45ac4379-7185-471b-a103-916d25dc648d",
- *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ *   "45ac4379-7185-471b-a103-916d25dc648d"
  * );
  * const result = await downloadCmd.execute(config);
  * // result.data is a Blob containing the file
@@ -101,20 +89,16 @@ export const GenerateAccountStatement = (
  */
 export const DownloadAccountStatement = (
   savingsAccountId: number,
-  documentId: string,
-  configuration?: { tenantId?: string }
-): Command<{ savingsAccountId: number, documentId: string, configuration?: { tenantId?: string } }, DownloadAccountStatementResponse> => {
+  documentId: string
+): Command<{ savingsAccountId: number, documentId: string }, DownloadAccountStatementResponse> => {
   return {
-    input: { savingsAccountId, documentId, configuration },
+    input: { savingsAccountId, documentId },
     metadata: {
       commandName: 'DownloadAccountStatement',
       path: `/v1/savings/${savingsAccountId}/documents/${documentId}/attachment`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -157,8 +141,6 @@ export const DownloadAccountStatement = (
  * @param queryParams.createdAtTo - Filter documents created up to this date (e.g., "2023-12-31+23:59:00")
  * @param queryParams.name - Name of the document (e.g., "January 01st - July 17st")
  * @param queryParams.type - Filter documents by type (statement, receipt, report, passport)
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns a list of document details
  *
@@ -166,8 +148,7 @@ export const DownloadAccountStatement = (
  * ```typescript
  * const getDocsCmd = GetAccountDocumentsDetails(
  *   123,
- *   { type: "statement", createdAtFrom: "2023-01-01+00:00:00" },
- *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ *   { type: "statement", createdAtFrom: "2023-01-01+00:00:00" }
  * );
  * const result = await getDocsCmd.execute(config);
  * result.forEach(doc => console.log(doc.name));
@@ -175,20 +156,16 @@ export const DownloadAccountStatement = (
  */
 export const GetAccountDocumentsDetails = (
   savingsAccountId: number,
-  queryParams?: GetAccountDocumentsDetailsQueryParams,
-  configuration?: { tenantId?: string }
-): Command<{ savingsAccountId: number, queryParams?: GetAccountDocumentsDetailsQueryParams, configuration?: { tenantId?: string } }, GetAccountDocumentsDetailsResponse> => {
+  queryParams?: GetAccountDocumentsDetailsQueryParams
+): Command<{ savingsAccountId: number, queryParams?: GetAccountDocumentsDetailsQueryParams }, GetAccountDocumentsDetailsResponse> => {
   return {
-    input: { savingsAccountId, queryParams, configuration },
+    input: { savingsAccountId, queryParams },
     metadata: {
       commandName: 'GetAccountDocumentsDetails',
       path: `/v1/savings/${savingsAccountId}/documents`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {

@@ -86,8 +86,7 @@ describe('Recipient Commands', () => {
       const mockResponse = { data: mockRecipient };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 456, id: 123, tenantId: 'test-tenant' };
-      const command = GetRecipient(params);
+      const command = GetRecipient(456, 123);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/456/recipients/123');
@@ -97,7 +96,7 @@ describe('Recipient Commands', () => {
       expect(command.metadata.method).toBe('GET');
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockRecipient: Recipient = {
         id: 123,
         clientId: 456,
@@ -129,20 +128,18 @@ describe('Recipient Commands', () => {
 
       mockAxiosInstance.get.mockResolvedValue({ data: mockRecipient });
 
-      const params = { clientId: 456, id: 123, tenantId: 'custom-tenant' };
-      const command = GetRecipient(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = GetRecipient(456, 123);
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+      expect(mockConfig.tenantId).toBe('your_tenant_id');
     });
 
     it('should handle errors properly', async () => {
       const mockError = new Error('Recipient not found');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const params = { clientId: 456, id: 999 };
-      const command = GetRecipient(params);
+      const command = GetRecipient(456, 999);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Mocked error');
       expect(errorHandlerModule.handleAxiosError).toHaveBeenCalledWith(mockError);
@@ -197,8 +194,7 @@ describe('Recipient Commands', () => {
       const mockResponse = { data: createdRecipient };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 456, recipient: recipientData, tenantId: 'test-tenant' };
-      const command = CreateRecipient(params);
+      const command = CreateRecipient(456, recipientData);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/456/recipients', recipientData);
@@ -253,8 +249,7 @@ describe('Recipient Commands', () => {
 
       mockAxiosInstance.post.mockResolvedValue({ data: createdRecipient });
 
-      const params = { clientId: 456, recipient: wireRecipientData };
-      const command = CreateRecipient(params);
+      const command = CreateRecipient(456, wireRecipientData);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients/456/recipients', wireRecipientData);
@@ -282,8 +277,7 @@ describe('Recipient Commands', () => {
       const mockError = new Error('Validation failed');
       mockAxiosInstance.post.mockRejectedValue(mockError);
 
-      const params = { clientId: 456, recipient: recipientData };
-      const command = CreateRecipient(params);
+      const command = CreateRecipient(456, recipientData);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Mocked error');
       expect(errorHandlerModule.handleAxiosError).toHaveBeenCalledWith(mockError);
@@ -295,8 +289,7 @@ describe('Recipient Commands', () => {
       const mockResponse = { data: { message: 'Recipient deleted successfully' } };
       mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      const params = { clientId: 456, recipientId: 123, tenantId: 'test-tenant' };
-      const command = DeleteRecipient(params);
+      const command = DeleteRecipient(456, 123);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/456/recipients/123');
@@ -306,23 +299,21 @@ describe('Recipient Commands', () => {
       expect(command.metadata.method).toBe('DELETE');
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       mockAxiosInstance.delete.mockResolvedValue({ data: {} });
 
-      const params = { clientId: 456, recipientId: 123, tenantId: 'custom-tenant' };
-      const command = DeleteRecipient(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = DeleteRecipient(456, 123);
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+      expect(mockConfig.tenantId).toBe('your_tenant_id');
     });
 
     it('should handle deletion errors properly', async () => {
       const mockError = new Error('Recipient not found for deletion');
       mockAxiosInstance.delete.mockRejectedValue(mockError);
 
-      const params = { clientId: 456, recipientId: 999 };
-      const command = DeleteRecipient(params);
+      const command = DeleteRecipient(456, 999);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Mocked error');
       expect(errorHandlerModule.handleAxiosError).toHaveBeenCalledWith(mockError);
@@ -394,8 +385,7 @@ describe('Recipient Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
       const params: RecipientRequest = { limit: 20, offset: 0 };
-      const configuration = { tenantId: 'test-tenant' };
-      const command = GetRecipients(456, params, configuration);
+      const command = GetRecipients(456, params);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/456/recipients', {
@@ -412,8 +402,7 @@ describe('Recipient Commands', () => {
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
       const params: RecipientRequest = { offset: 10 };
-      const configuration = { tenantId: 'test-tenant' };
-      const command = GetRecipients(456, params, configuration);
+      const command = GetRecipients(456, params);
       await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/456/recipients', {
@@ -430,8 +419,7 @@ describe('Recipient Commands', () => {
         offset: 0,
         name: 'John'
       };
-      const configuration = { tenantId: 'test-tenant' };
-      const command = GetRecipients(456, params, configuration);
+      const command = GetRecipients(456, params);
       await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/456/recipients', {
@@ -439,16 +427,15 @@ describe('Recipient Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       mockAxiosInstance.get.mockResolvedValue({ data: [] });
 
       const params: RecipientRequest = { limit: 5 };
-      const configuration = { tenantId: 'custom-tenant' };
-      const command = GetRecipients(456, params, configuration);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = GetRecipients(456, params);
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+      expect(mockConfig.tenantId).toBe('your_tenant_id');
     });
 
     it('should handle errors properly', async () => {
@@ -456,8 +443,7 @@ describe('Recipient Commands', () => {
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
       const params: RecipientRequest = { limit: 20 };
-      const configuration = {};
-      const command = GetRecipients(456, params, configuration);
+      const command = GetRecipients(456, params);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Mocked error');
       expect(errorHandlerModule.handleAxiosError).toHaveBeenCalledWith(mockError);
@@ -466,28 +452,25 @@ describe('Recipient Commands', () => {
 
   describe('Command Metadata', () => {
     it('should have correct metadata for all commands', () => {
-      const getCommand = GetRecipient({ clientId: 456, id: 123 });
-      const createCommand = CreateRecipient({
-        clientId: 456,
-        recipient: {
-          nickName: 'Test',
-          firstName: 'Test',
-          lastName: 'User',
-          emailAddress: 'test@example.com',
-          phoneNumber: '+1234567890',
-          recipientType: 'INDIVIDUAL',
-          paymentRail: 'ACH',
-          accountDetailsData: {
-            accountNumber: '123456789',
-            bankInformation: {
-              routingNumber: '021000021',
-              swiftCode: 'TEST'
-            }
+      const getCommand = GetRecipient(456, 123);
+      const createCommand = CreateRecipient(456, {
+        nickName: 'Test',
+        firstName: 'Test',
+        lastName: 'User',
+        emailAddress: 'test@example.com',
+        phoneNumber: '+1234567890',
+        recipientType: 'INDIVIDUAL',
+        paymentRail: 'ACH',
+        accountDetailsData: {
+          accountNumber: '123456789',
+          bankInformation: {
+            routingNumber: '021000021',
+            swiftCode: 'TEST'
           }
         }
       });
-      const deleteCommand = DeleteRecipient({ clientId: 456, recipientId: 123 });
-      const getRecipientsCommand = GetRecipients(456, { limit: 20 }, {});
+      const deleteCommand = DeleteRecipient(456, 123);
+      const getRecipientsCommand = GetRecipients(456, { limit: 20 });
 
       expect(getCommand.metadata).toEqual({
         commandName: 'GetRecipient',

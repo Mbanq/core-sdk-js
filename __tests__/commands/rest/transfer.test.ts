@@ -307,7 +307,7 @@ describe('GetTransfers', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     mockAxiosInstance.get.mockResolvedValueOnce({
       data: {
         pageItems: [{
@@ -325,15 +325,14 @@ describe('GetTransfers', () => {
     const params = {
       executedAt: '2023-01-01',
       paymentType: 'ACH' as PaymentRail,
-      transferStatus: 'COMPLETED',
-      tenantId: 'custom-tenant'
+      transferStatus: 'COMPLETED'
     };
 
     const command = GetTransfers(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 
   it('should use default values when optional parameters are undefined', async () => {
@@ -473,21 +472,15 @@ describe('MarkAsSuccess', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: 123, status: 'SUCCESS' } };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const params = {
-      externalId: 'ext-123',
-      paymentType: 'ACH' as PaymentRail,
-      tenantId: 'custom-tenant'
-    };
-
-    const command = MarkAsSuccess(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    const command = MarkAsSuccess('ext-123', 'ACH');
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 
   it('should use default paymentType when not provided', async () => {
@@ -501,11 +494,7 @@ describe('MarkAsSuccess', () => {
     };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const params = {
-      externalId: 'ext-default-payment-123'
-    };
-
-    const command = MarkAsSuccess(params);
+    const command = MarkAsSuccess('ext-default-payment-123');
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.post).toHaveBeenCalledWith(
@@ -622,25 +611,20 @@ describe('MarkAsProcessing', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: 123, status: 'PROCESSING' } };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const params = {
-      externalId: '1732882362138Dc',
-      fileUrl: 's3://ach-payment/123456',
-      paymentType: 'ACH' as const,
-      traceNumbers: {
-        outgoingTransfer: '84106760000024'
-      },
-      tenantId: 'custom-tenant'
-    };
-
-    const command = MarkAsProcessing(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    const command = MarkAsProcessing(
+      '1732882362138Dc',
+      's3://ach-payment/123456',
+      'ACH',
+      { outgoingTransfer: '84106760000024' }
+    );
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 });
 
@@ -751,7 +735,7 @@ describe('MarkAsReturned', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: 123, status: 'RETURNED' } };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
@@ -760,15 +744,14 @@ describe('MarkAsReturned', () => {
       externalId: 'ext-123',
       returnFileUrl: 's3://return-files/return-123.csv',
       errorCode: 'R01',
-      errorMessage: 'Insufficient Funds',
-      tenantId: 'custom-tenant'
+      errorMessage: 'Insufficient Funds'
     };
 
     const command = MarkAsReturned(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 });
 
@@ -815,17 +798,15 @@ describe('LogFailTransfer', () => {
     mockAxiosInstance.post.mockResolvedValueOnce(mockResponse);
 
     const command = LogFailTransfer({
-      payload: {
-        type: 'DEBIT',
-        paymentType: 'ACH',
-        currency: 'USD',
-        amount: 100,
-        externalId: '6491b76b-e5b6-483a-8d14-867a71eedadd',
-        reference: ['test reference'],
-        fileUrl: 's3://ach-local/fail-inbound-transfer-to-non-existing-account-000000099_1610507709557.ach',
-        errorCode: 'R04',
-        errorMessage: 'At least one party of the transfer must reference an internal account'
-      }
+      type: 'DEBIT',
+      paymentType: 'ACH',
+      currency: 'USD',
+      amount: 100,
+      externalId: '6491b76b-e5b6-483a-8d14-867a71eedadd',
+      reference: ['test reference'],
+      fileUrl: 's3://ach-local/fail-inbound-transfer-to-non-existing-account-000000099_1610507709557.ach',
+      errorCode: 'R04',
+      errorMessage: 'At least one party of the transfer must reference an internal account'
     });
 
     const result = await command.execute(mockConfig);
@@ -849,17 +830,15 @@ describe('LogFailTransfer', () => {
     mockAxiosInstance.post.mockRejectedValueOnce(axiosError);
 
     const command = LogFailTransfer({
-      payload: {
-        type: 'DEBIT',
-        paymentType: 'ACH',
-        currency: 'USD',
-        amount: 100,
-        externalId: '6491b76b-e5b6-483a-8d14-867a71eedadd',
-        reference: ['test reference'],
-        fileUrl: 's3://ach-local/fail-inbound-transfer-to-non-existing-account-000000099_1610507709557.ach',
-        errorCode: 'R04',
-        errorMessage: 'At least one party of the transfer must reference an internal account'
-      }
+      type: 'DEBIT',
+      paymentType: 'ACH',
+      currency: 'USD',
+      amount: 100,
+      externalId: '6491b76b-e5b6-483a-8d14-867a71eedadd',
+      reference: ['test reference'],
+      fileUrl: 's3://ach-local/fail-inbound-transfer-to-non-existing-account-000000099_1610507709557.ach',
+      errorCode: 'R04',
+      errorMessage: 'At least one party of the transfer must reference an internal account'
     });
 
     try {
@@ -874,29 +853,24 @@ describe('LogFailTransfer', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: 123, status: 'FAILED' } };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const params = {
-      payload: {
-        type: 'CREDIT',
-        paymentType: 'ACH' as const,
-        currency: 'USD',
-        amount: 100.50,
-        externalId: 'ext-123',
-        reference: ['ref-123'],
-        errorCode: 'E001',
-        errorMessage: 'Processing failed'
-      },
-      tenantId: 'custom-tenant'
+    const payload = {
+      type: 'CREDIT' as const,
+      paymentType: 'ACH' as const,
+      currency: 'USD' as const,
+      amount: 100,
+      externalId: 'ext-123',
+      reference: ['ref-123']
     };
 
-    const command = LogFailTransfer(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    const command = LogFailTransfer(payload);
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 
   it('should rethrow non-axios errors unchanged', async () => {
@@ -906,17 +880,15 @@ describe('LogFailTransfer', () => {
     mockAxiosInstance.post.mockRejectedValueOnce(nonAxiosError);
 
     const command = LogFailTransfer({
-      payload: {
-        type: 'DEBIT',
-        paymentType: 'ACH',
-        currency: 'USD',
-        amount: 100,
-        externalId: '6491b76b-e5b6-483a-8d14-867a71eedadd',
-        reference: ['test reference'],
-        fileUrl: 's3://ach-local/fail-inbound-transfer-to-non-existing-account-000000099_1610507709557.ach',
-        errorCode: 'R04',
-        errorMessage: 'At least one party of the transfer must reference an internal account'
-      }
+      type: 'DEBIT',
+      paymentType: 'ACH',
+      currency: 'USD',
+      amount: 100,
+      externalId: '6491b76b-e5b6-483a-8d14-867a71eedadd',
+      reference: ['test reference'],
+      fileUrl: 's3://ach-local/fail-inbound-transfer-to-non-existing-account-000000099_1610507709557.ach',
+      errorCode: 'R04',
+      errorMessage: 'At least one party of the transfer must reference an internal account'
     });
 
     try {
@@ -1020,22 +992,15 @@ describe('MarkAsFail', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: 123, status: 'FAILED' } };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const params = {
-      externalId: 'ext-123',
-      errorMessage: 'Payment processing failed',
-      paymentType: 'ACH' as const,
-      tenantId: 'custom-tenant'
-    };
-
-    const command = MarkAsFail(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    const command = MarkAsFail('ext-123', 'Insufficient funds', 'ACH');
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 });
 
@@ -1139,28 +1104,6 @@ describe('UpdateTraceNumber', () => {
       }
     }
   });
-
-  it('should use custom tenantId when provided', async () => {
-    const mockResponse = { data: { id: 123, status: 'UPDATED' } };
-    mockAxiosInstance.put.mockResolvedValue(mockResponse);
-
-    const params = {
-      externalId: 'ext-123',
-      traceNumbers: {
-        traceMapping: 'mapping-123',
-        CoreFileKey: 'file-key-123',
-        CoreBatch: 1001,
-        CoreSeq: 42
-      },
-      tenantId: 'custom-tenant'
-    };
-
-    const command = UpdateTraceNumber(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-    await command.execute(mockConfig);
-
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-  });
 });
 
 describe('CreateTransfer', () => {
@@ -1229,12 +1172,7 @@ describe('CreateTransfer', () => {
       reference: ['payment-ref-123']
     };
 
-    const params = {
-      transfer: transferData,
-      tenantId: 'test-tenant'
-    };
-
-    const command = CreateTransfer(params);
+    const command = CreateTransfer(transferData);
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/transfers', transferData);
@@ -1247,106 +1185,97 @@ describe('CreateTransfer', () => {
     });
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: '123' } };
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const params = {
-      transfer: {
-        type: 'CREDIT' as const,
-        fileUrl: 'https://example.com/file.csv',
-        paymentType: 'ACH' as const,
-        currency: 'USD' as const,
-        amount: 100,
-        debtor: {
-          identifier: '123',
-          name: 'John Doe',
-          accountType: 'CHECKING' as const
-        },
-        creditor: {
-          identifier: '456',
-          name: 'Jane Smith',
-          accountType: 'SAVINGS' as const,
-          agent: {
-            name: 'Test Bank',
-            identifier: '021000021'
-          }
-        },
-        reference: ['payment-ref-123']
+    const transferData = {
+      type: 'CREDIT' as const,
+      fileUrl: 'https://example.com/file.csv',
+      paymentType: 'ACH' as const,
+      currency: 'USD' as const,
+      amount: 100,
+      debtor: {
+        identifier: '123',
+        name: 'John Doe',
+        accountType: 'CHECKING' as const
       },
-      tenantId: 'custom-tenant'
+      creditor: {
+        identifier: '456',
+        name: 'Jane Smith',
+        accountType: 'SAVINGS' as const,
+        agent: {
+          name: 'Test Bank',
+          identifier: '021000021'
+        }
+      },
+      reference: ['payment-ref-123']
     };
 
-    const command = CreateTransfer(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    const command = CreateTransfer(transferData);
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 
   it('should handle errors properly', async () => {
     const mockError = new Error('Transfer creation failed');
     mockAxiosInstance.post.mockRejectedValue(mockError);
 
-    const params = {
-      transfer: {
-        type: 'CREDIT' as const,
-        fileUrl: 'https://example.com/file.csv',
-        paymentType: 'ACH' as const,
-        currency: 'USD' as const,
-        amount: 100,
-        debtor: {
-          identifier: '123',
-          name: 'John Doe',
-          accountType: 'CHECKING' as const
-        },
-        creditor: {
-          identifier: '456',
-          name: 'Jane Smith',
-          accountType: 'SAVINGS' as const,
-          agent: {
-            name: 'Test Bank',
-            identifier: '021000021'
-          }
-        },
-        reference: ['payment-ref-123']
+    const transferData = {
+      type: 'CREDIT' as const,
+      fileUrl: 'https://example.com/file.csv',
+      paymentType: 'ACH' as const,
+      currency: 'USD' as const,
+      amount: 100,
+      debtor: {
+        identifier: '123',
+        name: 'John Doe',
+        accountType: 'CHECKING' as const
       },
-      tenantId: 'test-tenant'
+      creditor: {
+        identifier: '456',
+        name: 'Jane Smith',
+        accountType: 'SAVINGS' as const,
+        agent: {
+          name: 'Test Bank',
+          identifier: '021000021'
+        }
+      },
+      reference: ['payment-ref-123']
     };
 
-    const command = CreateTransfer(params);
+    const command = CreateTransfer(transferData);
 
     await expect(command.execute(mockConfig)).rejects.toThrow('Transfer creation failed');
   });
 
   it('should have correct metadata', () => {
-    const params = {
-      transfer: {
-        type: 'CREDIT' as const,
-        fileUrl: 'https://example.com/file.csv',
-        paymentType: 'ACH' as const,
-        currency: 'USD' as const,
-        amount: 100,
-        debtor: {
-          identifier: '123',
-          name: 'John Doe',
-          accountType: 'CHECKING' as const
-        },
-        creditor: {
-          identifier: '456',
-          name: 'Jane Smith',
-          accountType: 'SAVINGS' as const,
-          agent: {
-            name: 'Test Bank',
-            identifier: '021000021'
-          }
-        },
-        reference: ['payment-ref-123']
+    const transferData = {
+      type: 'CREDIT' as const,
+      fileUrl: 'https://example.com/file.csv',
+      paymentType: 'ACH' as const,
+      currency: 'USD' as const,
+      amount: 100,
+      debtor: {
+        identifier: '123',
+        name: 'John Doe',
+        accountType: 'CHECKING' as const
       },
-      tenantId: 'test-tenant'
+      creditor: {
+        identifier: '456',
+        name: 'Jane Smith',
+        accountType: 'SAVINGS' as const,
+        agent: {
+          name: 'Test Bank',
+          identifier: '021000021'
+        }
+      },
+      reference: ['payment-ref-123']
     };
 
-    const command = CreateTransfer(params);
+    const command = CreateTransfer(transferData);
 
     expect(command.metadata.commandName).toBe('CreateTransfer');
     expect(command.metadata.path).toBe('/v1/transfers');
@@ -1388,12 +1317,7 @@ describe('CreateTransfer', () => {
       reference: ['payment-ref-456']
     };
 
-    const params = {
-      transfer: transferData,
-      tenantId: ''
-    };
-
-    const command = CreateTransfer(params);
+    const command = CreateTransfer(transferData);
     const originalTenantId = mockConfig.tenantId;
     await command.execute(mockConfig);
 
@@ -1445,12 +1369,7 @@ describe('GetTransfer', () => {
     };
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-    const params = {
-      id: 123,
-      tenantId: 'test-tenant'
-    };
-
-    const command = GetTransfer(params);
+    const command = GetTransfer(123);
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/transfers/123');
@@ -1463,43 +1382,28 @@ describe('GetTransfer', () => {
     });
   });
 
-  it('should use custom tenantId when provided', async () => {
+  it('should not override tenantId', async () => {
     const mockResponse = { data: { id: 123 } };
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-    const params = {
-      id: 123,
-      tenantId: 'custom-tenant'
-    };
-
-    const command = GetTransfer(params);
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+    const command = GetTransfer(123);
     await command.execute(mockConfig);
 
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+    expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('your_tenant_id');
   });
 
   it('should handle errors properly', async () => {
     const mockError = new Error('Transfer not found');
     mockAxiosInstance.get.mockRejectedValue(mockError);
 
-    const params = {
-      id: 999,
-      tenantId: 'test-tenant'
-    };
-
-    const command = GetTransfer(params);
+    const command = GetTransfer(999);
 
     await expect(command.execute(mockConfig)).rejects.toThrow('Transfer not found');
   });
 
   it('should have correct metadata', () => {
-    const params = {
-      id: 123,
-      tenantId: 'test-tenant'
-    };
-
-    const command = GetTransfer(params);
+    const command = GetTransfer(123);
 
     expect(command.metadata.commandName).toBe('GetTransfer');
     expect(command.metadata.path).toBe('/v1/transfers/123');

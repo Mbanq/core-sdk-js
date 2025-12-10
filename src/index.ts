@@ -1,4 +1,4 @@
-export { createClient } from './client/index';
+export { createInstance } from './client/index';
 export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument, ListClientDocument, DeleteClientDocument, ApproveRejectClientDocument } from './commands/rest/clientIdentifier';

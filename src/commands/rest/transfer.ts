@@ -1,43 +1,39 @@
+import axios from 'axios';
 import {
   CreateTransferInputSchema,
-  CreateTransferOutputSchema,
-  GetTransferInputSchema,
-  MarkAsReturnInputSchema,
   PaymentRail,
-  ProcessOutputSchema, TransferSchema, TransferResponseSchema,
-  UpdateTraceNumbersInputSchema,
   CreateTransferInput,
   CreateTransferOutput,
   GetTransferInput,
   MarkAsReturnInput,
-  ProcessOutput, Transfer, TransferResponse,
+  ProcessOutput,
+  Transfer,
+  TransferResponse,
   UpdateTraceNumbersInput
 } from '../../types/transfer';
+import { Command, Config } from '../../types';
 import baseRequest from '../../utils/baseRequest';
-import type { Command, Config } from '../../types';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
-import axios from 'axios';
 import newDate from '../../utils/newDate';
 
-export const CreateTransfer = (params: { transfer: CreateTransferInput, tenantId: string }): Command<{ transfer: CreateTransferInput, tenantId: string }, CreateTransferOutput> => {
+export const CreateTransfer = (transfer: CreateTransferInput): Command<{ transfer: CreateTransferInput }, CreateTransferOutput> => {
+  const path = `/v1/transfers`;
+
   return {
-    input: params,
+    input: { transfer },
     metadata: {
       commandName: 'CreateTransfer',
-      path: `/v1/transfers`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
       // Validate input using Zod schema
-      CreateTransferInputSchema.parse(params.transfer);
+      CreateTransferInputSchema.parse(transfer);
 
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<CreateTransferOutput>(`/v1/transfers`, params.transfer);
+        const response = await axiosInstance.post<CreateTransferOutput>(path, transfer);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -46,22 +42,21 @@ export const CreateTransfer = (params: { transfer: CreateTransferInput, tenantId
   };
 };
 
-export const GetTransfer = (params: { id: number, tenantId: string }): Command<{ id: number; tenantId: string }, any> => {
+export const GetTransfer = (id: number): Command<{ id: number }, any> => {
+  const path = `/v1/transfers/${id}`;
+
   return {
-    input: params,
+    input: { id },
     metadata: {
       commandName: 'GetTransfer',
-      path: `/v1/transfers/${params.id}`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<any>(`/v1/transfers/${params.id}`);
+        const response = await axiosInstance.get<any>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -70,7 +65,8 @@ export const GetTransfer = (params: { id: number, tenantId: string }): Command<{
   };
 };
 
-export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput, Array<Transfer>> => {
+export const GetTransfers = (params: GetTransferInput): Command<{ params: GetTransferInput }, Array<Transfer>> => {
+  const path = `/v1/transfers`;
   const enrichedParams = {
     paymentType: params.paymentType || 'ACH',
     status: params.transferStatus || 'EXECUTION_SCHEDULED',
@@ -81,17 +77,15 @@ export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput
     originatedBy: 'us',
     accountType: params.accountType
   };
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'GetTransfers',
-      path: `/v1/transfers`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       const allTransfers: Array<Transfer> = [];
@@ -107,7 +101,7 @@ export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput
 
       try {
         do {
-          const response = await axiosInstance.get<TransferResponse>(`/v1/transfers`, { params: newParams });
+          const response = await axiosInstance.get<TransferResponse>(path, { params: newParams });
           const { totalFilteredRecords: total, pageItems } = response.data;
           allTransfers.push(...pageItems);
           totalFilteredRecords = total;
@@ -123,27 +117,27 @@ export const GetTransfers = (params: GetTransferInput): Command<GetTransferInput
 };
 
 export const MarkAsSuccess = (
-  params: { externalId: string; paymentType?: PaymentRail, tenantId?: string }
-): Command<{ externalId: string; paymentType?: PaymentRail, tenantId?: string }, ProcessOutput> => {
+  externalId: string,
+  paymentType?: PaymentRail
+): Command<{ externalId: string; paymentType?: PaymentRail }, ProcessOutput> => {
+  const path = `/v1/external-transfers?command=MARK_AS_SUCCESS`;
   const enrichedParams = {
-    ...params,
-    paymentType: params.paymentType || 'ACH'
+    externalId,
+    paymentType: paymentType || 'ACH'
   };
+
   return {
-    input: params,
+    input: { externalId, paymentType },
     metadata: {
       commandName: 'MarkAsSuccess',
-      path: `/v1/external-transfers?command=MARK_AS_SUCCESS`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>(`/v1/external-transfers?command=MARK_AS_SUCCESS`, enrichedParams);
+        const response = await axiosInstance.post<ProcessOutput>(path, enrichedParams);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -153,14 +147,11 @@ export const MarkAsSuccess = (
 };
 
 export const MarkAsProcessing = (
-  params: {
-    externalId: string;
-    fileUrl: string;
-    paymentType: PaymentRail;
-    traceNumbers: {
-      outgoingTransfer: string;
-    },
-    tenantId?: string;
+  externalId: string,
+  fileUrl: string,
+  paymentType: PaymentRail,
+  traceNumbers: {
+    outgoingTransfer: string;
   }
 ): Command<{
   externalId: string;
@@ -169,23 +160,21 @@ export const MarkAsProcessing = (
   traceNumbers: {
     outgoingTransfer: string;
   }
-  tenantId?: string;
 }, ProcessOutput> => {
+  const path = `/v1/external-transfers?command=MARK_AS_PROCESSING`;
+
   return {
-    input: params,
+    input: { externalId, fileUrl, paymentType, traceNumbers },
     metadata: {
       commandName: 'MarkAsProcessing',
-      path: `/v1/external-transfers?command=MARK_AS_PROCESSING`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>(`/v1/external-transfers?command=MARK_AS_PROCESSING`, params);
+        const response = await axiosInstance.post<ProcessOutput>(path, { externalId, fileUrl, paymentType, traceNumbers });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -196,22 +185,21 @@ export const MarkAsProcessing = (
 
 export const MarkAsReturned = (
   params: MarkAsReturnInput
-): Command<MarkAsReturnInput, ProcessOutput> => {
+): Command<{ params: MarkAsReturnInput }, ProcessOutput> => {
+  const path = `/v1/external-transfers?command=MARK_AS_RETURN`;
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'MarkAsReturned',
-      path: `/v1/external-transfers?command=MARK_AS_RETURN`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>(`/v1/external-transfers?command=MARK_AS_RETURN`, { ...params });
+        const response = await axiosInstance.post<ProcessOutput>(path, { ...params });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -221,27 +209,25 @@ export const MarkAsReturned = (
 };
 
 export const LogFailTransfer = (
-  params: { payload: Transfer, tenantId?: string }
-): Command<{ payload: Transfer, tenantId?: string }, ProcessOutput> => {
-
+  payload: Transfer
+): Command<{ payload: Transfer }, ProcessOutput> => {
+  const path = `/v1/external-transfers?command=LOG_FAILURE`;
   const enrichedParams = {
-    ...params.payload
+    ...payload
   };
+
   return {
-    input: params,
+    input: { payload },
     metadata: {
       commandName: 'LogFailTransfer',
-      path: `/v1/external-transfers?command=LOG_FAILURE`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>(`/v1/external-transfers?command=LOG_FAILURE`, enrichedParams);
+        const response = await axiosInstance.post<ProcessOutput>(path, enrichedParams);
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -260,24 +246,24 @@ export const LogFailTransfer = (
 };
 
 export const MarkAsFail = (
-  params: { externalId: string, errorMessage: string, paymentType: PaymentRail, tenantId?: string }
-): Command<{ externalId: string, errorMessage: string, paymentType: PaymentRail, tenantId?: string }, ProcessOutput> => {
+  externalId: string,
+  errorMessage: string,
+  paymentType: PaymentRail
+): Command<{ externalId: string; errorMessage: string; paymentType: PaymentRail }, ProcessOutput> => {
+  const path = `/v1/external-transfers?command=MARK_AS_FAIL`;
 
   return {
-    input: params,
+    input: { externalId, errorMessage, paymentType },
     metadata: {
       commandName: 'MarkAsFail',
-      path: `/v1/external-transfers?command=MARK_AS_FAIL`,
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>(`/v1/external-transfers?command=MARK_AS_FAIL`, params);
+        const response = await axiosInstance.post<ProcessOutput>(path, { externalId, errorMessage, paymentType });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -288,26 +274,24 @@ export const MarkAsFail = (
 
 export const UpdateTraceNumber = (
   params: UpdateTraceNumbersInput
-): Command<UpdateTraceNumbersInput, ProcessOutput> => {
-
+): Command<{ params: UpdateTraceNumbersInput }, ProcessOutput> => {
+  const path = `/v1/external-transfers/${params.externalId}`;
   const enrichedParams = {
     traceNumbers: params.traceNumbers
   };
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'UpdateTraceNumber',
-      path: `/v1/external-transfers/${params.externalId}`,
+      path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.put<ProcessOutput>(`/v1/external-transfers/${params.externalId}`, enrichedParams);
+        const response = await axiosInstance.put<ProcessOutput>(path, enrichedParams);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

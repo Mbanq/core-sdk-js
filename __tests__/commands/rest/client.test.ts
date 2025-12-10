@@ -108,7 +108,7 @@ describe('Client Commands', () => {
       expect(result!.clientData).toEqual(mockClientData);
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockClientData = { data: { id: 123 } };
       mockAxiosInstance.get.mockResolvedValue(mockClientData);
 
@@ -118,7 +118,7 @@ describe('Client Commands', () => {
       };
 
       const command = GetClient(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -151,15 +151,12 @@ describe('Client Commands', () => {
       };
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 123,
-        updates: {
-          name: 'Jane Doe',
-          email: 'jane@example.com'
-        }
+      const updates = {
+        name: 'Jane Doe',
+        email: 'jane@example.com'
       };
 
-      const command = UpdateClient(params);
+      const command = UpdateClient(123, updates);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.put).toHaveBeenCalledWith(
@@ -172,18 +169,14 @@ describe('Client Commands', () => {
       expect(result).toEqual({ success: true, clientId: 123 });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { success: true } };
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 123,
-        updates: { name: 'Updated Name' },
-        tenantId: 'custom-tenant'
-      };
+      const updates = { name: 'Updated Name' };
 
-      const command = UpdateClient(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = UpdateClient(123, updates);
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -193,23 +186,17 @@ describe('Client Commands', () => {
       const mockError = new Error('Update failed');
       mockAxiosInstance.put.mockRejectedValue(mockError);
 
-      const params = {
-        clientId: 123,
-        updates: { name: 'New Name' }
-      };
+      const updates = { name: 'New Name' };
 
-      const command = UpdateClient(params);
+      const command = UpdateClient(123, updates);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Update failed');
     });
 
     it('should have correct metadata', () => {
-      const params = {
-        clientId: 123,
-        updates: { name: 'Test' }
-      };
+      const updates = { name: 'Test' };
 
-      const command = UpdateClient(params);
+      const command = UpdateClient(123, updates);
 
       expect(command.metadata.commandName).toBe('UpdateClient');
       expect(command.metadata.path).toBe('/v1/clients/123');
@@ -224,18 +211,14 @@ describe('Client Commands', () => {
       };
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 123,
-        identifierId: 'id123',
-        updates: {
-          documentTypeId: 'PASSPORT',
-          documentKey: 'ABC123456',
-          status: 'ACTIVE',
-          description: 'Valid passport'
-        }
+      const updates = {
+        documentTypeId: 'PASSPORT',
+        documentKey: 'ABC123456',
+        status: 'ACTIVE',
+        description: 'Valid passport'
       };
 
-      const command = UpdateClientIdentifier(params);
+      const command = UpdateClientIdentifier(123, 'id123', updates);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.put).toHaveBeenCalledWith(
@@ -250,23 +233,18 @@ describe('Client Commands', () => {
       expect(result).toEqual({ success: true, identifierId: 'id123' });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { success: true } };
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
-      const params = {
-        clientId: 123,
-        identifierId: 'id123',
-        updates: {
-          documentTypeId: 'PASSPORT',
-          documentKey: 'ABC123456',
-          status: 'ACTIVE'
-        },
-        tenantId: 'custom-tenant'
+      const updates = {
+        documentTypeId: 'PASSPORT',
+        documentKey: 'ABC123456',
+        status: 'ACTIVE'
       };
 
-      const command = UpdateClientIdentifier(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = UpdateClientIdentifier(123, 'id123', updates);
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -276,33 +254,25 @@ describe('Client Commands', () => {
       const mockError = new Error('Identifier update failed');
       mockAxiosInstance.put.mockRejectedValue(mockError);
 
-      const params = {
-        clientId: 123,
-        identifierId: 'id123',
-        updates: {
-          documentTypeId: 'PASSPORT',
-          documentKey: 'ABC123456',
-          status: 'ACTIVE'
-        }
+      const updates = {
+        documentTypeId: 'PASSPORT',
+        documentKey: 'ABC123456',
+        status: 'ACTIVE'
       };
 
-      const command = UpdateClientIdentifier(params);
+      const command = UpdateClientIdentifier(123, 'id123', updates);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Identifier update failed');
     });
 
     it('should have correct metadata', () => {
-      const params = {
-        clientId: 123,
-        identifierId: 'id123',
-        updates: {
-          documentTypeId: 'PASSPORT',
-          documentKey: 'ABC123456',
-          status: 'ACTIVE'
-        }
+      const updates = {
+        documentTypeId: 'PASSPORT',
+        documentKey: 'ABC123456',
+        status: 'ACTIVE'
       };
 
-      const command = UpdateClientIdentifier(params);
+      const command = UpdateClientIdentifier(123, 'id123', updates);
 
       expect(command.metadata.commandName).toBe('UpdateClientIdentifier');
       expect(command.metadata.path).toBe('/v1/clients/123/identifiers/id123');
@@ -337,7 +307,7 @@ describe('Client Commands', () => {
         legalFormId: 1
       };
 
-      const command = CreateClient({ clientData });
+      const command = CreateClient(clientData);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/clients', clientData);
@@ -348,7 +318,7 @@ describe('Client Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { clientId: 123 } };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
@@ -368,12 +338,9 @@ describe('Client Commands', () => {
         legalFormId: 1
       };
 
-      const command = CreateClient({
-        clientData,
-        tenantId: 'custom-tenant'
-      });
+      const command = CreateClient(clientData);
 
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -399,7 +366,7 @@ describe('Client Commands', () => {
         legalFormId: 1
       };
 
-      const command = CreateClient({ clientData });
+      const command = CreateClient(clientData);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Validation failed');
     });
@@ -421,7 +388,7 @@ describe('Client Commands', () => {
         legalFormId: 1
       };
 
-      const command = CreateClient({ clientData });
+      const command = CreateClient(clientData);
 
       expect(command.metadata.commandName).toBe('CreateClient');
       expect(command.metadata.path).toBe('/v1/clients');
@@ -442,7 +409,7 @@ describe('Client Commands', () => {
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const command = GetClients({}, {});
+      const command = GetClients({});
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients', {
@@ -474,7 +441,7 @@ describe('Client Commands', () => {
         firstname: 'John'
       };
 
-      const command = GetClients(params, {});
+      const command = GetClients(params);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients', {
@@ -516,14 +483,14 @@ describe('Client Commands', () => {
       expect(result!.pageItems).toHaveLength(250);
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = {
         data: { totalFilteredRecords: 0, pageItems: [] }
       };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const command = GetClients({}, { tenantId: 'custom-tenant' });
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const command = GetClients({});
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -533,13 +500,13 @@ describe('Client Commands', () => {
       const mockError = new Error('Server error');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const command = GetClients({}, {});
+      const command = GetClients({});
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Server error');
     });
 
     it('should have correct metadata', () => {
-      const command = GetClients({}, {});
+      const command = GetClients({});
 
       expect(command.metadata.commandName).toBe('GetClients');
       expect(command.metadata.path).toBe('/v1/clients');
@@ -557,7 +524,7 @@ describe('Client Commands', () => {
       };
       mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      const command = DeleteClient({ clientId: 123 });
+      const command = DeleteClient(123);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/clients/123');
@@ -567,16 +534,13 @@ describe('Client Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { status: 'DELETED' } };
       mockAxiosInstance.delete.mockResolvedValue(mockResponse);
 
-      const command = DeleteClient({
-        clientId: 123,
-        tenantId: 'custom-tenant'
-      });
+      const command = DeleteClient(123);
 
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -586,13 +550,13 @@ describe('Client Commands', () => {
       const mockError = new Error('Client not found');
       mockAxiosInstance.delete.mockRejectedValue(mockError);
 
-      const command = DeleteClient({ clientId: 999 });
+      const command = DeleteClient(999);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Client not found');
     });
 
     it('should have correct metadata', () => {
-      const command = DeleteClient({ clientId: 123 });
+      const command = DeleteClient(123);
 
       expect(command.metadata.commandName).toBe('DeleteClient');
       expect(command.metadata.path).toBe('/v1/clients/123');
@@ -618,18 +582,16 @@ describe('Client Commands', () => {
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          note: 'Test verification',
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy',
-          activationDate: '2024-01-01',
-          skipVerify: false,
-          skipActivate: false,
-          autoActivate: false, // Changed to false to test only verification
-          isActivatedByManualReview: false
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        note: 'Test verification',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activationDate: '2024-01-01',
+        skipVerify: false,
+        skipActivate: false,
+        autoActivate: false, // Changed to false to test only verification
+        isActivatedByManualReview: false
       });
 
       const result = await command.execute(mockConfig);
@@ -668,17 +630,15 @@ describe('Client Commands', () => {
         .mockResolvedValueOnce(mockActivateResponse);
 
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy',
-          activationDate: '2024-01-01',
-          skipVerify: false,
-          skipActivate: false,
-          autoActivate: true,
-          isActivatedByManualReview: false
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activationDate: '2024-01-01',
+        skipVerify: false,
+        skipActivate: false,
+        autoActivate: true,
+        isActivatedByManualReview: false
       });
 
       const result = await command.execute(mockConfig);
@@ -701,17 +661,15 @@ describe('Client Commands', () => {
 
     it('should skip verification when skipVerify is true', async () => {
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy',
-          activationDate: '2024-01-01',
-          skipVerify: true,
-          skipActivate: false,
-          autoActivate: true,
-          isActivatedByManualReview: false,
-          kycVerificationType: 'FULL'
-        }
+        clientId: '123',
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy',
+        activationDate: '2024-01-01',
+        skipVerify: true,
+        skipActivate: false,
+        autoActivate: true,
+        isActivatedByManualReview: false,
+        kycVerificationType: 'FULL'
       });
 
       const mockActivateResponse = {
@@ -753,16 +711,14 @@ describe('Client Commands', () => {
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          skipVerify: false,
-          skipActivate: true,
-          autoActivate: true,
-          isActivatedByManualReview: false,
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy'
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        skipVerify: false,
+        skipActivate: true,
+        autoActivate: true,
+        isActivatedByManualReview: false,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy'
       });
 
       const result = await command.execute(mockConfig);
@@ -788,16 +744,14 @@ describe('Client Commands', () => {
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          skipVerify: false,
-          skipActivate: false,
-          autoActivate: false,
-          isActivatedByManualReview: false,
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy'
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        skipVerify: false,
+        skipActivate: false,
+        autoActivate: false,
+        isActivatedByManualReview: false,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy'
       });
 
       const result = await command.execute(mockConfig);
@@ -808,22 +762,20 @@ describe('Client Commands', () => {
 
     it('should throw error when both skipVerify and skipActivate are true', async () => {
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          skipVerify: true,
-          skipActivate: true,
-          autoActivate: true,
-          isActivatedByManualReview: false,
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy'
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        skipVerify: true,
+        skipActivate: true,
+        autoActivate: true,
+        isActivatedByManualReview: false,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy'
       });
 
       await expect(command.execute(mockConfig)).rejects.toThrow();
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockVerifyResponse = {
         data: {
           id: 1,
@@ -840,20 +792,17 @@ describe('Client Commands', () => {
       mockAxiosInstance.post.mockResolvedValue(mockVerifyResponse);
 
       const command = VerifyWithActivateClients({
-        tenantId: 'custom-tenant',
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          skipVerify: false,
-          skipActivate: true,
-          autoActivate: true,
-          isActivatedByManualReview: false,
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy'
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        skipVerify: false,
+        skipActivate: true,
+        autoActivate: true,
+        isActivatedByManualReview: false,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy'
       });
 
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -861,16 +810,14 @@ describe('Client Commands', () => {
 
     it('should have correct metadata', () => {
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          skipVerify: false,
-          skipActivate: false,
-          autoActivate: true,
-          isActivatedByManualReview: false,
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy'
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        skipVerify: false,
+        skipActivate: false,
+        autoActivate: true,
+        isActivatedByManualReview: false,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy'
       });
 
       expect(command.metadata.commandName).toBe('VerifyWithActivateClients');
@@ -883,16 +830,14 @@ describe('Client Commands', () => {
       mockAxiosInstance.post.mockRejectedValue(mockError);
 
       const command = VerifyWithActivateClients({
-        param: {
-          clientId: '123',
-          kycVerificationType: 'FULL',
-          skipVerify: false,
-          skipActivate: true,
-          autoActivate: true,
-          isActivatedByManualReview: false,
-          locale: 'en',
-          dateFormat: 'dd MMMM yyyy'
-        }
+        clientId: '123',
+        kycVerificationType: 'FULL',
+        skipVerify: false,
+        skipActivate: true,
+        autoActivate: true,
+        isActivatedByManualReview: false,
+        locale: 'en',
+        dateFormat: 'dd MMMM yyyy'
       });
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Verification failed');
@@ -944,7 +889,7 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const command = GetStatusOfVerifyClient({ clientId: 623148 });
+      const command = GetStatusOfVerifyClient(623148);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/clients/623148/verificationstatus');
@@ -954,7 +899,7 @@ describe('Client Commands', () => {
       expect(result?.identifiers).toHaveLength(1);
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = {
         data: {
           id: 123,
@@ -971,12 +916,9 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const command = GetStatusOfVerifyClient({
-        clientId: 123,
-        tenantId: 'custom-tenant'
-      });
+      const command = GetStatusOfVerifyClient(123);
 
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
+      const expectedConfig = { ...mockConfig, tenantId: 'your_tenant_id' };
       await command.execute(mockConfig);
 
       expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
@@ -986,13 +928,13 @@ describe('Client Commands', () => {
       const mockError = new Error('Client not found');
       mockAxiosInstance.get.mockRejectedValue(mockError);
 
-      const command = GetStatusOfVerifyClient({ clientId: 999 });
+      const command = GetStatusOfVerifyClient(999);
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Client not found');
     });
 
     it('should have correct metadata', () => {
-      const command = GetStatusOfVerifyClient({ clientId: 123 });
+      const command = GetStatusOfVerifyClient(123);
 
       expect(command.metadata.commandName).toBe('GetStatusOfVerifyClient');
       expect(command.metadata.path).toBe('/v1/clients/123/verificationstatus');
@@ -1016,7 +958,7 @@ describe('Client Commands', () => {
 
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-      const command = GetStatusOfVerifyClient({ clientId: 456 });
+      const command = GetStatusOfVerifyClient(456);
       const result = await command.execute(mockConfig);
 
       expect(result).toEqual(mockResponse.data);
@@ -1043,7 +985,7 @@ describe('Client Commands', () => {
 
         mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-        const command = GetStatusOfVerifyClient({ clientId: 789 });
+        const command = GetStatusOfVerifyClient(789);
         const result = await command.execute(mockConfig);
 
         expect(result?.verificationStatus.value).toBe(status);
@@ -1067,7 +1009,7 @@ describe('Client Commands', () => {
       };
       mockAxiosInstance.post.mockResolvedValue({ data: response });
 
-      const command = CloseClient({ clientId, data });
+      const command = CloseClient(clientId, data);
       const result = await command.execute(mockConfig);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith(
@@ -1088,10 +1030,7 @@ describe('Client Commands', () => {
       };
 
       expect(() => {
-        CloseClient({
-          clientId: 202,
-          data: invalidData as any
-        });
+        CloseClient(202, invalidData as any);
       }).toThrow();
     });
 
@@ -1099,15 +1038,11 @@ describe('Client Commands', () => {
       const mockError = new Error('Request failed');
       mockAxiosInstance.post.mockRejectedValue(mockError);
 
-      const command = CloseClient({
-        clientId: 789,
-        tenantId: 'default',
-        data: {
-          closureReasonId: 'closure_reason_003',
-          locale: 'en_US',
-          closerDate: '2024-06-30',
-          dateFormat: 'yyyy-MM-dd'
-        }
+      const command = CloseClient(789, {
+        closureReasonId: 'closure_reason_003',
+        locale: 'en_US',
+        closerDate: '2024-06-30',
+        dateFormat: 'yyyy-MM-dd'
       });
 
       await expect(command.execute(mockConfig)).rejects.toThrow('Request failed');
