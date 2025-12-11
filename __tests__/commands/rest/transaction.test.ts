@@ -789,7 +789,6 @@ describe('GetRecentTransactions', () => {
   });
 });
 
-
 describe('GetTransactionById', () => {
   let mockAxiosInstance: MockAxiosInstance;
 

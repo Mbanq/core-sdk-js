@@ -18,6 +18,7 @@ export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAd
 export { SwitchClientClassification, GetClientClassification } from './commands/rest/clientClassification';
 export { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from './commands/rest/globalConfiguration';
 export { GetPendingTransactions, GetCompletedTransactions, GetRecentTransactions, GetTransactionById, GetBankDetailsFromRoutingCode } from './commands/rest/transaction';
+export { CreateFixedDepositAccount } from './commands/rest/fixedDepositAccount';
 
 export type {
   Config,

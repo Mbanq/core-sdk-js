@@ -51,6 +51,11 @@ import {
   BankDetails
 } from './transaction';
 
+import {
+  CreateFixedDepositAccountRequest,
+  CreateFixedDepositAccountResponse
+} from './fixedDepositAccount';
+
 export {
   Config,
   RequestOptions,
@@ -124,5 +129,7 @@ export {
   TransactionById,
   GetBankDetailsFromRoutingCodeResponse,
   GetBankDetailsFromRoutingCodeRequest,
-  BankDetails
+  BankDetails,
+  CreateFixedDepositAccountRequest,
+  CreateFixedDepositAccountResponse
 };

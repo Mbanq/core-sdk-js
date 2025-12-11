@@ -1,0 +1,74 @@
+import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse } from '../../types/fixedDepositAccount';
+import { Command, Config } from '../../types/config';
+import baseRequest from '../../utils/baseRequest';
+import { handleAxiosError } from '../../utils/errorHandler';
+
+/**
+ * Creates a new Fixed Deposit Account for a customer and immediately activates it.
+ * This combines the submit, approve, and activate commands in a single operation.
+ *
+ * @param params - The fixed deposit account creation parameters (see CreateFixedDepositAccountRequest)
+ * @param params.productId - The ID of the fixed deposit product to use for the account
+ * @param params.clientId - The unique identifier of the client opening the fixed deposit account
+ * @param params.depositAmount - The amount to be deposited in the fixed deposit account
+ * @param params.depositPeriod - The period for the deposit in terms of the frequency type
+ * @param params.depositPeriodFrequencyId - The frequency type for the deposit period (e.g., Months, Years)
+ * @param params.isConsent - Indicates whether the client has given consent for the fixed deposit
+ * @param params.submittedOnDate - The date when the fixed deposit application is submitted
+ * @param params.locale - The locale used for date and number formatting
+ * @param params.dateFormat - The date format used in the request
+ * @param params.nominalAnnualInterestRate - Optional annual nominal interest rate for the fixed deposit account
+ * @param params.interestCompoundingPeriodType - Optional compounding period type for interest calculation
+ * @param params.interestPostingPeriodType - Optional period type for posting interest to the account
+ * @param params.interestCalculationType - Optional calculation method for the interest
+ * @param params.interestCalculationDaysInYearType - Optional number of days considered in a year for interest calculation
+ * @param params.preClosurePenalApplicable - Optional flag indicating if penalty is applicable for pre-closure
+ * @param params.minDepositTerm - Optional minimum term for the deposit
+ * @param params.minDepositTermTypeId - Optional type of period for the minimum deposit term
+ * @param params.transferInterestToSavings - Optional flag to transfer interest to a savings account
+ * @param params.monthDayFormat - Optional format for displaying month and day
+ * @param params.charges - Optional list of charges to be applied to the fixed deposit account
+ * @param params.charts - Optional list of interest rate charts applicable to the fixed deposit
+ * @returns A Command that when executed returns the created fixed deposit account details
+ *
+ * @example
+ * ```typescript
+ * const createFDCmd = CreateFixedDepositAccount({
+ *   productId: 609,
+ *   depositAmount: "1000",
+ *   depositPeriod: "1",
+ *   depositPeriodFrequencyId: 3,
+ *   isConsent: true,
+ *   submittedOnDate: "22 October 2024",
+ *   locale: "en",
+ *   dateFormat: "dd MMMM yyyy",
+ *   clientId: 5162
+ * });
+ * const result = await createFDCmd.execute(config);
+ * console.log(result.savingsId); // The ID of the created fixed deposit account
+ * ```
+ */
+export const CreateFixedDepositAccount = (
+  params: CreateFixedDepositAccountRequest
+): Command<{ params: CreateFixedDepositAccountRequest }, CreateFixedDepositAccountResponse> => {
+  return {
+    input: { params },
+    metadata: {
+      commandName: 'CreateFixedDepositAccount',
+      path: '/v1/fixeddepositaccounts',
+      method: 'POST'
+    },
+    async execute (config: Config) {
+      try {
+        const axiosInstance = await baseRequest(config);
+        const response = await axiosInstance.post(
+          '/v1/fixeddepositaccounts?command=submit,approve,activate',
+          params
+        );
+        return response.data;
+      } catch (error) {
+        throw handleAxiosError(error);
+      }
+    }
+  };
+};
