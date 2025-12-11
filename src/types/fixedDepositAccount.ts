@@ -134,11 +134,23 @@ export const UpdateFixedDepositAccountResponseShape = {
 
 export const UpdateFixedDepositAccountResponseSchema = z.object(UpdateFixedDepositAccountResponseShape);
 
+// Response schema for deleting a fixed deposit account
+export const DeleteFixedDepositAccountResponseShape = {
+  id: z.string(),
+  officeId: z.number(),
+  clientId: z.number(),
+  savingsId: z.string(),
+  resourceId: z.string()
+};
+
+export const DeleteFixedDepositAccountResponseSchema = z.object(DeleteFixedDepositAccountResponseShape);
+
 // Export types
 export type CreateFixedDepositAccountRequest = z.infer<typeof CreateFixedDepositAccountRequestSchema>;
 export type CreateFixedDepositAccountResponse = z.infer<typeof CreateFixedDepositAccountResponseSchema>;
 export type UpdateFixedDepositAccountRequest = z.infer<typeof UpdateFixedDepositAccountRequestSchema>;
 export type UpdateFixedDepositAccountResponse = z.infer<typeof UpdateFixedDepositAccountResponseSchema>;
+export type DeleteFixedDepositAccountResponse = z.infer<typeof DeleteFixedDepositAccountResponseSchema>;
 export type ChartSlab = z.infer<typeof chartSlabSchema>;
 export type Chart = z.infer<typeof chartSchema>;
 export type Charge = z.infer<typeof chargeSchema>;

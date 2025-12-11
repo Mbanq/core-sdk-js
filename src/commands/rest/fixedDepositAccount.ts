@@ -1,4 +1,4 @@
-import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse, FixedDepositAccount, UpdateFixedDepositAccountRequest, UpdateFixedDepositAccountResponse } from '../../types/fixedDepositAccount';
+import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse, FixedDepositAccount, UpdateFixedDepositAccountRequest, UpdateFixedDepositAccountResponse, DeleteFixedDepositAccountResponse } from '../../types/fixedDepositAccount';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -185,6 +185,46 @@ export const UpdateFixedDepositAccount = (
       try {
         const axiosInstance = await baseRequest(config);
         const response = await axiosInstance.put(`/v1/fixeddepositaccounts/${accountId}`, params);
+        return response.data;
+      } catch (error) {
+        throw handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Deletes a specific Fixed Deposit Account by its unique identifier.
+ *
+ * This API allows you to delete a Fixed Deposit Account. The account can only be
+ * deleted if it is not activated.
+ *
+ * **Pre-check**: The account can only be deleted if the Fixed Deposit account is not activated.
+ *
+ * @param accountId - The ID associated with the fixed deposit account
+ * @returns A Command that when executed returns the deletion response
+ *
+ * @example
+ * ```typescript
+ * const deleteFDCmd = DeleteFixedDepositAccount(13400);
+ * const result = await deleteFDCmd.execute(config);
+ * console.log('Deleted account:', result.savingsId);
+ * ```
+ */
+export const DeleteFixedDepositAccount = (
+  accountId: number
+): Command<{ accountId: number }, DeleteFixedDepositAccountResponse> => {
+  return {
+    input: { accountId },
+    metadata: {
+      commandName: 'DeleteFixedDepositAccount',
+      path: `/v1/fixeddepositaccounts/${accountId}`,
+      method: 'DELETE'
+    },
+    async execute (config: Config) {
+      try {
+        const axiosInstance = await baseRequest(config);
+        const response = await axiosInstance.delete(`/v1/fixeddepositaccounts/${accountId}`);
         return response.data;
       } catch (error) {
         throw handleAxiosError(error);

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { CreateFixedDepositAccount, GetFixedDepositAccount, UpdateFixedDepositAccount } from '../../../src/commands/rest/fixedDepositAccount';
+import { CreateFixedDepositAccount, GetFixedDepositAccount, UpdateFixedDepositAccount, DeleteFixedDepositAccount } from '../../../src/commands/rest/fixedDepositAccount';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
@@ -787,6 +787,132 @@ describe('UpdateFixedDepositAccount', () => {
       dateFormat: 'dd MMMM yyyy'
     });
 
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+describe('DeleteFixedDepositAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a DeleteFixedDepositAccount command with correct metadata', () => {
+    const command = DeleteFixedDepositAccount(13400);
+
+    expect(command.input).toEqual({ accountId: 13400 });
+    expect(command.metadata).toEqual({
+      commandName: 'DeleteFixedDepositAccount',
+      path: '/v1/fixeddepositaccounts/13400',
+      method: 'DELETE'
+    });
+  });
+
+  it('should execute DELETE request and return deletion response', async () => {
+    const mockResponse = {
+      id: '13400',
+      officeId: 1,
+      clientId: 5162,
+      savingsId: '13400',
+      resourceId: '13400'
+    };
+
+    mockAxiosInstance.delete.mockResolvedValue({ data: mockResponse });
+
+    const command = DeleteFixedDepositAccount(13400);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/fixeddepositaccounts/13400');
+    expect(result).toEqual(mockResponse);
+    expect(result.savingsId).toBe('13400');
+  });
+
+  it('should handle axios errors during deletion', async () => {
+    const mockError: MockAxiosError = new Error('Deletion failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Cannot delete activated account',
+        developerMessage: 'Fixed deposit account is activated and cannot be deleted'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.delete.mockRejectedValue(mockError);
+
+    const command = DeleteFixedDepositAccount(13400);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should handle account not found error', async () => {
+    const mockError: MockAxiosError = new Error('Account not found');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Fixed deposit account not found',
+        developerMessage: 'Fixed deposit account with ID 13400 does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.delete.mockRejectedValue(mockError);
+
+    const command = DeleteFixedDepositAccount(13400);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = {
+      id: '13400',
+      officeId: 1,
+      clientId: 5162,
+      savingsId: '13400',
+      resourceId: '13400'
+    };
+
+    mockAxiosInstance.delete.mockResolvedValue({ data: mockResponse });
+
+    const command = DeleteFixedDepositAccount(13400);
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'
