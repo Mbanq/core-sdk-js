@@ -1,8 +1,8 @@
-import type { Command, Config } from '../types';
+import type { Command, Config, RequestOptions } from '../types';
 import { validateConfig } from '../utils/validation';
 import { createCommandError } from '../utils/errorHandler';
 
-export const createClient = (initialConfig: Config) => {
+export const createInstance = (initialConfig: Config) => {
   let currentConfig = initialConfig;
 
   const errors = validateConfig(initialConfig);
@@ -31,25 +31,33 @@ export const createClient = (initialConfig: Config) => {
     }
   };
 
-  const requestHandler = async <TInput, TOutput>(command: Command<TInput, TOutput>): Promise<TOutput | undefined> => {
+  const requestHandler = async <TInput, TOutput>(
+    command: Command<TInput, TOutput>,
+    options?: RequestOptions
+  ): Promise<TOutput | undefined> => {
     try {
       await executeMiddlewares('before', command);
 
-      // Set tenant ID from config if not provided in command
-      if (command.input && typeof command.input === 'object' && !('tenantId' in command.input)) {
-        const commandWithTenant = {
-          ...command,
-          input: {
-            ...command.input,
-            tenantId: currentConfig.tenantId
+      // Merge RequestOptions into config only if options are provided
+      let requestConfig: Config = currentConfig;
+
+      if (options) {
+        requestConfig = {
+          ...currentConfig,
+          ...(options.traceId && { traceId: options.traceId }),
+          axiosConfig: {
+            ...currentConfig.axiosConfig,
+            ...(options.timeout && { timeout: options.timeout }),
+            ...(options.keepAlive !== undefined && { keepAlive: options.keepAlive }),
+            headers: {
+              ...currentConfig.axiosConfig?.headers,
+              ...options.headers
+            }
           }
         };
-        const result = await commandWithTenant.execute(currentConfig);
-        await executeMiddlewares('after', commandWithTenant, result);
-        return result;
       }
 
-      const result = await command.execute(currentConfig);
+      const result = await command.execute(requestConfig);
       await executeMiddlewares('after', command, result);
       return result;
     } catch (error) {
@@ -60,7 +68,7 @@ export const createClient = (initialConfig: Config) => {
 
   const createTenantContext = (tenantId: string) => {
     return {
-      request: <TInput, TOutput>(command: Command<TInput, TOutput>) => {
+      request: <TInput, TOutput>(command: Command<TInput, TOutput>, options?: RequestOptions) => {
         // Override tenant ID for this specific request
         const commandWithTenant = {
           ...command,
@@ -69,7 +77,7 @@ export const createClient = (initialConfig: Config) => {
             tenantId
           }
         };
-        return requestHandler(commandWithTenant);
+        return requestHandler(commandWithTenant, options);
       }
     };
   };

@@ -15,8 +15,8 @@ const generateUrlWithQuery = (path: string, type: number): string => {
   return `${path}?${searchParams.toString()}`;
 };
 
-export const GetClientAddress = (clientId: number, configuration?: { tenantId?: string }):
-  Command<{ clientId: number; configuration?: { tenantId?: string } }, GetClientAddressResponse> => {
+export const GetClientAddress = (clientId: number):
+  Command<{ clientId: number }, GetClientAddressResponse> => {
   const path = `/v1/client/${clientId}/addresses`;
   return {
     input: { clientId },
@@ -26,9 +26,6 @@ export const GetClientAddress = (clientId: number, configuration?: { tenantId?: 
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.get<GetClientAddressResponse>(path);
@@ -43,13 +40,12 @@ export const GetClientAddress = (clientId: number, configuration?: { tenantId?: 
 export const CreateClientAddress = (
   clientId: number,
   type: number,
-  params: CreateClientAddressRequest,
-  configuration?: { tenantId?: string }):
+  params: CreateClientAddressRequest
+):
   Command<{
     clientId: number;
     type: number;
-    params: CreateClientAddressRequest;
-    configuration?: { tenantId?: string }
+    params: CreateClientAddressRequest
   }, CreateClientAddressResponse> => {
   const path = `/v1/client/${clientId}/addresses`;
   const urlPath = generateUrlWithQuery(path, type);
@@ -61,9 +57,6 @@ export const CreateClientAddress = (
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.post<CreateClientAddressResponse>(urlPath, params);
@@ -78,13 +71,12 @@ export const CreateClientAddress = (
 export const UpdateClientAddress = (
   clientId: number,
   type: number,
-  params: UpdateClientAddressRequest,
-  configuration?: { tenantId?: string }):
+  params: UpdateClientAddressRequest
+):
   Command<{
     clientId: number;
     type: number;
-    params: UpdateClientAddressRequest,
-    configuration?: { tenantId?: string }
+    params: UpdateClientAddressRequest
   }, UpdateClientAddressResponse> => {
   const path = `/v1/client/${clientId}/addresses`;
   const urlPath = generateUrlWithQuery(path, type);
@@ -96,9 +88,6 @@ export const UpdateClientAddress = (
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.put<UpdateClientAddressResponse>(urlPath, params);
@@ -113,13 +102,11 @@ export const UpdateClientAddress = (
 export const SetClientAddressStatus = (
   clientId: number,
   type: number,
-  params: { addressId: number, isActive: boolean },
-  configuration?: { tenantId?: string }
+  params: { addressId: number, isActive: boolean }
 ): Command<{
   clientId: number,
   type: number,
-  params: { addressId: number, isActive: boolean },
-  configuration?: { tenantId?: string }
+  params: { addressId: number, isActive: boolean }
 }, UpdateClientAddressResponse> => {
   const path = `/v1/client/${clientId}/addresses`;
   const urlPath = generateUrlWithQuery(path, type);
@@ -131,9 +118,6 @@ export const SetClientAddressStatus = (
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.put<UpdateClientAddressResponse>(urlPath, params);

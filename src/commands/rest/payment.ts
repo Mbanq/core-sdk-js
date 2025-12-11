@@ -1,30 +1,32 @@
-import baseRequest from '../../utils/baseRequest';
-import type { Command, Config } from '../../types';
-import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 import { z } from 'zod';
 import {
   validateCreatePaymentInput,
   validateUpdatePaymentInput,
-  type Payment,
-  type CreatePaymentInput,
-  type UpdatePaymentInput,
-  type PaymentResponse,
-  type PaymentFilters,
+  Payment,
+  CreatePaymentInput,
+  UpdatePaymentInput,
+  PaymentResponse,
+  PaymentFilters,
   ProcessOutput
 } from '../../types/payment';
+import { Command, Config } from '../../types';
+import baseRequest from '../../utils/baseRequest';
+import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 
-export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: string }): Command<{ payment: CreatePaymentInput, tenantId?: string }, ProcessOutput> => {
+export const CreatePayment = (payment: CreatePaymentInput): Command<{ payment: CreatePaymentInput }, ProcessOutput> => {
+  const path = '/v1/payments';
+
   return {
-    input: params,
+    input: { payment },
     metadata: {
       commandName: 'CreatePayment',
-      path: '/v1/payments',
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
       // Validate input using validation function
       try {
-        validateCreatePaymentInput(params.payment);
+        validateCreatePaymentInput(payment);
       } catch (error) {
         if (error instanceof z.ZodError) {
           throw createCommandError({
@@ -36,13 +38,10 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
         throw error;
       }
 
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<ProcessOutput>('/v1/payments', params.payment);
+        const response = await axiosInstance.post<ProcessOutput>(path, payment);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -51,22 +50,21 @@ export const CreatePayment = (params: { payment: CreatePaymentInput, tenantId?: 
   };
 };
 
-export const GetPayment = (params: { id: number, tenantId?: string }): Command<{ id: number; tenantId?: string }, Payment> => {
+export const GetPayment = (id: number): Command<{ id: number }, Payment> => {
+  const path = `/v1/payments/${id}`;
+
   return {
-    input: params,
+    input: { id },
     metadata: {
       commandName: 'GetPayment',
-      path: `/v1/payments/${params.id}`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<any>(`/v1/payments/${params.id}`);
+        const response = await axiosInstance.get<any>(path);
         // The API returns a single payment object, not a PaymentResponse
         const paymentData = response.data;
         return paymentData;
@@ -77,18 +75,20 @@ export const GetPayment = (params: { id: number, tenantId?: string }): Command<{
   };
 };
 
-export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput, tenantId?: string }): Command<{ id: number, payment: UpdatePaymentInput, tenantId?: string }, Payment> => {
+export const UpdatePayment = (id: number, payment: UpdatePaymentInput): Command<{ id: number; payment: UpdatePaymentInput }, Payment> => {
+  const path = `/v1/payments/${id}`;
+
   return {
-    input: params,
+    input: { id, payment },
     metadata: {
       commandName: 'UpdatePayment',
-      path: `/v1/payments/${params.id}`,
+      path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
       // Validate input using validation function
       try {
-        validateUpdatePaymentInput(params.payment);
+        validateUpdatePaymentInput(payment);
       } catch (error) {
         if (error instanceof z.ZodError) {
           throw createCommandError({
@@ -100,13 +100,10 @@ export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput,
         throw error;
       }
 
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.put<Payment>(`/v1/payments/${params.id}`, params.payment);
+        const response = await axiosInstance.put<Payment>(path, payment);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -115,18 +112,17 @@ export const UpdatePayment = (params: { id: number, payment: UpdatePaymentInput,
   };
 };
 
-export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: string } = {}): Command<{params: PaymentFilters, configuration: { tenantId?: string }}, PaymentResponse> => {
+export const GetPayments = (params: PaymentFilters): Command<{ params: PaymentFilters }, PaymentResponse> => {
+  const path = '/v1/payments';
+
   return {
-    input: { params, configuration },
+    input: { params },
     metadata: {
       commandName: 'GetPayments',
-      path: '/v1/payments',
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       // Always include default query parameters
@@ -171,7 +167,7 @@ export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: 
           offset: processedParams.offset !== undefined ? processedParams.offset : 0
         };
 
-        const response = await axiosInstance.get<PaymentResponse>('/v1/payments', { params: queryParams });
+        const response = await axiosInstance.get<PaymentResponse>(path, { params: queryParams });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -180,22 +176,21 @@ export const GetPayments = (params: PaymentFilters, configuration: { tenantId?: 
   };
 };
 
-export const DeletePayment = (params: { id: number, tenantId?: string }): Command<{ id: number, tenantId?: string }, void> => {
+export const DeletePayment = (id: number): Command<{ id: number }, void> => {
+  const path = `/v1/payments/${id}`;
+
   return {
-    input: params,
+    input: { id },
     metadata: {
       commandName: 'DeletePayment',
-      path: `/v1/payments/${params.id}`,
+      path,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        await axiosInstance.delete(`/v1/payments/${params.id}`);
+        await axiosInstance.delete(path);
       } catch (error) {
         handleAxiosError(error);
       }

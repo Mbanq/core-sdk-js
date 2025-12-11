@@ -470,7 +470,7 @@ Always specify tenant context:
 
 ```typescript
 // Good: Explicit tenant context
-const client = createClient(config);
+const client = createInstance(config);
 const payments = await client.for('tenant-123').payments.list().execute();
 
 // Avoid: Missing tenant context (may cause errors)
@@ -482,9 +482,9 @@ const payments = await client.payments.list().execute();
 ### Complete Payment Workflow
 
 ```typescript
-import { createClient } from '@mbanq/core-sdk';
+import { createInstance } from '@mbanq/core-sdk';
 
-const client = createClient({
+const client = createInstance({
   baseURL: 'https://api.mbanq.com',
   apiKey: 'your-api-key'
 });

@@ -126,7 +126,7 @@ describe('Card Commands', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { id: 123 } };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
@@ -135,15 +135,14 @@ describe('Card Commands', () => {
           internalCardId: 'card-123',
           cardType: 'DEBIT'
         },
-        payload: { amount: 100 },
-        tenantId: 'custom-tenant'
+        payload: { amount: 100 }
       };
 
       const command = SendAuthorizationToCore(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+      expect(mockConfig.tenantId).toBe('your_tenant_id');
     });
 
     it('should handle errors properly', async () => {
@@ -265,21 +264,20 @@ describe('Card Commands', () => {
       });
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       mockAxiosInstance.put.mockResolvedValue({});
 
       const params: CardUpdate = {
         clientId: 456,
         businessCardIDURL: 'https://example.com/card-id',
-        businessCardIDQRCode: 'QR_CODE_DATA_456',
-        tenantId: 'custom-tenant'
+        businessCardIDQRCode: 'QR_CODE_DATA_456'
       };
 
       const command = UpdateCardID(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
+      expect(mockConfig.tenantId).toBe('your_tenant_id');
     });
 
     it('should handle errors properly', async () => {

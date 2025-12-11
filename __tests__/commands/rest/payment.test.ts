@@ -132,71 +132,12 @@ describe('CreatePayment', () => {
 
     mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
-    const command = CreatePayment({
-      payment: validPaymentData
-    });
+    const command = CreatePayment(validPaymentData);
 
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.post).toHaveBeenCalledWith('/v1/payments', validPaymentData);
     expect(result).toEqual(mockResponse.data);
-  });
-
-  it('should use custom tenantId when provided', async () => {
-    const mockResponse = {
-      data: {
-        id: 123,
-        clientId: 4742,
-        amount: 100.50,
-        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
-        paymentType: 'DEBIT',
-        paymentRail: 'CARD',
-        recipient: {
-          cardId: '437',
-          recipientType: 'INDIVIDUAL',
-          address: { countryCode: 'US' },
-          name: 'Test Recipient'
-        },
-        originator: {
-          accountId: '4193',
-          recipientType: 'INDIVIDUAL',
-          address: {
-            line1: 'Test Address',
-            stateCode: 'NY',
-            countryCode: 'US',
-            postalCode: '12345'
-          },
-          name: 'Test Originator'
-        },
-        executedAt: '2023-01-01T00:00:00Z',
-        createdAt: '2023-01-01T00:00:00Z',
-        externalId: '1755660740713zV',
-        status: 'DRAFT',
-        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
-        currencyData: {
-          code: 'USD',
-          name: 'US Dollar',
-          decimalPlaces: 2,
-          displaySymbol: '$',
-          nameCode: 'US Dollar',
-          currencyCodeInDigit: 0,
-          isBaseCurrency: false
-        },
-        currency: 'USD'
-      }
-    };
-
-    mockAxiosInstance.post.mockResolvedValue(mockResponse);
-
-    const command = CreatePayment({
-      payment: validPaymentData,
-      tenantId: 'custom-tenant'
-    });
-
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-    await command.execute(mockConfig);
-
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
   });
 
   it('should throw CommandError for invalid payment data', async () => {
@@ -205,9 +146,7 @@ describe('CreatePayment', () => {
       currency: 'INVALID'
     };
 
-    const command = CreatePayment({
-      payment: invalidPaymentData as any
-    });
+    const command = CreatePayment(invalidPaymentData as any);
 
     try {
       await command.execute(mockConfig);
@@ -235,9 +174,7 @@ describe('CreatePayment', () => {
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
     mockAxiosInstance.post.mockRejectedValue(axiosError);
 
-    const command = CreatePayment({
-      payment: validPaymentData
-    });
+    const command = CreatePayment(validPaymentData);
 
     try {
       await command.execute(mockConfig);
@@ -258,9 +195,7 @@ describe('CreatePayment', () => {
       throw nonZodError;
     });
 
-    const command = CreatePayment({
-      payment: validPaymentData
-    });
+    const command = CreatePayment(validPaymentData);
 
     try {
       await command.execute(mockConfig);
@@ -274,9 +209,7 @@ describe('CreatePayment', () => {
   });
 
   it('should have correct metadata', () => {
-    const command = CreatePayment({
-      payment: validPaymentData
-    });
+    const command = CreatePayment(validPaymentData);
 
     expect(command.metadata.commandName).toBe('CreatePayment');
     expect(command.metadata.path).toBe('/v1/payments');
@@ -361,71 +294,12 @@ describe('GetPayment', () => {
 
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-    const command = GetPayment({
-      id: 123
-    });
+    const command = GetPayment(123);
 
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments/123');
     expect(result).toEqual(mockResponse.data);
-  });
-
-  it('should use custom tenantId when provided', async () => {
-    const mockResponse = {
-      data: {
-        id: 123,
-        clientId: 4742,
-        amount: 100.50,
-        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
-        paymentType: 'DEBIT',
-        paymentRail: 'CARD',
-        recipient: {
-          cardId: '437',
-          recipientType: 'INDIVIDUAL',
-          address: { countryCode: 'US' },
-          name: 'Test Recipient'
-        },
-        originator: {
-          accountId: '4193',
-          recipientType: 'INDIVIDUAL',
-          address: {
-            line1: 'Test Address',
-            stateCode: 'NY',
-            countryCode: 'US',
-            postalCode: '12345'
-          },
-          name: 'Test Originator'
-        },
-        executedAt: '2023-01-01T00:00:00Z',
-        createdAt: '2023-01-01T00:00:00Z',
-        externalId: '1755660740713zV',
-        status: 'DRAFT',
-        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
-        currencyData: {
-          code: 'USD',
-          name: 'US Dollar',
-          decimalPlaces: 2,
-          displaySymbol: '$',
-          nameCode: 'US Dollar',
-          currencyCodeInDigit: 0,
-          isBaseCurrency: false
-        },
-        currency: 'USD'
-      }
-    };
-
-    mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-    const command = GetPayment({
-      id: 123,
-      tenantId: 'custom-tenant'
-    });
-
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-    await command.execute(mockConfig);
-
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
   });
 
   it('should throw CommandError on API error', async () => {
@@ -442,9 +316,7 @@ describe('GetPayment', () => {
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
     mockAxiosInstance.get.mockRejectedValue(axiosError);
 
-    const command = GetPayment({
-      id: 999
-    });
+    const command = GetPayment(999);
 
     try {
       await command.execute(mockConfig);
@@ -458,9 +330,7 @@ describe('GetPayment', () => {
   });
 
   it('should have correct metadata', () => {
-    const command = GetPayment({
-      id: 123
-    });
+    const command = GetPayment(123);
 
     expect(command.metadata.commandName).toBe('GetPayment');
     expect(command.metadata.path).toBe('/v1/payments/123');
@@ -550,77 +420,12 @@ describe('UpdatePayment', () => {
 
     mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
-    const command = UpdatePayment({
-      id: 123,
-      payment: updateData
-    });
+    const command = UpdatePayment(123, updateData);
 
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.put).toHaveBeenCalledWith('/v1/payments/123', updateData);
     expect(result).toEqual(mockResponse.data);
-  });
-
-  it('should use custom tenantId when provided', async () => {
-    const updateData = {
-      status: 'CANCELLED' as const
-    };
-
-    const mockResponse = {
-      data: {
-        id: 123,
-        clientId: 4742,
-        amount: 100.50,
-        correlationId: '46005ded-a9e8-41fe-b26e-831e02c79715',
-        paymentType: 'DEBIT',
-        paymentRail: 'CARD',
-        recipient: {
-          cardId: '437',
-          recipientType: 'INDIVIDUAL',
-          address: { countryCode: 'US' },
-          name: 'Test Recipient'
-        },
-        originator: {
-          accountId: '4193',
-          recipientType: 'INDIVIDUAL',
-          address: {
-            line1: 'Test Address',
-            stateCode: 'NY',
-            countryCode: 'US',
-            postalCode: '12345'
-          },
-          name: 'Test Originator'
-        },
-        executedAt: '2023-01-01T00:00:00Z',
-        createdAt: '2023-01-01T00:00:00Z',
-        externalId: '1755660740713zV',
-        status: 'CANCELLED',
-        paymentRailMetaData: { externalCardName: 'Test Card', externalCardLastDigit: '1234' },
-        currencyData: {
-          code: 'USD',
-          name: 'US Dollar',
-          decimalPlaces: 2,
-          displaySymbol: '$',
-          nameCode: 'US Dollar',
-          currencyCodeInDigit: 0,
-          isBaseCurrency: false
-        },
-        currency: 'USD'
-      }
-    };
-
-    mockAxiosInstance.put.mockResolvedValue(mockResponse);
-
-    const command = UpdatePayment({
-      id: 123,
-      payment: updateData,
-      tenantId: 'custom-tenant'
-    });
-
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-    await command.execute(mockConfig);
-
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
   });
 
   it('should throw CommandError for invalid update data', async () => {
@@ -629,10 +434,7 @@ describe('UpdatePayment', () => {
       status: 'INVALID_STATUS'
     };
 
-    const command = UpdatePayment({
-      id: 123,
-      payment: invalidUpdateData as any
-    });
+    const command = UpdatePayment(123, invalidUpdateData as any);
 
     try {
       await command.execute(mockConfig);
@@ -660,10 +462,7 @@ describe('UpdatePayment', () => {
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
     mockAxiosInstance.put.mockRejectedValue(axiosError);
 
-    const command = UpdatePayment({
-      id: 123,
-      payment: { status: 'CANCELLED' }
-    });
+    const command = UpdatePayment(123, { status: 'CANCELLED' });
 
     try {
       await command.execute(mockConfig);
@@ -684,10 +483,7 @@ describe('UpdatePayment', () => {
       throw nonZodError;
     });
 
-    const command = UpdatePayment({
-      id: 123,
-      payment: { status: 'CANCELLED' }
-    });
+    const command = UpdatePayment(123, { status: 'CANCELLED' });
 
     try {
       await command.execute(mockConfig);
@@ -701,10 +497,7 @@ describe('UpdatePayment', () => {
   });
 
   it('should have correct metadata', () => {
-    const command = UpdatePayment({
-      id: 123,
-      payment: { status: 'CANCELLED' }
-    });
+    const command = UpdatePayment(123, { status: 'CANCELLED' });
 
     expect(command.metadata.commandName).toBe('UpdatePayment');
     expect(command.metadata.path).toBe('/v1/payments/123');
@@ -746,29 +539,12 @@ describe('DeletePayment', () => {
   it('should delete payment by ID successfully', async () => {
     mockAxiosInstance.delete.mockResolvedValue(undefined);
 
-    const command = DeletePayment({
-      id: 123
-    });
+    const command = DeletePayment(123);
 
     const result = await command.execute(mockConfig);
 
     expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
     expect(result).toBeUndefined();
-  });
-
-  it('should use custom tenantId when provided', async () => {
-    mockAxiosInstance.delete.mockResolvedValue(undefined);
-
-    const command = DeletePayment({
-      id: 123,
-      tenantId: 'custom-tenant'
-    });
-
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-    await command.execute(mockConfig);
-
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-    expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/payments/123');
   });
 
   it('should throw CommandError on API error', async () => {
@@ -785,9 +561,7 @@ describe('DeletePayment', () => {
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
     mockAxiosInstance.delete.mockRejectedValue(axiosError);
 
-    const command = DeletePayment({
-      id: 999
-    });
+    const command = DeletePayment(999);
 
     try {
       await command.execute(mockConfig);
@@ -814,9 +588,7 @@ describe('DeletePayment', () => {
     vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
     mockAxiosInstance.delete.mockRejectedValue(axiosError);
 
-    const command = DeletePayment({
-      id: 123
-    });
+    const command = DeletePayment(123);
 
     try {
       await command.execute(mockConfig);
@@ -830,9 +602,7 @@ describe('DeletePayment', () => {
   });
 
   it('should have correct metadata', () => {
-    const command = DeletePayment({
-      id: 123
-    });
+    const command = DeletePayment(123);
 
     expect(command.metadata.commandName).toBe('DeletePayment');
     expect(command.metadata.path).toBe('/v1/payments/123');
@@ -915,8 +685,7 @@ describe('GetPayments', () => {
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
     const command = GetPayments(
-      { limit: 10, offset: 0 },
-      { tenantId: 'test-tenant' }
+      { limit: 10, offset: 0 }
     );
 
     const result = await command.execute(mockConfig);
@@ -1010,8 +779,7 @@ describe('GetPayments', () => {
     mockAxiosInstance.get.mockResolvedValue(firstPageResponse);
 
     const command = GetPayments(
-      { limit: 0 },
-      { tenantId: 'test-tenant' }
+      { limit: 0 }
     );
 
     const result = await command.execute(mockConfig);
@@ -1042,7 +810,7 @@ describe('GetPayments', () => {
 
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
-    const command = GetPayments({}, { tenantId: 'test-tenant' });
+    const command = GetPayments({});
     await command.execute(mockConfig);
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/payments', {
@@ -1072,8 +840,7 @@ describe('GetPayments', () => {
     mockAxiosInstance.get.mockRejectedValue(axiosError);
 
     const command = GetPayments(
-      { limit: 10 },
-      { tenantId: 'test-tenant' }
+      { limit: 10 }
     );
 
     try {
@@ -1087,29 +854,8 @@ describe('GetPayments', () => {
     }
   });
 
-  it('should use custom tenantId when provided', async () => {
-    const mockResponse = {
-      data: {
-        totalFilteredRecords: 0,
-        pageItems: []
-      }
-    };
-
-    mockAxiosInstance.get.mockResolvedValue(mockResponse);
-
-    const command = GetPayments(
-      { limit: 5 },
-      { tenantId: 'custom-tenant' }
-    );
-
-    const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
-    await command.execute(mockConfig);
-
-    expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
-  });
-
   it('should have correct metadata', () => {
-    const command = GetPayments({}, { tenantId: 'test-tenant' });
+    const command = GetPayments({});
 
     expect(command.metadata.commandName).toBe('GetPayments');
     expect(command.metadata.path).toBe('/v1/payments');
@@ -1127,8 +873,7 @@ describe('GetPayments', () => {
     mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
     const command = GetPayments(
-      { limit: 10, fromValueDate: '2023-01-01' },
-      { tenantId: 'test-tenant' }
+      { limit: 10, fromValueDate: '2023-01-01' }
     );
 
     await command.execute(mockConfig);

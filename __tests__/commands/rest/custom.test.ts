@@ -92,21 +92,19 @@ describe('Custom Commands', () => {
       expect(command.metadata.commandName).toBe('CustomUpdate');
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { success: true } };
       mockAxiosInstance.put.mockResolvedValue(mockResponse);
 
       const params = {
         url: '/custom/endpoint',
-        updates: { field: 'value' },
-        tenantId: 'custom-tenant'
+        updates: { field: 'value' }
       };
 
       const command = CustomUpdate(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
     });
 
     it('should handle errors properly', async () => {
@@ -196,21 +194,19 @@ describe('Custom Commands', () => {
       expect(command.metadata.commandName).toBe('CustomCreate');
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { success: true } };
       mockAxiosInstance.post.mockResolvedValue(mockResponse);
 
       const params = {
         url: '/custom/items',
-        data: { name: 'test' },
-        tenantId: 'custom-tenant'
+        data: { name: 'test' }
       };
 
       const command = CustomCreate(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
     });
 
     it('should handle errors properly', async () => {
@@ -290,20 +286,18 @@ describe('Custom Commands', () => {
       expect(command.metadata.commandName).toBe('CustomGet');
     });
 
-    it('should use custom tenantId when provided', async () => {
+    it('should not override tenantId', async () => {
       const mockResponse = { data: { id: 123 } };
       mockAxiosInstance.get.mockResolvedValue(mockResponse);
 
       const params = {
-        url: '/custom/items/123',
-        tenantId: 'custom-tenant'
+        url: '/custom/items/123'
       };
 
       const command = CustomGet(params);
-      const expectedConfig = { ...mockConfig, tenantId: 'custom-tenant' };
       await command.execute(mockConfig);
 
-      expect(baseRequestModule.default).toHaveBeenCalledWith(expectedConfig);
+      expect(baseRequestModule.default).toHaveBeenCalledWith(mockConfig);
     });
 
     it('should handle errors properly', async () => {

@@ -1,4 +1,4 @@
-import type { Config, Command, Middleware } from './config';
+import type { Config, Command, Middleware, RequestOptions } from './config';
 import type { Transfer } from './transfer';
 import type { DocumentNode } from 'graphql';
 import type { GetTransferInput, MarkAsReturnInput, ProcessOutput, CreateTransferInput, CreateTransferOutput } from './transfer';
@@ -36,11 +36,33 @@ import {
   GetCompletedTransactionsRequest,
   CompletedTransaction,
   SubTransactionType,
-  TransactionType
+  TransactionType,
+  AuthorizedTransactionType,
+  SavingsTransactionType,
+  RejectedAuthTransactionType,
+  GetRecentTransactionsResponse,
+  GetRecentTransactionsRequest,
+  RecentTransaction,
+  GetTransactionByIdResponse,
+  GetTransactionByIdRequest,
+  TransactionById,
+  GetBankDetailsFromRoutingCodeResponse,
+  GetBankDetailsFromRoutingCodeRequest,
+  BankDetails
 } from './transaction';
+
+import {
+  CreateFixedDepositAccountRequest,
+  CreateFixedDepositAccountResponse,
+  FixedDepositAccount,
+  UpdateFixedDepositAccountRequest,
+  UpdateFixedDepositAccountResponse,
+  DeleteFixedDepositAccountResponse
+} from './fixedDepositAccount';
 
 export {
   Config,
+  RequestOptions,
   GetTransferInput,
   MarkAsReturnInput,
   ProcessOutput,
@@ -99,5 +121,23 @@ export {
   GetCompletedTransactionsRequest,
   CompletedTransaction,
   SubTransactionType,
-  TransactionType
+  TransactionType,
+  AuthorizedTransactionType,
+  SavingsTransactionType,
+  RejectedAuthTransactionType,
+  GetRecentTransactionsResponse,
+  GetRecentTransactionsRequest,
+  RecentTransaction,
+  GetTransactionByIdResponse,
+  GetTransactionByIdRequest,
+  TransactionById,
+  GetBankDetailsFromRoutingCodeResponse,
+  GetBankDetailsFromRoutingCodeRequest,
+  BankDetails,
+  CreateFixedDepositAccountRequest,
+  CreateFixedDepositAccountResponse,
+  FixedDepositAccount,
+  UpdateFixedDepositAccountRequest,
+  UpdateFixedDepositAccountResponse,
+  DeleteFixedDepositAccountResponse
 };

@@ -19,6 +19,17 @@ export interface Config {
   };
 }
 
+export interface RequestOptions {
+  /** Override trace ID for request tracking */
+  traceId?: string;
+  /** Request timeout in milliseconds */
+  timeout?: number;
+  /** Enable HTTP keep-alive for this request */
+  keepAlive?: boolean;
+  /** Additional headers for this request */
+  headers?: Record<string, string>;
+}
+
 export interface Credential {
   client_secret: string,
   grant_type: string,

@@ -201,7 +201,7 @@ vi.mock('../../src/commands/rest/user', () => ({
   }))
 }));
 
-import { createClient } from '../../src/client/index';
+import { createInstance } from '../../src/client/index';
 import * as validationModule from '../../src/utils/validation';
 import * as paymentCommands from '../../src/commands/rest/payment';
 import { Command, Config } from '../../src/types';
@@ -227,11 +227,11 @@ describe('Client', () => {
     tenantId: 'test-tenant'
   };
 
-  describe('createClient', () => {
+  describe('createInstance', () => {
     it('should create client with valid configuration', () => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
 
       expect(client).toBeDefined();
       expect(client.setConfig).toBeInstanceOf(Function);
@@ -244,7 +244,7 @@ describe('Client', () => {
       const invalidConfig = { baseUrl: '' };
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue(['baseUrl is required']);
 
-      expect(() => createClient(invalidConfig as unknown as Config)).toThrow('Invalid configuration: baseUrl is required');
+      expect(() => createInstance(invalidConfig as unknown as Config)).toThrow('Invalid configuration: baseUrl is required');
     });
 
     it('should execute command successfully', async () => {
@@ -260,7 +260,7 @@ describe('Client', () => {
         execute: vi.fn().mockResolvedValue({ success: true })
       };
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const result = await client.request(mockCommand);
 
       expect(mockCommand.execute).toHaveBeenCalledWith(validConfig);
@@ -295,19 +295,11 @@ describe('Client', () => {
         execute: vi.fn().mockResolvedValue({ success: true })
       };
 
-      const client = createClient(configWithMiddleware);
+      const client = createInstance(configWithMiddleware);
       await client.request(mockCommand);
 
-      const expectedCommandWithTenant = {
-        ...mockCommand,
-        input: {
-          ...mockCommand.input,
-          tenantId: validConfig.tenantId
-        }
-      };
-
       expect(beforeMock).toHaveBeenCalledWith(mockCommand);
-      expect(afterMock).toHaveBeenCalledWith(expectedCommandWithTenant, { success: true });
+      expect(afterMock).toHaveBeenCalledWith(mockCommand, { success: true });
       expect(onErrorMock).not.toHaveBeenCalled();
     });
 
@@ -340,7 +332,7 @@ describe('Client', () => {
         execute: vi.fn().mockRejectedValue(error)
       };
 
-      const client = createClient(configWithMiddleware);
+      const client = createInstance(configWithMiddleware);
 
       await expect(client.request(mockCommand)).rejects.toThrow('Command failed');
 
@@ -375,21 +367,13 @@ describe('Client', () => {
         execute: vi.fn().mockResolvedValue({ success: true })
       };
 
-      const client = createClient(configWithMiddlewares);
+      const client = createInstance(configWithMiddlewares);
       await client.request(mockCommand);
-
-      const expectedCommandWithTenant = {
-        ...mockCommand,
-        input: {
-          ...mockCommand.input,
-          tenantId: validConfig.tenantId
-        }
-      };
 
       expect(before1).toHaveBeenCalledWith(mockCommand);
       expect(before2).toHaveBeenCalledWith(mockCommand);
-      expect(after1).toHaveBeenCalledWith(expectedCommandWithTenant, { success: true });
-      expect(after2).toHaveBeenCalledWith(expectedCommandWithTenant, { success: true });
+      expect(after1).toHaveBeenCalledWith(mockCommand, { success: true });
+      expect(after2).toHaveBeenCalledWith(mockCommand, { success: true });
     });
   });
 
@@ -397,7 +381,7 @@ describe('Client', () => {
     it('should replace entire configuration', async () => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const newConfig = {
         baseUrl: 'https://new-api.example.com',
         secret: 'new-secret',
@@ -423,7 +407,7 @@ describe('Client', () => {
     it('should merge configuration updates', async () => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
 
       client.updateConfig({
         secret: 'updated-secret',
@@ -467,7 +451,7 @@ describe('Client', () => {
         }
       };
 
-      const client = createClient(configWithHeaders);
+      const client = createInstance(configWithHeaders);
 
       client.updateConfig({
         axiosConfig: {
@@ -501,7 +485,7 @@ describe('Client', () => {
         .mockReturnValueOnce([])
         .mockReturnValueOnce(['Invalid URL']);
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
 
       expect(() => {
         client.updateConfig({
@@ -515,7 +499,7 @@ describe('Client', () => {
     it('should reset configuration to initial state', async () => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
 
       client.updateConfig({
         secret: 'updated-secret'
@@ -549,7 +533,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue({ id: '123', status: 'CREATED' })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const paymentData = {
           amount: 100.50,
           currency: 'USD',
@@ -582,7 +566,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue({ id: '123' })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const tenantClient = client.tenant('custom-tenant');
         const paymentData = {
           amount: 100,
@@ -610,7 +594,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue({ id: '123', status: 'SUCCESS' })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const paymentOperation = await client.payment.get(123);
         const result = await paymentOperation.execute();
 
@@ -628,7 +612,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue({ id: '123' })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const tenantClient = client.tenant('custom-tenant');
 
         await tenantClient.payment.get(123);
@@ -648,7 +632,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue({ id: '123', status: 'UPDATED' })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const updateData = { status: 'CANCELLED' as const };
 
         const paymentOperation = await client.payment.update(123, updateData);
@@ -669,7 +653,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue({ id: '123' })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const tenantClient = client.tenant('custom-tenant');
         const updateData = { amount: 200 };
 
@@ -691,7 +675,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue(undefined)
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const paymentOperation = await client.payment.delete(123);
         const result = await paymentOperation.execute();
 
@@ -709,7 +693,7 @@ describe('Client', () => {
           execute: vi.fn().mockResolvedValue(undefined)
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const tenantClient = client.tenant('custom-tenant');
 
         await tenantClient.payment.delete(123);
@@ -737,7 +721,7 @@ describe('Client', () => {
           })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const queryBuilder = client.payment.list();
 
         expect(getPaymentsSpy).toHaveBeenCalledWith({ tenantId: 'test-tenant' });
@@ -765,7 +749,7 @@ describe('Client', () => {
           })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const result = await client.payment.list().execute();
 
         expect(result).toEqual([{ id: '1' }, { id: '2' }]);
@@ -787,7 +771,7 @@ describe('Client', () => {
           })
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const tenantClient = client.tenant('custom-tenant');
 
         tenantClient.payment.list();
@@ -811,7 +795,7 @@ describe('Client', () => {
           list: () => mockQueryBuilder
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const queryBuilder = client.payment.list();
 
         // Test that the builder methods are available and chainable
@@ -842,7 +826,7 @@ describe('Client', () => {
           list: () => mockQueryBuilder
         } as any);
 
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const queryBuilder = client.payment.list();
 
         // Test that the all() method is available and chainable
@@ -856,7 +840,7 @@ describe('Client', () => {
 
     describe('tenant context', () => {
       it('should create tenant context with correct tenantId', () => {
-        const client = createClient(validConfig);
+        const client = createInstance(validConfig);
         const tenantClient = client.tenant('new-tenant');
 
         expect(tenantClient).toBeDefined();
@@ -875,7 +859,7 @@ describe('Client', () => {
 
     beforeEach(() => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
-      client = createClient(validConfig);
+      client = createInstance(validConfig);
     });
 
     describe('client namespace', () => {
@@ -1069,7 +1053,7 @@ describe('Client', () => {
         execute: vi.fn().mockResolvedValue({ success: true, data: 'executed-with-existing-tenant' })
       };
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const result = await client.request(mockCommand);
 
       // Should execute command directly without modifying input
@@ -1082,7 +1066,7 @@ describe('Client', () => {
     it('should create tenant context with request method (lines 62-72)', () => {
       vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const tenantClient = client.tenant('specific-tenant-id');
 
       expect(tenantClient).toBeDefined();
@@ -1107,7 +1091,7 @@ describe('Client', () => {
         })
       };
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const tenantClient = client.tenant('tenant-123');
       const result = await tenantClient.request(mockCommand);
 
@@ -1147,7 +1131,7 @@ describe('Client', () => {
         execute: vi.fn().mockResolvedValue({ success: true, data: 'preserved-properties' })
       };
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const tenantClient = client.tenant('new-tenant');
       const result = await tenantClient.request(mockCommand);
 
@@ -1174,7 +1158,7 @@ describe('Client', () => {
         })
       };
 
-      const client = createClient(validConfig);
+      const client = createInstance(validConfig);
       const tenantClient1 = client.tenant('tenant-1');
       const tenantClient2 = client.tenant('tenant-2');
 
@@ -1196,7 +1180,7 @@ describe.skip('Account API Tests (DEPRECATED - use Command Pattern instead)', ()
 
   it('should have client structure that supports account operations', () => {
     vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
-    const client = createClient({
+    const client = createInstance({
       baseUrl: 'https://api.example.com',
       tenantId: 'test-tenant',
       secret: 'test-secret'
@@ -1218,7 +1202,7 @@ describe.skip('Client For API Tests - Lines 191-316 (DEPRECATED - use Command Pa
 
   beforeEach(() => {
     vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
-    client = createClient({
+    client = createInstance({
       baseUrl: 'https://api.example.com',
       tenantId: 'test-tenant',
       secret: 'test-secret'
@@ -1414,7 +1398,7 @@ describe.skip('User API Tests (DEPRECATED - use Command Pattern instead)', () =>
 
   beforeEach(() => {
     vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
-    client = createClient({
+    client = createInstance({
       baseUrl: 'https://api.example.com',
       tenantId: 'test-tenant',
       secret: 'test-secret'
@@ -1462,7 +1446,7 @@ describe.skip('Account Chaining API Tests (DEPRECATED - use Command Pattern inst
 
   beforeEach(() => {
     vi.spyOn(validationModule, 'validateConfig').mockReturnValue([]);
-    client = createClient({
+    client = createInstance({
       baseUrl: 'https://api.example.com',
       tenantId: 'test-tenant',
       secret: 'test-secret'

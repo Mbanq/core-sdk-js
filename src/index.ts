@@ -1,4 +1,4 @@
-export { createClient } from './client/index';
+export { createInstance } from './client/index';
 export { CreatePayment, GetPayment, UpdatePayment, GetPayments, DeletePayment } from './commands/rest/payment';
 export { SendAuthorizationToCore, UpdateCardID } from './commands/rest/card';
 export { GetPermittedDocumentTypes, CreateClientIdentifier, UpdateClientIdentifier, UploadClientIdentifierDocument, ListClientDocument, DeleteClientDocument, ApproveRejectClientDocument } from './commands/rest/clientIdentifier';
@@ -17,7 +17,8 @@ export { ListCardProduct, GetCardProduct, CreateCardProduct, UpdateCardProduct }
 export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './commands/rest/clientAddress';
 export { SwitchClientClassification, GetClientClassification } from './commands/rest/clientClassification';
 export { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from './commands/rest/globalConfiguration';
-export { GetPendingTransactions, GetCompletedTransactions } from './commands/rest/transaction';
+export { GetPendingTransactions, GetCompletedTransactions, GetRecentTransactions, GetTransactionById, GetBankDetailsFromRoutingCode } from './commands/rest/transaction';
+export { CreateFixedDepositAccount, GetFixedDepositAccount, UpdateFixedDepositAccount, DeleteFixedDepositAccount } from './commands/rest/fixedDepositAccount';
 
 export type {
   Config,

@@ -1,56 +1,54 @@
 import { AxiosResponse } from 'axios';
-import { type Command, type Config, ProcessOutput } from '../../types';
+import { ProcessOutput } from '../../types';
 import {
-  ClientData, CreateClientRequest, CreateClientResponse, ListClientsRequest, ListClientsResponse, UpdateClientRequest, VerifyWithActivateClient, ResponseVerify, GetStatusOfVerifyClientResponse, CloseClientRequest, CloseClientResponse,
+  ClientData,
+  CreateClientRequest,
+  CreateClientResponse,
+  ListClientsRequest,
+  ListClientsResponse,
+  UpdateClientRequest,
+  VerifyWithActivateClient,
+  ResponseVerify,
+  GetStatusOfVerifyClientResponse,
+  CloseClientRequest,
+  CloseClientResponse,
   validateCloseClientRequest
 } from '../../types/client';
+import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError, createCommandError } from '../../utils/errorHandler';
 
 export const GetClient = (params: {
   clientId: number;
-  tenantId?: string;
   riskRating?: boolean;
   clientAddress?: boolean;
   clientIdentifier?: boolean;
   staffInSelectedOfficeOnly?: boolean;
   checkIdentitiesExpiration?: boolean;
   clientAccountAssociate?: boolean;
-}): Command<{
-  clientId: number;
-  tenantId?: string;
-  riskRating?: boolean;
-  clientAddress?: boolean;
-  clientIdentifier?: boolean;
-  staffInSelectedOfficeOnly?: boolean;
-  checkIdentitiesExpiration?: boolean;
-  clientAccountAssociate?: boolean;
-}, any> => {
+}): Command<{ params: typeof params }, any> => {
+  const queryParams = new URLSearchParams();
+  if (params.staffInSelectedOfficeOnly) queryParams.append('staffInSelectedOfficeOnly', 'true');
+  if (params.checkIdentitiesExpiration) queryParams.append('checkIdentitiesExpiration', 'true');
+  if (params.clientAccountAssociate) queryParams.append('clientAccountAssociate', 'true');
+
+  const queryString = queryParams.toString();
+  const clientUrl = `/v1/clients/${params.clientId}${queryString ? `?${queryString}` : ''}`;
+
   return {
-    input: params,
+    input: { params },
     metadata: {
       commandName: 'GetClient',
-      path: `/v1/clients/${params.clientId}`,
+      path: clientUrl,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
         const result: any = {};
 
         // Always fetch basic client data
-        const queryParams = new URLSearchParams();
-        if (params.staffInSelectedOfficeOnly) queryParams.append('staffInSelectedOfficeOnly', 'true');
-        if (params.checkIdentitiesExpiration) queryParams.append('checkIdentitiesExpiration', 'true');
-        if (params.clientAccountAssociate) queryParams.append('clientAccountAssociate', 'true');
-
-        const queryString = queryParams.toString();
-        const clientUrl = `/v1/clients/${params.clientId}${queryString ? `?${queryString}` : ''}`;
-
         const clientResponse = await axiosInstance.get(clientUrl);
         result.clientData = clientResponse;
 
@@ -79,23 +77,23 @@ export const GetClient = (params: {
 };
 
 export const UpdateClient = (
-  params: { tenantId?: string; clientId: number; updates: UpdateClientRequest }
-): Command<{ tenantId?: string; clientId: number; updates: UpdateClientRequest }, ProcessOutput> => {
+  clientId: number,
+  updates: UpdateClientRequest
+): Command<{ clientId: number; updates: UpdateClientRequest }, ProcessOutput> => {
+  const path = `/v1/clients/${clientId}`;
+
   return {
-    input: params,
+    input: { clientId, updates },
     metadata: {
       commandName: 'UpdateClient',
-      path: `/v1/clients/${params.clientId}`,
+      path,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.put<ProcessOutput>(`/v1/clients/${params.clientId}`, { ...params.updates });
+        const response = await axiosInstance.put<ProcessOutput>(path, { ...updates });
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -105,23 +103,22 @@ export const UpdateClient = (
 };
 
 export const CreateClient = (
-  params: { tenantId?: string; clientData: CreateClientRequest }
-): Command<{ tenantId?: string; clientData: CreateClientRequest }, CreateClientResponse> => {
+  clientData: CreateClientRequest
+): Command<{ clientData: CreateClientRequest }, CreateClientResponse> => {
+  const path = '/v1/clients';
+
   return {
-    input: params,
+    input: { clientData },
     metadata: {
       commandName: 'CreateClient',
-      path: '/v1/clients',
+      path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<CreateClientResponse>('/v1/clients', params.clientData);
+        const response = await axiosInstance.post<CreateClientResponse>(path, clientData);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -130,18 +127,17 @@ export const CreateClient = (
   };
 };
 
-export const GetClients = (params: ListClientsRequest, configuration: { tenantId?: string }): Command<{ params: ListClientsRequest, configuration: { tenantId?: string } }, ListClientsResponse> => {
+export const GetClients = (params: ListClientsRequest): Command<{ params: ListClientsRequest }, ListClientsResponse> => {
+  const path = `/v1/clients`;
+
   return {
-    input: { params, configuration },
+    input: { params },
     metadata: {
       commandName: 'GetClients',
-      path: `/v1/clients`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       const allClients: Array<ClientData> = [];
@@ -158,7 +154,7 @@ export const GetClients = (params: ListClientsRequest, configuration: { tenantId
       try {
         if (params.limit === 0) {
           do {
-            const response = await axiosInstance.get<ListClientsResponse>(`/v1/clients`, { params: newParams });
+            const response = await axiosInstance.get<ListClientsResponse>(path, { params: newParams });
             const { totalFilteredRecords: total, pageItems } = response.data;
             allClients.push(...pageItems);
             totalFilteredRecords = total;
@@ -166,7 +162,7 @@ export const GetClients = (params: ListClientsRequest, configuration: { tenantId
           } while (offset < totalFilteredRecords);
           return { totalFilteredRecords, pageItems: allClients };
         } else {
-          const response = await axiosInstance.get<ListClientsResponse>('/v1/clients', { params: newParams });
+          const response = await axiosInstance.get<ListClientsResponse>(path, { params: newParams });
           return response.data;
         }
       } catch (error) {
@@ -176,22 +172,21 @@ export const GetClients = (params: ListClientsRequest, configuration: { tenantId
   };
 };
 
-export const DeleteClient = (params: { clientId: number, tenantId?: string }): Command<{ clientId: number, tenantId?: string }, ProcessOutput> => {
+export const DeleteClient = (clientId: number): Command<{ clientId: number }, ProcessOutput> => {
+  const path = `/v1/clients/${clientId}`;
+
   return {
-    input: params,
+    input: { clientId },
     metadata: {
       commandName: 'DeleteClient',
-      path: `/v1/clients/${params.clientId}`,
+      path,
       method: 'DELETE'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.delete(`/v1/clients/${params.clientId}`);
+        const response = await axiosInstance.delete(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -200,40 +195,38 @@ export const DeleteClient = (params: { clientId: number, tenantId?: string }): C
   };
 };
 
-export const VerifyWithActivateClients = (params: { tenantId?: string; param: VerifyWithActivateClient }): Command<{ tenantId?: string; param: VerifyWithActivateClient }, ProcessOutput | ResponseVerify> => {
-  const path = `/v1/clients/${params.param.clientId}`;
+export const VerifyWithActivateClients = (param: VerifyWithActivateClient): Command<{ param: VerifyWithActivateClient }, ProcessOutput | ResponseVerify> => {
+  const path = `/v1/clients/${param.clientId}`;
+
   return {
-    input: params,
+    input: { param },
     metadata: {
       commandName: 'VerifyWithActivateClients',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
         let verify: AxiosResponse<ResponseVerify> | undefined;
-        if (!params.param.skipVerify) {
+        if (!param.skipVerify) {
           const requestVerify = {
-            kycVerificationType: params.param.kycVerificationType,
-            note: params.param.note
+            kycVerificationType: param.kycVerificationType,
+            note: param.note
           };
-          verify = await axiosInstance.post<ResponseVerify>(`/v1/clients/${params.param.clientId}`, requestVerify);
+          verify = await axiosInstance.post<ResponseVerify>(path, requestVerify);
         }
 
-        if (!params.param.skipActivate && ((verify && verify.data.data.clientKycStatus === 'APPROVED' && params.param.autoActivate) || !verify)) {
+        if (!param.skipActivate && ((verify && verify.data.data.clientKycStatus === 'APPROVED' && param.autoActivate) || !verify)) {
           const requestActivate = {
-            locale: params.param.locale,
-            dateFormat: params.param.dateFormat,
-            activationDate: params.param.activationDate,
-            isActivatedByManualReview: params.param.isActivatedByManualReview,
-            manualReviewActivationComments: params.param.manualReviewActivationComments
+            locale: param.locale,
+            dateFormat: param.dateFormat,
+            activationDate: param.activationDate,
+            isActivatedByManualReview: param.isActivatedByManualReview,
+            manualReviewActivationComments: param.manualReviewActivationComments
           };
-          const activateClient = await axiosInstance.post<ProcessOutput>(`/v1/clients/${params.param.clientId}`, requestActivate);
+          const activateClient = await axiosInstance.post<ProcessOutput>(path, requestActivate);
 
           let result: ResponseVerify | ProcessOutput = activateClient.data;
           if (verify) {
@@ -258,22 +251,21 @@ export const VerifyWithActivateClients = (params: { tenantId?: string; param: Ve
   };
 };
 
-export const GetStatusOfVerifyClient = (params: { tenantId?: string; clientId: number }): Command<{ tenantId?: string; clientId: number }, GetStatusOfVerifyClientResponse> => {
+export const GetStatusOfVerifyClient = (clientId: number): Command<{ clientId: number }, GetStatusOfVerifyClientResponse> => {
+  const path = `/v1/clients/${clientId}/verificationstatus`;
+
   return {
-    input: params,
+    input: { clientId },
     metadata: {
       commandName: 'GetStatusOfVerifyClient',
-      path: `/v1/clients/${params.clientId}/verificationstatus`,
+      path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.get<GetStatusOfVerifyClientResponse>(`/v1/clients/${params.clientId}/verificationstatus`);
+        const response = await axiosInstance.get<GetStatusOfVerifyClientResponse>(path);
         return response.data;
       } catch (error) {
         handleAxiosError(error);
@@ -282,24 +274,22 @@ export const GetStatusOfVerifyClient = (params: { tenantId?: string; clientId: n
   };
 };
 
-export const CloseClient = (params: { tenantId?: string; clientId: number; data: CloseClientRequest }): Command<{ tenantId?: string; clientId: number; data: CloseClientRequest }, CloseClientResponse> => {
-  validateCloseClientRequest(params.data);
-  const path = `/v1/clients/${params.clientId}?command=close`;
+export const CloseClient = (clientId: number, data: CloseClientRequest): Command<{ clientId: number; data: CloseClientRequest }, CloseClientResponse> => {
+  validateCloseClientRequest(data);
+  const path = `/v1/clients/${clientId}?command=close`;
+
   return {
-    input: params,
+    input: { clientId, data },
     metadata: {
       commandName: 'CloseClient',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (params.tenantId) {
-        config.tenantId = params.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
-        const response = await axiosInstance.post<CloseClientResponse>(path, params.data);
+        const response = await axiosInstance.post<CloseClientResponse>(path, data);
         return response.data;
       } catch (error) {
         handleAxiosError(error);

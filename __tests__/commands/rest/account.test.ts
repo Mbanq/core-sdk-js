@@ -55,9 +55,9 @@ describe('GetAccount', () => {
   });
 
   it('should create a GetAccount command with correct metadata', () => {
-    const command = GetAccount(123, { tenantId: 'test-tenant' });
+    const command = GetAccount(123);
 
-    expect(command.input).toEqual({ accountId: 123, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ accountId: 123 });
     expect(command.metadata).toEqual({
       commandName: 'GetAccount',
       path: '/v1/savingsaccounts/123',
@@ -95,7 +95,7 @@ describe('GetAccount', () => {
 
     mockAxiosInstance.get.mockResolvedValue({ data: mockAccountData });
 
-    const command = GetAccount(123, { tenantId: 'test-tenant' });
+    const command = GetAccount(123);
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'
@@ -105,7 +105,7 @@ describe('GetAccount', () => {
 
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/v1/savingsaccounts/123');
     expect(result).toEqual(mockAccountData);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors', async () => {
@@ -197,9 +197,9 @@ describe('UpdateAccount', () => {
       charges: []
     };
 
-    const command = UpdateAccount(456, updateData, { tenantId: 'test-tenant' });
+    const command = UpdateAccount(456, updateData);
 
-    expect(command.input).toEqual({ accountId: 456, requestData: updateData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ accountId: 456, requestData: updateData });
     expect(command.metadata).toEqual({
       commandName: 'UpdateAccount',
       path: '/v1/savingsaccounts/456',
@@ -237,7 +237,7 @@ describe('UpdateAccount', () => {
     const mockResponse = { success: true, accountId: 456 };
     mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
 
-    const command = UpdateAccount(456, updateData, { tenantId: 'test-tenant' });
+    const command = UpdateAccount(456, updateData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -251,7 +251,7 @@ describe('UpdateAccount', () => {
       updateData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during update', async () => {
@@ -371,9 +371,9 @@ describe('DeleteAccount', () => {
   });
 
   it('should create a DeleteAccount command with correct metadata', () => {
-    const command = DeleteAccount(456, { tenantId: 'test-tenant' });
+    const command = DeleteAccount(456);
 
-    expect(command.input).toEqual({ accountId: 456, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ accountId: 456 });
     expect(command.metadata).toEqual({
       commandName: 'DeleteAccount',
       path: '/v1/savingsaccounts/456',
@@ -385,7 +385,7 @@ describe('DeleteAccount', () => {
     const mockResponse = { success: true };
     mockAxiosInstance.delete.mockResolvedValue({ data: mockResponse });
 
-    const command = DeleteAccount(456, { tenantId: 'test-tenant' });
+    const command = DeleteAccount(456);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -396,7 +396,7 @@ describe('DeleteAccount', () => {
 
     expect(mockAxiosInstance.delete).toHaveBeenCalledWith('/v1/savingsaccounts/456');
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during delete', async () => {
@@ -466,10 +466,9 @@ describe('GetAccountsOfClient', () => {
   it('should create a GetAccountsOfClient command with correct metadata', () => {
     const clientId = 123;
     const params = { showReservedAccount: true };
-    const configuration = { tenantId: 'test-tenant' };
-    const command = GetAccountsOfClient(clientId, params, configuration);
+    const command = GetAccountsOfClient(clientId, params);
 
-    expect(command.input).toEqual({ clientId, params, configuration });
+    expect(command.input).toEqual({ clientId, params });
     expect(command.metadata).toEqual({
       commandName: 'ListAccountsOfClient',
       path: '/v1/clients/123/accounts',
@@ -494,8 +493,7 @@ describe('GetAccountsOfClient', () => {
 
     const command = GetAccountsOfClient(
       123,
-      { showReservedAccount: true },
-      { tenantId: 'test-tenant' }
+      { showReservedAccount: true }
     );
 
     const config = {
@@ -509,7 +507,7 @@ describe('GetAccountsOfClient', () => {
       params: { showReservedAccount: true }
     });
     expect(result).toEqual(mockAccountsData);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during get accounts', async () => {
@@ -640,7 +638,7 @@ describe('CreateAndActivateAccount', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = CreateAndActivateAccount(requestData, { tenantId: 'test-tenant' });
+    const command = CreateAndActivateAccount(requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -654,7 +652,7 @@ describe('CreateAndActivateAccount', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle minimal required fields', async () => {
@@ -752,8 +750,7 @@ describe('CreateAndActivateAccount', () => {
         dateFormat: 'dd MMMM yyyy',
         submittedOnDate: '22 June 2023',
         monthDayFormat: 'dd MMMM yyyy'
-      },
-      { tenantId: 'custom-tenant' }
+      }
     );
 
     const config = {
@@ -763,7 +760,7 @@ describe('CreateAndActivateAccount', () => {
 
     await command.execute(config);
 
-    expect(config.tenantId).toBe('custom-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should not override tenantId if not provided in configuration', async () => {
@@ -895,9 +892,9 @@ describe('CloseAccount', () => {
       locale: 'en',
       closeReasonCodeId: 5100
     };
-    const command = CloseAccount(5100, requestData, { tenantId: 'test-tenant' });
+    const command = CloseAccount(5100, requestData);
 
-    expect(command.input).toEqual({ savingsAccountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ savingsAccountId: 5100, requestData });
     expect(command.metadata).toEqual({
       commandName: 'CloseAccount',
       path: '/v1/savingsaccounts/5100?command=close',
@@ -932,7 +929,7 @@ describe('CloseAccount', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = CloseAccount(5100, requestData, { tenantId: 'test-tenant' });
+    const command = CloseAccount(5100, requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -946,7 +943,7 @@ describe('CloseAccount', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during close', async () => {
@@ -1025,9 +1022,9 @@ describe('BlockAccount', () => {
 
   it('should create a BlockAccount command with correct metadata', () => {
     const requestData = { blockReasonCodeId: 5100 };
-    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+    const command = BlockAccount(123, requestData);
 
-    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ accountId: 123, requestData });
     expect(command.metadata).toEqual({
       commandName: 'BlockAccount',
       path: '/v1/savingsaccounts/123?command=block',
@@ -1067,7 +1064,7 @@ describe('BlockAccount', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = BlockAccount(123, requestData, { tenantId: 'test-tenant' });
+    const command = BlockAccount(123, requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -1081,7 +1078,7 @@ describe('BlockAccount', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during block', async () => {
@@ -1155,9 +1152,9 @@ describe('ScheduleAccountClosure', () => {
       locale: 'en',
       closeReasonCodeId: 5100
     };
-    const command = ScheduleAccountClosure(5100, requestData, { tenantId: 'test-tenant' });
+    const command = ScheduleAccountClosure(5100, requestData);
 
-    expect(command.input).toEqual({ accountId: 5100, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ accountId: 5100, requestData });
     expect(command.metadata).toEqual({
       commandName: 'ScheduleAccountClosure',
       path: '/v1/savingsaccounts/5100?command=SCHEDULECLOSE',
@@ -1192,7 +1189,7 @@ describe('ScheduleAccountClosure', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = ScheduleAccountClosure(5100, requestData, { tenantId: 'test-tenant' });
+    const command = ScheduleAccountClosure(5100, requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -1206,7 +1203,7 @@ describe('ScheduleAccountClosure', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during schedule closure', async () => {
@@ -1285,9 +1282,9 @@ describe('HoldAmount', () => {
 
   it('should create a HoldAmount command with correct metadata', () => {
     const requestData = { transactionAmount: 45, holdAmountReasonCodeId: 6100 };
-    const command = HoldAmount(123, requestData, { tenantId: 'test-tenant' });
+    const command = HoldAmount(123, requestData);
 
-    expect(command.input).toEqual({ accountId: 123, requestData, configuration: { tenantId: 'test-tenant' } });
+    expect(command.input).toEqual({ accountId: 123, requestData });
     expect(command.metadata).toEqual({
       commandName: 'HoldAmount',
       path: '/v1/savingsaccounts/123?command=hold',
@@ -1313,7 +1310,7 @@ describe('HoldAmount', () => {
 
     mockAxiosInstance.post.mockResolvedValue({ data: mockResponse });
 
-    const command = HoldAmount(123, requestData, { tenantId: 'test-tenant' });
+    const command = HoldAmount(123, requestData);
 
     const config = {
       baseUrl: 'https://api.example.com',
@@ -1327,7 +1324,7 @@ describe('HoldAmount', () => {
       requestData
     );
     expect(result).toEqual(mockResponse);
-    expect(config.tenantId).toBe('test-tenant');
+    expect(config.tenantId).toBe('default-tenant');
   });
 
   it('should handle axios errors during hold amount', async () => {

@@ -26,9 +26,6 @@ import {
  * @param params.description - A brief description of the savings product
  * @param params.locale - The locale for formatting date and number fields (e.g., "en")
  * @param params.dateFormat - The date format string (e.g., "dd MMMM yyyy")
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the created account product details
  *
  * @example
@@ -58,28 +55,23 @@ import {
  *     dateFormat: "dd MMMM yyyy",
  *     startDate: "01 January 2024",
  *     endDate: "31 December 2024"
- *   },
- *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ *   }
  * );
  * const result = await createCmd.execute(config);
  * console.log(result.resourceId, result.id);
  * ```
  */
 export const CreateAccountProduct = (
-  params: CreateAccountProductRequest,
-  configuration?: { tenantId?: string }
-): Command<{ params: CreateAccountProductRequest, configuration?: { tenantId?: string } }, CreateAccountProductResponse> => {
+  params: CreateAccountProductRequest
+): Command<{ params: CreateAccountProductRequest }, CreateAccountProductResponse> => {
   return {
-    input: { params, configuration },
+    input: { params },
     metadata: {
       commandName: 'CreateAccountProduct',
       path: '/v1/savingsproducts',
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -109,9 +101,6 @@ export const CreateAccountProduct = (
  * @param params.minRequiredOpeningBalance - The minimum balance required to open the savings account
  * @param params.locale - The locale for formatting date and number fields
  * @param params.dateFormat - The date format string
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the update response with changes
  *
  * @example
@@ -141,8 +130,7 @@ export const CreateAccountProduct = (
  *     feeToIncomeAccountMappings: "[]",
  *     locale: "en",
  *     dateFormat: "dd MMMM yyyy"
- *   },
- *   { tenantId: "z01j3e71zd6zkq908yvf5861a8" }
+ *   }
  * );
  * const result = await updateCmd.execute(config);
  * console.log(result.changes);
@@ -150,20 +138,16 @@ export const CreateAccountProduct = (
  */
 export const UpdateAccountProduct = (
   productId: number,
-  params: UpdateAccountProductRequest,
-  configuration?: { tenantId?: string }
-): Command<{ productId: number, params: UpdateAccountProductRequest, configuration?: { tenantId?: string } }, UpdateAccountProductResponse> => {
+  params: UpdateAccountProductRequest
+): Command<{ productId: number, params: UpdateAccountProductRequest }, UpdateAccountProductResponse> => {
   return {
-    input: { productId, params, configuration },
+    input: { productId, params },
     metadata: {
       commandName: 'UpdateAccountProduct',
       path: `/v1/savingsproducts/${productId}`,
       method: 'PUT'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -182,32 +166,24 @@ export const UpdateAccountProduct = (
 /**
  * Retrieves all savings account products.
  *
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns a list of all account products
  *
  * @example
  * ```typescript
- * const listCmd = GetAllAccountProducts({ tenantId: "z01j3e71zd6zkq908yvf5861a8" });
+ * const listCmd = GetAllAccountProducts();
  * const result = await listCmd.execute(config);
  * result.forEach(product => console.log(product.name));
  * ```
  */
-export const GetAllAccountProducts = (
-  configuration?: { tenantId?: string }
-): Command<{ configuration?: { tenantId?: string } }, GetAllAccountProductsResponse> => {
+export const GetAllAccountProducts = (): Command<{}, GetAllAccountProductsResponse> => {
   return {
-    input: { configuration },
+    input: {},
     metadata: {
       commandName: 'GetAllAccountProducts',
       path: '/v1/savingsproducts',
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -226,33 +202,26 @@ export const GetAllAccountProducts = (
  * Retrieves a single savings account product by its ID.
  *
  * @param productId - The ID of the savings product to retrieve
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
- *
  * @returns A Command that when executed returns the account product details
  *
  * @example
  * ```typescript
- * const getCmd = GetAccountProductById(101, { tenantId: "z01j3e71zd6zkq908yvf5861a8" });
+ * const getCmd = GetAccountProductById(101);
  * const result = await getCmd.execute(config);
  * console.log(result.name);
  * ```
  */
 export const GetAccountProductById = (
-  productId: number,
-  configuration?: { tenantId?: string }
-): Command<{ productId: number, configuration?: { tenantId?: string } }, GetAccountProductByIdResponse> => {
+  productId: number
+): Command<{ productId: number }, GetAccountProductByIdResponse> => {
   return {
-    input: { productId, configuration },
+    input: { productId },
     metadata: {
       commandName: 'GetAccountProductById',
       path: `/v1/savingsproducts/${productId}`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {

@@ -10,22 +10,18 @@ import {
 /**
  * Retrieves the classification for a client.
  * @param clientId The id of the client to retrieve the classification for.
- * @param configuration The configuration object containing the tenant id.
  * @returns A promise that resolves to the classification for the given client.
  */
-export const GetClientClassification = (clientId: number, configuration?: { tenantId: string }): Command<{ clientId: number, configuration?: { tenantId: string } }, ClientClassificationResponse> => {
+export const GetClientClassification = (clientId: number): Command<{ clientId: number }, ClientClassificationResponse> => {
   const path = `/v1/clients/${clientId}/classifications`;
   return {
-    input: { clientId, configuration },
+    input: { clientId },
     metadata: {
       commandName: 'GetClientClassification',
       path,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.get<ClientClassificationResponse>(path);
@@ -39,22 +35,19 @@ export const GetClientClassification = (clientId: number, configuration?: { tena
 /**
  * Switches the client classification for the given client id.
  * @param clientId the id of the client to switch the classification for
- * @param configuration the configuration object containing the tenant id
+ * @param params the switch classification request parameters
  * @returns a promise that resolves to the response from the server
  */
-export const SwitchClientClassification = (clientId: number, params: SwitchClientClassificationRequest, configuration?: { tenantId: string }): Command<{ clientId: number, params: SwitchClientClassificationRequest, configuration?: { tenantId: string } }, SwitchClientClassificationResponse> => {
+export const SwitchClientClassification = (clientId: number, params: SwitchClientClassificationRequest): Command<{ clientId: number, params: SwitchClientClassificationRequest }, SwitchClientClassificationResponse> => {
   const path = `/v1/clients/${clientId}?command=switchclassification`;
   return {
-    input: { clientId, params, configuration },
+    input: { clientId, params },
     metadata: {
       commandName: 'SwitchClientClassification',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.post<SwitchClientClassificationResponse>(path, params);
@@ -70,23 +63,19 @@ export const SwitchClientClassification = (clientId: number, params: SwitchClien
  * Cancels the switch client classification for the given client id.
  * @param clientId the id of the client to cancel the switch classification for
  * @param params object containing the switch classification request id
- * @param configuration the configuration object containing the tenant id
  * @returns a promise that resolves to the response from the server
  */
-export const CancelSwitchClientClassification = (clientId: number, params: { switchClassificationRequestId: number }, configuration?: { tenantId: string }): Command<{ clientId: number, params: { switchClassificationRequestId: number }, configuration?: { tenantId: string } }, SwitchClientClassificationResponse> => {
+export const CancelSwitchClientClassification = (clientId: number, params: { switchClassificationRequestId: number }): Command<{ clientId: number, params: { switchClassificationRequestId: number } }, SwitchClientClassificationResponse> => {
   // this function cannot be tested right now.
   const path = `/v1/clients/${clientId}?command=cancelSwitchclassification`;
   return {
-    input: { clientId, params, configuration },
+    input: { clientId, params },
     metadata: {
       commandName: 'CancelSwitchClientClassification',
       path,
       method: 'POST'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
       try {
         const response = await axiosInstance.post<SwitchClientClassificationResponse>(path, params);

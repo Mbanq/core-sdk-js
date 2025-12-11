@@ -2,7 +2,13 @@ import {
   GetPendingTransactionsRequest,
   GetPendingTransactionsResponse,
   GetCompletedTransactionsRequest,
-  GetCompletedTransactionsResponse
+  GetCompletedTransactionsResponse,
+  GetRecentTransactionsRequest,
+  GetRecentTransactionsResponse,
+  GetTransactionByIdRequest,
+  GetTransactionByIdResponse,
+  GetBankDetailsFromRoutingCodeRequest,
+  GetBankDetailsFromRoutingCodeResponse
 } from '../../types/transaction';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
@@ -23,8 +29,6 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * @param params.limit - Restricts the size of results returned. Defaults to 200
  * @param params.orderBy - In which property order data will be fetched. Defaults to "createdAt"
  * @param params.sortOrder - Specifies the sorting order. Possible values: ASC, DESC. Defaults to "DESC"
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns the pending transactions response
  *
@@ -32,8 +36,7 @@ import { handleAxiosError } from '../../utils/errorHandler';
  * ```typescript
  * const getPendingCmd = GetPendingTransactions(
  *   123,
- *   { offset: 0, limit: 200, orderBy: "createdAt", sortOrder: "DESC" },
- *   { tenantId: "tokoro" }
+ *   { offset: 0, limit: 200, orderBy: "createdAt", sortOrder: "DESC" }
  * );
  * const result = await getPendingCmd.execute(config);
  * console.log(result.totalFilteredRecords);
@@ -42,23 +45,19 @@ import { handleAxiosError } from '../../utils/errorHandler';
  */
 export const GetPendingTransactions = (
   savingsId: number,
-  params?: GetPendingTransactionsRequest,
-  configuration?: { tenantId?: string }
+  params?: GetPendingTransactionsRequest
 ): Command<
-    { savingsId: number; params?: GetPendingTransactionsRequest; configuration?: { tenantId?: string } },
-    GetPendingTransactionsResponse
+  { savingsId: number; params?: GetPendingTransactionsRequest },
+  GetPendingTransactionsResponse
 > => {
   return {
-    input: { savingsId, params, configuration },
+    input: { savingsId, params },
     metadata: {
       commandName: 'GetPendingTransactions',
       path: `/v1/savingsaccounts/${savingsId}/pendingTransaction`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
@@ -103,8 +102,6 @@ export const GetPendingTransactions = (
  * @param params.orderBy - The list is sorted by the indicated field. Defaults to "id"
  * @param params.sortOrder - Specifies the sorting order. Possible values: ASC, DESC
  * @param params.getCardData - Do you want to get Card data. Defaults to false
- * @param configuration - Optional configuration
- * @param configuration.tenantId - Optional tenant identifier for multi-tenant environments
  *
  * @returns A Command that when executed returns the completed transactions response
  *
@@ -114,42 +111,228 @@ export const GetPendingTransactions = (
  *   123,
  *   {
  *     offset: 0,
- *     limit: 15,
- *     showEnrichedTransactions: true,
- *     orderBy: "id",
- *     sortOrder: "DESC"
- *   },
- *   { tenantId: "tokoro" }
+ *     limit: 200,
+ *     orderBy: "createdAt",
+ *     sortOrder: "DESC",
+ *     subTransactionType: "DEPOSIT"
+ *   }
  * );
  * const result = await getCompletedCmd.execute(config);
  * console.log(result.totalFilteredRecords);
- * console.log(result.pageItems[0].transactionType.code);
+ * console.log(result.pageItems[0].transfer.status); // "COMPLETED"
  * ```
  */
 export const GetCompletedTransactions = (
-  savingsAccountId: number,
-  params?: GetCompletedTransactionsRequest,
-  configuration?: { tenantId?: string }
+  savingsId: number,
+  params?: GetCompletedTransactionsRequest
 ): Command<
-    { savingsAccountId: number; params?: GetCompletedTransactionsRequest; configuration?: { tenantId?: string } },
-    GetCompletedTransactionsResponse
+  { savingsId: number; params?: GetCompletedTransactionsRequest },
+  GetCompletedTransactionsResponse
 > => {
   return {
-    input: { savingsAccountId, params, configuration },
+    input: { savingsId, params },
     metadata: {
       commandName: 'GetCompletedTransactions',
-      path: `/v1/savingsaccounts/${savingsAccountId}/transactions`,
+      path: `/v1/savingsaccounts/${savingsId}/transactions`,
       method: 'GET'
     },
     execute: async (config: Config) => {
-      if (configuration?.tenantId) {
-        config.tenantId = configuration.tenantId;
-      }
       const axiosInstance = await baseRequest(config);
 
       try {
         const response = await axiosInstance.get<GetCompletedTransactionsResponse>(
-          `/v1/savingsaccounts/${savingsAccountId}/transactions`,
+          `/v1/savingsaccounts/${savingsId}/transactions`,
+          { params }
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Retrieves recent transactions for a specific savings account.
+ *
+ * Use this API to retrieve the recent transactions with their status, including Completed,
+ * Pending, and Rejected. This unified endpoint returns transactions with card-related
+ * information when applicable.
+ *
+ * Pass the account ID to get the transaction details.
+ *
+ * Retrieves a list of recent transactions with their status, including Completed,
+ * Pending, and Rejected.
+ *
+ * @param savingsId - The ID associated with the account (Example: 101)
+ * @param params - Optional query parameters for filtering, pagination and sorting
+ * @param params.offset - Indicates the result from which pagination starts. Defaults to 0. Example: 0
+ * @param params.limit - Restricts the size of results returned. Defaults to 50. To override the default and return all entries you must explicitly pass a non-positive integer value for limit e.g. limit=0, or limit=-1. Example: 20
+ * @param params.orderBy - Specifies the data to order the results by. Defaults to createdAt. Available options: transactionDate, submittedOnDate, bookingDate, transactionAmount, createdAt
+ * @param params.sortOrder - Specifies the sort direction for the results. Defaults to DESC (descending). Available options: ASC (Ascending order - oldest/smallest first), DESC (Descending order - newest/largest first)
+ * @param params.type - Filter transactions by type. Multiple values can be provided. Example: type=AUTHORIZED_TX&type=SAVINGS_TX
+ * @param params.transactionType - Filter by specific transaction types. Multiple values can be provided. Example: transactionType=DEPOSIT&transactionType=WITHDRAWAL
+ * @param params.subTransactionType - Filter by sub-transaction types. Multiple values can be provided. Example: subTransactionType=CARD_TRANSACTION&subTransactionType=ACH
+ * @param params.cardId - Filter transactions by card ID. Multiple card IDs can be provided. Example: cardId=12345&cardId=45678
+ * @param params.status - Filter transactions by status. Multiple values can be provided. Example: status=PROCESSED&status=PROCESSING
+ * @param params.startDate - Filter transactions from this date onwards (inclusive). Format: ISO-8601 date (YYYY-MM-DD). Example: 2024-01-01
+ * @param params.endDate - Filter transactions up to this date (inclusive). Format: ISO-8601 date (YYYY-MM-DD). Example: 2024-12-31
+ * @param params.reference - Filter based on the reference provided at the time of the transaction. Example: TXN-2024-001234
+ *
+ * @returns A Command that when executed returns the recent transactions response
+ *
+ * @example
+ * ```typescript
+ * const getRecentCmd = GetRecentTransactions(
+ *   101,
+ *   {
+ *     offset: 0,
+ *     limit: 50,
+ *     orderBy: "createdAt",
+ *     sortOrder: "DESC",
+ *     type: ["SAVINGS_TX"],
+ *     status: ["PROCESSED"]
+ *   }
+ * );
+ * const result = await getRecentCmd.execute(config);
+ * console.log(result.totalFilteredRecords);
+ * console.log(result.pageItems[0].transactionAmount);
+ * console.log(result.pageItems[0].cardNumber); // "****1234" if card transaction
+ * ```
+ */
+export const GetRecentTransactions = (
+  savingsId: number,
+  params?: GetRecentTransactionsRequest
+): Command<
+  { savingsId: number; params?: GetRecentTransactionsRequest },
+  GetRecentTransactionsResponse
+> => {
+  return {
+    input: { savingsId, params },
+    metadata: {
+      commandName: 'GetRecentTransactions',
+      path: `/v1/savingsaccounts/${savingsId}/unifiedtransactions`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get<GetRecentTransactionsResponse>(
+          `/v1/savingsaccounts/${savingsId}/unifiedtransactions`,
+          { params }
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Retrieves the details of a specific account transaction.
+ *
+ * Use this API to retrieve the details of a specific account transaction.
+ * Provide the transaction Id as a parameter to access the transaction details.
+ *
+ * @param savingsAccountId - The associated account ID
+ * @param transactionId - The ID associated with the transaction (Example: 12)
+ * @param params - Optional query parameters
+ * @param params.associations - Specifies the type of associations to include in the response (Example: includeEnrichedData). Defaults to includeEnrichedData
+ *
+ * @returns A Command that when executed returns the transaction details
+ *
+ * @example
+ * ```typescript
+ * const getTransactionCmd = GetTransactionById(
+ *   12,
+ *   19,
+ *   { associations: "includeEnrichedData" }
+ * );
+ * const result = await getTransactionCmd.execute(config);
+ * console.log(result.transactionType.value); // "Withdrawal"
+ * console.log(result.amount); // 0.1
+ * console.log(result.transferData?.status); // "EXECUTION_SUCCESS"
+ * ```
+ */
+export const GetTransactionById = (
+  savingsAccountId: number,
+  transactionId: number,
+  params?: GetTransactionByIdRequest
+): Command<
+  { savingsAccountId: number; transactionId: number; params?: GetTransactionByIdRequest },
+  GetTransactionByIdResponse
+> => {
+  return {
+    input: { savingsAccountId, transactionId, params },
+    metadata: {
+      commandName: 'GetTransactionById',
+      path: `/v1/savingsaccounts/${savingsAccountId}/transactions/${transactionId}`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get<GetTransactionByIdResponse>(
+          `/v1/savingsaccounts/${savingsAccountId}/transactions/${transactionId}`,
+          { params }
+        );
+        return response.data;
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Get the bank details from the routing code.
+ *
+ * Use this API to get the bank details from the routing code.
+ * Financial institutions often utilize distinct routing codes for ACH (Automated Clearing House) and wire transfers.
+ *
+ * We can use the Query param 'scheme' to differentiate between ACH and Wire transfers.
+ *
+ * @param routingNumber - Routing codes identify each financial institution with a unique ID (Example: 273976369). Pattern: \b\d{9}\b
+ * @param params - Optional query parameters
+ * @param params.scheme - Scheme used for retrieving the Bank Details. Supported values are "ACH" and "WIRE"
+ *
+ * @returns A Command that when executed returns the bank details
+ *
+ * @example
+ * ```typescript
+ * const getBankDetailsCmd = GetBankDetailsFromRoutingCode(
+ *   "273976369",
+ *   { scheme: "ACH" }
+ * );
+ * const result = await getBankDetailsCmd.execute(config);
+ * console.log(result.bankName); // "VERIDIAN CREDIT UNION"
+ * console.log(result.achLocation.city); // "WATERLOO"
+ * console.log(result.scheme); // "ACH"
+ * ```
+ */
+export const GetBankDetailsFromRoutingCode = (
+  routingNumber: string,
+  params?: GetBankDetailsFromRoutingCodeRequest
+): Command<
+  { routingNumber: string; params?: GetBankDetailsFromRoutingCodeRequest },
+  GetBankDetailsFromRoutingCodeResponse
+> => {
+  return {
+    input: { routingNumber, params },
+    metadata: {
+      commandName: 'GetBankDetailsFromRoutingCode',
+      path: `/v1/bankdetails/routing/${routingNumber}`,
+      method: 'GET'
+    },
+    execute: async (config: Config) => {
+      const axiosInstance = await baseRequest(config);
+
+      try {
+        const response = await axiosInstance.get<GetBankDetailsFromRoutingCodeResponse>(
+          `/v1/bankdetails/routing/${routingNumber}`,
           { params }
         );
         return response.data;

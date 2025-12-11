@@ -56,13 +56,13 @@ describe('GetUserDetail', () => {
     expect(result).toEqual(mockUserDetail);
   });
 
-  it('should get user detail with params', async () => {
+  it('should get user detail without params', async () => {
     const mockAxios = {
       get: vi.fn().mockResolvedValue({ data: mockUserDetail })
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = GetUserDetail({ tenantId: 'customTenant' });
+    const command = GetUserDetail();
     const result = await command.execute(mockConfig);
 
     expect(baseRequest).toHaveBeenCalledWith(mockConfig);
@@ -83,19 +83,17 @@ describe('GetUserDetail', () => {
     await expect(command.execute(mockConfig)).rejects.toThrow();
   });
 
-  it('should override tenantId if provided in params', async () => {
+  it('should not override tenantId', async () => {
     const mockAxios = {
       get: vi.fn().mockResolvedValue({ data: mockUserDetail })
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = GetUserDetail({ tenantId: 'newTenantId' });
+    const command = GetUserDetail();
     await command.execute(mockConfig);
 
-    expect(baseRequest).toHaveBeenCalledWith({
-      ...mockConfig,
-      tenantId: 'newTenantId'
-    });
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('tenantId');
   });
 });
 
@@ -185,19 +183,17 @@ describe('EnableSelfServiceAccess', () => {
     await expect(command.execute(mockConfig)).rejects.toThrow();
   });
 
-  it('should override tenantId if provided in params', async () => {
+  it('should not override tenantId', async () => {
     const mockAxios = {
       post: vi.fn().mockResolvedValue({ data: mockResponse })
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = EnableSelfServiceAccess(mockRequestData, { tenantId: 'newTenantId' });
+    const command = EnableSelfServiceAccess(mockRequestData);
     await command.execute(mockConfig);
 
-    expect(baseRequest).toHaveBeenCalledWith({
-      ...mockConfig,
-      tenantId: 'newTenantId'
-    });
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('tenantId');
   });
 });
 
@@ -281,19 +277,17 @@ describe('UpdateSelfServiceUser', () => {
     await expect(command.execute(mockConfig)).rejects.toThrow();
   });
 
-  it('should override tenantId if provided in params', async () => {
+  it('should not override tenantId', async () => {
     const mockAxios = {
       put: vi.fn().mockResolvedValue({ data: mockResponse })
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = UpdateSelfServiceUser(mockRequestData, { tenantId: 'newTenantId' });
+    const command = UpdateSelfServiceUser(mockRequestData);
     await command.execute(mockConfig);
 
-    expect(baseRequest).toHaveBeenCalledWith({
-      ...mockConfig,
-      tenantId: 'newTenantId'
-    });
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('tenantId');
   });
 
   it('should exclude userId from request body', async () => {
@@ -338,7 +332,7 @@ describe('DeleteSelfServiceUser', () => {
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = DeleteSelfServiceUser(123, { tenantId: 'tenantId' });
+    const command = DeleteSelfServiceUser(123);
     const result = await command.execute(mockConfig);
 
     expect(baseRequest).toHaveBeenCalledWith(mockConfig);
@@ -353,25 +347,23 @@ describe('DeleteSelfServiceUser', () => {
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = DeleteSelfServiceUser(123, { tenantId: 'tenantId' });
+    const command = DeleteSelfServiceUser(123);
 
     // We expect the command to throw because handleAxiosError throws
     await expect(command.execute(mockConfig)).rejects.toThrow();
   });
 
-  it('should override tenantId if provided in params', async () => {
+  it('should not override tenantId', async () => {
     const mockAxios = {
       delete: vi.fn().mockResolvedValue({ data: mockResponse })
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = DeleteSelfServiceUser(123, { tenantId: 'newTenantId' });
+    const command = DeleteSelfServiceUser(123);
     await command.execute(mockConfig);
 
-    expect(baseRequest).toHaveBeenCalledWith({
-      ...mockConfig,
-      tenantId: 'newTenantId'
-    });
+    expect(baseRequest).toHaveBeenCalledWith(mockConfig);
+    expect(mockConfig.tenantId).toBe('tenantId');
   });
 
   it('should use correct userId in the DELETE endpoint', async () => {
@@ -380,7 +372,7 @@ describe('DeleteSelfServiceUser', () => {
     };
     (baseRequest as any).mockResolvedValue(mockAxios);
 
-    const command = DeleteSelfServiceUser(456, { tenantId: 'tenantId' });
+    const command = DeleteSelfServiceUser(456);
     await command.execute(mockConfig);
 
     expect(mockAxios.delete).toHaveBeenCalledWith('/v1/users/456');
