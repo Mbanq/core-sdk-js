@@ -53,7 +53,8 @@ import {
 
 import {
   CreateFixedDepositAccountRequest,
-  CreateFixedDepositAccountResponse
+  CreateFixedDepositAccountResponse,
+  FixedDepositAccount
 } from './fixedDepositAccount';
 
 export {
@@ -131,5 +132,6 @@ export {
   GetBankDetailsFromRoutingCodeRequest,
   BankDetails,
   CreateFixedDepositAccountRequest,
-  CreateFixedDepositAccountResponse
+  CreateFixedDepositAccountResponse,
+  FixedDepositAccount
 };

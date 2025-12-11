@@ -1,4 +1,4 @@
-import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse } from '../../types/fixedDepositAccount';
+import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse, FixedDepositAccount } from '../../types/fixedDepositAccount';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -65,6 +65,50 @@ export const CreateFixedDepositAccount = (
           '/v1/fixeddepositaccounts?command=submit,approve,activate',
           params
         );
+        return response.data;
+      } catch (error) {
+        throw handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Retrieves detailed information about a specific Fixed Deposit Account.
+ *
+ * This API provides comprehensive details of the selected Fixed Deposit account, including:
+ * - Account parameters (deposit amount, maturity date, interest rates)
+ * - Associated charges and fees
+ * - Interest rate charts and slabs
+ * - Account status and timeline
+ * - Summary of transactions and balances
+ *
+ * @param accountId - The ID of the fixed deposit account to retrieve
+ * @returns A Command that when executed returns the full FixedDepositAccount details
+ *
+ * @example
+ * ```typescript
+ * const getFDCmd = GetFixedDepositAccount(13400);
+ * const account = await getFDCmd.execute(config);
+ * console.log(account.accountNo, account.depositAmount);
+ * console.log(account.status.value); // e.g., "Submitted and pending approval"
+ * console.log(account.maturityDate); // [2025, 10, 22]
+ * ```
+ */
+export const GetFixedDepositAccount = (
+  accountId: number
+): Command<{ accountId: number }, FixedDepositAccount> => {
+  return {
+    input: { accountId },
+    metadata: {
+      commandName: 'GetFixedDepositAccount',
+      path: `/v1/fixeddepositaccounts/${accountId}`,
+      method: 'GET'
+    },
+    async execute (config: Config) {
+      try {
+        const axiosInstance = await baseRequest(config);
+        const response = await axiosInstance.get(`/v1/fixeddepositaccounts/${accountId}`);
         return response.data;
       } catch (error) {
         throw handleAxiosError(error);

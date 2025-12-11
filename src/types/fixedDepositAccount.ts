@@ -71,3 +71,152 @@ export type CreateFixedDepositAccountResponse = z.infer<typeof CreateFixedDeposi
 export type ChartSlab = z.infer<typeof chartSlabSchema>;
 export type Chart = z.infer<typeof chartSchema>;
 export type Charge = z.infer<typeof chargeSchema>;
+
+// Schemas for GetFixedDepositAccount response
+const codeValueSchema = z.object({
+  id: z.number(),
+  code: z.string(),
+  value: z.string()
+});
+
+const statusSchema = z.object({
+  id: z.number(),
+  code: z.string(),
+  value: z.string(),
+  submittedAndPendingApproval: z.boolean(),
+  approved: z.boolean(),
+  rejected: z.boolean(),
+  withdrawnByApplicant: z.boolean(),
+  active: z.boolean(),
+  closed: z.boolean(),
+  prematureClosed: z.boolean(),
+  transferInProgress: z.boolean(),
+  transferOnHold: z.boolean(),
+  matured: z.boolean()
+});
+
+const timelineSchema = z.object({
+  submittedOnDate: z.array(z.number()),
+  submittedByUsername: z.string(),
+  submittedByFirstname: z.string(),
+  submittedByLastname: z.string(),
+  approvedOnDate: z.array(z.number()).optional(),
+  approvedByUsername: z.string().optional(),
+  approvedByFirstname: z.string().optional(),
+  approvedByLastname: z.string().optional(),
+  activatedOnDate: z.array(z.number()).optional(),
+  activatedByUsername: z.string().optional(),
+  activatedByFirstname: z.string().optional(),
+  activatedByLastname: z.string().optional()
+});
+
+const currencySchema = z.object({
+  code: z.string(),
+  name: z.string(),
+  decimalPlaces: z.number(),
+  displaySymbol: z.string(),
+  nameCode: z.string(),
+  displayLabel: z.string()
+});
+
+const summarySchema = z.object({
+  currency: currencySchema,
+  totalDeposits: z.number(),
+  totalWithdrawals: z.number(),
+  totalWithdrawalFees: z.number(),
+  totalAnnualFees: z.number(),
+  totalInterestEarned: z.number(),
+  totalInterestPosted: z.number(),
+  accountBalance: z.number(),
+  totalFeeCharge: z.number(),
+  totalPenaltyCharge: z.number(),
+  totalOverdraftInterestDerived: z.number(),
+  totalWithholdTax: z.number(),
+  interestNotPosted: z.number(),
+  availableBalance: z.number()
+});
+
+const accountChargeSchema = z.object({
+  id: z.number(),
+  chargeId: z.number(),
+  accountId: z.number(),
+  name: z.string(),
+  chargeTimeType: codeValueSchema,
+  dueDate: z.array(z.number()).optional(),
+  chargeCalculationType: codeValueSchema,
+  percentage: z.number(),
+  amountPercentageAppliedTo: z.number(),
+  currency: currencySchema,
+  amount: z.number(),
+  amountPaid: z.number(),
+  amountWaived: z.number(),
+  amountWrittenOff: z.number(),
+  amountOutstanding: z.number(),
+  amountOrPercentage: z.number(),
+  minCap: z.number(),
+  maxCap: z.number(),
+  penalty: z.boolean(),
+  isActive: z.boolean(),
+  totalDeferredChargeAmount: z.number(),
+  numberOfExemptedFee: z.number(),
+  collectOnlyTotalDeferCharge: z.boolean(),
+  reverseOnTransferFail: z.boolean()
+});
+
+const accountChartSlabSchema = z.object({
+  id: z.number(),
+  description: z.string().optional(),
+  periodType: codeValueSchema,
+  fromPeriod: z.number(),
+  toPeriod: z.number().optional(),
+  annualInterestRate: z.number(),
+  currency: currencySchema
+});
+
+const accountChartSchema = z.object({
+  id: z.number(),
+  fromDate: z.array(z.number()),
+  isPrimaryGroupingByAmount: z.boolean(),
+  accountId: z.number(),
+  accountNumber: z.string(),
+  chartSlabs: z.array(accountChartSlabSchema),
+  periodTypes: z.array(codeValueSchema)
+});
+
+export const FixedDepositAccountShape = {
+  id: z.string(),
+  preClosurePenalApplicable: z.boolean(),
+  minDepositTerm: z.number(),
+  minDepositTermType: codeValueSchema,
+  depositAmount: z.number(),
+  maturityAmount: z.number(),
+  maturityDate: z.array(z.number()),
+  depositPeriod: z.number(),
+  depositPeriodFrequency: codeValueSchema,
+  activationCharge: z.number(),
+  transferInterestToSavings: z.boolean(),
+  accountNo: z.string(),
+  clientId: z.number(),
+  clientName: z.string(),
+  depositProductId: z.number(),
+  depositProductName: z.string(),
+  fieldOfficerId: z.number(),
+  status: statusSchema,
+  timeline: timelineSchema,
+  currency: currencySchema,
+  nominalAnnualInterestRate: z.number(),
+  interestCompoundingPeriodType: codeValueSchema,
+  interestPostingPeriodType: codeValueSchema,
+  minRequiredOpeningBalance: z.number(),
+  withdrawalFeeForTransfers: z.boolean(),
+  depositType: codeValueSchema,
+  minBalanceForInterestCalculation: z.number(),
+  withHoldTax: z.boolean(),
+  summary: summarySchema,
+  charges: z.array(accountChargeSchema),
+  accountChart: accountChartSchema
+};
+
+export const FixedDepositAccountSchema = z.object(FixedDepositAccountShape);
+
+export type FixedDepositAccount = z.infer<typeof FixedDepositAccountSchema>;
