@@ -18,6 +18,16 @@ const chartSchema = z.object({
   isActiveChart: z.string().optional()
 });
 
+// Schema for interest rate charts in Update requests (includes id)
+const updateChartSchema = z.object({
+  id: z.number(),
+  fromDate: z.array(z.number()).optional(),
+  dateFormat: z.string().optional(),
+  locale: z.string().optional(),
+  chartSlabs: z.array(chartSlabSchema).optional(),
+  isActiveChart: z.string().optional()
+});
+
 // Schema for charges
 const chargeSchema = z.object({
   chargeId: z.number(),
@@ -65,9 +75,70 @@ export const CreateFixedDepositAccountResponseShape = {
 
 export const CreateFixedDepositAccountResponseSchema = z.object(CreateFixedDepositAccountResponseShape);
 
+// Request schema for updating a fixed deposit account
+export const UpdateFixedDepositAccountRequestShape = {
+  clientId: z.number(),
+  productId: z.number(),
+  submittedOnDate: z.string(),
+  nominalAnnualInterestRate: z.number().optional(),
+  depositAmount: z.union([z.string(), z.number()]).optional(),
+  depositPeriod: z.number(),
+  withHoldTax: z.boolean().optional(),
+  interestCompoundingPeriodType: z.number().optional(),
+  interestPostingPeriodType: z.number().optional(),
+  interestCalculationType: z.number().optional(),
+  interestCalculationDaysInYearType: z.number().optional(),
+  depositPeriodFrequencyId: z.number(),
+  preClosurePenalApplicable: z.boolean().optional(),
+  minDepositTerm: z.number().optional(),
+  minDepositTermTypeId: z.number().optional(),
+  transferInterestToSavings: z.union([z.string(), z.boolean()]).optional(),
+  locale: z.string(),
+  dateFormat: z.string(),
+  monthDayFormat: z.string().optional(),
+  charges: z.array(chargeSchema).optional(),
+  charts: z.array(updateChartSchema).optional()
+};
+
+export const UpdateFixedDepositAccountRequestSchema = z.object(UpdateFixedDepositAccountRequestShape);
+
+// Response schema for updating a fixed deposit account
+export const UpdateFixedDepositAccountResponseShape = {
+  id: z.string(),
+  officeId: z.number(),
+  clientId: z.number(),
+  savingsId: z.string(),
+  resourceId: z.string(),
+  changes: z.object({
+    submittedOnDate: z.string().optional(),
+    nominalAnnualInterestRate: z.number().optional(),
+    depositAmount: z.union([z.string(), z.number()]).optional(),
+    depositPeriod: z.number().optional(),
+    withHoldTax: z.boolean().optional(),
+    interestCompoundingPeriodType: z.number().optional(),
+    interestPostingPeriodType: z.number().optional(),
+    interestCalculationType: z.number().optional(),
+    interestCalculationDaysInYearType: z.number().optional(),
+    depositPeriodFrequencyId: z.number().optional(),
+    preClosurePenalApplicable: z.boolean().optional(),
+    minDepositTerm: z.number().optional(),
+    minDepositTermTypeId: z.number().optional(),
+    transferInterestToSavings: z.union([z.string(), z.boolean()]).optional(),
+    locale: z.string().optional(),
+    dateFormat: z.string().optional(),
+    monthDayFormat: z.string().optional(),
+    charges: z.array(chargeSchema).optional(),
+    charts: z.array(updateChartSchema).optional()
+  }).optional()
+};
+
+export const UpdateFixedDepositAccountResponseSchema = z.object(UpdateFixedDepositAccountResponseShape);
+
 // Export types
 export type CreateFixedDepositAccountRequest = z.infer<typeof CreateFixedDepositAccountRequestSchema>;
 export type CreateFixedDepositAccountResponse = z.infer<typeof CreateFixedDepositAccountResponseSchema>;
+export type UpdateFixedDepositAccountRequest = z.infer<typeof UpdateFixedDepositAccountRequestSchema>;
+export type UpdateFixedDepositAccountResponse = z.infer<typeof UpdateFixedDepositAccountResponseSchema>;
 export type ChartSlab = z.infer<typeof chartSlabSchema>;
 export type Chart = z.infer<typeof chartSchema>;
 export type Charge = z.infer<typeof chargeSchema>;

@@ -54,7 +54,9 @@ import {
 import {
   CreateFixedDepositAccountRequest,
   CreateFixedDepositAccountResponse,
-  FixedDepositAccount
+  FixedDepositAccount,
+  UpdateFixedDepositAccountRequest,
+  UpdateFixedDepositAccountResponse
 } from './fixedDepositAccount';
 
 export {
@@ -133,5 +135,7 @@ export {
   BankDetails,
   CreateFixedDepositAccountRequest,
   CreateFixedDepositAccountResponse,
-  FixedDepositAccount
+  FixedDepositAccount,
+  UpdateFixedDepositAccountRequest,
+  UpdateFixedDepositAccountResponse
 };

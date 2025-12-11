@@ -1,4 +1,4 @@
-import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse, FixedDepositAccount } from '../../types/fixedDepositAccount';
+import { CreateFixedDepositAccountRequest, CreateFixedDepositAccountResponse, FixedDepositAccount, UpdateFixedDepositAccountRequest, UpdateFixedDepositAccountResponse } from '../../types/fixedDepositAccount';
 import { Command, Config } from '../../types/config';
 import baseRequest from '../../utils/baseRequest';
 import { handleAxiosError } from '../../utils/errorHandler';
@@ -109,6 +109,82 @@ export const GetFixedDepositAccount = (
       try {
         const axiosInstance = await baseRequest(config);
         const response = await axiosInstance.get(`/v1/fixeddepositaccounts/${accountId}`);
+        return response.data;
+      } catch (error) {
+        throw handleAxiosError(error);
+      }
+    }
+  };
+};
+
+/**
+ * Updates an existing Fixed Deposit Account.
+ *
+ * This API allows you to modify the details and deposit parameters of an existing
+ * Fixed Deposit Account. You can update interest rates, deposit amounts, charges,
+ * and other account settings.
+ *
+ * @param accountId - The ID of the fixed deposit account to update
+ * @param params - The update parameters
+ * @param params.clientId - The unique identifier of the client
+ * @param params.productId - The ID of the product associated with the account
+ * @param params.submittedOnDate - The date the update request was submitted
+ * @param params.depositAmount - The amount to be deposited
+ * @param params.depositPeriod - The duration of the deposit period
+ * @param params.depositPeriodFrequencyId - The frequency identifier for the deposit period
+ * @param params.locale - The locale setting for formatting dates and numbers
+ * @param params.dateFormat - The date format used in the request
+ * @param params.nominalAnnualInterestRate - Optional annual nominal interest rate
+ * @param params.withHoldTax - Optional flag indicating whether to withhold tax
+ * @param params.interestCompoundingPeriodType - Optional type of interest compounding period
+ * @param params.interestPostingPeriodType - Optional type of interest posting period
+ * @param params.interestCalculationType - Optional type of interest calculation method
+ * @param params.interestCalculationDaysInYearType - Optional number of days in year for interest calculation
+ * @param params.preClosurePenalApplicable - Optional flag for pre-closure penalty
+ * @param params.minDepositTerm - Optional minimum deposit term
+ * @param params.minDepositTermTypeId - Optional identifier for minimum deposit term type
+ * @param params.transferInterestToSavings - Optional flag to transfer interest to savings
+ * @param params.monthDayFormat - Optional format for month and day
+ * @param params.charges - Optional list of charges associated with the account
+ * @param params.charts - Optional list of interest rate charts
+ * @returns A Command that when executed returns the update response with changes
+ *
+ * @example
+ * ```typescript
+ * const updateFDCmd = UpdateFixedDepositAccount(13400, {
+ *   clientId: 5162,
+ *   productId: 609,
+ *   submittedOnDate: "22 October 2024",
+ *   nominalAnnualInterestRate: 2,
+ *   depositAmount: "10001",
+ *   depositPeriod: 1,
+ *   withHoldTax: false,
+ *   interestCompoundingPeriodType: 4,
+ *   interestPostingPeriodType: 7,
+ *   interestCalculationType: 2,
+ *   depositPeriodFrequencyId: 3,
+ *   locale: "en",
+ *   dateFormat: "dd MMMM yyyy"
+ * });
+ * const result = await updateFDCmd.execute(config);
+ * console.log('Updated account:', result.savingsId);
+ * ```
+ */
+export const UpdateFixedDepositAccount = (
+  accountId: number,
+  params: UpdateFixedDepositAccountRequest
+): Command<{ accountId: number; params: UpdateFixedDepositAccountRequest }, UpdateFixedDepositAccountResponse> => {
+  return {
+    input: { accountId, params },
+    metadata: {
+      commandName: 'UpdateFixedDepositAccount',
+      path: `/v1/fixeddepositaccounts/${accountId}`,
+      method: 'PUT'
+    },
+    async execute (config: Config) {
+      try {
+        const axiosInstance = await baseRequest(config);
+        const response = await axiosInstance.put(`/v1/fixeddepositaccounts/${accountId}`, params);
         return response.data;
       } catch (error) {
         throw handleAxiosError(error);

@@ -1,23 +1,23 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { CreateFixedDepositAccount, GetFixedDepositAccount } from '../../../src/commands/rest/fixedDepositAccount';
+import { CreateFixedDepositAccount, GetFixedDepositAccount, UpdateFixedDepositAccount } from '../../../src/commands/rest/fixedDepositAccount';
 import * as baseRequestModule from '../../../src/utils/baseRequest';
 
 interface MockAxiosInstance {
-    get: ReturnType<typeof vi.fn>;
-    post: ReturnType<typeof vi.fn>;
-    put: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
+  get: ReturnType<typeof vi.fn>;
+  post: ReturnType<typeof vi.fn>;
+  put: ReturnType<typeof vi.fn>;
+  delete: ReturnType<typeof vi.fn>;
 }
 
 interface MockAxiosError extends Error {
-    response?: {
-        status: number;
-        data: {
-            message?: string;
-            developerMessage?: string;
-        };
+  response?: {
+    status: number;
+    data: {
+      message?: string;
+      developerMessage?: string;
     };
-    isAxiosError?: boolean;
+  };
+  isAxiosError?: boolean;
 }
 
 describe('CreateFixedDepositAccount', () => {
@@ -531,6 +531,262 @@ describe('GetFixedDepositAccount', () => {
     mockAxiosInstance.get.mockResolvedValue({ data: mockAccountData });
 
     const command = GetFixedDepositAccount(13400);
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await command.execute(config);
+
+    expect(config.tenantId).toBe('default-tenant');
+  });
+});
+
+describe('UpdateFixedDepositAccount', () => {
+  let mockAxiosInstance: MockAxiosInstance;
+
+  beforeEach(() => {
+    vi.stubEnv('SECRET', 'your_secret');
+    vi.stubEnv('SIGNEE', 'your_signee');
+    vi.stubEnv('TENANT_ID', 'your_tenant_id');
+    vi.stubEnv('BASE_URL', 'https://your.api.url');
+
+    mockAxiosInstance = {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn()
+    };
+
+    vi.spyOn(baseRequestModule, 'default').mockResolvedValue(mockAxiosInstance as unknown as import('axios').AxiosInstance);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('should create an UpdateFixedDepositAccount command with correct metadata', () => {
+    const params = {
+      clientId: 5162,
+      productId: 609,
+      submittedOnDate: '22 October 2024',
+      nominalAnnualInterestRate: 2,
+      depositAmount: '10001',
+      depositPeriod: 1,
+      depositPeriodFrequencyId: 3,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy'
+    };
+
+    const command = UpdateFixedDepositAccount(13400, params);
+
+    expect(command.input).toEqual({ accountId: 13400, params });
+    expect(command.metadata).toEqual({
+      commandName: 'UpdateFixedDepositAccount',
+      path: '/v1/fixeddepositaccounts/13400',
+      method: 'PUT'
+    });
+  });
+
+  it('should execute PUT request with minimal required fields and return response data', async () => {
+    const requestData = {
+      clientId: 5162,
+      productId: 609,
+      submittedOnDate: '22 October 2024',
+      depositAmount: '10001',
+      depositPeriod: 1,
+      depositPeriodFrequencyId: 3,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy'
+    };
+
+    const mockResponse = {
+      id: '13400',
+      officeId: 1,
+      clientId: 5162,
+      savingsId: '13400',
+      resourceId: '13400',
+      changes: {
+        depositAmount: 10001
+      }
+    };
+
+    mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+    const command = UpdateFixedDepositAccount(13400, requestData);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+      '/v1/fixeddepositaccounts/13400',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(result.savingsId).toBe('13400');
+  });
+
+  it('should execute PUT request with all optional fields', async () => {
+    const requestData = {
+      clientId: 5162,
+      productId: 609,
+      submittedOnDate: '22 October 2024',
+      nominalAnnualInterestRate: 2,
+      depositAmount: '10001',
+      depositPeriod: 1,
+      withHoldTax: false,
+      interestCompoundingPeriodType: 4,
+      interestPostingPeriodType: 7,
+      interestCalculationType: 2,
+      interestCalculationDaysInYearType: 365,
+      depositPeriodFrequencyId: 3,
+      preClosurePenalApplicable: false,
+      minDepositTerm: 3,
+      minDepositTermTypeId: 2,
+      transferInterestToSavings: false,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy',
+      monthDayFormat: 'dd MMM',
+      charges: [
+        {
+          chargeId: 645,
+          amount: 10,
+          dueDate: '22 October 2024'
+        }
+      ]
+    };
+
+    const mockResponse = {
+      id: '13400',
+      officeId: 1,
+      clientId: 5162,
+      savingsId: '13400',
+      resourceId: '13400',
+      changes: {
+        interestCompoundingPeriodType: 4,
+        interestPostingPeriodType: 7,
+        interestCalculationType: 2,
+        charges: [
+          {
+            chargeId: 645,
+            amount: '10',
+            dueDate: '22 October 2024'
+          }
+        ],
+        depositAmount: 10001
+      }
+    };
+
+    mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+    const command = UpdateFixedDepositAccount(13400, requestData);
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    const result = await command.execute(config);
+
+    expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+      '/v1/fixeddepositaccounts/13400',
+      requestData
+    );
+    expect(result).toEqual(mockResponse);
+    expect(result.changes?.interestCompoundingPeriodType).toBe(4);
+  });
+
+  it('should handle axios errors during update', async () => {
+    const mockError: MockAxiosError = new Error('Update failed');
+    mockError.response = {
+      status: 400,
+      data: {
+        message: 'Invalid update data',
+        developerMessage: 'Validation failed for fixed deposit account update'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.put.mockRejectedValue(mockError);
+
+    const command = UpdateFixedDepositAccount(13400, {
+      clientId: 5162,
+      productId: 609,
+      submittedOnDate: '22 October 2024',
+      depositAmount: '10001',
+      depositPeriod: 1,
+      depositPeriodFrequencyId: 3,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy'
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should handle account not found error', async () => {
+    const mockError: MockAxiosError = new Error('Account not found');
+    mockError.response = {
+      status: 404,
+      data: {
+        message: 'Fixed deposit account not found',
+        developerMessage: 'Fixed deposit account with ID 13400 does not exist'
+      }
+    };
+    mockError.isAxiosError = true;
+
+    mockAxiosInstance.put.mockRejectedValue(mockError);
+
+    const command = UpdateFixedDepositAccount(13400, {
+      clientId: 5162,
+      productId: 609,
+      submittedOnDate: '22 October 2024',
+      depositAmount: '10001',
+      depositPeriod: 1,
+      depositPeriodFrequencyId: 3,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy'
+    });
+
+    const config = {
+      baseUrl: 'https://api.example.com',
+      tenantId: 'default-tenant'
+    };
+
+    await expect(command.execute(config)).rejects.toThrow();
+  });
+
+  it('should not override tenantId if not provided in params', async () => {
+    const mockResponse = {
+      id: '13400',
+      officeId: 1,
+      clientId: 5162,
+      savingsId: '13400',
+      resourceId: '13400'
+    };
+
+    mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+
+    const command = UpdateFixedDepositAccount(13400, {
+      clientId: 5162,
+      productId: 609,
+      submittedOnDate: '22 October 2024',
+      depositAmount: '10001',
+      depositPeriod: 1,
+      depositPeriodFrequencyId: 3,
+      locale: 'en',
+      dateFormat: 'dd MMMM yyyy'
+    });
+
     const config = {
       baseUrl: 'https://api.example.com',
       tenantId: 'default-tenant'

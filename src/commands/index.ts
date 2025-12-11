@@ -16,4 +16,4 @@ export { ListCardProduct, CreateCardProduct, UpdateCardProduct, GetCardProduct }
 export { GetClientAddress, CreateClientAddress, UpdateClientAddress, SetClientAddressStatus } from './rest/clientAddress';
 export { SwitchClientClassification, GetClientClassification } from './rest/clientClassification';
 export { GetConfigurations, GetConfigurationByName, EnableDisableConfiguration } from './rest/globalConfiguration';
-export { CreateFixedDepositAccount, GetFixedDepositAccount } from './rest/fixedDepositAccount';
+export { CreateFixedDepositAccount, GetFixedDepositAccount, UpdateFixedDepositAccount } from './rest/fixedDepositAccount';
