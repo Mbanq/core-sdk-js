@@ -444,8 +444,242 @@ The SDK uses a Command Pattern for all operations. Commands are created using fa
 
 | Command | Description |
 |---------|-------------|
+| `GetCards` | Retrieve all cards for a specific client |
+| `GetCardById` | Get detailed information about a specific card by ID |
+| `GetCardAuthorizations` | List card authorizations with filtering options (status, pagination, sorting) |
+| `GetCardAuthorizationById` | Retrieve detailed information about a specific card authorization including transaction details, merchant information, and optional associations (notes/media) |
 | `SendAuthorizationToCore` | Send card authorization request to core system |
-| `UpdateCardID` | Update card identification information |
+| `UpdateCardID` | Update client card identification information (URL and QR code) |
+| `GetCards` | Retrieve all cards associated with a specific client |
+| `GetCardById` | Get detailed information for a specific card by ID |
+| `GetCardImageUrl` | Get the URL for a card's visual representation/image |
+| `GetCardAuthorizations` | Retrieve all card authorizations with filtering and pagination |
+| `CreateCard` | Create a new debit or credit card (virtual or physical) |
+| `ChangeCardType` | Change the product type of an existing card |
+| `ActivatePhysicalCard` | Activate a physical card that has been issued |
+| `OrderPhysicalCard` | Request fulfillment/shipment of a physical card |
+| `SetPIN` | Generate a secure URL for card PIN changes |
+| `AddCardToMobileWallet` | Provision a card for Apple Pay or Google Pay |
+| `UpdateCardFeature` | Enable/disable card features (POS, online, ATM, international) |
+| `UpdateCardLimit` | Update card limits and velocity rules (purchase and ATM) |
+
+### Card Operations Usage Examples
+
+#### Card Creation and Management
+
+```javascript
+import { 
+  createInstance, 
+  CreateCard, 
+  GetCards, 
+  GetCardById,
+  ChangeCardType,
+  ActivatePhysicalCard,
+  OrderPhysicalCard
+} from '@mbanq/core-sdk-js';
+
+const client = createInstance({
+  secret: 'your-secret',
+  signee: 'YOUR-SIGNEE',
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
+});
+
+// Create a debit card with existing savings account
+const debitCard = await client.request(CreateCard({
+  productId: 123,
+  savingsAccountId: 456789,
+  clientId: 98765
+}));
+
+// Create a credit card
+const creditCard = await client.request(CreateCard({
+  productId: 124,
+  creditAccountId: 456790,
+  userId: 555
+}));
+
+// Get all cards for a client
+const clientCards = await client.request(GetCards(98765));
+console.log('Client cards:', clientCards);
+
+// Get specific card details
+const cardDetails = await client.request(GetCardById(debitCard.id));
+console.log('Card status:', cardDetails.status);
+
+// Change card product type
+await client.request(ChangeCardType(debitCard.id, { productId: 125 }));
+
+// Order physical card for virtual card
+const physicalCard = await client.request(OrderPhysicalCard(debitCard.id));
+
+// Activate physical card once received
+const activation = await client.request(ActivatePhysicalCard(physicalCard.id));
+console.log('Card token:', activation.cardToken);
+```
+
+#### Card Features and Limits
+
+```javascript
+import { 
+  UpdateCardFeature, 
+  UpdateCardLimit 
+} from '@mbanq/core-sdk-js';
+
+// Update card features
+const features = await client.request(UpdateCardFeature(cardId, {
+  posPaymentEnabled: true,
+  onlinePaymentEnabled: true,
+  atmWithdrawalsEnabled: false,
+  internationalPaymentsEnabled: true,
+  blockedCountries: ['US', 'CA']
+}));
+
+// Update card limits and velocity rules
+const limits = await client.request(UpdateCardLimit(cardId, {
+  purchase: [{
+    single: {
+      transactionAmount: 1000,
+      numberOfTransactions: 5
+    },
+    daily: {
+      transactionAmount: 5000,
+      numberOfTransactions: 20
+    },
+    monthly: {
+      transactionAmount: 15000,
+      numberOfTransactions: 100
+    }
+  }],
+  atm: [{
+    daily: {
+      transactionAmount: 2000,
+      numberOfTransactions: 10
+    },
+    weekly: {
+      transactionAmount: 5000,
+      numberOfTransactions: 25
+    }
+  }]
+}));
+```
+
+#### Mobile Wallet Integration
+
+```javascript
+import { AddCardToMobileWallet } from '@mbanq/core-sdk-js';
+
+// Apple Pay provisioning
+const applePaySetup = await client.request(AddCardToMobileWallet(cardId, {
+  walletProvider: 'APPLE_PAY',
+  certificate1: 'apple-cert-1-data',
+  certificate2: 'apple-cert-2-data',
+  nonce: 'apple-nonce-value'
+}));
+
+// Google Pay provisioning
+const googlePaySetup = await client.request(AddCardToMobileWallet(cardId, {
+  walletProvider: 'GOOGLE_PAY',
+  deviceID: 'android-device-id',
+  walletAccountID: 'google-wallet-account-id'
+}));
+
+console.log('Provisioning data:', applePaySetup.data.activationData);
+```
+
+#### Card Authorization Management
+
+```javascript
+import { 
+  GetCardAuthorizations, 
+  SendAuthorizationToCore,
+  GetCardImageUrl,
+  SetPIN
+} from '@mbanq/core-sdk-js';
+
+// Get card authorizations with filtering
+const authorizations = await client.request(GetCardAuthorizations({
+  cardToken: 'card-uuid-token',
+  status: 'ACTIVE',
+  limit: 50,
+  offset: 0,
+  orderBy: 'createdAt',
+  sortOrder: 'desc',
+  isActiveCardAuthorizations: true
+}));
+
+console.log('Total authorizations:', authorizations.totalFilteredRecords);
+console.log('Recent transactions:', authorizations.pageItems);
+
+// Send authorization to core system
+await client.request(SendAuthorizationToCore({
+  card: { 
+    internalCardId: 'card-123', 
+    cardType: 'DEBIT' 
+  },
+  payload: { 
+    amount: 1000, 
+    currency: 'USD',
+    merchant: 'Merchant Name'
+  },
+  flag: 'AUTH_CAPTURE',
+  skipNotification: false
+}));
+
+// Get card image URL for display
+const { imageUrl } = await client.request(GetCardImageUrl(cardId));
+
+// Generate PIN change URL
+const pinSetup = await client.request(SetPIN(cardId));
+console.log('PIN change URL:', pinSetup.data);
+```
+
+#### Card ID and Visual Updates
+
+```javascript
+import { UpdateCardID } from '@mbanq/core-sdk-js';
+
+// Update card identification with custom branding
+await client.request(UpdateCardID({
+  clientId: 98765,
+  businessCardIDURL: 'https://your-brand.com/card-design.png',
+  businessCardIDQRCode: 'base64-encoded-qr-code-data'
+}));
+```
+
+### Card Types and Features
+
+#### Card Types
+- **Debit Cards**: Linked to savings accounts for spending available balance
+- **Credit Cards**: Linked to credit accounts with revolving credit limits
+- **Virtual Cards**: Digital-only cards for online and mobile payments
+- **Physical Cards**: Physical plastic cards with EMV chip and contactless support
+
+#### Supported Mobile Wallets
+- **Apple Pay**: iPhone, iPad, Apple Watch support
+- **Google Pay**: Android devices and Google Wallet integration
+
+#### Card Features Control
+- **POS Payments**: Enable/disable point-of-sale transactions
+- **Online Payments**: Control e-commerce and online purchases
+- **ATM Withdrawals**: Manage cash withdrawal capabilities
+- **International Payments**: Allow/restrict international transactions
+- **Contactless Payments**: Tap-to-pay functionality
+- **Blocked Countries**: Geographically restrict card usage
+
+#### Velocity Limits and Controls
+- **Single Transaction**: Maximum amount per transaction
+- **Daily Limits**: Total amount and transaction count per day
+- **Weekly Limits**: Total amount and transaction count per week
+- **Monthly Limits**: Total amount and transaction count per month
+- **ATM vs Purchase**: Separate limits for ATM withdrawals vs purchases
+
+#### Authorization Management
+- **Real-time Authorizations**: Process card transactions in real-time
+- **Authorization History**: Track all card transaction attempts
+- **Status Tracking**: Monitor authorization statuses (ACTIVE, COMPLETED, REJECTED, etc.)
+- **Filtering and Search**: Find specific transactions by criteria
+- **Merchant Details**: Complete transaction merchant information
 
 #### Card Product Operations
 

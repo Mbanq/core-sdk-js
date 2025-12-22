@@ -1,3 +1,31 @@
+# [0.21.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.20.0...v0.21.0) (2025-12-20)
+
+
+### Features
+
+* card issuing ([70dc0ee](https://github.com/Mbanq/core-sdk-js-internal/commit/70dc0eebac5b0cc29d26c862a864d06440117431))
+
+# [0.20.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.19.0...v0.20.0) (2025-12-19)
+
+
+### Features
+
+* Add command and types for retrieving card authorizations. ([#52](https://github.com/Mbanq/core-sdk-js-internal/issues/52)) ([f78b29b](https://github.com/Mbanq/core-sdk-js-internal/commit/f78b29bfddf8c59997d148a7db738117a2bab936))
+
+# [0.19.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.18.0...v0.19.0) (2025-12-18)
+
+
+### Features
+
+* Add `GetBankDetailsFromRoutingCode` command with new types and tests. ([5dbae5a](https://github.com/Mbanq/core-sdk-js-internal/commit/5dbae5a6bc7cf64952233d7bd3962cfaca86545d))
+* add `GetRecentTransactions` command and new transaction type enums ([891956f](https://github.com/Mbanq/core-sdk-js-internal/commit/891956f543a24130c4bf1e543c40d807b590844f))
+* Add `GetTransactionById` command, its request/response types, and tests. ([1395697](https://github.com/Mbanq/core-sdk-js-internal/commit/13956977a9ffe2a3dc32e5734acf3c6170ffe1e1))
+* Add command and types for deleting fixed deposit accounts. ([5f66c67](https://github.com/Mbanq/core-sdk-js-internal/commit/5f66c679ea3c1b9f0ebe70ecd7b9aaa9f763dd1e))
+* add command and types for retrieving a `fixed deposit account` ([2ef1dc4](https://github.com/Mbanq/core-sdk-js-internal/commit/2ef1dc4ee8a6b311d26e831f0499b9bda3d63ade))
+* add command and types for updating fixed deposit accounts ([7670eb7](https://github.com/Mbanq/core-sdk-js-internal/commit/7670eb7e98a8cecf0a20fa064d62b0f043d575c0))
+* add command, types, and tests for creating fixed deposit accounts ([46b58b1](https://github.com/Mbanq/core-sdk-js-internal/commit/46b58b12a8781648145d83bcc7b87521bb4bde33))
+* **internal:** Implement public/internal release separation with build scripts, type definitions, and workflow updates. ([f887872](https://github.com/Mbanq/core-sdk-js-internal/commit/f887872a1fe1c76a4866749cb94fe41699c224c1))
+
 # [0.18.0](https://github.com/mbanq/core-sdk-js/compare/v0.17.0...v0.18.0) (2025-12-09)
 
 
