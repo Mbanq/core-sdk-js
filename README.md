@@ -448,6 +448,8 @@ The SDK uses a Command Pattern for all operations. Commands are created using fa
 | `GetCardById` | Get detailed information about a specific card by ID |
 | `GetCardAuthorizations` | List card authorizations with filtering options (status, pagination, sorting) |
 | `GetCardAuthorizationById` | Retrieve detailed information about a specific card authorization including transaction details, merchant information, and optional associations (notes/media) |
+| `GetCardSettlements` | List all card settlements with comprehensive filtering (date range, status, pagination, sorting). A settlement is where a card transaction is finalized and funds are transferred from the cardholder to the merchant |
+| `GetCardSettlementById` | Retrieve detailed information about a specific card settlement by ID, including client info, merchant details, transaction amounts, batch information, and interchange fees |
 | `SendAuthorizationToCore` | Send card authorization request to core system |
 | `UpdateCardID` | Update client card identification information (URL and QR code) |
 | `GetCards` | Retrieve all cards associated with a specific client |

@@ -1,3 +1,31 @@
+# [0.25.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.24.0...v0.25.0) (2025-12-24)
+
+
+### Features
+
+* add prepaid card management commands, types, and tests ([#55](https://github.com/Mbanq/core-sdk-js-internal/issues/55)) ([d8b8201](https://github.com/Mbanq/core-sdk-js-internal/commit/d8b820195825e1c2c24ebc02134ff62ca5ebddf3))
+
+# [0.24.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.23.0...v0.24.0) (2025-12-22)
+
+
+### Features
+
+* updating card status, replacing card ([5a8bc0a](https://github.com/Mbanq/core-sdk-js-internal/commit/5a8bc0a8651a913110067997cb4cbc2eaae95018))
+
+# [0.23.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.22.0...v0.23.0) (2025-12-22)
+
+
+### Features
+
+* Add commands and types for retrieving card settlements and their details ([#54](https://github.com/Mbanq/core-sdk-js-internal/issues/54)) ([0224a3a](https://github.com/Mbanq/core-sdk-js-internal/commit/0224a3a29a7b08a6e2514e445097d4a08f494b5e))
+
+# [0.22.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.21.0...v0.22.0) (2025-12-22)
+
+
+### Features
+
+* Add `GetCardAuthorizationById` command with new types and refactor card type definitions to `.ts`. ([#53](https://github.com/Mbanq/core-sdk-js-internal/issues/53)) ([4dcdd00](https://github.com/Mbanq/core-sdk-js-internal/commit/4dcdd000106270e768c65b9e6ff4cf75ef640b91))
+
 # [0.21.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.20.0...v0.21.0) (2025-12-20)
 
 
