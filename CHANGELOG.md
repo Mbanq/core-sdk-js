@@ -1,3 +1,17 @@
+# [0.27.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.26.0...v0.27.0) (2025-12-24)
+
+
+### Features
+
+*  get acquired card by ([887aa2a](https://github.com/Mbanq/core-sdk-js-internal/commit/887aa2a1f999bb319866c5836ed180aba72b5014))
+
+# [0.26.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.25.0...v0.26.0) (2025-12-24)
+
+
+### Features
+
+* get acquired cards ([b07e1b4](https://github.com/Mbanq/core-sdk-js-internal/commit/b07e1b4b3391da87b051fc853bcef7d2f3707023))
+
 # [0.25.0](https://github.com/Mbanq/core-sdk-js-internal/compare/v0.24.0...v0.25.0) (2025-12-24)
 
 
@@ -52,7 +66,6 @@
 * add command and types for retrieving a `fixed deposit account` ([2ef1dc4](https://github.com/Mbanq/core-sdk-js-internal/commit/2ef1dc4ee8a6b311d26e831f0499b9bda3d63ade))
 * add command and types for updating fixed deposit accounts ([7670eb7](https://github.com/Mbanq/core-sdk-js-internal/commit/7670eb7e98a8cecf0a20fa064d62b0f043d575c0))
 * add command, types, and tests for creating fixed deposit accounts ([46b58b1](https://github.com/Mbanq/core-sdk-js-internal/commit/46b58b12a8781648145d83bcc7b87521bb4bde33))
-* **internal:** Implement public/internal release separation with build scripts, type definitions, and workflow updates. ([f887872](https://github.com/Mbanq/core-sdk-js-internal/commit/f887872a1fe1c76a4866749cb94fe41699c224c1))
 
 # [0.18.0](https://github.com/mbanq/core-sdk-js/compare/v0.17.0...v0.18.0) (2025-12-09)
 

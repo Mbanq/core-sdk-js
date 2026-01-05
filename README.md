@@ -44,10 +44,18 @@ npm install @mbanq/core-sdk-js
 import { createInstance, CreatePayment, GetTransfers } from '@mbanq/core-sdk-js';
 
 const client = createInstance({
-  secret: 'your-jwt-secret',
-  signee: 'YOUR-SIGNEE',
   baseUrl: 'https://api.cloud.mbanq.com',
   tenantId: 'your-tenant-id'
+});
+
+await client.connect({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
+  }
 });
 
 // Create payment
@@ -84,83 +92,52 @@ const transfers = await client.request(GetTransfers({
 
 ## Setup
 
-### Authentication Options
+### Authentication
 
-The SDK supports multiple authentication methods. Choose the one that fits your integration:
-
-#### 1. JWT Token Authentication (Recommended)
-Use your API secret and signee for JWT-based authentication:
+The SDK uses OAuth 2.0 password grant flow for authentication:
 
 ```javascript
 const client = createInstance({
-  secret: 'your-jwt-secret',
-  signee: 'YOUR-SIGNEE', 
   baseUrl: 'https://api.cloud.mbanq.com',
   tenantId: 'your-tenant-id'
 });
-```
 
-#### 2. Bearer Token Authentication
-If you already have a valid access token:
-
-```javascript
-// With "Bearer " prefix (recommended)
-const client = createInstance({
-  bearerToken: 'Bearer your-access-token',
-  baseUrl: 'https://api.cloud.mbanq.com', 
-  tenantId: 'your-tenant-id'
-});
-
-// Without "Bearer " prefix (automatically added)
-const client = createInstance({
-  bearerToken: 'your-access-token', // "Bearer " will be added automatically
-  baseUrl: 'https://api.cloud.mbanq.com', 
-  tenantId: 'your-tenant-id'
-});
-```
-
-#### 3. OAuth Credential Authentication
-For OAuth 2.0 password grant flow:
-
-```javascript
-const client = createInstance({
+await client.connect({
   credential: {
     client_id: 'your-client-id',
     client_secret: 'your-client-secret',
     username: 'your-username',
     password: 'your-password',
     grant_type: 'password'
-  },
-  baseUrl: 'https://api.cloud.mbanq.com',
-  tenantId: 'your-tenant-id'
+  }
 });
 ```
-
-#### Authentication Priority
-When multiple authentication methods are provided, the SDK uses them in this order:
-1. **`bearerToken`** - Takes highest priority if provided
-2. **`credential`** - OAuth flow is used if no bearerToken 
-3. **`secret` + `signee`** - JWT authentication used as fallback
 
 #### Additional Configuration Options
 ```javascript
 const client = createInstance({
-  // Choose one authentication method from above
-  secret: 'your-jwt-secret',
-  signee: 'YOUR-SIGNEE',
-  
   // Required configuration
   baseUrl: 'https://api.cloud.mbanq.com',
   tenantId: 'your-tenant-id',
   
   // Optional configuration
-  traceId: 'custom-trace-id', // Custom request tracing identifier
   axiosConfig: {
     timeout: 30000, // Request timeout in milliseconds (default: 29000)
     keepAlive: true, // HTTP keep-alive for connection reuse
     headers: {
       'Custom-Header': 'custom-value' // Additional HTTP headers
     }
+  }
+});
+
+// Authenticate with OAuth credentials
+await client.connect({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
   }
 });
 ```
@@ -176,10 +153,18 @@ const client = createInstance({
 #### Environment Variables Example
 ```javascript
 const client = createInstance({
-  secret: process.env.MBANQ_API_SECRET,
-  signee: process.env.MBANQ_API_SIGNEE,
   baseUrl: process.env.MBANQ_API_URL,
   tenantId: process.env.MBANQ_TENANT_ID
+});
+
+await client.connect({
+  credential: {
+    client_id: process.env.MBANQ_CLIENT_ID,
+    client_secret: process.env.MBANQ_CLIENT_SECRET,
+    username: process.env.MBANQ_USERNAME,
+    password: process.env.MBANQ_PASSWORD,
+    grant_type: 'password'
+  }
 });
 ```
 
@@ -811,7 +796,7 @@ For detailed information about specific features and APIs, refer to the followin
 - **[Mbanq API Reference](https://apidocs.cloud.mbanq.com/reference)** - Official API documentation with detailed endpoint information, request/response schemas, and examples
 
 ### Quick Links
-- [Authentication Options](#authentication-options) - JWT, Bearer Token, and OAuth configuration
+- [Authentication](#authentication) - OAuth credential configuration
 - [Middleware Configuration](#middleware) - Logging, metrics, and custom middleware
 - [Error Handling Patterns](#error-handling) - Error types and handling strategies
 - [Type Definitions](#type-safety--validation) - Complete schema and type reference
@@ -846,8 +831,6 @@ The library uses a consistent error handling pattern. All API calls may throw th
 ### Error Types
 - **`CommandError`**: Base error type with `code`, `message`, `statusCode`, and optional `requestId`
 - **Authentication Errors**: Invalid or missing API credentials
-  - Invalid JWT secret/signee combination
-  - Expired or invalid bearer token
   - OAuth credential authentication failure
 - **Validation Errors**: Invalid parameters provided (uses Zod validation)
 - **API Errors**: Server-side errors with specific error codes
@@ -855,8 +838,6 @@ The library uses a consistent error handling pattern. All API calls may throw th
 
 ### Common Authentication Error Scenarios
 - **Missing credentials**: No authentication method provided
-- **Invalid JWT**: Incorrect secret or signee values
-- **Expired token**: Bearer token has expired and needs refresh
 - **OAuth failure**: Invalid username/password or client credentials
 
 ## Examples
@@ -868,10 +849,18 @@ import { createInstance, CreateTransfer, GetTransfer, MarkAsSuccess } from '@mba
 
 // Initialize the client
 const client = createInstance({ 
-  secret: 'your-secret', 
-  signee: 'YOUR-SIGNEE', 
   baseUrl: 'https://api.cloud.mbanq.com', 
   tenantId: 'your-tenant-id' 
+});
+
+await client.connect({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
+  }
 });
 
 // Create an ACH transfer
