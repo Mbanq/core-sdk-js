@@ -788,6 +788,28 @@ await client.request(UpdateCardID({
 | `UpdateSelfServiceUser` | Update self-service user information |
 | `DeleteSelfServiceUser` | Delete a self-service user |
 
+#### Loan Operations
+
+| Command | Description |
+|---|---|
+| `CreateLoan` | Create a new loan application |
+| `ApproveLoan` | Approve a loan application |
+| `GetLoanById` | Get loan details by ID |
+| `DisburseLoanToLinkedAccount` | Disburse a loan to a linked savings account |
+| `DisburseLoan` | Disburse a loan with payment details |
+| `CalculateLoanSchedule` | Calculate loan repayment schedule without creating the loan |
+| `MakeRepayment` | Make a repayment on a loan (installments, advance, or late payments) |
+| `GetLoanPreclosureTemplate` | Get preclosure template with transaction details and payment options |
+| `PreCloseLoan` | Pre-close a loan by early repayment of the entire outstanding amount |
+| `GetLoanTransactionDetails` | Retrieve detailed information about a specific loan transaction |
+| `GetLoanWriteoffTemplate` | Retrieve the write-off template with reason options for loan write-off |
+| `WriteLoanOff` | Write off an unrecoverable loan and close it as written off |
+| `GetLoanSearchTemplate` | Retrieve the ad-hoc search query template for loans |
+| `GetSearchData` | Generic search across various resources (loans, clients, etc.) with query support |
+
+
+
+
 ## Documentation
 
 For detailed information about specific features and APIs, refer to the following resources:
