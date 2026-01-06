@@ -819,6 +819,11 @@ await client.request(UpdateCardID({
 | `GetLoanSearchTemplate` | Retrieve the ad-hoc search query template for loans |
 | `GetSearchData` | Generic search across various resources (loans, clients, etc.) with query support |
 
+#### Subscriber Operations
+
+| Command | Description |
+|---|---|
+| `GetSubscriber` | Retrieve detailed information about a specific subscriber by ID |
 
 
 
