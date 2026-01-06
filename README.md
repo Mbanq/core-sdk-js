@@ -425,6 +425,18 @@ The SDK uses a Command Pattern for all operations. Commands are created using fa
 | `DownloadAccountStatement` | Download a generated account statement |
 | `GetAccountDocumentsDetails` | Get details of account documents |
 
+#### Charge Operations
+
+| Command | Description |
+|---------|-------------|
+| `AddChargeToAccount` | Add a charge to a savings account |
+| `GetChargesByAccountId` | Get all charges for a savings account |
+| `AddChargeToLoanAccount` | Add a charge to a loan account |
+| `GetChargesByLoanAccountId` | Get all charges for a loan account |
+| `WaiveChargeFromAccount` | Waive a charge from a savings account |
+| `UndoChargeToAccount` | Undo a charge transaction |
+| `PayAccountCharge` | Pay a pending charge on an account |
+
 #### Card Operations
 
 | Command | Description |
