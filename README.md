@@ -689,6 +689,16 @@ await client.request(UpdateCardID({
 | `CreateCardProduct` | Create a new card product configuration |
 | `UpdateCardProduct` | Update an existing card product |
 
+#### Acquire Card Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetAcquiredCards` | Retrieve all acquired/external cards for a specific client |
+| `GetAcquiredCardById` | Get detailed information about a specific acquired card by ID |
+| `AddAcquiredCard` | Add an acquired card to a client's external cards list |
+| `BlockAcquiredCardAddition` | Block the addition of acquired cards from external sources for a client |
+| `UnblockAcquiredCardAddition` | Unblock the addition of acquired cards from external sources for a client |
+
 #### Client Operations
 
 | Command | Description |
