@@ -835,6 +835,8 @@ await client.request(UpdateCardID({
 |---|---|
 | `GetSubscribers` | Use this API to retrieve all the configured subscribers |
 | `GetSubscriber` | Retrieve detailed information about a specific subscriber by ID |
+| `CreateSubscriber` | Use this API to add a new subscriber for a webhook, email, or client email. |
+| `DeleteSubscriber` | Use this API to delete a subscriber by the provided subscriber ID. |
 
 
 
