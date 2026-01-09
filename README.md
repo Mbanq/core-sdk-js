@@ -689,6 +689,24 @@ await client.request(UpdateCardID({
 | `CreateCardProduct` | Create a new card product configuration |
 | `UpdateCardProduct` | Update an existing card product |
 
+#### Credit Account Operations
+
+| Command | Description |
+|---------|-------------|
+| `GetCreditAccountTransactionById` | Get detailed information for a specific credit account transaction by ID |
+| `GetCreditAccountPendingTransactions` | Retrieve all pending transactions (card authorizations on hold) for a credit account |
+| `GetCreditAccountCompletedTransactions` | Retrieve all completed/posted transactions for a credit account with optional filtering |
+| `GetCreditAccountDetails` | Retrieve comprehensive details of a credit account including balances, limits, and billing information |
+| `GetCreditAccountBilledStatements` | Retrieve all billing statements generated for a credit account |
+| `DownloadCreditAccountBilledStatement` | Download a specific billing statement document for a credit account |
+| `CreateCreditAccountPayment` | Process a payment to reduce the outstanding balance on a credit account |
+| `CreateCreditAccountAutoPayInternal` | Set up automatic payment from an internal account to pay credit account balance |
+| `CreateCreditAccountAutoPayExternal` | Set up automatic payment from an external bank account to pay credit account balance |
+| `CreateUnsecuredCreditAccount` | Create a new unsecured credit account for a client |
+| `CreateSecuredCreditAccount` | Create a new secured credit account with collateral account |
+| `ApproveCreditAccount` | Approve a pending credit account application, activating it for use |
+| `AdjustCreditAccountLimits` | Adjust the credit limit and cash advance limit for an existing credit account |
+
 #### Acquire Card Operations
 
 | Command | Description |
@@ -829,6 +847,41 @@ await client.request(UpdateCardID({
 | `GetLoanSearchTemplate` | Retrieve the ad-hoc search query template for loans |
 | `GetSearchData` | Generic search across various resources (loans, clients, etc.) with query support |
 
+#### Card Operations
+
+| Command | Description |
+|---|---|
+| `GetCards` | Retrieve all cards for a specific client |
+| `GetCardById` | Get detailed information about a specific card by ID |
+| `GetCardImageUrl` | Get the URL for a card's visual representation |
+| `GetCardAuthorizations` | Retrieve all card authorizations with filtering and pagination |
+| `GetCardAuthorizationById` | Retrieve detailed information about a specific card authorization |
+| `GetCardSettlements` | List all card settlements with comprehensive filtering |
+| `GetCardSettlementById` | Retrieve detailed information about a specific card settlement |
+| `CreateCard` | Create a new debit or credit card |
+| `ChangeCardType` | Change the product type of an existing card |
+| `ActivatePhysicalCard` | Activate a physical card that has been issued |
+| `OrderPhysicalCard` | Request fulfillment/shipment of a physical card |
+| `SetPIN` | Generate a secure URL for card PIN changes |
+| `AddCardToMobileWallet` | Provision a card for Apple Pay or Google Pay |
+| `UpdateCardFeature` | Enable/disable card features |
+| `UpdateCardLimit` | Update card limits and velocity rules |
+| `TerminateCard` | Terminate a card |
+| `SuspendCard` | Suspend a card |
+| `ActivateCard` | Activate a card |
+| `ReactivateCard` | Reactivate a suspended card |
+| `ReplaceCard` | Replace a card |
+| `RenewCard` | Renew a card |
+
+#### Note Operations
+
+| Command | Description |
+|---|---|
+| `CreateNote` | Create a note for a resource |
+| `GetNotes` | Get notes for a resource |
+| `GetNoteById` | Get a specific note by ID |
+| `DeleteNote` | Delete a note |
+
 #### Notification Operations
 
 | Command | Description |
@@ -836,6 +889,7 @@ await client.request(UpdateCardID({
 | `GetSubscribers` | Use this API to retrieve all the configured subscribers |
 | `GetSubscriber` | Retrieve detailed information about a specific subscriber by ID |
 | `CreateSubscriber` | Use this API to add a new subscriber for a webhook, email, or client email. |
+| `UpdateSubscriber` | Use this API to update the details of an existing subscriber using the provided subscriber ID. |
 | `DeleteSubscriber` | Use this API to delete a subscriber by the provided subscriber ID. |
 
 
