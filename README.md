@@ -767,6 +767,20 @@ await client.request(UpdateCardID({
 | `CustomCreate` | Execute a custom create operation |
 | `CustomGet` | Execute a custom get operation |
 
+#### DataTable Operations
+
+| Command | Description |
+|---------|-------------|
+| `CreateEntryInDataTable` | Create a new entry (row) in a data table with support for JSON data or file uploads |
+| `GetEntriesFromDataTable` | Retrieve all entries from a data table including column metadata and structure |
+| `UpdateEntryInDataTable` | Update an existing entry in a data table by its unique identifier |
+| `DeleteEntryFromDataTable` | Delete an entry from a data table by its unique identifier |
+| `GetDataTableProductMappingTemplate` | Get template for entity data table product mapping with available entities, data tables, and products |
+| `CreateDataTableProductMapping` | Create a mapping between an entity table, data table, and product |
+| `GetDataTableProductMappings` | Retrieve list of entity data table product mappings with pagination and filtering support |
+| `GetDataTableProductMappingById` | Retrieve a specific entity data table product mapping by its unique identifier |
+| `DeleteDataTableProductMapping` | Delete a specific entity data table product mapping by its unique identifier |
+
 #### Global Configuration Operations
 
 | Command | Description |
@@ -1035,3 +1049,59 @@ try {
 ```
 
 For more detailed information or support, please contact our support team or visit our developer portal.
+
+// Delete a data table entry
+const deleted = await client.request(DeleteEntryFromDataTable({
+  datatable: 'd_client_info',
+  apptableid: 101,
+  datatableId: 1651719413544 // Entry ID to delete
+}));
+
+console.log('Deleted entry ID:', deleted.id);
+console.log('Resource ID:', deleted.resourceId);
+
+// Get product mapping template
+const mappings = await client.request(GetDataTableProductMappingTemplate({}));
+console.log('Total records:', mappings.totalFilteredRecords);
+console.log('Mappings:', mappings.pageItems);
+// pageItems contains: [{ id, entity, datatableName, productId, productName }, ...]
+
+// Filter by application table
+const loanMappings = await client.request(GetDataTableProductMappingTemplate({
+  apptable: 'm_loan'
+}));
+// Returns only mappings for m_loan entity
+
+// Create data table product mapping
+const mapping = await client.request(CreateDataTableProductMapping({
+  entity: 'm_loan',
+  productId: 23,
+  datatableName: 'd_loan_additional_details'
+}));
+console.log('Mapping created with ID:', mapping.id);
+console.log('Resource ID:', mapping.resourceId);
+
+// Get list of mappings with pagination
+const mappings = await client.request(GetDataTableProductMappings({
+  limit: 10,
+  offset: 0
+}));
+console.log('Total records:', mappings.totalFilteredRecords);
+console.log('First page:', mappings.pageItems);
+
+// Filter mappings by entity
+const loanMappings = await client.request(GetDataTableProductMappings({
+  entity: 'm_loan'
+}));
+
+// Get specific mapping by ID
+const mapping = await client.request(GetDataTableProductMappingById(67));
+console.log('Mapping ID:', mapping.id);
+console.log('Entity:', mapping.entity);
+console.log('Data Table:', mapping.datatableName);
+console.log('Product:', mapping.productName);
+
+// Delete mapping by ID
+const deleteResult = await client.request(DeleteDataTableProductMapping(67));
+console.log('Deleted resource ID:', deleteResult.resourceId);
+console.log('Deleted mapping ID:', deleteResult.id);
