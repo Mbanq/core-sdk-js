@@ -905,7 +905,10 @@ await client.request(UpdateCardID({
 | `CreateSubscriber` | Use this API to add a new subscriber for a webhook, email, or client email. |
 | `UpdateSubscriber` | Use this API to update the details of an existing subscriber using the provided subscriber ID. |
 | `DeleteSubscriber` | Use this API to delete a subscriber by the provided subscriber ID. |
-
+| `CreateSubscription` | Use this API to create one or more subscriptions for a subscriber. |
+| `GetSubscriptions` | Use this API to retrieve a list of all subscriptions. |
+| `DeleteSubscription` | Use this API to delete a subscription by the provided subscription ID |
+| `GetSubscriptionEvents` | Use this API to retrieve the list of available entities and their associated actions for a specific subscription type. |
 
 
 ## Documentation
