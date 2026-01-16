@@ -684,10 +684,17 @@ await client.request(UpdateCardID({
 
 | Command | Description |
 |---------|-------------|
-| `ListCardProduct` | List all available card products with pagination |
+| `Create Credit Product` | List all available card products with pagination |
 | `GetCardProduct` | Get details of a specific card product by ID |
 | `CreateCardProduct` | Create a new card product configuration |
 | `UpdateCardProduct` | Update an existing card product |
+
+#### Credit Card Product Operations
+
+| Command | Description |
+|---------|-------------|
+| `CreateCreditProduct` | Use the API to create and activate a credit product. |
+| `GetCreditProduct` | Use this API to retrieve the credit card product details. |
 
 #### Credit Account Operations
 
