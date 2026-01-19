@@ -917,6 +917,13 @@ await client.request(UpdateCardID({
 | `DeleteSubscription` | Use this API to delete a subscription by the provided subscription ID |
 | `GetSubscriptionEvents` | Use this API to retrieve the list of available entities and their associated actions for a specific subscription type. |
 
+#### Report Operations
+
+| Command | Description |
+|---|---|
+| `GetReports` | Use this API to fetch all the existing reports configured in the system according to bank requirements. The response contains the values for each report and its associated parameters. |
+| `GetReportParameters` | Use this API to fetch all the parameters which are linked to a specific report, which are required for the execution of the report. |
+| `RunReport` | Use this API to run and receive specific reporting data from the database by passing the report name as a path parameter. Supports dynamic parameters, generic result sets, CSV export, and multiple output formats (HTML, PDF, CSV). |
 
 ## Documentation
 
