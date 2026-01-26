@@ -1119,6 +1119,68 @@ console.log('Data Table:', mapping.datatableName);
 console.log('Product:', mapping.productName);
 
 // Delete mapping by ID
-const deleteResult = await client.request(DeleteDataTableProductMapping(67));
-console.log('Deleted resource ID:', deleteResult.resourceId);
-console.log('Deleted mapping ID:', deleteResult.id);
+const deleted = await client.request(DeleteDataTableProductMapping(67));
+console.log('Deleted mapping ID:', deleted.id);
+```
+
+### Dispute Reason Example
+
+```javascript
+import { createInstance, AddDisputeReason } from '@mbanq/core-sdk-js';
+
+const client = createInstance({
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
+});
+
+await client.connect({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
+  }
+});
+
+// Add a new dispute reason
+const disputeReason = await client.request(AddDisputeReason([{
+  reasonIdentifier: 'UNAUTHORIZED_FRAUD',
+  name: 'Unauthorized Fraud',
+  description: 'Unrecognized Charge',
+  paymentRail: 'CREDIT_CARD',
+  supportMultipleTransactions: true,
+  supportRecognizedTransaction: false,
+  isBlockCardOnDisputeCreation: true
+}]));
+
+console.log('Dispute reason created:', disputeReason.data[0].name);
+console.log('Payment rail:', disputeReason.data[0].paymentRail);
+console.log('Blocks card on creation:', disputeReason.data[0].isBlockCardOnDisputeCreation);
+
+// Add multiple dispute reasons at once
+const multipleReasons = await client.request(AddDisputeReason([
+  {
+    reasonIdentifier: 'UNAUTHORIZED_FRAUD',
+    name: 'Unauthorized Fraud',
+    paymentRail: 'CREDIT_CARD'
+  },
+  {
+    reasonIdentifier: 'INCORRECT_AMOUNT',
+    name: 'Incorrect Amount',
+    paymentRail: 'ACH'
+  }
+]));
+console.log('Created', multipleReasons.data.length, 'dispute reasons');
+
+// Update an existing dispute reason
+const updated = await client.request(UpdateDisputeReason('UNAUTHORIZED_FRAUD', {
+  name: 'UnAuthorized Fraud',
+  description: 'Non receipt of merchandise',
+  reasonIdentifier: 'UNAUTHORIZED_FRAUD',
+  supportMultipleTransactions: false,
+  paymentRail: 'CREDIT_CARD'
+}));
+console.log('Updated dispute reason ID:', updated.resourceId);
+console.log('Changes:', updated.changes);
+```
