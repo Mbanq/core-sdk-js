@@ -119,7 +119,7 @@ const client = createInstance({
   // Required configuration
   baseUrl: 'https://api.cloud.mbanq.com',
   tenantId: 'your-tenant-id',
-  
+
   // Optional configuration
   axiosConfig: {
     timeout: 30000, // Request timeout in milliseconds (default: 29000)
@@ -186,7 +186,7 @@ const axiosLogger = (axiosInstance) => {
       return config;
     }
   );
-  
+
   // Add response interceptor
   axiosInstance.interceptors.response.use(
     (response) => {
@@ -467,10 +467,10 @@ The SDK uses a Command Pattern for all operations. Commands are created using fa
 #### Card Creation and Management
 
 ```javascript
-import { 
-  createInstance, 
-  CreateCard, 
-  GetCards, 
+import {
+  createInstance,
+  CreateCard,
+  GetCards,
   GetCardById,
   ChangeCardType,
   ActivatePhysicalCard,
@@ -520,9 +520,9 @@ console.log('Card token:', activation.cardToken);
 #### Card Features and Limits
 
 ```javascript
-import { 
-  UpdateCardFeature, 
-  UpdateCardLimit 
+import {
+  UpdateCardFeature,
+  UpdateCardLimit
 } from '@mbanq/core-sdk-js';
 
 // Update card features
@@ -589,8 +589,8 @@ console.log('Provisioning data:', applePaySetup.data.activationData);
 #### Card Authorization Management
 
 ```javascript
-import { 
-  GetCardAuthorizations, 
+import {
+  GetCardAuthorizations,
   SendAuthorizationToCore,
   GetCardImageUrl,
   SetPIN
@@ -612,12 +612,12 @@ console.log('Recent transactions:', authorizations.pageItems);
 
 // Send authorization to core system
 await client.request(SendAuthorizationToCore({
-  card: { 
-    internalCardId: 'card-123', 
-    cardType: 'DEBIT' 
+  card: {
+    internalCardId: 'card-123',
+    cardType: 'DEBIT'
   },
-  payload: { 
-    amount: 1000, 
+  payload: {
+    amount: 1000,
     currency: 'USD',
     merchant: 'Merchant Name'
   },
@@ -946,7 +946,7 @@ The SDK uses [Zod](https://zod.dev/) for runtime type validation and TypeScript 
 - `ACH` - Automated Clearing House
 - `SAMEDAYACH` - Same Day ACH
 - `WIRE` - Domestic Wire Transfer
-- `SWIFT` - International Wire Transfer  
+- `SWIFT` - International Wire Transfer
 - `INTERNAL` - Internal Transfer
 - `FXPAY` - Foreign Exchange Payment
 - `CARD` - Card Payment
@@ -985,9 +985,9 @@ The library uses a consistent error handling pattern. All API calls may throw th
 import { createInstance, CreateTransfer, GetTransfer, MarkAsSuccess } from '@mbanq/core-sdk-js';
 
 // Initialize the client
-const client = createInstance({ 
-  baseUrl: 'https://api.cloud.mbanq.com', 
-  tenantId: 'your-tenant-id' 
+const client = createInstance({
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
 });
 
 await client.connect({
@@ -1067,120 +1067,3 @@ try {
 
 For more detailed information or support, please contact our support team or visit our developer portal.
 
-// Delete a data table entry
-const deleted = await client.request(DeleteEntryFromDataTable({
-  datatable: 'd_client_info',
-  apptableid: 101,
-  datatableId: 1651719413544 // Entry ID to delete
-}));
-
-console.log('Deleted entry ID:', deleted.id);
-console.log('Resource ID:', deleted.resourceId);
-
-// Get product mapping template
-const mappings = await client.request(GetDataTableProductMappingTemplate({}));
-console.log('Total records:', mappings.totalFilteredRecords);
-console.log('Mappings:', mappings.pageItems);
-// pageItems contains: [{ id, entity, datatableName, productId, productName }, ...]
-
-// Filter by application table
-const loanMappings = await client.request(GetDataTableProductMappingTemplate({
-  apptable: 'm_loan'
-}));
-// Returns only mappings for m_loan entity
-
-// Create data table product mapping
-const mapping = await client.request(CreateDataTableProductMapping({
-  entity: 'm_loan',
-  productId: 23,
-  datatableName: 'd_loan_additional_details'
-}));
-console.log('Mapping created with ID:', mapping.id);
-console.log('Resource ID:', mapping.resourceId);
-
-// Get list of mappings with pagination
-const mappings = await client.request(GetDataTableProductMappings({
-  limit: 10,
-  offset: 0
-}));
-console.log('Total records:', mappings.totalFilteredRecords);
-console.log('First page:', mappings.pageItems);
-
-// Filter mappings by entity
-const loanMappings = await client.request(GetDataTableProductMappings({
-  entity: 'm_loan'
-}));
-
-// Get specific mapping by ID
-const mapping = await client.request(GetDataTableProductMappingById(67));
-console.log('Mapping ID:', mapping.id);
-console.log('Entity:', mapping.entity);
-console.log('Data Table:', mapping.datatableName);
-console.log('Product:', mapping.productName);
-
-// Delete mapping by ID
-const deleted = await client.request(DeleteDataTableProductMapping(67));
-console.log('Deleted mapping ID:', deleted.id);
-```
-
-### Dispute Reason Example
-
-```javascript
-import { createInstance, AddDisputeReason } from '@mbanq/core-sdk-js';
-
-const client = createInstance({
-  baseUrl: 'https://api.cloud.mbanq.com',
-  tenantId: 'your-tenant-id'
-});
-
-await client.connect({
-  credential: {
-    client_id: 'your-client-id',
-    client_secret: 'your-client-secret',
-    username: 'your-username',
-    password: 'your-password',
-    grant_type: 'password'
-  }
-});
-
-// Add a new dispute reason
-const disputeReason = await client.request(AddDisputeReason([{
-  reasonIdentifier: 'UNAUTHORIZED_FRAUD',
-  name: 'Unauthorized Fraud',
-  description: 'Unrecognized Charge',
-  paymentRail: 'CREDIT_CARD',
-  supportMultipleTransactions: true,
-  supportRecognizedTransaction: false,
-  isBlockCardOnDisputeCreation: true
-}]));
-
-console.log('Dispute reason created:', disputeReason.data[0].name);
-console.log('Payment rail:', disputeReason.data[0].paymentRail);
-console.log('Blocks card on creation:', disputeReason.data[0].isBlockCardOnDisputeCreation);
-
-// Add multiple dispute reasons at once
-const multipleReasons = await client.request(AddDisputeReason([
-  {
-    reasonIdentifier: 'UNAUTHORIZED_FRAUD',
-    name: 'Unauthorized Fraud',
-    paymentRail: 'CREDIT_CARD'
-  },
-  {
-    reasonIdentifier: 'INCORRECT_AMOUNT',
-    name: 'Incorrect Amount',
-    paymentRail: 'ACH'
-  }
-]));
-console.log('Created', multipleReasons.data.length, 'dispute reasons');
-
-// Update an existing dispute reason
-const updated = await client.request(UpdateDisputeReason('UNAUTHORIZED_FRAUD', {
-  name: 'UnAuthorized Fraud',
-  description: 'Non receipt of merchandise',
-  reasonIdentifier: 'UNAUTHORIZED_FRAUD',
-  supportMultipleTransactions: false,
-  paymentRail: 'CREDIT_CARD'
-}));
-console.log('Updated dispute reason ID:', updated.resourceId);
-console.log('Changes:', updated.changes);
-```
