@@ -1,0 +1,1 @@
+import{_ as a,c as i,o as n,ag as e}from"./chunks/framework.NFWsHCBL.js";const c=JSON.parse('{"title":"Core SDK JS","description":"","frontmatter":{},"headers":[],"relativePath":"index.md","filePath":"index.md"}'),l={name:"index.md"};function t(p,s,r,h,k,E){return n(),i("div",null,[...s[0]||(s[0]=[e("",16)])])}const o=a(l,[["render",t]]);export{c as __pageData,o as default};
