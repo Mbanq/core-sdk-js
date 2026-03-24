@@ -22,9 +22,31 @@
   - [Metrics Middleware](#metrics-middleware)
   - [Custom Middleware](#custom-middleware)
 - [API Reference](#api-reference)
-  - [Transfer Operations](#transfer-operations)
+  - [Account Operations](#account-operations)
+  - [Account Product Operations](#account-product-operations)
+  - [Account Statement Operations](#account-statement-operations)
+  - [Charge Operations](#charge-operations)
+  - [Card Operations](#card-operations)
+  - [Card Product Operations](#card-product-operations)
+  - [Credit Card Product Operations](#credit-card-product-operations)
+  - [Credit Account Operations](#credit-account-operations)
+  - [Acquire Card Operations](#acquire-card-operations)
+  - [Client Operations](#client-operations)
+  - [Client Address Operations](#client-address-operations)
+  - [Client Classification Operations](#client-classification-operations)
   - [Client Identifier Operations](#client-identifier-operations)
+  - [Custom Operations](#custom-operations)
+  - [DataTable Operations](#datatable-operations)
+  - [Global Configuration Operations](#global-configuration-operations)
+  - [Payment Operations](#payment-operations)
+  - [Recipient Operations](#recipient-operations)
+  - [Transaction Operations](#transaction-operations)
+  - [Transfer Operations](#transfer-operations)
   - [User Operations](#user-operations)
+  - [Loan Operations](#loan-operations)
+  - [Note Operations](#note-operations)
+  - [Notification Operations](#notification-operations)
+  - [Report Operations](#report-operations)
 - [Documentation](#documentation)
 - [Type Safety & Validation](#type-safety--validation)
 - [Error Handling](#error-handling)
@@ -119,7 +141,7 @@ const client = createInstance({
   // Required configuration
   baseUrl: 'https://api.cloud.mbanq.com',
   tenantId: 'your-tenant-id',
-
+  
   // Optional configuration
   axiosConfig: {
     timeout: 30000, // Request timeout in milliseconds (default: 29000)
@@ -140,6 +162,50 @@ await client.connect({
     grant_type: 'password'
   }
 });
+```
+
+#### Two-Factor Authentication (2FA)
+
+If your account has Two-Factor Authentication (2FA) enabled, you must verify your identity using a One-Time Password (OTP) after the initial connection.
+
+```javascript
+const client = createInstance({
+  baseUrl: 'https://api.cloud.mbanq.com',
+  tenantId: 'your-tenant-id'
+});
+
+// 1. Initial connection
+// Returns 2FA status: { isMFARequired, mfaDeliveryMethods, isSelfServiceUser, isPasswordExpired }
+const { isMFARequired, mfaDeliveryMethods } = await client.connect({
+  credential: {
+    client_id: 'your-client-id',
+    client_secret: 'your-client-secret',
+    username: 'your-username',
+    password: 'your-password',
+    grant_type: 'password'
+  }
+});
+
+if (isMFARequired) {
+  // 2. Perform 2FA verification if required
+  // mfaDeliveryMethods contains available methods, e.g. ['TOTP']
+  await client.twoFactorAuthentication({
+    token: '123456', // The OTP code
+    deliveryMethod: 'email'
+  });
+}
+
+// 3. Perform authorized requests
+try {
+  const result = await client.request(CreatePayment({ /* ... */ }));
+} catch (error) {
+  // NOTE: If you receive an AUTHORIZATION_ERROR with code 'RESTRICTED' 
+  // and message "Access to type ... is restricted", it means your 2FA token 
+  // has expired. You must perform 2FA verification again.
+  if (error.code === 'RESTRICTED') {
+    await client.twoFactorAuthentication({ /* ... */ });
+  }
+}
 ```
 
 ### Security Best Practices
@@ -186,7 +252,7 @@ const axiosLogger = (axiosInstance) => {
       return config;
     }
   );
-
+  
   // Add response interceptor
   axiosInstance.interceptors.response.use(
     (response) => {
@@ -467,10 +533,10 @@ The SDK uses a Command Pattern for all operations. Commands are created using fa
 #### Card Creation and Management
 
 ```javascript
-import {
-  createInstance,
-  CreateCard,
-  GetCards,
+import { 
+  createInstance, 
+  CreateCard, 
+  GetCards, 
   GetCardById,
   ChangeCardType,
   ActivatePhysicalCard,
@@ -520,9 +586,9 @@ console.log('Card token:', activation.cardToken);
 #### Card Features and Limits
 
 ```javascript
-import {
-  UpdateCardFeature,
-  UpdateCardLimit
+import { 
+  UpdateCardFeature, 
+  UpdateCardLimit 
 } from '@mbanq/core-sdk-js';
 
 // Update card features
@@ -589,8 +655,8 @@ console.log('Provisioning data:', applePaySetup.data.activationData);
 #### Card Authorization Management
 
 ```javascript
-import {
-  GetCardAuthorizations,
+import { 
+  GetCardAuthorizations, 
   SendAuthorizationToCore,
   GetCardImageUrl,
   SetPIN
@@ -612,12 +678,12 @@ console.log('Recent transactions:', authorizations.pageItems);
 
 // Send authorization to core system
 await client.request(SendAuthorizationToCore({
-  card: {
-    internalCardId: 'card-123',
-    cardType: 'DEBIT'
+  card: { 
+    internalCardId: 'card-123', 
+    cardType: 'DEBIT' 
   },
-  payload: {
-    amount: 1000,
+  payload: { 
+    amount: 1000, 
     currency: 'USD',
     merchant: 'Merchant Name'
   },
@@ -788,6 +854,16 @@ await client.request(UpdateCardID({
 | `GetDataTableProductMappingById` | Retrieve a specific entity data table product mapping by its unique identifier |
 | `DeleteDataTableProductMapping` | Delete a specific entity data table product mapping by its unique identifier |
 
+#### FX Pay Operations
+
+| Command | Description |
+|---|---|
+| `GetCurrencyTemplates` | Retrieve all available currency templates |
+| `GetFetchFxRates` | Retrieve FX rates for a currency pair |
+| `LockFxRate` | Lock an FX rate for a currency pair |
+| `GetTransferCharges` | Retrieve charges for a transfer |
+| `CreateAndSubmitTransfer` | Create and submit a transfer |
+
 #### Global Configuration Operations
 
 | Command | Description |
@@ -946,7 +1022,7 @@ The SDK uses [Zod](https://zod.dev/) for runtime type validation and TypeScript 
 - `ACH` - Automated Clearing House
 - `SAMEDAYACH` - Same Day ACH
 - `WIRE` - Domestic Wire Transfer
-- `SWIFT` - International Wire Transfer
+- `SWIFT` - International Wire Transfer  
 - `INTERNAL` - Internal Transfer
 - `FXPAY` - Foreign Exchange Payment
 - `CARD` - Card Payment
@@ -963,19 +1039,195 @@ The SDK uses [Zod](https://zod.dev/) for runtime type validation and TypeScript 
 - **Type Safety**: Full TypeScript support with inferred types
 
 ## Error Handling
-The library uses a consistent error handling pattern. All API calls may throw the following errors:
 
-### Error Types
-- **`CommandError`**: Base error type with `code`, `message`, `statusCode`, and optional `requestId`
-- **Authentication Errors**: Invalid or missing API credentials
-  - OAuth credential authentication failure
-- **Validation Errors**: Invalid parameters provided (uses Zod validation)
-- **API Errors**: Server-side errors with specific error codes
-- **Network Errors**: Network connectivity or timeout issues
+The SDK provides a unified error handling pattern across REST and GraphQL APIs. All errors are normalized to a consistent `SdkError` structure.
 
-### Common Authentication Error Scenarios
-- **Missing credentials**: No authentication method provided
-- **OAuth failure**: Invalid username/password or client credentials
+### SdkError Structure
+
+```typescript
+interface SdkError extends Error {
+  name: 'SdkError';
+  message: string;                    // Human-readable error message
+  statusCode?: number;                // HTTP status code (REST only)
+  classification: ErrorClassification; // Error category
+  requestId?: string;                 // Request tracking ID
+  details?: ErrorDetails;             // Structured error details
+  cause?: Error;                      // Original error (minimal)
+}
+
+type ErrorClassification =
+  | 'VALIDATION_ERROR'      // 400, 422 - Invalid input
+  | 'AUTHENTICATION_ERROR'  // 401 - Invalid credentials
+  | 'AUTHORIZATION_ERROR'   // 403 - Insufficient permissions
+  | 'NOT_FOUND'             // 404 - Resource not found
+  | 'RATE_LIMIT'            // 429 - Too many requests
+  | 'NETWORK_ERROR'         // No response from server
+  | 'SERVER_ERROR'          // 500+ - Server issues
+  | 'GRAPHQL_ERROR'         // GraphQL-specific errors
+  | 'UNKNOWN_ERROR';        // Unclassified errors
+
+interface ErrorDetails {
+  errorCode?: string;           // API error code (e.g., 'error.msg.client.id.invalid')
+  validationErrors?: Array<{    // Field-level errors
+    field: string;
+    message: string;
+    code?: string;
+    value?: unknown;
+    args?: unknown[];
+  }>;
+  path?: string[];              // GraphQL field path
+  graphqlCode?: string;         // GraphQL extension code
+}
+```
+
+### Basic Error Handling
+
+```typescript
+import { isSdkError, SdkError } from '@mbanq/core-sdk-js';
+
+try {
+  const result = await client.request(GetClient(123));
+} catch (error) {
+  if (isSdkError(error)) {
+    console.log('Error:', error.message);
+    console.log('Classification:', error.classification);
+    console.log('Status:', error.statusCode);
+    console.log('Request ID:', error.requestId);
+    
+    // Access structured details
+    if (error.details?.validationErrors) {
+      error.details.validationErrors.forEach(ve => {
+        console.log(`Field ${ve.field}: ${ve.message}`);
+      });
+    }
+  }
+}
+```
+
+### Classification-Based Handling
+
+```typescript
+try {
+  await client.request(CreatePayment(paymentData));
+} catch (error) {
+  if (isSdkError(error)) {
+    switch (error.classification) {
+      case 'AUTHENTICATION_ERROR':
+        // Refresh token or re-authenticate
+        await client.connect(credentials);
+        break;
+      case 'AUTHORIZATION_ERROR':
+        // Check 2FA or permissions
+        console.log('Access denied:', error.message);
+        break;
+      case 'VALIDATION_ERROR':
+        // Show field errors to user
+        error.details?.validationErrors?.forEach(e => {
+          showFieldError(e.field, e.message);
+        });
+        break;
+      case 'NOT_FOUND':
+        // Resource doesn't exist
+        console.log('Resource not found');
+        break;
+      case 'NETWORK_ERROR':
+        // Retry or show offline message
+        console.log('Network issue, please retry');
+        break;
+      case 'SERVER_ERROR':
+        // Log and show generic error
+        console.error('Server error:', error.requestId);
+        break;
+    }
+  }
+}
+```
+
+### REST Error Example
+
+When a REST API returns an error like:
+```json
+{
+  "developerMessage": "The requested resource is not available.",
+  "httpStatusCode": "404",
+  "defaultUserMessage": "The requested resource is not available.",
+  "userMessageGlobalisationCode": "error.msg.resource.not.found",
+  "errors": [{
+    "developerMessage": "Client with identifier 21994 does not exist",
+    "defaultUserMessage": "Client with identifier 21994 does not exist",
+    "userMessageGlobalisationCode": "error.msg.client.id.invalid",
+    "parameterName": "id",
+    "value": null,
+    "args": [{"value": 21994}]
+  }]
+}
+```
+
+The SDK transforms it to:
+```typescript
+{
+  name: 'SdkError',
+  message: 'The requested resource is not available.',
+  statusCode: 404,
+  classification: 'NOT_FOUND',
+  details: {
+    errorCode: 'error.msg.resource.not.found',
+    validationErrors: [{
+      field: 'id',
+      message: 'Client with identifier 21994 does not exist',
+      code: 'error.msg.client.id.invalid',
+      value: null,
+      args: [21994]
+    }]
+  }
+}
+```
+
+### GraphQL Error Example
+
+GraphQL errors like 2FA/permission issues:
+```json
+{
+  "message": "Access to type 'PaymentRecipientTypeFormats' is restricted",
+  "extensions": { "code": "RESTRICTED", "classification": "DataFetchingException" }
+}
+```
+
+Are transformed to:
+```typescript
+{
+  name: 'SdkError',
+  message: "Access to type 'PaymentRecipientTypeFormats' is restricted",
+  classification: 'AUTHORIZATION_ERROR',
+  details: {
+    graphqlCode: 'RESTRICTED',
+    errorCode: 'RESTRICTED'
+  }
+}
+```
+
+### Type Guards
+
+```typescript
+import { isSdkError } from '@mbanq/core-sdk-js';
+
+// Check if error is an SdkError
+if (isSdkError(error)) {
+  // TypeScript knows error is SdkError
+  console.log(error.classification);
+}
+```
+
+### Accessing Original Error
+
+For debugging, the original error is available via the standard `cause` property:
+
+```typescript
+if (isSdkError(error) && error.cause) {
+  console.log('Original error:', error.cause.message);
+  console.log('Axios code:', (error.cause as any).code);
+}
+```
 
 ## Examples
 
@@ -985,9 +1237,9 @@ The library uses a consistent error handling pattern. All API calls may throw th
 import { createInstance, CreateTransfer, GetTransfer, MarkAsSuccess } from '@mbanq/core-sdk-js';
 
 // Initialize the client
-const client = createInstance({
-  baseUrl: 'https://api.cloud.mbanq.com',
-  tenantId: 'your-tenant-id'
+const client = createInstance({ 
+  baseUrl: 'https://api.cloud.mbanq.com', 
+  tenantId: 'your-tenant-id' 
 });
 
 await client.connect({
@@ -1043,7 +1295,7 @@ if (transfer.status === 'EXECUTION_PROCESSING') {
 ### Error Handling Example
 
 ```javascript
-import { isCommandError, CreateTransfer } from '@mbanq/core-sdk-js';
+import { isSdkError, CreateTransfer } from '@mbanq/core-sdk-js';
 
 try {
   const transfer = await client.request(CreateTransfer({
@@ -1052,7 +1304,7 @@ try {
     // Missing required fields
   }));
 } catch (error) {
-  if (isCommandError(error)) {
+  if (isSdkError(error)) {
     console.error('Transfer creation failed:');
     console.error('Code:', error.code);
     console.error('Message:', error.message);
@@ -1066,4 +1318,3 @@ try {
 ```
 
 For more detailed information or support, please contact our support team or visit our developer portal.
-
